@@ -10,7 +10,7 @@ COPY src /build/src
 RUN ./gradlew build --no-daemon
 
 
-FROM openjdk:11-jdk AS runtime
+FROM openjdk:11-jre AS runtime
  
 COPY --from=build /build/build/libs/*.jar /app/
 
