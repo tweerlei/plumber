@@ -19,6 +19,7 @@ import de.tweerlei.plumber.worker.WellKnownKeys
 import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.DelegatingWorker
 import de.tweerlei.plumber.worker.Worker
+import de.tweerlei.plumber.worker.Record
 
 class DynamoDBKeyWorker(
     private val partitionKey: String,
@@ -30,24 +31,20 @@ class DynamoDBKeyWorker(
     override fun doProcess(item: WorkItem) =
         item.getString().let { key ->
             when (rangeKey) {
-                null -> mapOf(partitionKey to key)
-                    .also {
-                        item.setString(key, DynamoDBKeys.PARTITION_KEY)
-                    }.let {
-                        mapOf(
-                            partitionKey to item.getAs<Any>(DynamoDBKeys.PARTITION_KEY)
-                        )
-                    }
-                else -> mapOf(partitionKey to item.getAs<Any>(), rangeKey to rangeKeyValue)
-                    .also {
-                        item.setString(key, DynamoDBKeys.PARTITION_KEY)
-                        item.setString(rangeKeyValue, DynamoDBKeys.RANGE_KEY)
-                    }.let {
-                        mapOf(
-                            partitionKey to item.getAs<Any>(DynamoDBKeys.PARTITION_KEY),
-                            rangeKey to item.getAs<Any>(DynamoDBKeys.RANGE_KEY)
-                        )
-                    }
+                null -> item.apply {
+                    setString(key, DynamoDBKeys.PARTITION_KEY)
+                    Record(
+                        partitionKey to getAs<Any>(DynamoDBKeys.PARTITION_KEY)
+                    )
+                }
+                else -> item.apply {
+                    setString(key, DynamoDBKeys.PARTITION_KEY)
+                    setString(rangeKeyValue, DynamoDBKeys.RANGE_KEY)
+                    Record(
+                        partitionKey to getAs<Any>(DynamoDBKeys.PARTITION_KEY),
+                        rangeKey to getAs<Any>(DynamoDBKeys.RANGE_KEY)
+                    )
+                }
             }.let { record ->
                 item.set(record, WellKnownKeys.RECORD)
             }

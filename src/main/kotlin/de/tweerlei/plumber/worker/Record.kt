@@ -15,4 +15,8 @@
  */
 package de.tweerlei.plumber.worker
 
-class Record: LinkedHashMap<String, Any?>()
+class Record(vararg items: Pair<String, Any?>): LinkedHashMap<String, Any?>() {
+    init {
+        items.forEach { (k, v) -> this[k] = v }
+    }
+}

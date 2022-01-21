@@ -71,8 +71,10 @@ class PlumberApplication(
                 --explain                     Explain resulting plan, don't execute
                 --requester-pays              Requester pays access to S3 buckets
                 --assume-role=<arn>           Assume the given IAM role for all S3 operations
-                --start-after=<key>           Start after the given S3 key
-                --stop-after=<key>            Stop after the given S3 key
+                --start-after=<key>           Start after the given key
+                --stop-after=<key>            Stop after the given key
+                --start-range=<key>           Start after the given range key
+                --stop-range=<key>            Stop after the given range key
                 --key-chars=<list>            Use the given list of characters to generate S3 partition keys
                 --primary-key=<name>          Use the given JDBC column as primary key
                 --partition-key=<name>        Use the given DynamoDB attribute as partition key
@@ -100,6 +102,8 @@ class PlumberApplication(
                 requesterPays = args.containsOption("requester-pays"),
                 startAfterKey = args.getOptionValue("start-after"),
                 stopAfterKey = args.getOptionValue("stop-after"),
+                startAfterRangeKey = args.getOptionValue("start-range"),
+                stopAfterRangeKey = args.getOptionValue("stop-range"),
                 keyChars = args.getOptionValue("key-chars"),
                 primaryKey = args.getOptionValue("primary-key") ?: "",
                 partitionKey = args.getOptionValue("partition-key") ?: "",
@@ -118,6 +122,7 @@ class PlumberApplication(
                 logger.info("----------------------------------------------------------------------")
                 logger.info("${if (requesterPays) "paying" else "not paying"} for requests")
                 logger.info("starting after $startAfterKey up to and including $stopAfterKey")
+                logger.info("starting range after $startAfterRangeKey up to and including $stopAfterRangeKey")
                 logger.info("generating partitions using key chars $keyChars")
                 logger.info("requesting $numberOfFilesPerRequest file names at once")
                 logger.info("waiting for up to $maxWaitTimeSeconds seconds for new items")

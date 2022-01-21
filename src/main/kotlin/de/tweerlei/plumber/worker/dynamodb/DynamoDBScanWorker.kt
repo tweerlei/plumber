@@ -26,6 +26,8 @@ class DynamoDBScanWorker(
     private val tableName: String,
     private val partitionKey: String,
     private val rangeKey: String?,
+    private val startAfterRange: String?,
+    private val endWithRange: String?,
     private val numberOfFilesPerRequest: Int,
     private val amazonDynamoDBClient: AmazonDynamoDB,
     limit: Int,
@@ -36,39 +38,66 @@ class DynamoDBScanWorker(
 
     override fun generateItems(item: WorkItem, fn: (WorkItem) -> Boolean) {
         val startAfter = when (item.containsKey(WellKnownKeys.START_AFTER_KEY)) {
-            true -> mapOf(partitionKey to AttributeValue(item.getString(WellKnownKeys.START_AFTER_KEY)))
+            true -> Record(
+                partitionKey to item.getOptional<Comparable<Any>>(WellKnownKeys.START_AFTER_KEY)
+            ).also { map ->
+                if (rangeKey != null && startAfterRange != null)
+                    map[rangeKey] = convertType(startAfterRange)
+            }
             else -> null
         }
         val endWith = when (item.containsKey(WellKnownKeys.END_WITH_KEY)) {
-            true -> item.getString(WellKnownKeys.END_WITH_KEY)
+            true -> Record(
+                partitionKey to item.getOptional<Comparable<Any>>(WellKnownKeys.END_WITH_KEY)
+            ).also { map ->
+                if (rangeKey != null && endWithRange != null)
+                    map[rangeKey] = convertType(endWithRange)
+            }
             else -> null
         }
         logger.info("fetching elements from $startAfter to $endWith")
 
         var result: ScanResult? = null
-        var firstKey: String? = null
-        var lastKey: String? = null
+        var firstKey: Any? = null
+        var lastKey: Any? = null
         var itemCount = 0
         do {
-            result = listFilenames(startAfter, result?.lastEvaluatedKey)
-            result.items.forEach { row ->
-                val key = row[partitionKey]?.s.orEmpty()
-                if (endWith == null || key <= endWith) {
-                    if (fn(row.fromDynamoDB().toWorkItem())) {
-                        itemCount++
-                        if (firstKey == null) firstKey = key
-                        lastKey = key
+            result = listFilenames(startAfter?.toDynamoDB(), result?.lastEvaluatedKey)
+            result.items.forEach { resultItem ->
+                resultItem.fromDynamoDB().let { row ->
+                    if (isKeyBefore(row, endWith)) {
+                        if (fn(row.toWorkItem())) {
+                            itemCount++
+                            if (firstKey == null) firstKey = row[partitionKey]
+                            lastKey = row[partitionKey]
+                        } else {
+                            result.lastEvaluatedKey = null
+                        }
                     } else {
                         result.lastEvaluatedKey = null
                     }
-                } else {
-                    result.lastEvaluatedKey = null
                 }
             }
         } while (result?.lastEvaluatedKey != null)
 
         logger.info("fetched $itemCount filenames from $startAfter to $endWith, first key: $firstKey, last key: $lastKey")
     }
+
+    private fun convertType(value: String) =
+        WorkItem.of(null).let { item ->
+            item.setString(value)
+            item.getAs<Comparable<Any>>()
+        }
+
+    @Suppress("UNCHECKED_CAST")
+    private fun isKeyBefore(row: Record, maxKey: Record?) =
+        when {
+            maxKey == null -> true
+            row[partitionKey] as Comparable<Any> > maxKey[partitionKey] as Comparable<Any> -> false
+            rangeKey == null || maxKey[rangeKey] == null -> true
+            row[rangeKey] as Comparable<Any> > maxKey[rangeKey] as Comparable<Any> -> false
+            else -> true
+        }
 
     private fun listFilenames(startAfter: Map<String, AttributeValue>?, continueAfter: Map<String, AttributeValue>?) =
         ScanRequest()
