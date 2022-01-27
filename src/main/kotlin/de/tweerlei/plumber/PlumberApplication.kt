@@ -55,6 +55,9 @@ class PlumberApplication(
                 ?.let { params ->
                     logger.info("___________________________________________________Building pipeline__")
                     pipelineBuilder.build(params)
+                        .let { worker ->
+                            if (params.explain) null else worker
+                        }
                 }?.let { worker ->
                     logger.info("____________________________________________________Running pipeline__")
                     runWorker(worker)
