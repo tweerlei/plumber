@@ -8,7 +8,7 @@ plugins {
 }
 
 group = "de.tweerlei"
-version = "1.0.0-SNAPSHOT"
+version = "0.1.0-SNAPSHOT"
 java.sourceCompatibility = JavaVersion.VERSION_11
 
 repositories {
@@ -45,6 +45,18 @@ tasks.withType<KotlinCompile> {
     kotlinOptions {
         freeCompilerArgs = listOf("-Xjsr305=strict")
         jvmTarget = "11"
+    }
+}
+
+tasks.withType<Jar> {
+    enabled = false
+}
+
+tasks.withType<org.springframework.boot.gradle.tasks.bundling.BootJar> {
+    enabled = true
+    manifest {
+        attributes["Implementation-Title"] = project.name
+        attributes["Implementation-Version"] = project.version
     }
 }
 

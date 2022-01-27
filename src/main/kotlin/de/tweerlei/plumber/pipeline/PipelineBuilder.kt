@@ -15,24 +15,20 @@
  */
 package de.tweerlei.plumber.pipeline
 
-import de.tweerlei.plumber.util.humanReadable
 import de.tweerlei.plumber.worker.WorkerBuilder
-import de.tweerlei.plumber.worker.WorkItem
-import de.tweerlei.plumber.worker.*
 import mu.KLogging
-import java.time.Duration
+import org.springframework.stereotype.Service
 
-class PipelineRunner(
+@Service
+class PipelineBuilder(
     private val factory: ProcessingStepFactory
 ) {
 
     companion object: KLogging()
 
-    fun run(params: PipelineParams) {
+    fun build(params: PipelineParams) =
         createWorkerDefinitions(params)
             .let { definitions -> createWorkers(definitions, params) }
-            .let { worker -> if (!params.explain) runWorker(worker) }
-    }
 
     private fun createWorkerDefinitions(params: PipelineParams): List<WorkerDefinition> {
         var parallelDegree = 1
@@ -113,19 +109,6 @@ class PipelineRunner(
                 currentWorker.parallelDegree
             )
         }
-    }
-
-    private fun runWorker(
-        worker: Worker
-    ) {
-        val startTime = System.currentTimeMillis()
-        worker.open().use {
-            worker.process(WorkItem.of(null))
-        }
-        val endTime = System.currentTimeMillis()
-        logger.info("----------------------------------------------------------------------")
-        val duration = Duration.ofMillis(endTime - startTime)
-        logger.info("Total processing time: ${duration.humanReadable()}")
     }
 
     private data class WorkerDefinition(
