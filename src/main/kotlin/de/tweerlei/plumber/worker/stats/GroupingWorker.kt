@@ -40,7 +40,7 @@ class GroupingWorker(
                     .incrementAndGet()
                     .also { counter ->
                         if (counter % interval == 0) {
-                            logger.info("$name: $value: $counter")
+                            logger.info { "$name: $value: $counter" }
                         }
                         item.set(counter, WellKnownKeys.COUNT)
                     }
@@ -54,7 +54,7 @@ class GroupingWorker(
 
     override fun onClose() {
         counters.forEach { (k, v) ->
-            logger.info("$name: $k: ${v.get()}")
+            logger.info { "$name: $k: ${v.get()}" }
         }
     }
 }

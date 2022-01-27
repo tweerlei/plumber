@@ -55,7 +55,7 @@ class DynamoDBScanWorker(
             }
             else -> null
         }
-        logger.info("fetching elements from $startAfter to $endWith")
+        logger.info { "fetching elements from $startAfter to $endWith" }
 
         var result: ScanResult? = null
         var firstKey: Any? = null
@@ -63,6 +63,7 @@ class DynamoDBScanWorker(
         var itemCount = 0
         do {
             result = listFilenames(startAfter?.toDynamoDB(), result?.lastEvaluatedKey)
+            logger.debug { "fetched ${result.items.size} items" }
             result.items.forEach { resultItem ->
                 resultItem.fromDynamoDB().let { row ->
                     if (isKeyBefore(row, endWith)) {
@@ -80,7 +81,7 @@ class DynamoDBScanWorker(
             }
         } while (result?.lastEvaluatedKey != null)
 
-        logger.info("fetched $itemCount filenames from $startAfter to $endWith, first key: $firstKey, last key: $lastKey")
+        logger.info { "fetched $itemCount filenames from $startAfter to $endWith, first key: $firstKey, last key: $lastKey" }
     }
 
     private fun convertType(value: String) =

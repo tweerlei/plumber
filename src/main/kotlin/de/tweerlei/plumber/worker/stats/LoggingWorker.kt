@@ -27,6 +27,6 @@ class LoggingWorker(
     companion object : KLogging()
 
     override fun doProcess(item: WorkItem) =
-        logger.info(item.getString())
+        logger.info { item.getString() }
             .let { true }
 }

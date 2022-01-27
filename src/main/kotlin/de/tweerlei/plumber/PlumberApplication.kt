@@ -52,10 +52,10 @@ class PlumberApplication(
 
                 Multithreaded data processor.
                 A processing pipeline is built from command line arguments.
-                
+
                 Supported steps are:
-                
-                
+
+
             """.trimIndent())
             .apply {
                 factory.processingStepDescriptions().forEach { (keyword, name) ->
@@ -65,9 +65,9 @@ class PlumberApplication(
                 }
             }
             .append("""
-                
+
                 Supported global options are:
-                
+
                 --help                        Show this help
                 --explain                     Explain resulting plan, don't execute
                 --requester-pays              Requester pays access to S3 buckets
@@ -89,6 +89,14 @@ class PlumberApplication(
                 --wait=<n>                    Wait at most this number of seconds for a new message
                 --follow                      Keep polling for new messages
                 --reread                      Re-read all messages
+
+                Any other options are used to configure the application. Some examples:
+
+                --debug                       Enable debug logging
+                --cloud.aws.region.static     Configure AWS region
+                --spring.datasource.url       Set JDBC url
+                --spring.datasource.username  Set JDBC user name
+                --spring.datasource.password  Set JDBC password
             """.trimIndent())
             .toString()
             .also { message -> logger.info(message) }
@@ -157,10 +165,10 @@ class PlumberApplication(
 
     override fun run(args: ApplicationArguments) {
         try {
-        parseArguments(args)
-            ?.let { params ->
-                PipelineRunner(factory).run(params)
-            }
+            parseArguments(args)
+                ?.let { params ->
+                    PipelineRunner(factory).run(params)
+                }
         } catch (e: Exception) {
             logger.error {
                 "Error while building the pipeline\n" +

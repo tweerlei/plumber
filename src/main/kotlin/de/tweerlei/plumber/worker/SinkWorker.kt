@@ -29,6 +29,6 @@ class SinkWorker: Worker {
     }
 
     override fun close() {
-        logger.info("Items received: ${count.get()}")
+        logger.info { "Items received: ${count.get()}" }
     }
 }

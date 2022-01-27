@@ -48,7 +48,7 @@ class TimingWorker(
         } catch (e: Exception) {
             logger.error {
                 "$name: failed to process $item\n" +
-                "${e.printStackTraceUpTo(this::class)}"
+                e.printStackTraceUpTo(this::class)
             }
             succ = successfulFiles.get()
             fail = failedFiles.incrementAndGet()
@@ -57,15 +57,20 @@ class TimingWorker(
 
         val total = totalProcessingTime.addAndGet(endTime - startTime)
         if ((succ + fail) % interval == 0)
-            logger.info("$name: $succ / ${succ + fail} ($active active) @ ${total / (succ + fail)} ms/item")
+            logger.info {
+                "$name: $succ / ${succ + fail} ($active active) @ ${total / (succ + fail)} ms/item"
+            }
         activeWorkers.decrementAndGet()
     }
 
     override fun onClose() {
-        logger.info("$name: Items successful: ${successfulFiles.get()}")
-        logger.info("$name: Items failed: ${failedFiles.get()}")
+        logger.info { "$name: Items successful: ${successfulFiles.get()}" }
+        logger.info { "$name: Items failed: ${failedFiles.get()}" }
         if (successfulFiles.get() + failedFiles.get() > 0) {
-            logger.info("$name: Net processing time per item: ${totalProcessingTime.get() / (successfulFiles.get() + failedFiles.get())} ms")
+            logger.info {
+                "$name: Net processing time per item: " +
+                "${totalProcessingTime.get() / (successfulFiles.get() + failedFiles.get())} ms"
+            }
         }
     }
 }

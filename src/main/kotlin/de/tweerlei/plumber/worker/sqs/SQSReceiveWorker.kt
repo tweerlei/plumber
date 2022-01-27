@@ -38,7 +38,7 @@ class SQSReceiveWorker(
     companion object: KLogging()
 
     override fun generateItems(item: WorkItem, fn: (WorkItem) -> Boolean) {
-        logger.info("waiting $waitSeconds seconds for next message in $queueUrl")
+        logger.info { "waiting $waitSeconds seconds for next message in $queueUrl" }
         var keepGenerating = true
         var itemCount = 0
         while (keepGenerating) {
@@ -53,7 +53,7 @@ class SQSReceiveWorker(
                     }
                 }
         }
-        logger.info("received $itemCount messages")
+        logger.info { "received $itemCount messages" }
     }
 
     private fun receiveFile() =

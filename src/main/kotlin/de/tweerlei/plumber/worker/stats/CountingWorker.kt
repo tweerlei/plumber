@@ -46,12 +46,12 @@ class CountingWorker(
                     val now = System.currentTimeMillis()
                     val last = lastTime.getAndSet(now)
                     val perSecond = interval * 1000L / (now - last).coerceAtLeast(1)
-                    logger.info("$name: Items processed: $counter @ ${perSecond.humanReadable()} items/s")
+                    logger.info { "$name: Items processed: $counter @ ${perSecond.humanReadable()} items/s" }
                 }
                 item.set(counter, WellKnownKeys.COUNT)
             }.let { true }
 
     override fun onClose() {
-        logger.info("$name: Items processed: ${sentFiles.get()}")
+        logger.info { "$name: Items processed: ${sentFiles.get()}" }
     }
 }

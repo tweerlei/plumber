@@ -43,7 +43,7 @@ abstract class GeneratingWorker(
                                 e.printStackTraceUpTo(this::class)
                             }
                         }
-                    }.let { count < limit }
+                    }.let { true }
         }
     }
 

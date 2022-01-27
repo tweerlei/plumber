@@ -45,7 +45,7 @@ class S3ListObjectsWorker(
             true -> item.getString(WellKnownKeys.END_WITH_KEY)
             else -> null
         }
-        logger.info("fetching filenames from $startAfter to $endWith")
+        logger.info { "fetching filenames from $startAfter to $endWith" }
 
         var result: ListObjectsV2Result? = null
         var firstKey: String? = null
@@ -53,6 +53,7 @@ class S3ListObjectsWorker(
         var itemCount = 0
         do {
             result = listFilenames(startAfter, result?.nextContinuationToken)
+            logger.debug { "fetched ${result.objectSummaries.size} items" }
             result.objectSummaries.forEach { objectSummary ->
                 if (endWith == null || objectSummary.key <= endWith) {
                     if (fn(objectSummary.toWorkItem())) {
@@ -67,7 +68,7 @@ class S3ListObjectsWorker(
                 }
             }
         } while (result?.nextContinuationToken != null)
-        logger.info("fetched $itemCount filenames from $startAfter to $endWith, first key: $firstKey, last key: $lastKey")
+        logger.info { "fetched $itemCount filenames from $startAfter to $endWith, first key: $firstKey, last key: $lastKey" }
     }
 
     private fun listFilenames(startWith: String?, continueWith: String?) =

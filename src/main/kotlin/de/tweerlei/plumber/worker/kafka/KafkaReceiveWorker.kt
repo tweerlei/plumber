@@ -41,13 +41,14 @@ class KafkaReceiveWorker(
     }
 
     override fun generateItems(item: WorkItem, fn: (WorkItem) -> Boolean) {
-        logger.info("waiting $waitSeconds seconds for next message in $topicName")
+        logger.info { "waiting $waitSeconds seconds for next message in $topicName" }
         var keepGenerating = true
         var itemCount = 0
         while (keepGenerating) {
             keepGenerating = follow
             // poll() with a zero timeout won't return any records
             consumer.poll(Duration.ofSeconds(waitSeconds.coerceAtLeast(1).toLong()))
+                .also { records -> logger.debug { "fetched ${records.count()} items" } }
                 .forEach { record ->
                     record.toWorkItem()
                         ?.also { newItem ->
@@ -59,7 +60,7 @@ class KafkaReceiveWorker(
                         }
                     }
                 }
-        logger.info("received $itemCount messages")
+        logger.info { "received $itemCount messages" }
         }
 
     private fun ConsumerRecord<String, String>.toWorkItem() =

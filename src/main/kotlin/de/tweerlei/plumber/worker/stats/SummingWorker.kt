@@ -47,13 +47,13 @@ class SummingWorker(
                             val now = System.currentTimeMillis()
                             val last = lastTime.getAndSet(now)
                             val perSecond = interval * (counter / interval - (counter - size) / interval) * 1000L / (now - last).coerceAtLeast(1)
-                            logger.info("$name: Item sum: $counter @ ${perSecond.humanReadable()} byte/s")
+                            logger.info { "$name: Item sum: $counter @ ${perSecond.humanReadable()} byte/s" }
                         }
                         item.set(counter, WellKnownKeys.SUM)
                     }
             }.let { true }
 
     override fun onClose() {
-        CountingWorker.logger.info("$name: Item sum: ${sum.get()}")
+        logger.info { "$name: Item sum: ${sum.get()}" }
     }
 }

@@ -39,6 +39,6 @@ class MinMaxWorker(
             }.let { true }
 
     override fun onClose() {
-        CountingWorker.logger.info("$name: Min. item: ${minValue.get()}, max. item: ${maxValue.get()}")
+        logger.info { "$name: Min. item: ${minValue.get()}, max. item: ${maxValue.get()}" }
     }
 }
