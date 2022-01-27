@@ -26,6 +26,7 @@ import java.io.*
 class JsonWriteWorker(
     private val file: File,
     private val objectMapper: ObjectMapper,
+    private val prettyPrint: Boolean,
     worker: Worker
 ): DelegatingWorker(worker) {
 
@@ -33,13 +34,13 @@ class JsonWriteWorker(
 
     override fun onOpen() {
         generator = objectMapper.createGenerator(FileOutputStream(file))
+        if (prettyPrint)
+            generator.prettyPrinter = objectMapper.serializationConfig.constructDefaultPrettyPrinter()
     }
 
     override fun doProcess(item: WorkItem): Boolean =
-        when (item.containsKey(JsonKeys.JSON_NODE)) {
-            true -> item.getAs<JsonNode>(JsonKeys.JSON_NODE)
-            else -> item.getOptional<Any>()
-        }.let { obj ->
+        item.getFirstAs<Any>(JsonKeys.JSON_NODE)
+            .let { obj ->
             objectMapper.writeValue(generator, obj)
         }.let {
             true

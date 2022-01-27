@@ -32,7 +32,8 @@ class FileWriteWorker(
     }
 
     override fun doProcess(item: WorkItem) =
-        File(dir, item.getString(WellKnownKeys.NAME))
+        item.getString(WellKnownKeys.NAME)
+            .let { name -> File(dir, name) }
             .let { file ->
                 FileOutputStream(file).use { stream ->
                     stream.write(item.getByteArray())

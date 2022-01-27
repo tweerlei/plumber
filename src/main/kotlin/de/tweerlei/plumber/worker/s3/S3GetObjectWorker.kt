@@ -30,7 +30,7 @@ class S3GetObjectWorker(
 ): DelegatingWorker(worker) {
 
     override fun doProcess(item: WorkItem) =
-        item.getString(WellKnownKeys.NAME)
+        item.getFirstString(WellKnownKeys.NAME)
             .let { name -> getFile(getBucketName(item), name) }
             .also { file ->
                 item.set(bucketName, S3Keys.BUCKET_NAME)

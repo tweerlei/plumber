@@ -46,6 +46,7 @@ class JsonWriteStep(
         JsonWriteWorker(
             File(arg),
             objectMapper,
+            params.prettyPrint,
             w
         ).let { fileWorker ->
             if (parallelDegree > 1)

@@ -43,5 +43,10 @@ class XmlEncodeStep(
         params: PipelineParams,
         parallelDegree: Int
     ) =
-        ToXmlWorker(params.elementName, xmlMapper, w)
+        ToXmlWorker(
+            params.elementName,
+            xmlMapper,
+            params.prettyPrint,
+            w
+        )
 }

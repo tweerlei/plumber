@@ -21,7 +21,7 @@ import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.filter.DecodingWorker
 import org.springframework.stereotype.Service
 
-@Service("decodeWorker")
+@Service("text-readWorker")
 class DecodeStep: ProcessingStep {
 
     override val name = "Decode binary data"

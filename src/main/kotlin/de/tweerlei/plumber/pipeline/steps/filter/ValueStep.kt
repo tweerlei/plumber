@@ -17,16 +17,15 @@ package de.tweerlei.plumber.pipeline.steps.filter
 
 import de.tweerlei.plumber.pipeline.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
-import de.tweerlei.plumber.worker.filter.CollectionWorker
-import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.Worker
+import de.tweerlei.plumber.worker.filter.SettingWorker
 import org.springframework.stereotype.Service
 
 @Service("valueWorker")
 class ValueStep: ProcessingStep {
 
     override val name = "Set value"
-    override val description = "Produces the given value once"
+    override val description = "Sets the current value to the given value"
 
     override fun createWorker(
         arg: String,
@@ -36,5 +35,5 @@ class ValueStep: ProcessingStep {
         params: PipelineParams,
         parallelDegree: Int
     ) =
-        CollectionWorker(listOf(WorkItem.of(null).apply { setString(arg) }), params.maxFilesPerThread, w)
+        SettingWorker(arg, w)
 }

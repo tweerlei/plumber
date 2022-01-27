@@ -15,6 +15,7 @@
  */
 package de.tweerlei.plumber.worker.filter
 
+import de.tweerlei.plumber.util.printStackTraceUpTo
 import de.tweerlei.plumber.worker.WellKnownKeys
 import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.Worker
@@ -50,7 +51,10 @@ class MultithreadedWorker(
                     try {
                         passOn(nextItem)
                     } catch (e: Throwable) {
-                        logger.error(e) { "Error while processing item $nextItem" }
+                        logger.error {
+                            "$name: Error while processing item $nextItem\n" +
+                            e.printStackTraceUpTo(this::class)
+                        }
                     }
                 }
             },

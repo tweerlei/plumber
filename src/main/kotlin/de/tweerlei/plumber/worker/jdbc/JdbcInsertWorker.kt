@@ -27,7 +27,7 @@ class JdbcInsertWorker(
     private var updater: Updater? = null
 
     override fun doProcess(item: WorkItem) =
-        item.getAs<Record>()
+        item.getFirstAs<Record>(WellKnownKeys.RECORD)
             .let { map ->
                 updaterFor(item, map).process(map, jdbcTemplate)
             }.let { true }

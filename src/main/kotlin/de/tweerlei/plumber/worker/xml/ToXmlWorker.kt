@@ -19,10 +19,12 @@ import com.fasterxml.jackson.dataformat.xml.XmlMapper
 import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.DelegatingWorker
 import de.tweerlei.plumber.worker.Worker
+import java.io.StringWriter
 
 class ToXmlWorker(
     private val elementName: String,
     private val xmlMapper: XmlMapper,
+    private val prettyPrint: Boolean,
     worker: Worker
 ): DelegatingWorker(worker) {
 
@@ -30,10 +32,16 @@ class ToXmlWorker(
 
     override fun doProcess(item: WorkItem) =
         item.getOptional<Any>()
-            .let { obj ->
-                writer.writeValueAsString(obj)
-                    .also { str ->
-                        item.set(str)
+            .let { obj -> writeValue(obj) }
+            .also { str -> item.set(str) }
+            .let { true }
+
+    private fun writeValue(obj: Any?) =
+        StringWriter().also { sw ->
+            xmlMapper.createGenerator(sw).also { generator ->
+                if (prettyPrint)
+                    generator.prettyPrinter = xmlMapper.serializationConfig.constructDefaultPrettyPrinter()
+                writer.writeValue(generator, obj)
                     }
-            }.let { true }
+        }.toString()
 }

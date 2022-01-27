@@ -21,7 +21,7 @@ import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.filter.EncodingWorker
 import org.springframework.stereotype.Service
 
-@Service("encodeWorker")
+@Service("text-writeWorker")
 class EncodeStep: ProcessingStep {
 
     override val name = "Encode binary data"

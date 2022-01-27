@@ -18,6 +18,7 @@ package de.tweerlei.plumber
 import de.tweerlei.plumber.pipeline.ProcessingStepFactory
 import de.tweerlei.plumber.pipeline.PipelineRunner
 import de.tweerlei.plumber.pipeline.PipelineParams
+import de.tweerlei.plumber.util.printStackTraceUpTo
 import mu.KLogging
 import org.springframework.boot.ApplicationArguments
 import org.springframework.boot.ApplicationRunner
@@ -81,6 +82,7 @@ class PlumberApplication(
                 --range-key=<name>            Use the given DynamoDB attribute as range key
                 --element-name=<name>         Set XML element name to read/write
                 --root-element-name=<name>    Set XML root element name to wrap output in
+                --pretty-print                Pretty print JSON and XML output
                 --limit=<n>                   Stop after reading n objects (per thread)
                 --queue-size=<n>              Queue size for items passed between threads
                 --fetch-size=<n>              Fetch at most this number of items per request
@@ -114,6 +116,7 @@ class PlumberApplication(
                 maxWaitTimeSeconds = args.getOptionValue("wait")?.toInt() ?: 0,
                 elementName = args.getOptionValue("element-name") ?: "",
                 rootElementName = args.getOptionValue("root-element-name") ?: "",
+                prettyPrint = args.containsOption("pretty-print"),
                 follow = args.containsOption("follow"),
                 reread = args.containsOption("reread"),
                 assumeRoleArn = args.getOptionValue("assume-role"),
@@ -153,10 +156,17 @@ class PlumberApplication(
         }
 
     override fun run(args: ApplicationArguments) {
+        try {
         parseArguments(args)
             ?.let { params ->
                 PipelineRunner(factory).run(params)
             }
+        } catch (e: Exception) {
+            logger.error {
+                "Error while building the pipeline\n" +
+                e.printStackTraceUpTo(PlumberApplication::class)
+            }
+        }
     }
 }
 

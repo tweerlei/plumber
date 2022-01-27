@@ -36,6 +36,19 @@ class WorkItem private constructor(): HashMap<String, Any>() {
     inline fun <reified T> getOptional(key: String = DEFAULT_KEY): T? =
         this[key] as T?
 
+    inline fun <reified T> getFirstAs(vararg keys: String) =
+        getFirst(*keys) as T
+
+    fun getFirst(vararg keys: String) =
+        keys.toList().plus(DEFAULT_KEY)
+            .first { key -> containsKey(key) }
+            .let { key -> getValue(key) }
+
+    fun getFirstString(vararg keys: String) =
+        keys.toList().plus(DEFAULT_KEY)
+            .first { key -> containsKey(key) }
+            .let { key -> getString(key) }
+
     fun getString(key: String = DEFAULT_KEY) =
         this[key].let { value ->
             when (value) {

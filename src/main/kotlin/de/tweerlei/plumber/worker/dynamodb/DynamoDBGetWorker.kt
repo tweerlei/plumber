@@ -29,7 +29,7 @@ class DynamoDBGetWorker(
 ): DelegatingWorker(worker) {
 
     override fun doProcess(item: WorkItem) =
-        item.getAs<Record>()
+        item.getFirstAs<Record>(WellKnownKeys.RECORD)
             .toDynamoDB()
             .let { attributes ->
                 getItem(

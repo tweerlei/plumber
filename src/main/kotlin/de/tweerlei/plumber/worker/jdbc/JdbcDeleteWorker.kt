@@ -28,7 +28,7 @@ class JdbcDeleteWorker(
     private var deleter: Deleter? = null
 
     override fun doProcess(item: WorkItem) =
-        item.getAs<Record>()
+        item.getFirstAs<Record>(WellKnownKeys.RECORD)
             .let { map ->
                 deleterFor(item).process(map, jdbcTemplate)
             }.let { true }

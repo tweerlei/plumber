@@ -13,25 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.tweerlei.plumber.worker.file
+package de.tweerlei.plumber.worker.filter
 
-import de.tweerlei.plumber.worker.*
-import java.io.File
-import java.io.IOException
+import de.tweerlei.plumber.worker.WorkItem
+import de.tweerlei.plumber.worker.DelegatingWorker
+import de.tweerlei.plumber.worker.Worker
 
-class FileDeleteWorker(
-    private val dir: File,
+class SettingWorker(
+    private val value: String,
     worker: Worker
 ): DelegatingWorker(worker) {
 
-    override fun onOpen() {
-        dir.mkdirs()
-    }
-
     override fun doProcess(item: WorkItem) =
-        item.getFirstString(WellKnownKeys.NAME)
-            .let { name -> File(dir, name) }
-            .let { file ->
-                file.delete() || throw IOException("Could not delete $file")
-            }
+        item.setString(value)
+            .let { true }
 }

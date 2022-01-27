@@ -28,7 +28,7 @@ class FileReadWorker(
 ): DelegatingWorker(worker) {
 
     override fun doProcess(item: WorkItem) =
-        item.getString(WellKnownKeys.NAME)
+        item.getFirstString(WellKnownKeys.NAME)
             .let { name ->
                 File(dir, name)
                     .let { file ->

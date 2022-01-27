@@ -15,6 +15,7 @@
  */
 package de.tweerlei.plumber.worker.filter
 
+import de.tweerlei.plumber.util.printStackTraceUpTo
 import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.WrappingWorker
@@ -34,9 +35,14 @@ class RetryingWorker(
                 passOn(item)
             } catch (e: Exception) {
                 if (i < numberOfRetries)
-                    logger.warn(e) { "$name: Error while processing item $item, retrying ${numberOfRetries - i} times" }
+                    logger.warn {
+                        "$name: Error while processing item $item, retrying ${numberOfRetries - i} times"
+                    }
                 else
-                    logger.error(e) { "$name: Error while processing item $item, retry limit exceeded" }
+                    logger.error {
+                        "$name: Error while processing item $item, retry limit exceeded\n" +
+                        e.printStackTraceUpTo(this::class)
+                    }
             }
         }
     }

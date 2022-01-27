@@ -36,10 +36,8 @@ class CsvWriteWorker(
     }
 
     override fun doProcess(item: WorkItem): Boolean =
-        when (item.containsKey(WellKnownKeys.RECORD)) {
-            true -> item.getAs<Record>(WellKnownKeys.RECORD)
-            else -> item.getOptional<Record>()
-        }?.let { obj ->
+        item.getFirstAs<Record>(WellKnownKeys.RECORD)
+            .let { obj ->
             writerFor(obj).writeValue(obj)
         }.let {
             true

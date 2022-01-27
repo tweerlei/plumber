@@ -17,10 +17,7 @@ package de.tweerlei.plumber.worker.csv
 
 import com.fasterxml.jackson.dataformat.csv.CsvMapper
 import com.fasterxml.jackson.dataformat.xml.XmlMapper
-import de.tweerlei.plumber.worker.WorkItem
-import de.tweerlei.plumber.worker.DelegatingWorker
-import de.tweerlei.plumber.worker.Record
-import de.tweerlei.plumber.worker.Worker
+import de.tweerlei.plumber.worker.*
 
 class ToCsvWorker(
     private val csvMapper: CsvMapper,
@@ -28,7 +25,7 @@ class ToCsvWorker(
 ): DelegatingWorker(worker) {
 
     override fun doProcess(item: WorkItem) =
-        item.getAs<Record>()
+        item.getFirstAs<Record>(WellKnownKeys.RECORD)
             .let { obj ->
                 csvMapper.writeValueAsString(obj.values)
                     .also { str ->

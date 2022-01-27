@@ -43,5 +43,9 @@ class JsonEncodeStep(
         params: PipelineParams,
         parallelDegree: Int
     ) =
-        ToJsonWorker(objectMapper, w)
+        ToJsonWorker(
+            objectMapper,
+            params.prettyPrint,
+            w
+        )
 }

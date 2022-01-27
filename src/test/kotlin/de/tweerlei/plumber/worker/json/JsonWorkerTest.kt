@@ -48,7 +48,7 @@ class JsonWorkerTest {
         WorkerBuilder.create()
             .append { w -> FromJsonWorker(JsonNode::class.java, objectMapper, w) }
             .append { w -> NodeGetWorker(JsonPointer.compile("/obj"), w) }
-            .append { w -> ToJsonWorker(objectMapper, w) }
+            .append { w -> ToJsonWorker(objectMapper, false, w) }
             .append { w -> CollectingWorker(items, w) }
             .build()
             .process(WorkItem.of(json.toByteArray(StandardCharsets.UTF_8)))

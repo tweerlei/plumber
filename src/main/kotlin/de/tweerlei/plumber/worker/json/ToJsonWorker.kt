@@ -19,18 +19,26 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.DelegatingWorker
 import de.tweerlei.plumber.worker.Worker
+import java.io.StringWriter
 
 class ToJsonWorker(
     private val objectMapper: ObjectMapper,
+    private val prettyPrint: Boolean,
     worker: Worker
 ): DelegatingWorker(worker) {
 
     override fun doProcess(item: WorkItem) =
         item.getOptional<Any>()
-            .let { obj ->
-                objectMapper.writeValueAsString(obj)
-                    .also { str ->
-                        item.set(str)
+            .let { obj -> writeValue(obj) }
+            .also { str -> item.set(str) }
+            .let { true }
+
+    private fun writeValue(obj: Any?) =
+        StringWriter().also { writer ->
+            objectMapper.createGenerator(writer).also { generator ->
+                if (prettyPrint)
+                    generator.prettyPrinter = objectMapper.serializationConfig.constructDefaultPrettyPrinter()
+                objectMapper.writeValue(generator, obj)
                     }
-            }.let { true }
+        }.toString()
 }

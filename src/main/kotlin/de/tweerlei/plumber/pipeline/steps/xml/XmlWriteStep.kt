@@ -48,6 +48,7 @@ class XmlWriteStep(
             params.elementName,
             params.rootElementName,
             xmlMapper,
+            params.prettyPrint,
             w
         ).let { fileWorker ->
             if (parallelDegree > 1)

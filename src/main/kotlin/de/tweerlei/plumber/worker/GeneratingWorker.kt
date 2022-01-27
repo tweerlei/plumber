@@ -15,6 +15,7 @@
  */
 package de.tweerlei.plumber.worker
 
+import de.tweerlei.plumber.util.printStackTraceUpTo
 import mu.KLogging
 
 abstract class GeneratingWorker(
@@ -36,8 +37,11 @@ abstract class GeneratingWorker(
                     .also { nextItem ->
                         try {
                             passOn(nextItem)
-                        } catch (e: Throwable) {
-                            logger.error(e) { "Error while processing item $nextItem" }
+                        } catch (e: Exception) {
+                            logger.error {
+                                "Error while processing item $nextItem\n" +
+                                e.printStackTraceUpTo(this::class)
+                            }
                         }
                     }.let { count < limit }
         }

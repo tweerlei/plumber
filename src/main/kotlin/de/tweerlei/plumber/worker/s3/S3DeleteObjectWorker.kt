@@ -30,7 +30,7 @@ class S3DeleteObjectWorker(
 ): DelegatingWorker(worker) {
 
     override fun doProcess(item: WorkItem) =
-        item.getString(WellKnownKeys.NAME)
+        item.getFirstString(WellKnownKeys.NAME)
             .let { name -> deleteFile(getBucketName(item), name) }
             .let { true }
 

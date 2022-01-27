@@ -17,7 +17,6 @@ package de.tweerlei.plumber.worker.xml
 
 import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.databind.JsonNode
-import com.fasterxml.jackson.databind.ObjectWriter
 import com.fasterxml.jackson.dataformat.xml.XmlMapper
 import de.tweerlei.plumber.worker.DelegatingWorker
 import de.tweerlei.plumber.worker.WorkItem
@@ -31,6 +30,7 @@ class XmlWriteWorker(
     private val elementName: String,
     private val rootElementName: String,
     private val xmlMapper: XmlMapper,
+    private val prettyPrint: Boolean,
     worker: Worker
 ): DelegatingWorker(worker) {
 
@@ -41,6 +41,8 @@ class XmlWriteWorker(
         XMLOutputFactory.newInstance().createXMLStreamWriter(FileOutputStream(file))
             .also { streamWriter ->
                 generator = xmlMapper.factory.createGenerator(streamWriter)
+                if (prettyPrint)
+                    generator.prettyPrinter = xmlMapper.serializationConfig.constructDefaultPrettyPrinter()
 
                 streamWriter.writeStartDocument()
                 streamWriter.writeStartElement(rootElementName)
@@ -48,10 +50,8 @@ class XmlWriteWorker(
     }
 
     override fun doProcess(item: WorkItem): Boolean =
-        when (item.containsKey(JsonKeys.JSON_NODE)) {
-            true -> item.getAs<JsonNode>(JsonKeys.JSON_NODE)
-            else -> item.getOptional<Any>()
-        }.let { obj ->
+        item.getFirstAs<Any>(JsonKeys.JSON_NODE)
+            .let { obj ->
             writer.writeValue(generator, obj)
         }.let {
             true

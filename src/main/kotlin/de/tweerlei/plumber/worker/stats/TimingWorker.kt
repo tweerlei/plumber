@@ -15,6 +15,7 @@
  */
 package de.tweerlei.plumber.worker.stats
 
+import de.tweerlei.plumber.util.printStackTraceUpTo
 import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.WrappingWorker
@@ -45,7 +46,10 @@ class TimingWorker(
             succ = successfulFiles.incrementAndGet()
             fail = failedFiles.get()
         } catch (e: Exception) {
-            logger.error("$name: failed to process $item", e)
+            logger.error {
+                "$name: failed to process $item\n" +
+                "${e.printStackTraceUpTo(this::class)}"
+            }
             succ = successfulFiles.get()
             fail = failedFiles.incrementAndGet()
         }
