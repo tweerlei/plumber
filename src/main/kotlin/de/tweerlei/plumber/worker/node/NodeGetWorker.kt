@@ -13,37 +13,39 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.tweerlei.plumber.worker.json
+package de.tweerlei.plumber.worker.node
 
 import com.fasterxml.jackson.core.JsonPointer
 import com.fasterxml.jackson.databind.JsonNode
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.node.ArrayNode
-import com.fasterxml.jackson.databind.node.ObjectNode
 import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.DelegatingWorker
+import de.tweerlei.plumber.worker.WellKnownKeys
 import de.tweerlei.plumber.worker.Worker
 
-class NodeUnsetWorker(
-    private val p: JsonPointer,
-    private val objectMapper: ObjectMapper,
+class NodeGetWorker(
+    private val ptr: JsonPointer,
     worker: Worker
 ): DelegatingWorker(worker) {
 
-    private val ptr = p.head()
-    private val key = p.last().matchingProperty
-    private val index = p.last().matchingIndex
-
     override fun doProcess(item: WorkItem) =
-        item.getAs<JsonNode>(JsonKeys.JSON_NODE)
-            .at(ptr)
-            .let { node ->
-                when {
-                    node.isObject -> (node as ObjectNode).remove(key)
-                        .let { true }
-                    node.isArray -> (node as ArrayNode).remove(index)
-                        .let { true }
-                    else -> false
-                }
-            }
+        item.getAs<JsonNode>(WellKnownKeys.NODE)
+            .let { json ->
+                json.at(ptr).toSimpleType()
+                    .also { value ->
+                        item.set(value)
+                        if (value is JsonNode)
+                            item.set(value, WellKnownKeys.NODE)
+                    }
+            }.let { true }
+
+    private fun JsonNode.toSimpleType(): Any? =
+        when {
+            isBoolean -> booleanValue()
+            isNumber -> numberValue()
+            isTextual -> textValue()
+            isBinary -> binaryValue()
+            isNull -> null
+            isEmpty -> null
+            else -> this
+        }
 }

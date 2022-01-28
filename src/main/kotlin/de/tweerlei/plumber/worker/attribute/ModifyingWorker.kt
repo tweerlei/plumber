@@ -13,18 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.tweerlei.plumber.worker.filter
+package de.tweerlei.plumber.worker.attribute
 
 import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.DelegatingWorker
 import de.tweerlei.plumber.worker.Worker
 
-class SettingWorker(
-    private val value: String,
+class ModifyingWorker(
+    private val src: String,
+    private val dst: String,
     worker: Worker
 ): DelegatingWorker(worker) {
 
     override fun doProcess(item: WorkItem) =
-        item.setString(value)
+        item.set(item.getOptional(src), dst)
             .let { true }
 }

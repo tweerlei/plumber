@@ -32,7 +32,7 @@ class MinMaxWorker(
     private val maxValue = AtomicReference<Comparable<Any>>()
 
     override fun doProcess(item: WorkItem) =
-        item.getOptional<Comparable<Any>>()
+        item.getOptionalAs<Comparable<Any>>()
             ?.let { value ->
                 minValue.accumulateAndGet(value) { a, b -> minOf(a ?: b, b) }
                 maxValue.accumulateAndGet(value) { a, b -> maxOf(a ?: b, b) }

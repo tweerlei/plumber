@@ -38,7 +38,7 @@ class KafkaSendWorker(
             }.let { true }
 
     private fun WorkItem.toProducerRecord() =
-        if (containsKey(WellKnownKeys.NAME))
+        if (has(WellKnownKeys.NAME))
             ProducerRecord<String, String>(topicName, getString(WellKnownKeys.NAME), getString())
         else
             ProducerRecord<String, String>(topicName, getString())

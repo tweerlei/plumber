@@ -13,22 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.tweerlei.plumber.worker.filter
+package de.tweerlei.plumber.worker.pattern
 
+import de.tweerlei.plumber.worker.WellKnownKeys
 import de.tweerlei.plumber.worker.WorkItem
-import de.tweerlei.plumber.worker.GeneratingWorker
+import de.tweerlei.plumber.worker.DelegatingWorker
 import de.tweerlei.plumber.worker.Worker
-import java.util.*
+import java.util.regex.Pattern
 
-class UUIDWorker(
-    limit: Int,
+class PatternWorker(
+    private val regex: Pattern,
     worker: Worker
-): GeneratingWorker(limit, worker) {
+): DelegatingWorker(worker) {
 
-    override fun generateItems(item: WorkItem, fn: (WorkItem) -> Boolean) {
-        generateSequence { UUID.randomUUID().toString() }
-            .all { uuid ->
-                fn(WorkItem.of(uuid))
-            }
-    }
+    override fun doProcess(item: WorkItem) =
+        item.set(regex, WellKnownKeys.FIND_PATTERN)
+            .let { true }
 }

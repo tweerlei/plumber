@@ -13,23 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.tweerlei.plumber.pipeline.steps.filter
+package de.tweerlei.plumber.pipeline.steps.node
 
+import com.fasterxml.jackson.core.JsonPointer
+import com.fasterxml.jackson.databind.ObjectMapper
 import de.tweerlei.plumber.pipeline.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
 import de.tweerlei.plumber.worker.WellKnownKeys
 import de.tweerlei.plumber.worker.Worker
-import de.tweerlei.plumber.worker.filter.ReplacingWorker
+import de.tweerlei.plumber.worker.node.NodeModifyWorker
 import org.springframework.stereotype.Service
 
-@Service("replaceWorker")
-class ReplaceStep: ProcessingStep {
+@Service("node-setWorker")
+class NodeSetStep(
+    private val objectMapper: ObjectMapper
+): ProcessingStep {
 
-    override val name = "Replace text"
-    override val description = "Replace all matches of a previous find: with the given replacement"
+    override val name = "Set JSON path"
+    override val description = "Replace a subtree of a JSON object using the given JSONPath"
 
-    override fun requiredAttributesFor(arg: String) = setOf(
-        WellKnownKeys.FIND_PATTERN
+    override fun isValuePassThrough() = true
+    override fun producedAttributesFor(arg: String) = setOf(
+        WellKnownKeys.NODE
     )
 
     override fun createWorker(
@@ -40,5 +45,5 @@ class ReplaceStep: ProcessingStep {
         params: PipelineParams,
         parallelDegree: Int
     ) =
-        ReplacingWorker(arg, w)
+        NodeModifyWorker(JsonPointer.compile("/$arg"), objectMapper, w)
 }

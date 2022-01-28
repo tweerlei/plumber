@@ -18,39 +18,81 @@ package de.tweerlei.plumber.worker
 import java.nio.charset.StandardCharsets
 import java.time.Instant
 
-class WorkItem private constructor(): HashMap<String, Any>() {
+class WorkItem private constructor(
+    private val map: MutableMap<String, Any>
+) {
 
     companion object {
         const val DEFAULT_KEY = ""
 
         fun of(value: Any?, vararg entries: Pair<String, Any?>) =
-            WorkItem().also { item ->
-                entries.forEach { (k, v) -> if (v != null) item[k] = v }
+            WorkItem(HashMap()).also { item ->
+                entries.forEach { (k, v) -> item.set(v, k) }
                 item.set(value)
             }
     }
 
-    inline fun <reified T> getAs(key: String = DEFAULT_KEY): T =
-        getValue(key) as T
+    fun plus(item: WorkItem) =
+        HashMap(this.map)
+            .apply { putAll(item.map) }
+            .let { map -> WorkItem(map) }
 
-    inline fun <reified T> getOptional(key: String = DEFAULT_KEY): T? =
-        this[key] as T?
+    fun has(key: String = DEFAULT_KEY) =
+        map.containsKey(key)
 
-    inline fun <reified T> getFirstAs(vararg keys: String) =
-        getFirst(*keys) as T
+    fun get(key: String = DEFAULT_KEY) =
+        map.getValue(key)
+
+    inline fun <reified T: Any> getAs(key: String = DEFAULT_KEY): T =
+        get(key) as T
+
+    fun getOptional(key: String = DEFAULT_KEY) =
+        map[key]
+
+    inline fun <reified T: Any> getOptionalAs(key: String = DEFAULT_KEY): T? =
+        getOptional(key) as T?
 
     fun getFirst(vararg keys: String) =
         keys.toList().plus(DEFAULT_KEY)
-            .first { key -> containsKey(key) }
-            .let { key -> getValue(key) }
+            .first { key -> map.containsKey(key) }
+            .let { key -> map.getValue(key) }
+
+    inline fun <reified T: Any> getFirstAs(vararg keys: String): T =
+        getFirst(*keys) as T
+
+    fun getOrSet(key: String, fn: () -> Any) =
+        if (map.containsKey(key))
+            map.getValue(key)
+        else
+            fn().also { map[key] = it }
+
+    inline fun <reified T: Any> getOrSetAs(key: String, noinline fn: () -> T): T =
+        getOrSet(key, fn) as T
+
+    fun set(value: Any?, key: String = DEFAULT_KEY) {
+        when (value) {
+            null -> map.remove(key)
+            else -> map[key] = value
+        }
+    }
+
+    fun setString(value: String, key: String = DEFAULT_KEY) {
+        map[key] = value.toAny()
+    }
+
+    private fun String.toAny(): Any =
+        toBooleanStrictOrNull()
+            ?: toLongOrNull()
+            ?: toDoubleOrNull()
+            ?: this
 
     fun getFirstString(vararg keys: String) =
         keys.toList().plus(DEFAULT_KEY)
-            .first { key -> containsKey(key) }
+            .first { key -> map.containsKey(key) }
             .let { key -> getString(key) }
 
     fun getString(key: String = DEFAULT_KEY) =
-        this[key].let { value ->
+        map[key].let { value ->
             when (value) {
                 null -> ""
                 is ByteArray -> value.toString(StandardCharsets.UTF_8)
@@ -59,7 +101,7 @@ class WorkItem private constructor(): HashMap<String, Any>() {
         }
 
     fun getInt(key: String = DEFAULT_KEY) =
-        this[key].let { value ->
+        map[key].let { value ->
             when (value) {
                 null -> 0
                 is Number -> value.toInt()
@@ -72,7 +114,7 @@ class WorkItem private constructor(): HashMap<String, Any>() {
         }
 
     fun getLong(key: String = DEFAULT_KEY) =
-        this[key].let { value ->
+        map[key].let { value ->
             when (value) {
                 null -> 0L
                 is Number -> value.toLong()
@@ -85,7 +127,7 @@ class WorkItem private constructor(): HashMap<String, Any>() {
         }
 
     fun getNumber(key: String = DEFAULT_KEY) =
-        this[key].let { value ->
+        map[key].let { value ->
             when (value) {
                 null -> 0
                 is Number -> value
@@ -98,7 +140,7 @@ class WorkItem private constructor(): HashMap<String, Any>() {
         }
 
     fun getBoolean(key: String = DEFAULT_KEY) =
-        this[key].let { value ->
+        map[key].let { value ->
             when (value) {
                 null -> false
                 is Number -> value.toInt() != 0
@@ -111,7 +153,7 @@ class WorkItem private constructor(): HashMap<String, Any>() {
         }
 
     fun getInstant(key: String = DEFAULT_KEY): Instant =
-        this[key].let { value ->
+        map[key].let { value ->
             when (value) {
                 null -> Instant.ofEpochSecond(0)
                 is Int -> Instant.ofEpochSecond(value.toLong())
@@ -125,7 +167,7 @@ class WorkItem private constructor(): HashMap<String, Any>() {
         }
 
     fun getByteArray(key: String = DEFAULT_KEY) =
-        this[key].let { value ->
+        map[key].let { value ->
             when (value) {
                 null -> byteArrayOf()
                 is Int -> value.toByteArray()
@@ -137,29 +179,6 @@ class WorkItem private constructor(): HashMap<String, Any>() {
                 else -> value.toString().toByteArray(StandardCharsets.UTF_8)
             }
         }
-
-    fun set(value: Any?, key: String = DEFAULT_KEY) {
-        when (value) {
-            null -> remove(key)
-            else -> put(key, value)
-        }
-    }
-
-    fun setString(value: String, key: String = DEFAULT_KEY) {
-        put(key, value.toAny())
-    }
-
-    fun plus(item: WorkItem) =
-        WorkItem().also { newItem ->
-            newItem.putAll(this)
-            newItem.putAll(item)
-        }
-
-    private fun String.toAny(): Any =
-        toBooleanStrictOrNull()
-            ?: toLongOrNull()
-            ?: toDoubleOrNull()
-            ?: this
 
     private fun String.toLenientNumber(): Number =
         toLongOrNull() ?: toDoubleOrNull() ?: 0L

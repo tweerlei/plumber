@@ -13,20 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.tweerlei.plumber.worker.filter
+package de.tweerlei.plumber.worker.attribute
 
-import de.tweerlei.plumber.worker.WellKnownKeys
 import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.DelegatingWorker
 import de.tweerlei.plumber.worker.Worker
-import java.util.regex.Pattern
 
-class PatternWorker(
-    private val regex: Pattern,
+class SettingWorker(
+    private val value: String,
     worker: Worker
 ): DelegatingWorker(worker) {
 
     override fun doProcess(item: WorkItem) =
-        item.set(regex, WellKnownKeys.FIND_PATTERN)
+        item.setString(value)
             .let { true }
 }

@@ -13,24 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.tweerlei.plumber.pipeline.steps.filter
+package de.tweerlei.plumber.pipeline.steps.pattern
 
 import de.tweerlei.plumber.pipeline.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
-import de.tweerlei.plumber.worker.WorkItem
+import de.tweerlei.plumber.worker.WellKnownKeys
 import de.tweerlei.plumber.worker.Worker
-import de.tweerlei.plumber.worker.filter.ModifyingWorker
+import de.tweerlei.plumber.worker.pattern.ReplacingWorker
 import org.springframework.stereotype.Service
 
-@Service("setWorker")
-class SetAttributeStep: ProcessingStep {
+@Service("replaceWorker")
+class ReplaceStep: ProcessingStep {
 
-    override val name = "Set attribute"
-    override val description = "Set the given attribute to the current value"
+    override val name = "Replace text"
+    override val description = "Replace all matches of a previous find: with the given replacement"
 
-    override fun isValuePassThrough() = true
-    override fun producedAttributesFor(arg: String) = setOf(
-        arg
+    override fun requiredAttributesFor(arg: String) = setOf(
+        WellKnownKeys.FIND_PATTERN
     )
 
     override fun createWorker(
@@ -41,5 +40,5 @@ class SetAttributeStep: ProcessingStep {
         params: PipelineParams,
         parallelDegree: Int
     ) =
-        ModifyingWorker(WorkItem.DEFAULT_KEY, arg, w)
+        ReplacingWorker(arg, w)
 }

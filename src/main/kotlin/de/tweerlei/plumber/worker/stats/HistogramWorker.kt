@@ -38,7 +38,7 @@ class HistogramWorker(
 
     override fun doProcess(item: WorkItem) =
         when {
-            item.getOptional<Any>() is Number -> numberHistogram.add(item.getLong())
+            item.getOptional() is Number -> numberHistogram.add(item.getLong())
             else -> stringHistogram.add(item.getString())
         }.let { true }
 

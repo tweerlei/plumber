@@ -20,6 +20,7 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.WorkerBuilder
+import de.tweerlei.plumber.worker.node.NodeGetWorker
 import de.tweerlei.plumber.worker.stats.CollectingWorker
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test

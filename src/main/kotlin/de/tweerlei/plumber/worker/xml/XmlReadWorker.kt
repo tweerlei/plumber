@@ -19,9 +19,9 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.dataformat.xml.XmlMapper
 import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.GeneratingWorker
+import de.tweerlei.plumber.worker.WellKnownKeys
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.file.FileKeys
-import de.tweerlei.plumber.worker.json.JsonKeys
 import mu.KLogging
 import java.io.*
 import javax.xml.stream.XMLInputFactory
@@ -76,7 +76,7 @@ class XmlReadWorker<T>(
             FileKeys.FILE_NAME to file.name
         ).also { item ->
             if (this is JsonNode)
-                item.set(this, JsonKeys.JSON_NODE)
+                item.set(this, WellKnownKeys.NODE)
         }
 
     override fun onClose() {

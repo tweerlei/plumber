@@ -29,8 +29,8 @@ class JdbcSelectWorker(
 ): GeneratingWorker(limit, worker) {
 
     override fun generateItems(item: WorkItem, fn: (WorkItem) -> Boolean) {
-        val startAfter = item.getOptional<Any>(WellKnownKeys.START_AFTER_KEY)
-        val endWith = item.getOptional<Any>(WellKnownKeys.END_WITH_KEY)
+        val startAfter = item.getOptional(WellKnownKeys.START_AFTER_KEY)
+        val endWith = item.getOptional(WellKnownKeys.END_WITH_KEY)
         val table = getTableName(item)
         val extractRows = ResultSetExtractor<Any?> { rs ->
             var keepGenerating = true

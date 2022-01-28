@@ -18,9 +18,9 @@ package de.tweerlei.plumber.pipeline.steps.json
 import com.fasterxml.jackson.databind.ObjectMapper
 import de.tweerlei.plumber.pipeline.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
+import de.tweerlei.plumber.worker.WellKnownKeys
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.file.FileKeys
-import de.tweerlei.plumber.worker.json.JsonKeys
 import de.tweerlei.plumber.worker.json.JsonReadWorker
 import org.springframework.stereotype.Service
 import java.io.File
@@ -34,9 +34,9 @@ class JsonReadStep(
     override val description = "Read JSON objects from the given file"
 
     override fun producedAttributesFor(arg: String) = setOf(
+        WellKnownKeys.NODE,
         FileKeys.FILE_PATH,
-        FileKeys.FILE_NAME,
-        JsonKeys.JSON_NODE
+        FileKeys.FILE_NAME
     )
 
     override fun createWorker(

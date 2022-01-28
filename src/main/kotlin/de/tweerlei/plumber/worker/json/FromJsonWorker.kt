@@ -19,6 +19,7 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.DelegatingWorker
+import de.tweerlei.plumber.worker.WellKnownKeys
 import de.tweerlei.plumber.worker.Worker
 
 class FromJsonWorker<T>(
@@ -39,7 +40,7 @@ class FromJsonWorker<T>(
                     ?.also { obj ->
                         item.set(obj)
                         if (obj is JsonNode)
-                            item.set(obj, JsonKeys.JSON_NODE)
+                            item.set(obj, WellKnownKeys.NODE)
                     }
             }?.let { true }
             ?: false

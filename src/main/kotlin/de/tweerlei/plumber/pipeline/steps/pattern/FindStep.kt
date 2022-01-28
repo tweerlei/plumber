@@ -13,19 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.tweerlei.plumber.pipeline.steps.filter
+package de.tweerlei.plumber.pipeline.steps.pattern
 
 import de.tweerlei.plumber.pipeline.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
+import de.tweerlei.plumber.worker.WellKnownKeys
 import de.tweerlei.plumber.worker.Worker
-import de.tweerlei.plumber.worker.filter.FormattingWorker
+import de.tweerlei.plumber.worker.pattern.PatternWorker
 import org.springframework.stereotype.Service
+import java.util.regex.Pattern
 
-@Service("formatWorker")
-class FormatStep: ProcessingStep {
+@Service("findWorker")
+class FindStep: ProcessingStep {
 
-    override val name = "Format text"
-    override val description = "Produces the argument with all occurrences of \${name} replaced by their value"
+    override val name = "Find by regex"
+    override val description = "Find matches of the given regular expression, use with filter: or replace:"
+
+    override fun producedAttributesFor(arg: String) = setOf(
+        WellKnownKeys.FIND_PATTERN
+    )
 
     override fun createWorker(
         arg: String,
@@ -35,5 +41,5 @@ class FormatStep: ProcessingStep {
         params: PipelineParams,
         parallelDegree: Int
     ) =
-        FormattingWorker(arg, w)
+        PatternWorker(Pattern.compile(arg), w)
 }

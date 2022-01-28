@@ -13,23 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.tweerlei.plumber.pipeline.steps.filter
+package de.tweerlei.plumber.pipeline.steps.node
 
+import com.fasterxml.jackson.core.JsonPointer
+import com.fasterxml.jackson.databind.ObjectMapper
 import de.tweerlei.plumber.pipeline.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
 import de.tweerlei.plumber.worker.WellKnownKeys
-import de.tweerlei.plumber.worker.filter.MatchingWorker
 import de.tweerlei.plumber.worker.Worker
+import de.tweerlei.plumber.worker.node.NodeGetWorker
 import org.springframework.stereotype.Service
 
-@Service("filterWorker")
-class FilterStep: ProcessingStep {
+@Service("node-getWorker")
+class NodeGetStep(
+    private val objectMapper: ObjectMapper
+): ProcessingStep {
 
-    override val name = "Filter items"
-    override val description = "Filter items that do (true) or don't (false) match the previous find:"
+    override val name = "Extract JSON path"
+    override val description = "Extract a subtree of a JSON object using the given JSONPath"
 
     override fun requiredAttributesFor(arg: String) = setOf(
-        WellKnownKeys.FIND_PATTERN
+        WellKnownKeys.NODE
     )
 
     override fun createWorker(
@@ -40,8 +44,5 @@ class FilterStep: ProcessingStep {
         params: PipelineParams,
         parallelDegree: Int
     ) =
-        MatchingWorker(
-            arg.toBooleanStrictOrNull() ?: true,
-            w
-        )
+        NodeGetWorker(JsonPointer.compile("/$arg"), w)
 }

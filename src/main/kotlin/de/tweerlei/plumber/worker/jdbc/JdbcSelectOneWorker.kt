@@ -31,7 +31,7 @@ class JdbcSelectOneWorker(
     override fun generateItems(item: WorkItem, fn: (WorkItem) -> Boolean) {
         selectRow(
             getTableName(item),
-            item.getOptional<Any>()
+            item.getOptional()
         ) { rs ->
             var keepGenerating = true
             while (keepGenerating && rs.next()) {

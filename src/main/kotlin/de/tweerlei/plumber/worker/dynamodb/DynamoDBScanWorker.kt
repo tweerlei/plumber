@@ -37,18 +37,18 @@ class DynamoDBScanWorker(
     companion object : KLogging()
 
     override fun generateItems(item: WorkItem, fn: (WorkItem) -> Boolean) {
-        val startAfter = when (item.containsKey(WellKnownKeys.START_AFTER_KEY)) {
+        val startAfter = when (item.has(WellKnownKeys.START_AFTER_KEY)) {
             true -> Record(
-                partitionKey to item.getOptional<Comparable<Any>>(WellKnownKeys.START_AFTER_KEY)
+                partitionKey to item.getOptionalAs<Comparable<Any>>(WellKnownKeys.START_AFTER_KEY)
             ).also { map ->
                 if (rangeKey != null && startAfterRange != null)
                     map[rangeKey] = convertType(startAfterRange)
             }
             else -> null
         }
-        val endWith = when (item.containsKey(WellKnownKeys.END_WITH_KEY)) {
+        val endWith = when (item.has(WellKnownKeys.END_WITH_KEY)) {
             true -> Record(
-                partitionKey to item.getOptional<Comparable<Any>>(WellKnownKeys.END_WITH_KEY)
+                partitionKey to item.getOptionalAs<Comparable<Any>>(WellKnownKeys.END_WITH_KEY)
             ).also { map ->
                 if (rangeKey != null && endWithRange != null)
                     map[rangeKey] = convertType(endWithRange)

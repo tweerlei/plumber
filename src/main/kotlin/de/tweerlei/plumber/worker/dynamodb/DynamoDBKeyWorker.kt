@@ -34,15 +34,15 @@ class DynamoDBKeyWorker(
                 null -> item.apply {
                     setString(key, DynamoDBKeys.PARTITION_KEY)
                     Record(
-                        partitionKey to getAs<Any>(DynamoDBKeys.PARTITION_KEY)
+                        partitionKey to get(DynamoDBKeys.PARTITION_KEY)
                     )
                 }
                 else -> item.apply {
                     setString(key, DynamoDBKeys.PARTITION_KEY)
                     setString(rangeKeyValue, DynamoDBKeys.RANGE_KEY)
                     Record(
-                        partitionKey to getAs<Any>(DynamoDBKeys.PARTITION_KEY),
-                        rangeKey to getAs<Any>(DynamoDBKeys.RANGE_KEY)
+                        partitionKey to get(DynamoDBKeys.PARTITION_KEY),
+                        rangeKey to get(DynamoDBKeys.RANGE_KEY)
                     )
                 }
             }.let { record ->

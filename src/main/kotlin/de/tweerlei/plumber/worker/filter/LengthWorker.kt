@@ -25,7 +25,7 @@ class LengthWorker(
 ): DelegatingWorker(worker) {
 
     override fun doProcess(item: WorkItem) =
-        item.getOptional<Any>()
+        item.getOptional()
             .size()
             .also { size ->
                 item.set(size, WellKnownKeys.SIZE)

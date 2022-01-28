@@ -16,12 +16,11 @@
 package de.tweerlei.plumber.worker.xml
 
 import com.fasterxml.jackson.core.JsonGenerator
-import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.dataformat.xml.XmlMapper
 import de.tweerlei.plumber.worker.DelegatingWorker
+import de.tweerlei.plumber.worker.WellKnownKeys
 import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.Worker
-import de.tweerlei.plumber.worker.json.JsonKeys
 import java.io.*
 import javax.xml.stream.XMLOutputFactory
 
@@ -50,12 +49,10 @@ class XmlWriteWorker(
     }
 
     override fun doProcess(item: WorkItem): Boolean =
-        item.getFirstAs<Any>(JsonKeys.JSON_NODE)
+        item.getFirst(WellKnownKeys.NODE)
             .let { obj ->
             writer.writeValue(generator, obj)
-        }.let {
-            true
-        }
+            }.let { true }
 
     override fun onClose() {
         generator.close()

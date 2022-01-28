@@ -18,8 +18,8 @@ package de.tweerlei.plumber.pipeline.steps.xml
 import com.fasterxml.jackson.dataformat.xml.XmlMapper
 import de.tweerlei.plumber.pipeline.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
+import de.tweerlei.plumber.worker.WellKnownKeys
 import de.tweerlei.plumber.worker.Worker
-import de.tweerlei.plumber.worker.json.JsonKeys
 import de.tweerlei.plumber.worker.xml.ToXmlWorker
 import org.springframework.stereotype.Service
 
@@ -32,7 +32,7 @@ class XmlEncodeStep(
     override val description = "Serialize objects to XML text"
 
     override fun producedAttributesFor(arg: String) = setOf(
-        JsonKeys.JSON_NODE
+        WellKnownKeys.NODE
     )
 
     override fun createWorker(

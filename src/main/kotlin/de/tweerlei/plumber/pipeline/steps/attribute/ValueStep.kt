@@ -13,24 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.tweerlei.plumber.worker.filter
+package de.tweerlei.plumber.pipeline.steps.attribute
 
-import de.tweerlei.plumber.worker.WellKnownKeys
-import de.tweerlei.plumber.worker.WorkItem
-import de.tweerlei.plumber.worker.DelegatingWorker
+import de.tweerlei.plumber.pipeline.ProcessingStep
+import de.tweerlei.plumber.pipeline.PipelineParams
 import de.tweerlei.plumber.worker.Worker
-import java.util.regex.Pattern
+import de.tweerlei.plumber.worker.attribute.SettingWorker
+import org.springframework.stereotype.Service
 
-class ReplacingWorker(
-    private val replacement: String,
-    worker: Worker
-): DelegatingWorker(worker) {
+@Service("valueWorker")
+class ValueStep: ProcessingStep {
 
-    override fun doProcess(item: WorkItem) =
-        item.getString()
-            .let { value ->
-                item.getAs<Pattern>(WellKnownKeys.FIND_PATTERN).matcher(value).replaceAll(replacement)
-            }.also { result ->
-                item.set(result)
-            }.let { true }
+    override val name = "Set value"
+    override val description = "Sets the current value to the given value"
+
+    override fun createWorker(
+        arg: String,
+        expectedOutput: Class<*>,
+        w: Worker,
+        predecessorName: String,
+        params: PipelineParams,
+        parallelDegree: Int
+    ) =
+        SettingWorker(arg, w)
 }

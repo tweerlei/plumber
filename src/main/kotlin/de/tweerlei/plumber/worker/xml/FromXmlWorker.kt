@@ -19,8 +19,8 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.dataformat.xml.XmlMapper
 import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.DelegatingWorker
+import de.tweerlei.plumber.worker.WellKnownKeys
 import de.tweerlei.plumber.worker.Worker
-import de.tweerlei.plumber.worker.json.JsonKeys
 
 class FromXmlWorker<T>(
     private val itemType: Class<T>,
@@ -40,7 +40,7 @@ class FromXmlWorker<T>(
                     ?.also { obj ->
                         item.set(obj)
                         if (obj is JsonNode)
-                            item.set(obj, JsonKeys.JSON_NODE)
+                            item.set(obj, WellKnownKeys.NODE)
                     }
             }?.let { true }
             ?: false

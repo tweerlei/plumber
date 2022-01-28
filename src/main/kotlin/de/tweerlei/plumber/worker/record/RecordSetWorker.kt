@@ -23,11 +23,9 @@ class RecordSetWorker(
 ): DelegatingWorker(worker) {
 
     override fun doProcess(item: WorkItem) =
-        when (item.containsKey(WellKnownKeys.RECORD)) {
-            true -> item.getAs<Record>(WellKnownKeys.RECORD)
-            else -> Record()
-                .also { map -> item.set(map, WellKnownKeys.RECORD) }
+        item.getOrSetAs(WellKnownKeys.RECORD) {
+            Record()
         }.let { map ->
-            map.put(field, item.getOptional<Any>())
+            map.put(field, item.getOptional())
         }.let { true }
 }

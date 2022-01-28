@@ -13,11 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.tweerlei.plumber.worker.json
+package de.tweerlei.plumber.worker.attribute
 
-class JsonKeys {
+import de.tweerlei.plumber.worker.WorkItem
+import de.tweerlei.plumber.worker.GeneratingWorker
+import de.tweerlei.plumber.worker.Worker
+import java.util.*
 
-    companion object {
-        const val JSON_NODE = "jsonNode"
+class UUIDWorker(
+    limit: Int,
+    worker: Worker
+): GeneratingWorker(limit, worker) {
+
+    override fun generateItems(item: WorkItem, fn: (WorkItem) -> Boolean) {
+        generateSequence { UUID.randomUUID().toString() }
+            .all { uuid ->
+                fn(WorkItem.of(uuid))
+            }
     }
 }

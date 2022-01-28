@@ -15,7 +15,7 @@
  */
 package de.tweerlei.plumber.worker
 
-import de.tweerlei.plumber.worker.filter.UUIDWorker
+import de.tweerlei.plumber.worker.attribute.UUIDWorker
 import de.tweerlei.plumber.worker.stats.CollectingWorker
 import de.tweerlei.plumber.worker.stats.CountingWorker
 import de.tweerlei.plumber.worker.filter.MultithreadedWorker

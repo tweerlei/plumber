@@ -19,6 +19,7 @@ import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import de.tweerlei.plumber.worker.DelegatingWorker
+import de.tweerlei.plumber.worker.WellKnownKeys
 import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.Worker
 import java.io.*
@@ -39,12 +40,10 @@ class JsonWriteWorker(
     }
 
     override fun doProcess(item: WorkItem): Boolean =
-        item.getFirstAs<Any>(JsonKeys.JSON_NODE)
+        item.getFirst(WellKnownKeys.NODE)
             .let { obj ->
             objectMapper.writeValue(generator, obj)
-        }.let {
-            true
-        }
+            }.let { true }
 
     override fun onClose() {
         generator.close()

@@ -13,28 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.tweerlei.plumber.pipeline.steps.json
+package de.tweerlei.plumber.pipeline.steps.node
 
 import com.fasterxml.jackson.core.JsonPointer
 import com.fasterxml.jackson.databind.ObjectMapper
 import de.tweerlei.plumber.pipeline.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
+import de.tweerlei.plumber.worker.WellKnownKeys
 import de.tweerlei.plumber.worker.Worker
-import de.tweerlei.plumber.worker.json.JsonKeys
-import de.tweerlei.plumber.worker.json.NodeModifyWorker
+import de.tweerlei.plumber.worker.node.NodeUnsetWorker
 import org.springframework.stereotype.Service
 
-@Service("node-setWorker")
-class NodeSetStep(
+@Service("node-delWorker")
+class NodeDelStep(
     private val objectMapper: ObjectMapper
 ): ProcessingStep {
 
-    override val name = "Set JSON path"
-    override val description = "Replace a subtree of a JSON object using the given JSONPath"
+    override val name = "Remove JSON path"
+    override val description = "Remove a subtree of a JSON object using the given JSONPath"
 
     override fun isValuePassThrough() = true
     override fun producedAttributesFor(arg: String) = setOf(
-        JsonKeys.JSON_NODE
+        WellKnownKeys.NODE
     )
 
     override fun createWorker(
@@ -45,5 +45,5 @@ class NodeSetStep(
         params: PipelineParams,
         parallelDegree: Int
     ) =
-        NodeModifyWorker(JsonPointer.compile("/$arg"), objectMapper, w)
+        NodeUnsetWorker(JsonPointer.compile("/$arg"), objectMapper, w)
 }

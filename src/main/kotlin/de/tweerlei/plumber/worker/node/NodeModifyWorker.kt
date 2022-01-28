@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.tweerlei.plumber.worker.json
+package de.tweerlei.plumber.worker.node
 
 import com.fasterxml.jackson.core.JsonPointer
 import com.fasterxml.jackson.databind.JsonNode
@@ -22,6 +22,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.ObjectNode
 import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.DelegatingWorker
+import de.tweerlei.plumber.worker.WellKnownKeys
 import de.tweerlei.plumber.worker.Worker
 
 class NodeModifyWorker(
@@ -35,13 +36,13 @@ class NodeModifyWorker(
     private val index = p.last().matchingIndex
 
     override fun doProcess(item: WorkItem) =
-        item.getAs<JsonNode>(JsonKeys.JSON_NODE)
+        item.getAs<JsonNode>(WellKnownKeys.NODE)
             .at(ptr)
             .let { node ->
                 when {
-                    node.isObject -> (node as ObjectNode).set<JsonNode>(key, objectMapper.valueToTree(item.getOptional<Any>()))
+                    node.isObject -> (node as ObjectNode).set<JsonNode>(key, objectMapper.valueToTree(item.getOptional()))
                         .let { true }
-                    node.isArray -> (node as ArrayNode).set(index, objectMapper.valueToTree(item.getOptional<Any>()))
+                    node.isArray -> (node as ArrayNode).set(index, objectMapper.valueToTree(item.getOptional()))
                         .let { true }
                     else -> false
                 }

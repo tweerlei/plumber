@@ -18,9 +18,9 @@ package de.tweerlei.plumber.pipeline.steps.json
 import com.fasterxml.jackson.databind.ObjectMapper
 import de.tweerlei.plumber.pipeline.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
+import de.tweerlei.plumber.worker.WellKnownKeys
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.json.FromJsonWorker
-import de.tweerlei.plumber.worker.json.JsonKeys
 import org.springframework.stereotype.Service
 
 @Service("json-parseWorker")
@@ -32,7 +32,7 @@ class JsonDecodeStep(
     override val description = "Deserialize objects from JSON text"
 
     override fun producedAttributesFor(arg: String) = setOf(
-        JsonKeys.JSON_NODE
+        WellKnownKeys.NODE
     )
 
     override fun createWorker(

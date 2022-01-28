@@ -28,7 +28,7 @@ class ToJsonWorker(
 ): DelegatingWorker(worker) {
 
     override fun doProcess(item: WorkItem) =
-        item.getOptional<Any>()
+        item.getOptional()
             .let { obj -> writeValue(obj) }
             .also { str -> item.set(str) }
             .let { true }

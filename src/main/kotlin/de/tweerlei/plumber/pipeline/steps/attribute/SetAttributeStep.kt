@@ -13,27 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.tweerlei.plumber.pipeline.steps.json
+package de.tweerlei.plumber.pipeline.steps.attribute
 
-import com.fasterxml.jackson.core.JsonPointer
-import com.fasterxml.jackson.databind.ObjectMapper
 import de.tweerlei.plumber.pipeline.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
+import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.Worker
-import de.tweerlei.plumber.worker.json.JsonKeys
-import de.tweerlei.plumber.worker.json.NodeGetWorker
+import de.tweerlei.plumber.worker.attribute.ModifyingWorker
 import org.springframework.stereotype.Service
 
-@Service("node-getWorker")
-class NodeGetStep(
-    private val objectMapper: ObjectMapper
-): ProcessingStep {
+@Service("setWorker")
+class SetAttributeStep: ProcessingStep {
 
-    override val name = "Extract JSON path"
-    override val description = "Extract a subtree of a JSON object using the given JSONPath"
+    override val name = "Set attribute"
+    override val description = "Set the given attribute to the current value"
 
-    override fun requiredAttributesFor(arg: String) = setOf(
-        JsonKeys.JSON_NODE
+    override fun isValuePassThrough() = true
+    override fun producedAttributesFor(arg: String) = setOf(
+        arg
     )
 
     override fun createWorker(
@@ -44,5 +41,5 @@ class NodeGetStep(
         params: PipelineParams,
         parallelDegree: Int
     ) =
-        NodeGetWorker(JsonPointer.compile("/$arg"), w)
+        ModifyingWorker(WorkItem.DEFAULT_KEY, arg, w)
 }

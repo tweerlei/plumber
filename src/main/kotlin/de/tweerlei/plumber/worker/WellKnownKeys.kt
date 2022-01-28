@@ -31,6 +31,7 @@ class WellKnownKeys {
 
         // records
         const val RECORD = "record"
+        const val NODE = "node"
 
         // filter and replace
         const val FIND_PATTERN = "findPattern"

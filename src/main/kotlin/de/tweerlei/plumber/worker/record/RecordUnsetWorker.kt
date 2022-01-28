@@ -23,7 +23,7 @@ class RecordUnsetWorker(
 ): DelegatingWorker(worker) {
 
     override fun doProcess(item: WorkItem) =
-        item.getOptional<Record>(WellKnownKeys.RECORD)
+        item.getOptionalAs<Record>(WellKnownKeys.RECORD)
         ?.let { map ->
             map.remove(field)
         }.let { true }

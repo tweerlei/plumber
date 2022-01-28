@@ -13,28 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.tweerlei.plumber.pipeline.steps.json
+package de.tweerlei.plumber.pipeline.steps.pattern
 
-import com.fasterxml.jackson.core.JsonPointer
-import com.fasterxml.jackson.databind.ObjectMapper
 import de.tweerlei.plumber.pipeline.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
+import de.tweerlei.plumber.worker.WellKnownKeys
+import de.tweerlei.plumber.worker.pattern.MatchingWorker
 import de.tweerlei.plumber.worker.Worker
-import de.tweerlei.plumber.worker.json.JsonKeys
-import de.tweerlei.plumber.worker.json.NodeUnsetWorker
 import org.springframework.stereotype.Service
 
-@Service("node-delWorker")
-class NodeDelStep(
-    private val objectMapper: ObjectMapper
-): ProcessingStep {
+@Service("filterWorker")
+class FilterStep: ProcessingStep {
 
-    override val name = "Remove JSON path"
-    override val description = "Remove a subtree of a JSON object using the given JSONPath"
+    override val name = "Filter items"
+    override val description = "Filter items that do (true) or don't (false) match the previous find:"
 
-    override fun isValuePassThrough() = true
-    override fun producedAttributesFor(arg: String) = setOf(
-        JsonKeys.JSON_NODE
+    override fun requiredAttributesFor(arg: String) = setOf(
+        WellKnownKeys.FIND_PATTERN
     )
 
     override fun createWorker(
@@ -45,5 +40,8 @@ class NodeDelStep(
         params: PipelineParams,
         parallelDegree: Int
     ) =
-        NodeUnsetWorker(JsonPointer.compile("/$arg"), objectMapper, w)
+        MatchingWorker(
+            arg.toBooleanStrictOrNull() ?: true,
+            w
+        )
 }

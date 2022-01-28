@@ -20,6 +20,7 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.GeneratingWorker
+import de.tweerlei.plumber.worker.WellKnownKeys
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.file.FileKeys
 import mu.KLogging
@@ -67,7 +68,7 @@ class JsonReadWorker<T>(
             FileKeys.FILE_NAME to file.name
         ).also { item ->
             if (this is JsonNode)
-                item.set(this, JsonKeys.JSON_NODE)
+                item.set(this, WellKnownKeys.NODE)
         }
 
     override fun onClose() {

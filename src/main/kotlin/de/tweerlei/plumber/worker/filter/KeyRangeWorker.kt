@@ -33,7 +33,7 @@ class KeyRangeWorker(
 
     override fun generateItems(item: WorkItem, fn: (WorkItem) -> Boolean) {
         when {
-            item.containsKey(WellKnownKeys.START_AFTER_KEY) && item.containsKey(WellKnownKeys.END_WITH_KEY) ->
+            item.has(WellKnownKeys.START_AFTER_KEY) && item.has(WellKnownKeys.END_WITH_KEY) ->
                 generateNumberRanges(item, fn)
             else ->
                 generateStringRanges(fn)

@@ -36,6 +36,6 @@ class NotNullStep: ProcessingStep {
         parallelDegree: Int
     ) =
         FilteringWorker({ item ->
-            (item.getOptional<Any>() != null) == (arg.toBooleanStrictOrNull() ?: true)
+            (item.getOptional() != null) == (arg.toBooleanStrictOrNull() ?: true)
         }, w)
 }
