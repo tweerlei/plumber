@@ -86,6 +86,12 @@ class WorkItem private constructor(
             ?: toDoubleOrNull()
             ?: this
 
+    fun getOptionalString(key: String = DEFAULT_KEY) =
+        if (map.containsKey(key))
+            getString(key)
+        else
+            null
+
     fun getFirstString(vararg keys: String) =
         keys.toList().plus(DEFAULT_KEY)
             .first { key -> map.containsKey(key) }
@@ -225,4 +231,7 @@ class WorkItem private constructor(
             (this shr 48 and 0xff).toByte(),
             (this shr 56 and 0xff).toByte(),
         )
+
+    override fun toString() =
+        map.toString()
 }

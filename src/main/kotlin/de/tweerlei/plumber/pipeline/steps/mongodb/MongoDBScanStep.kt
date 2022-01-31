@@ -13,30 +13,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.tweerlei.plumber.pipeline.steps.jdbc
+package de.tweerlei.plumber.pipeline.steps.mongodb
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import de.tweerlei.plumber.pipeline.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
-import de.tweerlei.plumber.worker.Record
 import de.tweerlei.plumber.worker.WellKnownKeys
 import de.tweerlei.plumber.worker.Worker
-import de.tweerlei.plumber.worker.jdbc.JdbcKeys
-import de.tweerlei.plumber.worker.jdbc.JdbcSelectOneWorker
-import de.tweerlei.plumber.worker.jdbc.JdbcTemplateFactory
+import de.tweerlei.plumber.worker.mongodb.MongoClientFactory
+import de.tweerlei.plumber.worker.mongodb.MongoDBKeys
+import de.tweerlei.plumber.worker.mongodb.MongoDBScanWorker
 import org.springframework.stereotype.Service
 
-@Service("jdbc-readWorker")
-class JdbcReadStep(
-    private val jdbcTemplateFactory: JdbcTemplateFactory
+@Service("mongodb-listWorker")
+class MongoDBScanStep(
+    private val mongoClientFactory: MongoClientFactory,
+    private val objectMapper: ObjectMapper
 ): ProcessingStep {
 
-    override val name = "Fetch JDBC row"
-    override val description = "Retrieve a row from the given JDBC table"
+    override val name = "Scan MongoDB documents"
+    override val description = "List documents from the given MongoDB table"
 
-    override fun expectedInputFor(arg: String) = Record::class.java
+    override fun requiredAttributesFor(arg: String) = setOf(
+        WellKnownKeys.START_AFTER_KEY,
+        WellKnownKeys.END_WITH_KEY
+    )
     override fun producedAttributesFor(arg: String) = setOf(
-        WellKnownKeys.RECORD,
-        JdbcKeys.TABLE_NAME
+        WellKnownKeys.NODE,
+        MongoDBKeys.DATABASE_NAME,
+        MongoDBKeys.COLLECTION_NAME
     )
 
     override fun createWorker(
@@ -47,12 +52,15 @@ class JdbcReadStep(
         params: PipelineParams,
         parallelDegree: Int
     ) =
-        jdbcTemplateFactory.createJdbcTemplate(parallelDegree)
+        mongoClientFactory.createClient()
             .let { client ->
-                JdbcSelectOneWorker(
+                MongoDBScanWorker(
+                    mongoClientFactory.getDefaultDatabase(),
                     arg,
-                    params.primaryKey.ifEmpty { "id" },
+                    params.primaryKey,
+                    params.numberOfFilesPerRequest,
                     client,
+                    objectMapper,
                     params.maxFilesPerThread,
                     w
                 )

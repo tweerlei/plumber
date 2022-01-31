@@ -37,24 +37,8 @@ class DynamoDBScanWorker(
     companion object : KLogging()
 
     override fun generateItems(item: WorkItem, fn: (WorkItem) -> Boolean) {
-        val startAfter = when (item.has(WellKnownKeys.START_AFTER_KEY)) {
-            true -> Record(
-                partitionKey to item.getOptionalAs<Comparable<Any>>(WellKnownKeys.START_AFTER_KEY)
-            ).also { map ->
-                if (rangeKey != null && startAfterRange != null)
-                    map[rangeKey] = convertType(startAfterRange)
-            }
-            else -> null
-        }
-        val endWith = when (item.has(WellKnownKeys.END_WITH_KEY)) {
-            true -> Record(
-                partitionKey to item.getOptionalAs<Comparable<Any>>(WellKnownKeys.END_WITH_KEY)
-            ).also { map ->
-                if (rangeKey != null && endWithRange != null)
-                    map[rangeKey] = convertType(endWithRange)
-            }
-            else -> null
-        }
+        val startAfter = item.toKey(WellKnownKeys.START_AFTER_KEY, startAfterRange)
+        val endWith = item.toKey(WellKnownKeys.END_WITH_KEY, endWithRange)
         logger.info { "fetching elements from $startAfter to $endWith" }
 
         var result: ScanResult? = null
@@ -66,7 +50,7 @@ class DynamoDBScanWorker(
             logger.debug { "fetched ${result.items.size} items" }
             result.items.forEach { resultItem ->
                 resultItem.fromDynamoDB().let { row ->
-                    if (isKeyBefore(row, endWith)) {
+                    if (row.isNotAfter(endWith)) {
                         if (fn(row.toWorkItem())) {
                             itemCount++
                             if (firstKey == null) firstKey = row[partitionKey]
@@ -84,6 +68,24 @@ class DynamoDBScanWorker(
         logger.info { "fetched $itemCount filenames from $startAfter to $endWith, first key: $firstKey, last key: $lastKey" }
     }
 
+    private fun listFilenames(startAfter: Map<String, AttributeValue>?, continueAfter: Map<String, AttributeValue>?) =
+        ScanRequest()
+            .withTableName(tableName)
+            .withLimit(numberOfFilesPerRequest)
+            .withExclusiveStartKey(continueAfter ?: startAfter)
+            .let { request -> amazonDynamoDBClient.scan(request) }
+
+    private fun WorkItem.toKey(attribute: String, rangeKeyValue: String?) =
+        if (has(attribute))
+            Record(
+                partitionKey to getOptionalAs<Comparable<Any>>(attribute)
+            ).also { map ->
+                if (rangeKey != null && rangeKeyValue != null)
+                    map[rangeKey] = convertType(rangeKeyValue)
+            }
+        else
+            null
+
     private fun convertType(value: String) =
         WorkItem.of(null).let { item ->
             item.setString(value)
@@ -91,21 +93,14 @@ class DynamoDBScanWorker(
         }
 
     @Suppress("UNCHECKED_CAST")
-    private fun isKeyBefore(row: Record, maxKey: Record?) =
+    private fun Record.isNotAfter(maxKey: Record?) =
         when {
             maxKey == null -> true
-            row[partitionKey] as Comparable<Any> > maxKey[partitionKey] as Comparable<Any> -> false
+            this[partitionKey] as Comparable<Any> > maxKey[partitionKey] as Comparable<Any> -> false
             rangeKey == null || maxKey[rangeKey] == null -> true
-            row[rangeKey] as Comparable<Any> > maxKey[rangeKey] as Comparable<Any> -> false
+            this[rangeKey] as Comparable<Any> > maxKey[rangeKey] as Comparable<Any> -> false
             else -> true
         }
-
-    private fun listFilenames(startAfter: Map<String, AttributeValue>?, continueAfter: Map<String, AttributeValue>?) =
-        ScanRequest()
-            .withTableName(tableName)
-            .withLimit(numberOfFilesPerRequest)
-            .withExclusiveStartKey(continueAfter ?: startAfter)
-            .let { request -> amazonDynamoDBClient.scan(request) }
 
     private fun Record.toWorkItem() =
         WorkItem.of(

@@ -114,19 +114,18 @@ class CommandLineProcessor(
                 assumeRoleArn = args.getOptionValue("assume-role"),
                 steps = parseSteps(args.nonOptionArgs)
             ).apply {
-                logger.info("${if (requesterPays) "paying" else "not paying"} for requests")
                 logger.info("starting after $startAfterKey up to and including $stopAfterKey")
                 logger.info("starting range after $startAfterRangeKey up to and including $stopAfterRangeKey")
                 logger.info("generating partitions using key chars $keyChars")
-                logger.info("requesting $numberOfFilesPerRequest file names at once")
-                logger.info("waiting for up to $maxWaitTimeSeconds seconds for new items")
-                logger.info("${if (reread) "will" else "won't"} re-read all existing items")
-                logger.info("${if (follow) "will" else "won't"} keep polling for new items")
+                logger.info("requesting $numberOfFilesPerRequest file names at once, waiting for up to $maxWaitTimeSeconds seconds for new items")
+                logger.info("${if (reread) "will" else "won't"} re-read all existing items, ${if (follow) "will" else "won't"} keep polling for new items")
                 logger.info("stopping after $maxFilesPerThread file names")
                 logger.info("using queue size of $queueSizePerThread items per thread")
                 logger.info("assuming role $assumeRoleArn for AWS access")
+                logger.info("${if (requesterPays) "paying" else "not paying"} for S3 requests")
                 logger.info("using JDBC primary key $primaryKey")
                 logger.info("using DynamoDB partition key $partitionKey and range key $rangeKey")
+                logger.info("${if (prettyPrint) "pretty printing" else "not pretty printing"} JSON or XML output")
                 logger.info("naming XML elements $elementName with root $rootElementName")
             }
         }

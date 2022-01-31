@@ -34,6 +34,7 @@ dependencies {
     implementation("com.amazonaws:aws-java-sdk-dynamodb:1.11.951")
 
     implementation("org.apache.kafka:kafka-clients:3.0.0")
+    implementation("org.mongodb:mongodb-driver-sync:4.2.3")
     implementation("org.springframework:spring-jdbc")
     runtimeOnly("org.postgresql:postgresql")
 

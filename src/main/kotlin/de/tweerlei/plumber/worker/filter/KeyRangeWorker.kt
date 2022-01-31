@@ -32,13 +32,11 @@ class KeyRangeWorker(
 ): GeneratingWorker(limit, worker) {
 
     override fun generateItems(item: WorkItem, fn: (WorkItem) -> Boolean) {
-        when {
-            item.has(WellKnownKeys.START_AFTER_KEY) && item.has(WellKnownKeys.END_WITH_KEY) ->
+        if (item.has(WellKnownKeys.START_AFTER_KEY) && item.has(WellKnownKeys.END_WITH_KEY))
                 generateNumberRanges(item, fn)
-            else ->
+        else
                 generateStringRanges(fn)
         }
-    }
 
     private fun generateNumberRanges(item: WorkItem, fn: (WorkItem) -> Boolean) {
         val minValue = item.getLong(WellKnownKeys.START_AFTER_KEY)

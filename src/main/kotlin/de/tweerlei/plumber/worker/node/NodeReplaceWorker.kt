@@ -17,37 +17,22 @@ package de.tweerlei.plumber.worker.node
 
 import com.fasterxml.jackson.core.JsonPointer
 import com.fasterxml.jackson.databind.JsonNode
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.node.ArrayNode
-import com.fasterxml.jackson.databind.node.JsonNodeFactory
-import com.fasterxml.jackson.databind.node.ObjectNode
 import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.DelegatingWorker
 import de.tweerlei.plumber.worker.WellKnownKeys
 import de.tweerlei.plumber.worker.Worker
 
-class NodeModifyWorker(
-    private val p: JsonPointer,
-    private val objectMapper: ObjectMapper,
+class NodeReplaceWorker(
+    private val ptr: JsonPointer,
     worker: Worker
 ): DelegatingWorker(worker) {
 
-    private val ptr = p.head()
-    private val key = p.last().matchingProperty
-    private val index = p.last().matchingIndex
-
     override fun doProcess(item: WorkItem) =
-        item.getOrSetAs<JsonNode>(WellKnownKeys.NODE) {
-            JsonNodeFactory.instance.objectNode()
-        }
-            .at(ptr)
-            .let { node ->
-                when {
-                    node.isObject -> (node as ObjectNode).set<JsonNode>(key, objectMapper.valueToTree(item.getOptional()))
-                        .let { true }
-                    node.isArray -> (node as ArrayNode).set(index, objectMapper.valueToTree(item.getOptional()))
-                        .let { true }
-                    else -> false
-                }
-            }
+        item.getAs<JsonNode>(WellKnownKeys.NODE)
+            .let { json ->
+                json.at(ptr)
+                    .also { value ->
+                        item.set(value, WellKnownKeys.NODE)
+                    }
+            }.let { true }
 }

@@ -34,15 +34,12 @@ class DynamoDBDeleteWorker(
             .let { attributes ->
                 deleteItem(
                     getTableName(item),
-                    getKeyFrom(attributes)
+                    attributes.extractKey(partitionKey, rangeKey)
                 )
             }.let { true }
 
     private fun getTableName(item: WorkItem) =
         tableName.ifEmpty { item.getString(DynamoDBKeys.TABLE_NAME) }
-
-    private fun getKeyFrom(item: Map<String, AttributeValue>) =
-        item.filter { (k, _) -> k == partitionKey || k == rangeKey }
 
     private fun deleteItem(table: String, item: Map<String, AttributeValue>) =
         DeleteItemRequest(table, item)

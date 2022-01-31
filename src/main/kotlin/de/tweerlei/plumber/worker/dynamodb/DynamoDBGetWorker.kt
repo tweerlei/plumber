@@ -34,19 +34,17 @@ class DynamoDBGetWorker(
             .let { attributes ->
                 getItem(
                     getTableName(item),
-                    getKeyFrom(attributes)
+                    attributes.extractKey(partitionKey, rangeKey)
                 )
             }.fromDynamoDB()
             .also { record ->
+                item.set(record)
                 item.set(record, WellKnownKeys.RECORD)
                 item.set(tableName, DynamoDBKeys.TABLE_NAME)
             }.let { true }
 
     private fun getTableName(item: WorkItem) =
         tableName.ifEmpty { item.getString(DynamoDBKeys.TABLE_NAME) }
-
-    private fun getKeyFrom(item: Map<String, AttributeValue>) =
-        item.filter { (k, _) -> k == partitionKey || k == rangeKey }
 
     private fun getItem(table: String, item: Map<String, AttributeValue>): Map<String, AttributeValue> =
         GetItemRequest(table, item)

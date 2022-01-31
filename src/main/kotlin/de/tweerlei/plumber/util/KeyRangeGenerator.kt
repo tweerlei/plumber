@@ -90,10 +90,5 @@ class KeyRangeGenerator(
             else -> packer.unpack(range.first + numerator * (range.last - range.first + 1) / denominator)
         }?.let {
             commonPrefix + it
-        }?.let {
-            when {
-                it.isEmpty() -> null
-                else -> it
-            }
-        }
+        }?.ifEmpty { null }
 }

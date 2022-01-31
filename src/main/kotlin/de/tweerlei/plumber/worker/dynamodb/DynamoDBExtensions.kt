@@ -39,3 +39,6 @@ fun Record.toDynamoDB() =
             else -> AttributeValue(v.toString())
         }
     }
+
+fun Map<String, AttributeValue>.extractKey(partitionKey: String, rangeKey: String?) =
+    filter { (k, _) -> k == partitionKey || k == rangeKey }

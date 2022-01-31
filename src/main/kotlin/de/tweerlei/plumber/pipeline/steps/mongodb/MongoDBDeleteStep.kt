@@ -13,30 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.tweerlei.plumber.pipeline.steps.jdbc
+package de.tweerlei.plumber.pipeline.steps.mongodb
 
+import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.ObjectMapper
 import de.tweerlei.plumber.pipeline.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
-import de.tweerlei.plumber.worker.Record
 import de.tweerlei.plumber.worker.WellKnownKeys
 import de.tweerlei.plumber.worker.Worker
-import de.tweerlei.plumber.worker.jdbc.JdbcKeys
-import de.tweerlei.plumber.worker.jdbc.JdbcSelectOneWorker
-import de.tweerlei.plumber.worker.jdbc.JdbcTemplateFactory
+import de.tweerlei.plumber.worker.mongodb.MongoClientFactory
+import de.tweerlei.plumber.worker.mongodb.MongoDBDeleteWorker
 import org.springframework.stereotype.Service
 
-@Service("jdbc-readWorker")
-class JdbcReadStep(
-    private val jdbcTemplateFactory: JdbcTemplateFactory
+@Service("mongodb-deleteWorker")
+class MongoDBDeleteStep(
+    private val mongoClientFactory: MongoClientFactory,
+    private val objectMapper: ObjectMapper
 ): ProcessingStep {
 
-    override val name = "Fetch JDBC row"
-    override val description = "Retrieve a row from the given JDBC table"
+    override val name = "Delete MongoDB document"
+    override val description = "Delete a document from the given MongoDB collection"
 
-    override fun expectedInputFor(arg: String) = Record::class.java
+    override fun expectedInputFor(arg: String) = JsonNode::class.java
     override fun producedAttributesFor(arg: String) = setOf(
-        WellKnownKeys.RECORD,
-        JdbcKeys.TABLE_NAME
+        WellKnownKeys.NODE
     )
 
     override fun createWorker(
@@ -47,13 +47,14 @@ class JdbcReadStep(
         params: PipelineParams,
         parallelDegree: Int
     ) =
-        jdbcTemplateFactory.createJdbcTemplate(parallelDegree)
+        mongoClientFactory.createClient()
             .let { client ->
-                JdbcSelectOneWorker(
+                MongoDBDeleteWorker(
+                    mongoClientFactory.getDefaultDatabase(),
                     arg,
-                    params.primaryKey.ifEmpty { "id" },
+                    params.primaryKey.ifEmpty { "_id" },
                     client,
-                    params.maxFilesPerThread,
+                    objectMapper,
                     w
                 )
             }

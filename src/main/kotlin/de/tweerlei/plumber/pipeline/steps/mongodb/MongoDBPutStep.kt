@@ -13,31 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.tweerlei.plumber.pipeline.steps.jdbc
+package de.tweerlei.plumber.pipeline.steps.mongodb
 
+import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.ObjectMapper
 import de.tweerlei.plumber.pipeline.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
-import de.tweerlei.plumber.worker.Record
-import de.tweerlei.plumber.worker.WellKnownKeys
 import de.tweerlei.plumber.worker.Worker
-import de.tweerlei.plumber.worker.jdbc.JdbcKeys
-import de.tweerlei.plumber.worker.jdbc.JdbcSelectOneWorker
-import de.tweerlei.plumber.worker.jdbc.JdbcTemplateFactory
+import de.tweerlei.plumber.worker.mongodb.MongoClientFactory
+import de.tweerlei.plumber.worker.mongodb.MongoDBPutWorker
 import org.springframework.stereotype.Service
 
-@Service("jdbc-readWorker")
-class JdbcReadStep(
-    private val jdbcTemplateFactory: JdbcTemplateFactory
+@Service("mongodb-writeWorker")
+class MongoDBPutStep(
+    private val mongoClientFactory: MongoClientFactory,
+    private val objectMapper: ObjectMapper
 ): ProcessingStep {
 
-    override val name = "Fetch JDBC row"
-    override val description = "Retrieve a row from the given JDBC table"
+    override val name = "Put MongoDB document"
+    override val description = "Insert a document into the given MongoDB collection"
 
-    override fun expectedInputFor(arg: String) = Record::class.java
-    override fun producedAttributesFor(arg: String) = setOf(
-        WellKnownKeys.RECORD,
-        JdbcKeys.TABLE_NAME
-    )
+    override fun expectedInputFor(arg: String) = JsonNode::class.java
 
     override fun createWorker(
         arg: String,
@@ -47,13 +43,13 @@ class JdbcReadStep(
         params: PipelineParams,
         parallelDegree: Int
     ) =
-        jdbcTemplateFactory.createJdbcTemplate(parallelDegree)
+        mongoClientFactory.createClient()
             .let { client ->
-                JdbcSelectOneWorker(
+                MongoDBPutWorker(
+                    mongoClientFactory.getDefaultDatabase(),
                     arg,
-                    params.primaryKey.ifEmpty { "id" },
                     client,
-                    params.maxFilesPerThread,
+                    objectMapper,
                     w
                 )
             }

@@ -27,6 +27,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
 import org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration
+import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration
 import org.springframework.boot.autoconfigure.sql.init.SqlInitializationAutoConfiguration
 import org.springframework.boot.autoconfigure.task.TaskExecutionAutoConfiguration
 import org.springframework.boot.autoconfigure.task.TaskSchedulingAutoConfiguration
@@ -38,6 +39,7 @@ import java.time.Duration
     DataSourceAutoConfiguration::class,
     SqlInitializationAutoConfiguration::class,
     KafkaAutoConfiguration::class,
+    MongoAutoConfiguration::class,
     TaskExecutionAutoConfiguration::class,
     TaskSchedulingAutoConfiguration::class
 ])

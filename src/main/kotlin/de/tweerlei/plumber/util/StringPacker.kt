@@ -73,18 +73,13 @@ class StringPacker(
                     insert(0, codeToChar[1])
                 remainder /= codeToChar.size
             }
-        }.toString().let { key ->
-            when {
-                key.isEmpty() -> null
-                else -> key
-            }
-        }
+        }.toString().ifEmpty { null }
 
     private fun charToCode(ch: Char) =
-        when {
-            ch.code > charToCode.size -> codeToChar.size - 1
-            else -> charToCode[ch.code]
-        }
+        if (ch.code > charToCode.size)
+            codeToChar.size - 1
+        else
+            charToCode[ch.code]
 
     private fun codeToChar(i: Long) =
         codeToChar[(i % codeToChar.size).toInt()]

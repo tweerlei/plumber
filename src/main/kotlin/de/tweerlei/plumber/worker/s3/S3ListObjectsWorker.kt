@@ -37,14 +37,8 @@ class S3ListObjectsWorker(
     companion object : KLogging()
 
     override fun generateItems(item: WorkItem, fn: (WorkItem) -> Boolean) {
-        val startAfter = when (item.has(WellKnownKeys.START_AFTER_KEY)) {
-            true -> item.getString(WellKnownKeys.START_AFTER_KEY)
-            else -> null
-        }
-        val endWith = when (item.has(WellKnownKeys.END_WITH_KEY)) {
-            true -> item.getString(WellKnownKeys.END_WITH_KEY)
-            else -> null
-        }
+        val startAfter = item.getOptionalString(WellKnownKeys.START_AFTER_KEY)
+        val endWith = item.getOptionalString(WellKnownKeys.END_WITH_KEY)
         logger.info { "fetching filenames from $startAfter to $endWith" }
 
         var result: ListObjectsV2Result? = null

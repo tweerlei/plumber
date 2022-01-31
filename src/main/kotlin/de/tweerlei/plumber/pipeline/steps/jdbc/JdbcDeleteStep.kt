@@ -46,7 +46,7 @@ class JdbcDeleteStep(
             .let { client ->
                 JdbcDeleteWorker(
                     arg,
-                    params.primaryKey.ifEmpty { throw IllegalArgumentException("No primary key specified") },
+                    params.primaryKey.ifEmpty { "id" },
                     client,
                     w
                 )

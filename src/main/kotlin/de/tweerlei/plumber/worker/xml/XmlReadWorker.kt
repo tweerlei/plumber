@@ -55,7 +55,7 @@ class XmlReadWorker<T>(
                 try {
                     var keepGenerating = true
                     while (keepGenerating && reader.hasNext()) {
-                        reader.next();
+                        reader.next()
                         if (reader.eventType == START_ELEMENT && reader.localName == elementName) {
                             keepGenerating = xmlMapper.readValue(reader, valueType)
                                 ?.let { obj ->

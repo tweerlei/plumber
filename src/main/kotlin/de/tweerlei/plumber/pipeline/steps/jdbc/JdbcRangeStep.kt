@@ -50,7 +50,7 @@ class JdbcRangeStep(
             .let { client ->
                 JdbcRangeWorker(
                     arg,
-                    params.primaryKey.ifEmpty { throw IllegalArgumentException("No primary key specified") },
+                    params.primaryKey.ifEmpty { "id" },
                     client,
                     w
                 )

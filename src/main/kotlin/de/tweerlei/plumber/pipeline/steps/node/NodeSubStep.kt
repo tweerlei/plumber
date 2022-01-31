@@ -13,30 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.tweerlei.plumber.pipeline.steps.jdbc
+package de.tweerlei.plumber.pipeline.steps.node
 
+import com.fasterxml.jackson.core.JsonPointer
+import com.fasterxml.jackson.databind.ObjectMapper
 import de.tweerlei.plumber.pipeline.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
-import de.tweerlei.plumber.worker.Record
 import de.tweerlei.plumber.worker.WellKnownKeys
 import de.tweerlei.plumber.worker.Worker
-import de.tweerlei.plumber.worker.jdbc.JdbcKeys
-import de.tweerlei.plumber.worker.jdbc.JdbcSelectOneWorker
-import de.tweerlei.plumber.worker.jdbc.JdbcTemplateFactory
+import de.tweerlei.plumber.worker.node.NodeReplaceWorker
 import org.springframework.stereotype.Service
 
-@Service("jdbc-readWorker")
-class JdbcReadStep(
-    private val jdbcTemplateFactory: JdbcTemplateFactory
+@Service("node-subWorker")
+class NodeSubStep(
+    private val objectMapper: ObjectMapper
 ): ProcessingStep {
 
-    override val name = "Fetch JDBC row"
-    override val description = "Retrieve a row from the given JDBC table"
+    override val name = "Extract JSON node"
+    override val description = "Replace the current node with one of its sub nodes"
 
-    override fun expectedInputFor(arg: String) = Record::class.java
-    override fun producedAttributesFor(arg: String) = setOf(
-        WellKnownKeys.RECORD,
-        JdbcKeys.TABLE_NAME
+    override fun requiredAttributesFor(arg: String) = setOf(
+        WellKnownKeys.NODE
     )
 
     override fun createWorker(
@@ -47,14 +44,5 @@ class JdbcReadStep(
         params: PipelineParams,
         parallelDegree: Int
     ) =
-        jdbcTemplateFactory.createJdbcTemplate(parallelDegree)
-            .let { client ->
-                JdbcSelectOneWorker(
-                    arg,
-                    params.primaryKey.ifEmpty { "id" },
-                    client,
-                    params.maxFilesPerThread,
-                    w
-                )
-            }
+        NodeReplaceWorker(JsonPointer.compile("/$arg"), w)
 }

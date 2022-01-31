@@ -33,8 +33,6 @@ class NodeGetWorker(
                 json.at(ptr).toSimpleType()
                     .also { value ->
                         item.set(value)
-                        if (value is JsonNode)
-                            item.set(value, WellKnownKeys.NODE)
                     }
             }.let { true }
 
