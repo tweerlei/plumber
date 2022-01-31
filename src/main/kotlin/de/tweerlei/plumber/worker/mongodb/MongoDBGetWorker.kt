@@ -35,8 +35,8 @@ class MongoDBGetWorker(
             .toMongoDB(objectMapper)
             .let { attributes ->
                 getItem(
-                    getDatabaseName(item),
-                    getCollectionName(item),
+                    item.getIfEmpty(databaseName, MongoDBKeys.DATABASE_NAME),
+                    item.getIfEmpty(collectionName, MongoDBKeys.COLLECTION_NAME),
                     attributes.extractKey(primaryKey)
                 )
             }.fromMongoDB(objectMapper)
@@ -46,12 +46,6 @@ class MongoDBGetWorker(
                 item.set(databaseName, MongoDBKeys.DATABASE_NAME)
                 item.set(collectionName, MongoDBKeys.COLLECTION_NAME)
             }.let { true }
-
-    private fun getDatabaseName(item: WorkItem) =
-        databaseName.ifEmpty { item.getString(MongoDBKeys.DATABASE_NAME) }
-
-    private fun getCollectionName(item: WorkItem) =
-        collectionName.ifEmpty { item.getString(MongoDBKeys.COLLECTION_NAME) }
 
     private fun getItem(database: String, collection: String, item: Document): Document =
         mongoClient.getDatabase(database).getCollection(collection).find(item).single()

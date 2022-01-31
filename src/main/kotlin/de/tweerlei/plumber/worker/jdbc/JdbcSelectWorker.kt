@@ -31,7 +31,7 @@ class JdbcSelectWorker(
     override fun generateItems(item: WorkItem, fn: (WorkItem) -> Boolean) {
         val startAfter = item.getOptional(WellKnownKeys.START_AFTER_KEY)
         val endWith = item.getOptional(WellKnownKeys.END_WITH_KEY)
-        val table = getTableName(item)
+        val table = item.getIfEmpty(tableName, JdbcKeys.TABLE_NAME)
         val extractRows = ResultSetExtractor<Any?> { rs ->
             var keepGenerating = true
             while (keepGenerating && rs.next()) {
@@ -48,9 +48,6 @@ class JdbcSelectWorker(
             else -> selectAll(table, extractRows)
         }
     }
-
-    private fun getTableName(item: WorkItem) =
-        tableName.ifEmpty { item.getString(JdbcKeys.TABLE_NAME) }
 
     private fun selectAll(table: String, rse: ResultSetExtractor<Any?>) {
         jdbcTemplate.query(

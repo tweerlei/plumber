@@ -31,13 +31,10 @@ class DynamoDBPutWorker(
             .toDynamoDB()
             .also { attributes ->
                 putItem(
-                    getTableName(item),
+                    item.getIfEmpty(tableName, DynamoDBKeys.TABLE_NAME),
                     attributes
                 )
             }.let { true }
-
-    private fun getTableName(item: WorkItem) =
-        tableName.ifEmpty { item.getString(DynamoDBKeys.TABLE_NAME) }
 
     private fun putItem(table: String, item: Map<String, AttributeValue>) =
         PutItemRequest(table, item)

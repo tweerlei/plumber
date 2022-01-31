@@ -29,11 +29,12 @@ class SQSSendWorker(
 
     override fun doProcess(item: WorkItem) =
         item.getString()
-            .let { body -> sendFile(getQueueUrl(item), body) }
-            .let { true }
-
-    private fun getQueueUrl(item: WorkItem) =
-        queueUrl.ifEmpty { item.getString(SQSKeys.QUEUE_URL) }
+            .let { body ->
+                sendFile(
+                    item.getIfEmpty(queueUrl, SQSKeys.QUEUE_URL),
+                    body
+                )
+            }.let { true }
 
     private fun sendFile(url: String, body: String) =
         SendMessageRequest(url, body)

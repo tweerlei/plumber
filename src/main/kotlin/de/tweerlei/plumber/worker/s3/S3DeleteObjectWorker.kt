@@ -31,11 +31,12 @@ class S3DeleteObjectWorker(
 
     override fun doProcess(item: WorkItem) =
         item.getFirstString(WellKnownKeys.NAME)
-            .let { name -> deleteFile(getBucketName(item), name) }
-            .let { true }
-
-    private fun getBucketName(item: WorkItem) =
-        bucketName.ifEmpty { item.getString(S3Keys.BUCKET_NAME) }
+            .let { name ->
+                deleteFile(
+                    item.getIfEmpty(bucketName, S3Keys.BUCKET_NAME),
+                    name
+                )
+            }.let { true }
 
     private fun deleteFile(bucket: String, fileName: String) =
         DeleteObjectRequest(bucket, fileName)

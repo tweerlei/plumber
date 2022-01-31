@@ -30,7 +30,7 @@ class JdbcSelectOneWorker(
 
     override fun generateItems(item: WorkItem, fn: (WorkItem) -> Boolean) {
         selectRow(
-            getTableName(item),
+            item.getIfEmpty(tableName, JdbcKeys.TABLE_NAME),
             item.getOptional()
         ) { rs ->
             var keepGenerating = true
@@ -41,9 +41,6 @@ class JdbcSelectOneWorker(
             null
         }
     }
-
-    private fun getTableName(item: WorkItem) =
-        tableName.ifEmpty { item.getString(JdbcKeys.TABLE_NAME) }
 
     private fun selectRow(table: String, id: Any?, rse: ResultSetExtractor<Any?>) {
         jdbcTemplate.query(

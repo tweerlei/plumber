@@ -31,8 +31,12 @@ class S3GetObjectWorker(
 
     override fun doProcess(item: WorkItem) =
         item.getFirstString(WellKnownKeys.NAME)
-            .let { name -> getFile(getBucketName(item), name) }
-            .also { file ->
+            .let { name ->
+                getFile(
+                    item.getIfEmpty(bucketName, S3Keys.BUCKET_NAME),
+                    name
+                )
+            }.also { file ->
                 item.set(bucketName, S3Keys.BUCKET_NAME)
                 item.set(file.key, S3Keys.OBJECT_KEY)
                 item.set(file.objectMetadata.contentLength, WellKnownKeys.SIZE)
@@ -43,9 +47,6 @@ class S3GetObjectWorker(
                     item.set(bytes)
                 }
             }.let { true }
-
-    private fun getBucketName(item: WorkItem) =
-        bucketName.ifEmpty { item.getString(S3Keys.BUCKET_NAME) }
 
     private fun getFile(bucket: String, fileName: String) =
         GetObjectRequest(bucket, fileName, requesterPays)

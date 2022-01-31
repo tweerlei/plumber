@@ -34,13 +34,12 @@ class JdbcInsertWorker(
 
     private fun updaterFor(item: WorkItem, map: Record) =
         when (val v = updater) {
-            null -> Updater.from(getTableName(item), map)
-                .also { updater = it }
+            null -> Updater.from(
+                item.getIfEmpty(tableName, JdbcKeys.TABLE_NAME),
+                map
+            ).also { updater = it }
             else -> v
         }
-
-    private fun getTableName(item: WorkItem) =
-        tableName.ifEmpty { item.getString(JdbcKeys.TABLE_NAME) }
 
     private class Updater(
         private val sql: String,

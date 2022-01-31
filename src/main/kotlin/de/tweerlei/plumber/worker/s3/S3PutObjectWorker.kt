@@ -33,11 +33,13 @@ class S3PutObjectWorker(
 
     override fun doProcess(item: WorkItem) =
         item.getString(WellKnownKeys.NAME)
-            .let { name -> putFile(getBucketName(item), name, item.getByteArray()) }
-            .let { true }
-
-    private fun getBucketName(item: WorkItem) =
-        bucketName.ifEmpty { item.getString(S3Keys.BUCKET_NAME) }
+            .let { name ->
+                putFile(
+                    item.getIfEmpty(bucketName, S3Keys.BUCKET_NAME),
+                    name,
+                    item.getByteArray()
+                )
+            }.let { true }
 
     private fun putFile(bucket: String, fileName: String, contents: ByteArray) =
         ObjectMetadata()

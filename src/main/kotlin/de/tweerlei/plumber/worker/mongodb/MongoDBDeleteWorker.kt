@@ -35,17 +35,11 @@ class MongoDBDeleteWorker(
             .toMongoDB(objectMapper)
             .let { attributes ->
                 deleteItem(
-                    getDatabaseName(item),
-                    getCollectionName(item),
+                    item.getIfEmpty(databaseName, MongoDBKeys.DATABASE_NAME),
+                    item.getIfEmpty(collectionName, MongoDBKeys.COLLECTION_NAME),
                     attributes.extractKey(primaryKey)
                 )
             }.let { true }
-
-    private fun getDatabaseName(item: WorkItem) =
-        databaseName.ifEmpty { item.getString(MongoDBKeys.DATABASE_NAME) }
-
-    private fun getCollectionName(item: WorkItem) =
-        collectionName.ifEmpty { item.getString(MongoDBKeys.COLLECTION_NAME) }
 
     private fun deleteItem(database: String, collection: String, item: Document) =
         mongoClient.getDatabase(database).getCollection(collection).deleteOne(item)

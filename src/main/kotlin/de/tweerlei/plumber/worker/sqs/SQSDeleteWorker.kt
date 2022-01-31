@@ -29,11 +29,12 @@ class SQSDeleteWorker(
 
     override fun doProcess(item: WorkItem) =
         item.getString(SQSKeys.DELETE_HANDLE)
-            .let { handle -> deleteFile(getQueueUrl(item), handle) }
-            .let { true }
-
-    private fun getQueueUrl(item: WorkItem) =
-        queueUrl.ifEmpty { item.getString(SQSKeys.QUEUE_URL) }
+            .let { handle ->
+                deleteFile(
+                    item.getIfEmpty(queueUrl, SQSKeys.QUEUE_URL),
+                    handle
+                )
+            }.let { true }
 
     private fun deleteFile(url: String, handle: String) =
         DeleteMessageRequest(url, handle)

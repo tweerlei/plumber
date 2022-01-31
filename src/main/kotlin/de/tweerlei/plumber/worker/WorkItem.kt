@@ -97,6 +97,9 @@ class WorkItem private constructor(
             .first { key -> map.containsKey(key) }
             .let { key -> getString(key) }
 
+    fun getIfEmpty(value: String, key: String = DEFAULT_KEY) =
+        value.ifEmpty { getString(key) }
+
     fun getString(key: String = DEFAULT_KEY) =
         map[key].let { value ->
             when (value) {
