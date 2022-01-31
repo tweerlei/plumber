@@ -80,6 +80,10 @@ class CommandLineProcessor(
                 --spring.datasource.url       Set JDBC url
                 --spring.datasource.username  Set JDBC user name
                 --spring.datasource.password  Set JDBC password
+                --spring.data.mongodb.uri          Set MongoDB uri
+                --spring.data.mongodb.username     Set MongoDB user name
+                --spring.data.mongodb.password     Set MongoDB password
+                --spring.data.mongodb.sslrootcert  Set MongoDB SSL CA certificate
 
             """.trimIndent())
             .toString()

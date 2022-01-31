@@ -46,7 +46,7 @@ class MongoDBScanWorker(
         var firstKey: Any? = null
         var lastKey: Any? = null
         var itemCount = 0
-        listFilenames(startAfter?.toMongoDB(objectMapper))
+        listDocuments(startAfter?.toMongoDB(objectMapper))
             .all { resultItem ->
                 resultItem.fromMongoDB(objectMapper).let { row ->
                     if (row.isNotAfter(endWith)) {
@@ -64,10 +64,10 @@ class MongoDBScanWorker(
                 }
             }
 
-        logger.info { "fetched $itemCount filenames from $startAfter to $endWith, first key: $firstKey, last key: $lastKey" }
+        logger.info { "fetched $itemCount documents from $startAfter to $endWith, first key: $firstKey, last key: $lastKey" }
     }
 
-    private fun listFilenames(startAfter: Document?) =
+    private fun listDocuments(startAfter: Document?) =
         when (startAfter) {
             null -> mongoClient.getDatabase(databaseName).getCollection(collectionName).find()
             else -> mongoClient.getDatabase(databaseName).getCollection(collectionName).find(startAfter)

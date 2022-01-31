@@ -53,7 +53,6 @@ class JdbcReadStep(
                     arg,
                     params.primaryKey.ifEmpty { "id" },
                     client,
-                    params.maxFilesPerThread,
                     w
                 )
             }

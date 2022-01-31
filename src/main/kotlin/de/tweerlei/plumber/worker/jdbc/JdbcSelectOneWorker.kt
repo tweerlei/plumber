@@ -17,51 +17,41 @@ package de.tweerlei.plumber.worker.jdbc
 
 import de.tweerlei.plumber.worker.*
 import org.springframework.jdbc.core.JdbcTemplate
-import org.springframework.jdbc.core.ResultSetExtractor
+import org.springframework.jdbc.core.RowMapper
 import java.sql.ResultSet
 
 class JdbcSelectOneWorker(
     private val tableName: String,
     private val primaryKey: String,
     private val jdbcTemplate: JdbcTemplate,
-    limit: Int,
     worker: Worker
-): GeneratingWorker(limit, worker) {
+): DelegatingWorker(worker) {
 
-    override fun generateItems(item: WorkItem, fn: (WorkItem) -> Boolean) {
+    override fun doProcess(item: WorkItem) =
         selectRow(
             item.getIfEmpty(tableName, JdbcKeys.TABLE_NAME),
             item.getOptional()
-        ) { rs ->
-            var keepGenerating = true
-            while (keepGenerating && rs.next()) {
-                if (!fn(rs.toWorkItem()))
-                    keepGenerating = false
-            }
-            null
-        }
-    }
+        ) { rs, _ ->
+            rs.toRecord()
+        }?.also { map ->
+            item.set(map)
+            item.set(map, WellKnownKeys.RECORD)
+            item.set(tableName, JdbcKeys.TABLE_NAME)
+            item.set(map[primaryKey], JdbcKeys.PRIMARY_KEY)
+        }?.let { true }
+        ?: false
 
-    private fun selectRow(table: String, id: Any?, rse: ResultSetExtractor<Any?>) {
-        jdbcTemplate.query(
+    private fun selectRow(table: String, id: Any?, rse: RowMapper<Record>) =
+        jdbcTemplate.queryForObject(
             "SELECT * FROM $table WHERE $primaryKey = ?",
             rse,
             id
         )
-    }
 
-    private fun ResultSet.toWorkItem() =
-        Record()
-            .also { map ->
-                for (i in 1..metaData.columnCount) {
-                    map[metaData.getColumnName(i)] = getObject(i)
-                }
-            }.let { map ->
-                WorkItem.of(
-                    map,
-                    WellKnownKeys.RECORD to map,
-                    JdbcKeys.TABLE_NAME to tableName,
-                    JdbcKeys.PRIMARY_KEY to map[primaryKey]
-                )
+    private fun ResultSet.toRecord() =
+        Record().also { map ->
+            for (i in 1..metaData.columnCount) {
+                map[metaData.getColumnName(i)] = getObject(i)
             }
+        }
 }

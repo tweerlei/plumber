@@ -34,7 +34,7 @@ class MongoDBGetWorker(
         item.getFirstAs<JsonNode>(WellKnownKeys.NODE)
             .toMongoDB(objectMapper)
             .let { attributes ->
-                getItem(
+                fetchDocument(
                     item.getIfEmpty(databaseName, MongoDBKeys.DATABASE_NAME),
                     item.getIfEmpty(collectionName, MongoDBKeys.COLLECTION_NAME),
                     attributes.extractKey(primaryKey)
@@ -47,6 +47,6 @@ class MongoDBGetWorker(
                 item.set(collectionName, MongoDBKeys.COLLECTION_NAME)
             }.let { true }
 
-    private fun getItem(database: String, collection: String, item: Document): Document =
+    private fun fetchDocument(database: String, collection: String, item: Document) =
         mongoClient.getDatabase(database).getCollection(collection).find(item).single()
 }

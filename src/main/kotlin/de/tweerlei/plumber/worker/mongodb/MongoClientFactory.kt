@@ -19,8 +19,10 @@ import com.mongodb.ConnectionString
 import com.mongodb.MongoClientSettings
 import com.mongodb.MongoCredential
 import com.mongodb.client.MongoClients
+import de.tweerlei.plumber.util.createSSLContextForCustomCA
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.stereotype.Service
+import java.io.FileInputStream
 
 @Service
 @ConfigurationProperties(prefix = "spring.data")
@@ -34,12 +36,27 @@ class MongoClientFactory {
             .credential(MongoCredential.createCredential(
                 mongodb.getValue("username"),
                 mongodb.getValue("authenticationDatabase"),
-                mongodb.getValue("password").toCharArray()))
-            .build()
+                mongodb.getValue("password").toCharArray())
+            ).apply {
+                createCustomSslContext()
+                    ?.also { context ->
+                        applyToSslSettings { builder ->
+                            builder.context(context)
+                        }
+                    }
+            }.build()
             .let { settings ->
                 MongoClients.create(settings)
             }
 
     fun getDefaultDatabase() =
         mongodb.getValue("database")
+
+    private fun createCustomSslContext() =
+        mongodb["sslrootcert"]
+            ?.let { path ->
+                FileInputStream(path).use {
+                    createSSLContextForCustomCA(it)
+                }
+            }
 }

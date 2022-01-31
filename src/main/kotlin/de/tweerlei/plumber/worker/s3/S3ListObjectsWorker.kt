@@ -62,6 +62,7 @@ class S3ListObjectsWorker(
                 }
             }
         } while (result?.nextContinuationToken != null)
+
         logger.info { "fetched $itemCount filenames from $startAfter to $endWith, first key: $firstKey, last key: $lastKey" }
     }
 

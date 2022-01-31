@@ -32,54 +32,55 @@ class JdbcSelectWorker(
         val startAfter = item.getOptional(WellKnownKeys.START_AFTER_KEY)
         val endWith = item.getOptional(WellKnownKeys.END_WITH_KEY)
         val table = item.getIfEmpty(tableName, JdbcKeys.TABLE_NAME)
-        val extractRows = ResultSetExtractor<Any?> { rs ->
+        val extractRows = ResultSetExtractor<Int> { rs ->
             var keepGenerating = true
+            var itemCount = 0
             while (keepGenerating && rs.next()) {
-                if (!fn(rs.toWorkItem()))
+                if (fn(rs.toWorkItem()))
+                    itemCount++
+                else
                     keepGenerating = false
             }
-            null
+            itemCount
         }
 
-        when {
+        val itemCount = when {
             startAfter != null && endWith != null -> selectRange(table, startAfter, endWith, extractRows)
             startAfter != null -> selectFrom(table, startAfter, extractRows)
             endWith != null -> selectTo(table, endWith, extractRows)
             else -> selectAll(table, extractRows)
         }
+
+        logger.info { "fetched $itemCount rows" }
     }
 
-    private fun selectAll(table: String, rse: ResultSetExtractor<Any?>) {
+    private fun selectAll(table: String, rse: ResultSetExtractor<Int>) =
         jdbcTemplate.query(
             "SELECT * FROM $table",
             rse
         )
-    }
 
-    private fun selectFrom(table: String, startAfter: Any, rse: ResultSetExtractor<Any?>) {
+    private fun selectFrom(table: String, startAfter: Any, rse: ResultSetExtractor<Int>) =
         jdbcTemplate.query(
             "SELECT * FROM $table WHERE $primaryKey > ?",
             rse,
             startAfter
         )
-    }
 
-    private fun selectTo(table: String, endWith: Any, rse: ResultSetExtractor<Any?>) {
+    private fun selectTo(table: String, endWith: Any, rse: ResultSetExtractor<Int>) =
         jdbcTemplate.query(
             "SELECT * FROM $table WHERE $primaryKey <= ?",
             rse,
             endWith
         )
-    }
 
-    private fun selectRange(table: String, startAfter: Any, endWith: Any, rse: ResultSetExtractor<Any?>) {
+    private fun selectRange(table: String, startAfter: Any, endWith: Any, rse: ResultSetExtractor<Int>) =
         jdbcTemplate.query(
             "SELECT * FROM $table WHERE $primaryKey > ? AND $primaryKey <= ?",
             rse,
             startAfter,
             endWith
         )
-    }
 
     private fun ResultSet.toWorkItem() =
         Record()
