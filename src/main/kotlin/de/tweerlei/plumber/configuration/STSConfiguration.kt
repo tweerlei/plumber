@@ -24,8 +24,8 @@ import org.springframework.context.annotation.Configuration
 
 @Configuration
 class STSConfiguration(
-    @Value("\${cloud.aws.region.static}") val awsRegion: String,
-    @Value("\${cloud.aws.sts.endpoint}") val awsEndpoint: String,
+    @Value("\${aws.region}") val awsRegion: String,
+    @Value("\${aws.sts.endpoint}") val awsEndpoint: String,
 ) {
 
     @Bean

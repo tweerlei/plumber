@@ -24,7 +24,7 @@ import org.springframework.stereotype.Service
 import java.util.*
 
 @Service
-@ConfigurationProperties(prefix = "spring.kafka")
+@ConfigurationProperties(prefix = "plumber.kafka")
 class KafkaClientFactory {
 
     lateinit var producer: Map<String, String>

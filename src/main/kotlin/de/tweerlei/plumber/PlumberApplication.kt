@@ -16,7 +16,6 @@
 package de.tweerlei.plumber
 
 import de.tweerlei.plumber.pipeline.PipelineBuilder
-import de.tweerlei.plumber.util.humanReadable
 import de.tweerlei.plumber.util.printStackTraceUpTo
 import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.Worker
@@ -63,13 +62,11 @@ class PlumberApplication(
                 }?.let { worker ->
                     logger.info("____________________________________________________Running pipeline__")
                     runWorker(worker)
-                }?.let { duration ->
-                    logger.info("_____________________________________________________________Summary__")
-                    logger.info("Total processing time: ${duration.humanReadable()}")
+                    logger.info("_______________________________________________Finished_successfully__")
                 }
         } catch (e: Exception) {
             logger.error {
-                "Error while building the pipeline\n" +
+                "______________________________________________________Error_occurred__\n" +
                 e.printStackTraceUpTo(PlumberApplication::class)
             }
         }
@@ -77,13 +74,10 @@ class PlumberApplication(
 
     private fun runWorker(
         worker: Worker
-    ): Duration {
-        val startTime = System.currentTimeMillis()
+    ) {
         worker.open().use {
             worker.process(WorkItem.of(null))
         }
-        val endTime = System.currentTimeMillis()
-        return Duration.ofMillis(endTime - startTime)
     }
 }
 

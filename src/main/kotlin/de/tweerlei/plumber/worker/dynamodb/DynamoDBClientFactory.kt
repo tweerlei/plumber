@@ -29,8 +29,8 @@ import org.springframework.stereotype.Service
 
 @Service
 class DynamoDBClientFactory(
-    @Value("\${cloud.aws.region.static}") private val awsRegion: String,
-    @Value("\${cloud.aws.dynamodb.endpoint}") private val awsEndpoint: String,
+    @Value("\${aws.region}") private val awsRegion: String,
+    @Value("\${aws.dynamodb.endpoint}") private val awsEndpoint: String,
     private val stsService: AWSSecurityTokenService
 ) {
 

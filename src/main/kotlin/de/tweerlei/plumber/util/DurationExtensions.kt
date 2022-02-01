@@ -18,4 +18,4 @@ package de.tweerlei.plumber.util
 import java.time.Duration
 
 fun Duration.humanReadable() =
-    "${toHours()}:${toMinutesPart()}:${toSecondsPart()}.${toMillisPart()}"
+    String.format("%d:%02d:%02d.%03d", toHours(), toMinutesPart(), toSecondsPart(), toMillisPart())

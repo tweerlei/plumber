@@ -23,7 +23,7 @@ import org.springframework.stereotype.Service
 import javax.sql.DataSource
 
 @Service
-@ConfigurationProperties(prefix = "spring")
+@ConfigurationProperties(prefix = "plumber.jdbc")
 class JdbcTemplateFactory {
 
     lateinit var datasource: Map<String, String>

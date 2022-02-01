@@ -74,16 +74,18 @@ class CommandLineProcessor(
                 --follow                      Keep polling for new messages
                 --reread                      Re-read all messages
 
-                Any other options are used to configure the application. Some examples:
+                Credentials can be passed via environment variables:
 
-                --cloud.aws.region.static     Configure AWS region
-                --spring.datasource.url       Set JDBC url
-                --spring.datasource.username  Set JDBC user name
-                --spring.datasource.password  Set JDBC password
-                --spring.data.mongodb.uri          Set MongoDB uri
-                --spring.data.mongodb.username     Set MongoDB user name
-                --spring.data.mongodb.password     Set MongoDB password
-                --spring.data.mongodb.sslrootcert  Set MongoDB SSL CA certificate
+                AWS_*                                 Set AWS credentials                                 
+                PLUMBER_JDBC_DATASOURCE_URL           Set JDBC url
+                PLUMBER_JDBC_DATASOURCE_USERNAME      Set JDBC user name
+                PLUMBER_JDBC_DATASOURCE_PASSWORD      Set JDBC password
+                PLUMBER_MONGODB_CLIENT_URI            Set MongoDB uri
+                PLUMBER_MONGODB_CLIENT_USERNAME       Set MongoDB user name
+                PLUMBER_MONGODB_CLIENT_PASSWORD       Set MongoDB password
+                PLUMBER_MONGODB_CLIENT_SSLROOTCERT    Set MongoDB SSL CA certificate
+                PLUMBER_KAFKA_CONSUMER_*              Set Kafka consumer config
+                PLUMBER_KAFKA_PRODUCER_*              Set Kafka producer config
 
             """.trimIndent())
             .toString()

@@ -29,8 +29,8 @@ import org.springframework.stereotype.Service
 
 @Service
 class S3ClientFactory(
-    @Value("\${cloud.aws.region.static}") private val awsRegion: String,
-    @Value("\${cloud.aws.s3.endpoint}") private val awsEndpoint: String,
+    @Value("\${aws.region}") private val awsRegion: String,
+    @Value("\${aws.s3.endpoint}") private val awsEndpoint: String,
     private val stsService: AWSSecurityTokenService
 ) {
 

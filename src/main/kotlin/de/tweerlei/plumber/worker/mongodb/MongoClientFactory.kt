@@ -25,18 +25,18 @@ import org.springframework.stereotype.Service
 import java.io.FileInputStream
 
 @Service
-@ConfigurationProperties(prefix = "spring.data")
+@ConfigurationProperties(prefix = "plumber.mongodb")
 class MongoClientFactory {
 
-    lateinit var mongodb: Map<String, String>
+    lateinit var client: Map<String, String>
 
     fun createClient() =
         MongoClientSettings.builder()
-            .applyConnectionString(ConnectionString(mongodb.getValue("uri")))
+            .applyConnectionString(ConnectionString(client.getValue("uri")))
             .credential(MongoCredential.createCredential(
-                mongodb.getValue("username"),
-                mongodb.getValue("authenticationDatabase"),
-                mongodb.getValue("password").toCharArray())
+                client.getValue("username"),
+                client.getValue("authenticationDatabase"),
+                client.getValue("password").toCharArray())
             ).apply {
                 createCustomSslContext()
                     ?.also { context ->
@@ -50,10 +50,11 @@ class MongoClientFactory {
             }
 
     fun getDefaultDatabase() =
-        mongodb.getValue("database")
+        client.getValue("database")
 
     private fun createCustomSslContext() =
-        mongodb["sslrootcert"]
+        client["sslrootcert"]
+            ?.ifBlank { null }
             ?.let { path ->
                 FileInputStream(path).use {
                     createSSLContextForCustomCA(it)

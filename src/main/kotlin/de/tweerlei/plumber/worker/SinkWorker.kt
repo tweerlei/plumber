@@ -15,7 +15,9 @@
  */
 package de.tweerlei.plumber.worker
 
+import de.tweerlei.plumber.util.humanReadable
 import mu.KLogging
+import java.time.Duration
 import java.util.concurrent.atomic.AtomicInteger
 
 class SinkWorker: Worker {
@@ -23,12 +25,21 @@ class SinkWorker: Worker {
     companion object: KLogging()
 
     private val count = AtomicInteger()
+    private var startTime: Long = 0
+
+    override fun open() =
+        this.apply {
+            startTime = System.currentTimeMillis()
+        }
 
     override fun process(item: WorkItem) {
         count.incrementAndGet()
     }
 
     override fun close() {
+        val endTime = System.currentTimeMillis()
+        val duration = Duration.ofMillis(endTime - startTime)
         logger.info { "Items received: ${count.get()}" }
+        logger.info { "Total processing time: ${duration.humanReadable()}" }
     }
 }
