@@ -42,5 +42,8 @@ class WellKnownKeys {
 
         // parallel processing
         const val WORKER_INDEX = "workerIndex"
+
+        // bulk processing
+        const val WORK_ITEMS = "workItems"
     }
 }
