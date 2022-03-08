@@ -20,7 +20,7 @@ import de.tweerlei.plumber.pipeline.PipelineParams
 import de.tweerlei.plumber.worker.WellKnownKeys
 import de.tweerlei.plumber.worker.s3.S3ClientFactory
 import de.tweerlei.plumber.worker.Worker
-import de.tweerlei.plumber.worker.s3.S3DeleteObjectWorker
+import de.tweerlei.plumber.worker.s3.S3DeleteObjectsWorker
 import org.springframework.stereotype.Service
 
 @Service("s3-bulkdeleteWorker")
@@ -45,7 +45,7 @@ class S3BulkDeleteStep(
     ) =
         s3ClientFactory.createAmazonS3Client(parallelDegree, params.assumeRoleArn)
             .let { client ->
-                S3DeleteObjectWorker(
+                S3DeleteObjectsWorker(
                     arg,
                     params.requesterPays,
                     client,

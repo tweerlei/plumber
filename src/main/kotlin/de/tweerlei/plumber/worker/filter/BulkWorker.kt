@@ -45,10 +45,6 @@ class BulkWorker(
                 logger.debug("Starting thread")
                 val items = LinkedList<WorkItem>()
                 while (true) {
-                    if (stop) {
-                        logger.debug("Exiting thread")
-                        break
-                    }
                     items.clear()
                     val itemCount = blockingQueue.drainTo(items, queueSizePerThread)
                     if (itemCount > 0) {
@@ -64,6 +60,9 @@ class BulkWorker(
                                         e.printStackTraceUpTo(this::class)
                             }
                         }
+                    } else if (stop) {
+                        logger.debug("Exiting thread")
+                        break
                     }
                 }
             },
