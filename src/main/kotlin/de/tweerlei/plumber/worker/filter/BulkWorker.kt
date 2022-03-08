@@ -50,7 +50,8 @@ class BulkWorker(
                     if (itemCount > 0) {
                         val nextItem = WorkItem.of(items,
                             WellKnownKeys.WORK_ITEMS to items,
-                            WellKnownKeys.WORKER_INDEX to workerIndex
+                            WellKnownKeys.WORKER_INDEX to workerIndex,
+                            WellKnownKeys.SIZE to itemCount
                         )
                         try {
                             passOn(nextItem)

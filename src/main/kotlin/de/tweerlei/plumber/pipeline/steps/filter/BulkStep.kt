@@ -47,7 +47,7 @@ class BulkStep: ProcessingStep {
         BulkWorker(
             predecessorName,
             parallelDegreeFor(arg),
-            params.queueSizePerThread,
+            params.numberOfFilesPerRequest,
             w
         )
 }
