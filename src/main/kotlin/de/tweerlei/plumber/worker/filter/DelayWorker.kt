@@ -13,25 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.tweerlei.plumber.worker
+package de.tweerlei.plumber.worker.filter
 
-import java.io.Closeable
+import de.tweerlei.plumber.worker.WorkItem
+import de.tweerlei.plumber.worker.DelegatingWorker
+import de.tweerlei.plumber.worker.Worker
 
-interface Worker: Closeable {
+class DelayWorker(
+    private val delay: Long,
+    worker: Worker
+): DelegatingWorker(worker) {
 
-    companion object {
-        private var interrupted = false
-
-        fun interrupt() {
-            interrupted = true
-        }
-    }
-
-    fun open() = this
-
-    fun process(item: WorkItem)
-
-    override fun close() {}
-
-    fun isInterrupted() = interrupted
+    override fun doProcess(item: WorkItem) =
+        Thread.sleep(delay)
+            .let { true }
 }

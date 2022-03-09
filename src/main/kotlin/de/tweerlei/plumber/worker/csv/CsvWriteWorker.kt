@@ -38,10 +38,10 @@ class CsvWriteWorker(
     override fun doProcess(item: WorkItem): Boolean =
         item.getFirstAs<Record>(WellKnownKeys.RECORD)
             .let { obj ->
-            writerFor(obj).writeValue(obj)
-        }.let {
-            true
-        }
+                writerFor(obj).writeValue(obj)
+            }.let {
+                true
+            }
 
     private fun writerFor(rec: Record) =
         when (val w = writer) {

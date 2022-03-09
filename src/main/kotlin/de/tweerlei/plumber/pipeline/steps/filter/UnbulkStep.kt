@@ -13,30 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.tweerlei.plumber.pipeline.steps.csv
+package de.tweerlei.plumber.pipeline.steps.filter
 
-import com.fasterxml.jackson.dataformat.csv.CsvMapper
 import de.tweerlei.plumber.pipeline.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
 import de.tweerlei.plumber.worker.WellKnownKeys
 import de.tweerlei.plumber.worker.Worker
-import de.tweerlei.plumber.worker.csv.CsvReadWorker
-import de.tweerlei.plumber.worker.file.FileKeys
+import de.tweerlei.plumber.worker.filter.UnbulkWorker
 import org.springframework.stereotype.Service
-import java.io.File
 
-@Service("csv-readWorker")
-class CsvReadStep(
-    private val csvMapper: CsvMapper
-): ProcessingStep {
+@Service("unbulkWorker")
+class UnbulkStep: ProcessingStep {
 
-    override val name = "Read CSV lines from file"
-    override val description = "Read CSV lines from the given file"
+    override val name = "Un-bulk items"
+    override val description = "Split bulks into separate items again"
 
-    override fun producedAttributesFor(arg: String) = setOf(
-        FileKeys.FILE_PATH,
-        FileKeys.FILE_NAME,
-        WellKnownKeys.RECORD
+    override fun requiredAttributesFor(arg: String) = setOf(
+        WellKnownKeys.WORK_ITEMS
     )
 
     override fun createWorker(
@@ -47,10 +40,5 @@ class CsvReadStep(
         params: PipelineParams,
         parallelDegree: Int
     ) =
-        CsvReadWorker(
-            File(arg.ifEmpty { "/dev/stdin" }),
-            csvMapper,
-            params.maxFilesPerThread,
-            w
-        )
+        UnbulkWorker(w)
 }

@@ -31,9 +31,7 @@ class BulkWorker(
     worker: Worker
 ): WrappingWorker(worker) {
 
-    companion object : KLogging() {
-        val endMarker = WorkItem.of(null)
-    }
+    companion object : KLogging()
 
     private val blockingQueue = LinkedBlockingQueue<WorkItem>(numberOfThreads * queueSizePerThread)
     private var threads: List<Thread> = emptyList()
@@ -47,8 +45,12 @@ class BulkWorker(
                 while (true) {
                     items.clear()
                     val itemCount = blockingQueue.drainTo(items, queueSizePerThread)
-                    if (itemCount > 0) {
-                        val nextItem = WorkItem.of(items,
+                    if (itemCount == 0 && stop) {
+                        break
+                    }
+                    if (!isInterrupted()) {
+                        val nextItem = WorkItem.of(
+                            items,
                             WellKnownKeys.WORK_ITEMS to items,
                             WellKnownKeys.WORKER_INDEX to workerIndex,
                             WellKnownKeys.SIZE to itemCount
@@ -61,11 +63,9 @@ class BulkWorker(
                                         e.printStackTraceUpTo(this::class)
                             }
                         }
-                    } else if (stop) {
-                        logger.debug("Exiting thread")
-                        break
                     }
                 }
+                logger.debug("Exiting thread")
             },
             "$name-worker-$workerIndex")
         }.toList()
@@ -74,7 +74,8 @@ class BulkWorker(
     }
 
     override fun process(item: WorkItem) {
-        blockingQueue.put(item)
+        if (!isInterrupted())
+            blockingQueue.put(item)
     }
 
     override fun onClose() {

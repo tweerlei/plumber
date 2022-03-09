@@ -13,25 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.tweerlei.plumber.worker
+package de.tweerlei.plumber.worker.filter
 
-import java.io.Closeable
+import de.tweerlei.plumber.worker.WorkItem
+import de.tweerlei.plumber.worker.GeneratingWorker
+import de.tweerlei.plumber.worker.WellKnownKeys
+import de.tweerlei.plumber.worker.Worker
 
-interface Worker: Closeable {
+class UnbulkWorker(
+    worker: Worker
+): GeneratingWorker(Int.MAX_VALUE, worker) {
 
-    companion object {
-        private var interrupted = false
-
-        fun interrupt() {
-            interrupted = true
-        }
+    override fun generateItems(item: WorkItem, fn: (WorkItem) -> Boolean) {
+        item.getAs<List<WorkItem>>(WellKnownKeys.WORK_ITEMS)
+            .all(fn)
     }
 
-    fun open() = this
-
-    fun process(item: WorkItem)
-
-    override fun close() {}
-
-    fun isInterrupted() = interrupted
+    override fun isInterrupted() = false
 }

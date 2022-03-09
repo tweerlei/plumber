@@ -51,7 +51,7 @@ class XmlWriteWorker(
     override fun doProcess(item: WorkItem): Boolean =
         item.getFirst(WellKnownKeys.NODE)
             .let { obj ->
-            writer.writeValue(generator, obj)
+                writer.writeValue(generator, obj)
             }.let { true }
 
     override fun onClose() {

@@ -44,24 +44,24 @@ class HistogramWorker(
 
     override fun onClose() {
         logger.info {
-            mutableListOf(
-                "Histogram for $name"
-            ).apply {
-                if (!numberHistogram.toRange().isEmpty()) {
-                    add("Total count: ${numberHistogram.count()}")
-//                    add("Reallocs: ${numberHistogram.reallocs()}")
-                    numberHistogram.toMap().forEach { (key, value) ->
-                        add("$key : $value")
-                    }
+        mutableListOf(
+            "Histogram for $name"
+        ).apply {
+            if (!numberHistogram.toRange().isEmpty()) {
+                add("Total count: ${numberHistogram.count()}")
+//                add("Reallocs: ${numberHistogram.reallocs()}")
+                numberHistogram.toMap().forEach { (key, value) ->
+                    add("$key : $value")
                 }
-                if (!stringHistogram.toRange().isEmpty()) {
-                    add("Total count: ${stringHistogram.count()}")
-//                    add("Reallocs: ${stringHistogram.reallocs()}")
-                    stringHistogram.toMap().forEach { (key, value) ->
-                        add("$key : $value")
-                    }
+            }
+            if (!stringHistogram.toRange().isEmpty()) {
+                add("Total count: ${stringHistogram.count()}")
+//                add("Reallocs: ${stringHistogram.reallocs()}")
+                stringHistogram.toMap().forEach { (key, value) ->
+                    add("$key : $value")
                 }
-            }.joinToString("\n")
+            }
+        }.joinToString("\n")
         }
     }
 }

@@ -33,10 +33,10 @@ class KeyRangeWorker(
 
     override fun generateItems(item: WorkItem, fn: (WorkItem) -> Boolean) {
         if (item.has(WellKnownKeys.START_AFTER_KEY) && item.has(WellKnownKeys.END_WITH_KEY))
-                generateNumberRanges(item, fn)
+            generateNumberRanges(item, fn)
         else
-                generateStringRanges(fn)
-        }
+            generateStringRanges(fn)
+    }
 
     private fun generateNumberRanges(item: WorkItem, fn: (WorkItem) -> Boolean) {
         val minValue = item.getLong(WellKnownKeys.START_AFTER_KEY)

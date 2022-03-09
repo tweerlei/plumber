@@ -39,6 +39,6 @@ class ToJsonWorker(
                 if (prettyPrint)
                     generator.prettyPrinter = objectMapper.serializationConfig.constructDefaultPrettyPrinter()
                 objectMapper.writeValue(generator, obj)
-                    }
+            }
         }.toString()
 }

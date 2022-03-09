@@ -44,7 +44,7 @@ class LineReadStep: ProcessingStep {
         parallelDegree: Int
     ) =
         LineReadWorker(
-            File(arg),
+            File(arg.ifEmpty { "/dev/stdin" }),
             params.maxFilesPerThread,
             w
         )

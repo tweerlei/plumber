@@ -48,7 +48,7 @@ class XmlReadStep(
         parallelDegree: Int
     ) =
         XmlReadWorker(
-            File(arg),
+            File(arg.ifEmpty { "/dev/stdin" }),
             params.elementName,
             expectedOutput,
             xmlMapper,

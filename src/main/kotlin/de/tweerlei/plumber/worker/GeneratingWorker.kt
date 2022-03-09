@@ -30,7 +30,7 @@ abstract class GeneratingWorker(
     final override fun process(item: WorkItem) {
         generateItems(item) { newItem ->
             count++
-            if (count > limit)
+            if (count > limit || isInterrupted())
                 false
             else
                 item.plus(newItem)

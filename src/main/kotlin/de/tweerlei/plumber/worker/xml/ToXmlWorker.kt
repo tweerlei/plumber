@@ -42,6 +42,6 @@ class ToXmlWorker(
                 if (prettyPrint)
                     generator.prettyPrinter = xmlMapper.serializationConfig.constructDefaultPrettyPrinter()
                 writer.writeValue(generator, obj)
-                    }
+            }
         }.toString()
 }

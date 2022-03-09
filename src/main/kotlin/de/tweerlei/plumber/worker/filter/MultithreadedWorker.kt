@@ -44,19 +44,21 @@ class MultithreadedWorker(
                 while (true) {
                     val nextItem = blockingQueue.take()
                     if (nextItem === endMarker) {
-                        logger.debug("Exiting thread")
                         break
                     }
-                    nextItem.set(workerIndex, WellKnownKeys.WORKER_INDEX)
-                    try {
-                        passOn(nextItem)
-                    } catch (e: Throwable) {
-                        logger.error {
-                            "$name: Error while processing item $nextItem\n" +
-                            e.printStackTraceUpTo(this::class)
+                    if (!isInterrupted()) {
+                        nextItem.set(workerIndex, WellKnownKeys.WORKER_INDEX)
+                        try {
+                            passOn(nextItem)
+                        } catch (e: Throwable) {
+                            logger.error {
+                                "$name: Error while processing item $nextItem\n" +
+                                        e.printStackTraceUpTo(this::class)
+                            }
                         }
                     }
                 }
+                logger.debug("Exiting thread")
             },
             "$name-worker-$workerIndex")
         }.toList()
@@ -65,7 +67,8 @@ class MultithreadedWorker(
     }
 
     override fun process(item: WorkItem) {
-        blockingQueue.put(item)
+        if (!isInterrupted())
+            blockingQueue.put(item)
     }
 
     override fun onClose() {

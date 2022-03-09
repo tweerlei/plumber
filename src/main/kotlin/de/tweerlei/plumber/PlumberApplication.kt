@@ -16,9 +16,8 @@
 package de.tweerlei.plumber
 
 import de.tweerlei.plumber.pipeline.PipelineBuilder
+import de.tweerlei.plumber.pipeline.WorkerRunner
 import de.tweerlei.plumber.util.printStackTraceUpTo
-import de.tweerlei.plumber.worker.WorkItem
-import de.tweerlei.plumber.worker.Worker
 import mu.KLogging
 import org.springframework.boot.ApplicationArguments
 import org.springframework.boot.ApplicationRunner
@@ -31,7 +30,6 @@ import org.springframework.boot.autoconfigure.sql.init.SqlInitializationAutoConf
 import org.springframework.boot.autoconfigure.task.TaskExecutionAutoConfiguration
 import org.springframework.boot.autoconfigure.task.TaskSchedulingAutoConfiguration
 import org.springframework.boot.runApplication
-import java.time.Duration
 
 @SpringBootApplication(exclude = [
     JacksonAutoConfiguration::class,
@@ -44,7 +42,8 @@ import java.time.Duration
 ])
 class PlumberApplication(
     private val cmdLineProcessor: CommandLineProcessor,
-    private val pipelineBuilder: PipelineBuilder
+    private val pipelineBuilder: PipelineBuilder,
+    private val workerRunner: WorkerRunner
 ) : ApplicationRunner {
 
     companion object : KLogging()
@@ -61,22 +60,14 @@ class PlumberApplication(
                         }
                 }?.let { worker ->
                     logger.info("____________________________________________________Running pipeline__")
-                    runWorker(worker)
+                    workerRunner.runWorker(worker)
                     logger.info("_______________________________________________Finished_successfully__")
                 }
-        } catch (e: Exception) {
+        } catch (e: Throwable) {
             logger.error {
                 "______________________________________________________Error_occurred__\n" +
                 e.printStackTraceUpTo(PlumberApplication::class)
             }
-        }
-    }
-
-    private fun runWorker(
-        worker: Worker
-    ) {
-        worker.open().use {
-            worker.process(WorkItem.of(null))
         }
     }
 }

@@ -48,7 +48,7 @@ class JsonReadStep(
         parallelDegree: Int
     ) =
         JsonReadWorker(
-            File(arg),
+            File(arg.ifEmpty { "/dev/stdin" }),
             expectedOutput,
             objectMapper,
             params.maxFilesPerThread,

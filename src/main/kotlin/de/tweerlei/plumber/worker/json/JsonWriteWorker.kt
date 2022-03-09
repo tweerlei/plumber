@@ -42,7 +42,7 @@ class JsonWriteWorker(
     override fun doProcess(item: WorkItem): Boolean =
         item.getFirst(WellKnownKeys.NODE)
             .let { obj ->
-            objectMapper.writeValue(generator, obj)
+                objectMapper.writeValue(generator, obj)
             }.let { true }
 
     override fun onClose() {
