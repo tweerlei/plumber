@@ -48,7 +48,7 @@ class BulkWorker(
                     if (itemCount == 0 && stop) {
                         break
                     }
-                    if (!isInterrupted()) {
+                    if (itemCount > 0 && !isInterrupted()) {
                         val nextItem = WorkItem.of(
                             items,
                             WellKnownKeys.WORK_ITEMS to items,

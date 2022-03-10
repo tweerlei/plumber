@@ -69,7 +69,7 @@ class CommandLineProcessor(
                 --pretty-print                Pretty print JSON and XML output
                 --limit=<n>                   Stop after reading n objects (per thread)
                 --queue-size=<n>              Queue size for items passed between threads
-                --fetch-size=<n>              Fetch at most this number of items per request
+                --bulk-size=<n>               Bulk size for steps that process multiple items at once
                 --wait=<n>                    Wait at most this number of seconds for a new message
                 --follow                      Keep polling for new messages
                 --reread                      Re-read all messages
@@ -108,7 +108,7 @@ class CommandLineProcessor(
                 primaryKey = args.getOptionValue("primary-key") ?: "",
                 partitionKey = args.getOptionValue("partition-key") ?: "",
                 rangeKey = args.getOptionValue("range-key"),
-                numberOfFilesPerRequest = args.getOptionValue("fetch-size")?.toInt() ?: 1000,
+                numberOfFilesPerRequest = args.getOptionValue("bulk-size")?.toInt() ?: 1000,
                 queueSizePerThread = args.getOptionValue("queue-size")?.toInt() ?: 10,
                 maxFilesPerThread = args.getOptionValue("limit")?.toInt() ?: Int.MAX_VALUE,
                 maxWaitTimeSeconds = args.getOptionValue("wait")?.toInt() ?: 0,
