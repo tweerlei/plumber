@@ -50,15 +50,5 @@ class XmlWriteStep(
             xmlMapper,
             params.prettyPrint,
             w
-        ).let { fileWorker ->
-            if (parallelDegree > 1)
-                MultithreadedWorker(
-                    predecessorName,
-                    1,
-                    1000,
-                    fileWorker
-                )
-            else
-                fileWorker
-        }
+        )
 }

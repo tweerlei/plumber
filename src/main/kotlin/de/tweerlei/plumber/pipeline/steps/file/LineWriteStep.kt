@@ -19,7 +19,6 @@ import de.tweerlei.plumber.pipeline.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
 import de.tweerlei.plumber.worker.file.LineWriteWorker
 import de.tweerlei.plumber.worker.Worker
-import de.tweerlei.plumber.worker.filter.MultithreadedWorker
 import org.springframework.stereotype.Service
 import java.io.File
 import java.nio.charset.StandardCharsets
@@ -45,15 +44,5 @@ class LineWriteStep: ProcessingStep {
             File(arg),
             "\n".toByteArray(StandardCharsets.UTF_8),
             w
-        ).let { fileWorker ->
-            if (parallelDegree > 1)
-                MultithreadedWorker(
-                    predecessorName,
-                    1,
-                    1000,
-                    fileWorker
-                )
-            else
-                fileWorker
-        }
+        )
 }

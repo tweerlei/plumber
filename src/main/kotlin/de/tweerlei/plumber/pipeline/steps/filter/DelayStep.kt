@@ -37,5 +37,8 @@ class DelayStep: ProcessingStep {
         params: PipelineParams,
         parallelDegree: Int
     ) =
-        DelayWorker(arg.toLongOrNull() ?: 0, w)
+        DelayWorker(
+            arg.toLongOrNull() ?: 0,
+            w
+        )
 }

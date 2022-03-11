@@ -49,15 +49,5 @@ class HistogramStep: ProcessingStep {
                     gen.extractPrefix(params.startAfterKey, params.stopAfterKey),
                     w
                 )
-            }.let { histogramWorker ->
-                if (parallelDegree > 1)
-                    MultithreadedWorker(
-                        predecessorName,
-                        1,
-                        1000,
-                        histogramWorker
-                    )
-                else
-                    histogramWorker
             }
 }

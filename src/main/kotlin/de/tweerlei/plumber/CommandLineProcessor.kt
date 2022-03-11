@@ -55,7 +55,6 @@ class CommandLineProcessor(
                 --explain                     Explain resulting plan, don't execute
                 --fail-fast                   Fail on first processing error
                 --log-level=<level>           Set the log level
-                
                 --requester-pays              Requester pays access to S3 buckets
                 --assume-role=<arn>           Assume the given IAM role for all S3 operations
                 --start-after=<key>           Start after the given key

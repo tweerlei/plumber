@@ -24,7 +24,7 @@ class RecordUnsetWorker(
 
     override fun doProcess(item: WorkItem) =
         item.getOptionalAs<Record>(WellKnownKeys.RECORD)
-        ?.let { map ->
-            map.remove(field)
-        }.let { true }
+            ?.let { map ->
+                map.remove(field)
+            }.let { true }
 }

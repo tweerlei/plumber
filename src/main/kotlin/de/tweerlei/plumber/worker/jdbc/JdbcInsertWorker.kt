@@ -35,9 +35,9 @@ class JdbcInsertWorker(
     private fun updaterFor(item: WorkItem, map: Record) =
         when (val v = updater) {
             null -> Updater.from(
-                item.getIfEmpty(tableName, JdbcKeys.TABLE_NAME),
-                map
-            ).also { updater = it }
+                    item.getIfEmpty(tableName, JdbcKeys.TABLE_NAME),
+                    map
+                ).also { updater = it }
             else -> v
         }
 

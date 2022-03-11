@@ -39,9 +39,7 @@ class CsvWriteWorker(
         item.getFirstAs<Record>(WellKnownKeys.RECORD)
             .let { obj ->
                 writerFor(obj).writeValue(obj)
-            }.let {
-                true
-            }
+            }.let { true }
 
     private fun writerFor(rec: Record) =
         when (val w = writer) {

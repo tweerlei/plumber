@@ -21,7 +21,6 @@ import de.tweerlei.plumber.pipeline.PipelineParams
 import de.tweerlei.plumber.worker.Record
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.csv.CsvWriteWorker
-import de.tweerlei.plumber.worker.filter.MultithreadedWorker
 import org.springframework.stereotype.Service
 import java.io.File
 
@@ -48,15 +47,5 @@ class CsvWriteStep(
             File(arg),
             csvMapper,
             w
-        ).let { fileWorker ->
-            if (parallelDegree > 1)
-                MultithreadedWorker(
-                    predecessorName,
-                    1,
-                    1000,
-                    fileWorker
-                )
-            else
-                fileWorker
-        }
+        )
 }

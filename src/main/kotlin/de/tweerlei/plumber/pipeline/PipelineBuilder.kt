@@ -34,20 +34,37 @@ class PipelineBuilder(
     private fun createWorkerDefinitions(params: PipelineParams): List<WorkerDefinition> {
         var parallelDegree = 1
         var producedAttributes = emptySet<String>()
-        return params.steps.map { step ->
+        val workerDefinitions = mutableListOf<WorkerDefinition>()
+        params.steps.forEach { step ->
             factory.processingStepFor(step.action)
-                .let { workerFactory ->
-                    parallelDegree = workerFactory.parallelDegreeFor(step.arg) ?: parallelDegree
-                    producedAttributes = producedAttributes.plus(workerFactory.producedAttributesFor(step.arg))
-                    WorkerDefinition(
-                        step.action,
-                        step.arg,
-                        workerFactory,
-                        producedAttributes,
-                        parallelDegree
+                .let { processingStep ->
+                    val newParallelDegree = processingStep.parallelDegreeFor(step.arg) ?: parallelDegree
+                    if (newParallelDegree < parallelDegree) {
+                        // Automatically add a parallel step to serialize processing
+                        workerDefinitions.add(
+                            WorkerDefinition(
+                                "parallel",
+                                newParallelDegree.toString(),
+                                factory.processingStepFor("parallel"),
+                                producedAttributes,
+                                newParallelDegree
+                            )
+                        )
+                    }
+                    parallelDegree = newParallelDegree
+                    producedAttributes = producedAttributes.plus(processingStep.producedAttributesFor(step.arg))
+                    workerDefinitions.add(
+                        WorkerDefinition(
+                            step.action,
+                            step.arg,
+                            processingStep,
+                            producedAttributes,
+                            parallelDegree
+                        )
                     )
                 }
         }
+        return workerDefinitions
     }
 
     private fun createWorkers(

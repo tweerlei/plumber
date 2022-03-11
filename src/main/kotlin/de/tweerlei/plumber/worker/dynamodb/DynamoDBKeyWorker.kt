@@ -29,24 +29,25 @@ class DynamoDBKeyWorker(
 ): DelegatingWorker(worker) {
 
     override fun doProcess(item: WorkItem) =
-        item.getString().let { key ->
-            when (rangeKey) {
-                null -> item.apply {
-                    setString(key, DynamoDBKeys.PARTITION_KEY)
-                    Record(
-                        partitionKey to get(DynamoDBKeys.PARTITION_KEY)
+        item.getString()
+            .let { key ->
+                when (rangeKey) {
+                    null -> item.apply {
+                        setString(key, DynamoDBKeys.PARTITION_KEY)
+                        Record(
+                            partitionKey to get(DynamoDBKeys.PARTITION_KEY)
                         )
                     }
-                else -> item.apply {
-                    setString(key, DynamoDBKeys.PARTITION_KEY)
-                    setString(rangeKeyValue, DynamoDBKeys.RANGE_KEY)
-                    Record(
-                        partitionKey to get(DynamoDBKeys.PARTITION_KEY),
-                        rangeKey to get(DynamoDBKeys.RANGE_KEY)
+                    else -> item.apply {
+                        setString(key, DynamoDBKeys.PARTITION_KEY)
+                        setString(rangeKeyValue, DynamoDBKeys.RANGE_KEY)
+                        Record(
+                            partitionKey to get(DynamoDBKeys.PARTITION_KEY),
+                            rangeKey to get(DynamoDBKeys.RANGE_KEY)
                         )
                     }
+                }
             }.let { record ->
                 item.set(record, WellKnownKeys.RECORD)
-            }
-        }.let { true }
+            }.let { true }
 }
