@@ -53,7 +53,9 @@ class CommandLineProcessor(
 
                 --help                        Show this help
                 --explain                     Explain resulting plan, don't execute
+                --fail-fast                   Fail on first processing error
                 --log-level=<level>           Set the log level
+                
                 --requester-pays              Requester pays access to S3 buckets
                 --assume-role=<arn>           Assume the given IAM role for all S3 operations
                 --start-after=<key>           Start after the given key
@@ -117,6 +119,7 @@ class CommandLineProcessor(
                 prettyPrint = args.containsOption("pretty-print"),
                 follow = args.containsOption("follow"),
                 reread = args.containsOption("reread"),
+                failFast = args.containsOption("fail-fast"),
                 assumeRoleArn = args.getOptionValue("assume-role"),
                 steps = parseSteps(args.nonOptionArgs)
             ).apply {
@@ -126,6 +129,7 @@ class CommandLineProcessor(
                 logger.info("requesting $numberOfFilesPerRequest file names at once, waiting for up to $maxWaitTimeSeconds seconds for new items")
                 logger.info("${if (reread) "will" else "won't"} re-read all existing items, ${if (follow) "will" else "won't"} keep polling for new items")
                 logger.info("stopping after $maxFilesPerThread file names")
+                logger.info("${if (failFast) "skipping over" else "failing on"} processing errors")
                 logger.info("using queue size of $queueSizePerThread items per thread")
                 logger.info("assuming role $assumeRoleArn for AWS access")
                 logger.info("${if (requesterPays) "paying" else "not paying"} for S3 requests")

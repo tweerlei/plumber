@@ -21,6 +21,7 @@ import de.tweerlei.plumber.worker.stats.CountingWorker
 import de.tweerlei.plumber.worker.filter.MultithreadedWorker
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
+import org.mockito.Mockito
 import java.util.concurrent.ConcurrentLinkedQueue
 
 class MultithreadedWorkerTest {
@@ -34,7 +35,7 @@ class MultithreadedWorkerTest {
             .append { w -> CountingWorker("test", 100, w) }
             .append { w -> CollectingWorker(items, w) }
             .build()
-            .open()
+            .open(Mockito.mock(Worker.RunContext::class.java))
             .use { worker -> worker.process(WorkItem.of("")) }
 
         assertEquals(100, items.size)

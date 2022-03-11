@@ -30,7 +30,7 @@ abstract class GeneratingWorker(
     final override fun process(item: WorkItem) {
         generateItems(item) { newItem ->
             count++
-            if (count > limit || isInterrupted())
+            if (count > limit || runContext.isInterrupted())
                 false
             else
                 item.plus(newItem)
@@ -38,10 +38,13 @@ abstract class GeneratingWorker(
                         try {
                             passOn(nextItem)
                         } catch (e: Exception) {
-                            logger.error {
-                                "Error while processing item $nextItem\n" +
-                                e.printStackTraceUpTo(this::class)
-                            }
+                            if (runContext.isFailFast())
+                                throw e
+                            else
+                                logger.error {
+                                    "Error while processing item $nextItem\n" +
+                                    e.printStackTraceUpTo(this::class)
+                                }
                         }
                     }.let { true }
         }

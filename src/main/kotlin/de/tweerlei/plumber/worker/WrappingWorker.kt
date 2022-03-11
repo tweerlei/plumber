@@ -19,9 +19,12 @@ abstract class WrappingWorker(
     private val worker: Worker
 ): Worker {
 
-    final override fun open() =
+    protected lateinit var runContext: Worker.RunContext
+
+    final override fun open(ctx: Worker.RunContext) =
         this.apply {
-            worker.open()
+            runContext = ctx
+            worker.open(ctx)
             onOpen()
         }
 

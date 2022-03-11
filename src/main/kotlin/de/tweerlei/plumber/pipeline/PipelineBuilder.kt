@@ -29,6 +29,7 @@ class PipelineBuilder(
     fun build(params: PipelineParams) =
         createWorkerDefinitions(params)
             .let { definitions -> createWorkers(definitions, params) }
+            .let { worker -> if (params.explain) null else worker }
 
     private fun createWorkerDefinitions(params: PipelineParams): List<WorkerDefinition> {
         var parallelDegree = 1

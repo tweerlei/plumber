@@ -28,6 +28,4 @@ class UnbulkWorker(
         item.getAs<List<WorkItem>>(WellKnownKeys.WORK_ITEMS)
             .all(fn)
     }
-
-    override fun isInterrupted() = false
 }

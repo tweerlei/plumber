@@ -27,7 +27,7 @@ class SinkWorker: Worker {
     private val count = AtomicInteger()
     private var startTime: Long = 0
 
-    override fun open() =
+    override fun open(ctx: Worker.RunContext) =
         this.apply {
             startTime = System.currentTimeMillis()
         }

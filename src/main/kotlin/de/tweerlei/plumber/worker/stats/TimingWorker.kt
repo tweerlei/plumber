@@ -46,6 +46,9 @@ class TimingWorker(
             succ = successfulFiles.incrementAndGet()
             fail = failedFiles.get()
         } catch (e: Exception) {
+            if (runContext.isFailFast())
+                throw e
+
             logger.error {
                 "$name: failed to process $item\n" +
                 e.printStackTraceUpTo(this::class)

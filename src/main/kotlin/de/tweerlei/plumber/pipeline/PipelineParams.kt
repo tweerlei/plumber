@@ -36,6 +36,7 @@ data class PipelineParams(
     val prettyPrint: Boolean,
     val follow: Boolean,
     val reread: Boolean,
+    val failFast: Boolean,
     val assumeRoleArn: String?
 ) {
     data class Step(

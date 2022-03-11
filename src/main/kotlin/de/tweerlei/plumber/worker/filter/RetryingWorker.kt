@@ -38,6 +38,8 @@ class RetryingWorker(
                     logger.warn {
                         "$name: Error while processing item $item, retrying ${numberOfRetries - i} times"
                     }
+                else if (runContext.isFailFast())
+                    throw e
                 else
                     logger.error {
                         "$name: Error while processing item $item, retry limit exceeded\n" +

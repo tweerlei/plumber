@@ -24,19 +24,40 @@ import javax.annotation.PreDestroy
 @Service
 class WorkerRunner {
 
+    class InterruptibleRunContext(
+        private val failFast: Boolean
+    ) : Worker.RunContext {
+        private var interrupted = false
+
+        fun interrupt() {
+            interrupted = true
+        }
+
+        override fun isInterrupted() =
+            interrupted
+
+        override fun isFailFast() =
+            failFast
+    }
+
     companion object : KLogging()
 
     private var currentThread: Thread? = null
+    private var currentContext: InterruptibleRunContext? = null
 
     fun runWorker(
-        worker: Worker
+        worker: Worker,
+        params: PipelineParams
     ) {
+        val runContext = InterruptibleRunContext(params.failFast)
         currentThread = Thread.currentThread()
+        currentContext = runContext
         try {
-            worker.open().use {
+            worker.open(runContext).use {
                 worker.process(WorkItem.of(null))
             }
         } finally {
+            currentContext = null
             currentThread = null
         }
     }
@@ -47,7 +68,7 @@ class WorkerRunner {
         val danglingThread = currentThread
         if (danglingThread != null) {
             logger.warn { "Interrupting all workers" }
-            Worker.interrupt()
+            currentContext?.interrupt()
 //            danglingThread.interrupt()
             danglingThread.join()
         }

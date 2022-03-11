@@ -36,6 +36,7 @@ class MultithreadedWorker(
 
     private val blockingQueue = LinkedBlockingQueue<WorkItem>(numberOfThreads * queueSizePerThread)
     private var threads: List<Thread> = emptyList()
+    private var lastError: Throwable? = null
 
     override fun onOpen() {
         threads = (1 .. numberOfThreads).map { workerIndex ->
@@ -46,15 +47,18 @@ class MultithreadedWorker(
                     if (nextItem === endMarker) {
                         break
                     }
-                    if (!isInterrupted()) {
+                    if (!runContext.isInterrupted()) {
                         nextItem.set(workerIndex, WellKnownKeys.WORKER_INDEX)
                         try {
                             passOn(nextItem)
                         } catch (e: Throwable) {
-                            logger.error {
-                                "$name: Error while processing item $nextItem\n" +
-                                        e.printStackTraceUpTo(this::class)
-                            }
+                            if (runContext.isFailFast())
+                                lastError = e
+                            else
+                                logger.error {
+                                    "$name: Error while processing item $nextItem\n" +
+                                            e.printStackTraceUpTo(this::class)
+                                }
                         }
                     }
                 }
@@ -67,7 +71,11 @@ class MultithreadedWorker(
     }
 
     override fun process(item: WorkItem) {
-        if (!isInterrupted())
+        val e = lastError
+        if (e != null)
+            throw e
+
+        if (!runContext.isInterrupted())
             blockingQueue.put(item)
     }
 

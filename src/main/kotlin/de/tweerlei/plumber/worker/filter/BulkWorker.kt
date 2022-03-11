@@ -36,6 +36,7 @@ class BulkWorker(
     private val blockingQueue = LinkedBlockingQueue<WorkItem>(numberOfThreads * queueSizePerThread)
     private var threads: List<Thread> = emptyList()
     private var stop = false
+    private var lastError : Throwable? = null
 
     override fun onOpen() {
         threads = (1 .. numberOfThreads).map { workerIndex ->
@@ -48,7 +49,7 @@ class BulkWorker(
                     if (itemCount == 0 && stop) {
                         break
                     }
-                    if (itemCount > 0 && !isInterrupted()) {
+                    if (itemCount > 0 && !runContext.isInterrupted()) {
                         val nextItem = WorkItem.of(
                             items,
                             WellKnownKeys.WORK_ITEMS to items,
@@ -58,10 +59,13 @@ class BulkWorker(
                         try {
                             passOn(nextItem)
                         } catch (e: Throwable) {
-                            logger.error {
-                                "$name: Error while processing item $nextItem\n" +
-                                        e.printStackTraceUpTo(this::class)
-                            }
+                            if (runContext.isFailFast())
+                                lastError = e
+                            else
+                                logger.error {
+                                    "$name: Error while processing item $nextItem\n" +
+                                            e.printStackTraceUpTo(this::class)
+                                }
                         }
                     }
                 }
@@ -74,7 +78,11 @@ class BulkWorker(
     }
 
     override fun process(item: WorkItem) {
-        if (!isInterrupted())
+        val e = lastError
+        if (e != null)
+            throw e
+
+        if (!runContext.isInterrupted())
             blockingQueue.put(item)
     }
 

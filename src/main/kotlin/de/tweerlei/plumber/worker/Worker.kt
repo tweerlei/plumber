@@ -19,19 +19,14 @@ import java.io.Closeable
 
 interface Worker: Closeable {
 
-    companion object {
-        private var interrupted = false
-
-        fun interrupt() {
-            interrupted = true
-        }
+    interface RunContext{
+        fun isInterrupted(): Boolean
+        fun isFailFast(): Boolean
     }
 
-    fun open() = this
+    fun open(ctx: RunContext) = this
 
     fun process(item: WorkItem)
 
     override fun close() {}
-
-    fun isInterrupted() = interrupted
 }
