@@ -15,13 +15,12 @@
  */
 package de.tweerlei.plumber.pipeline.steps.file
 
-import de.tweerlei.plumber.pipeline.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
+import de.tweerlei.plumber.pipeline.ProcessingStep
 import de.tweerlei.plumber.worker.WellKnownKeys
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.file.FileDeleteWorker
 import org.springframework.stereotype.Service
-import java.io.File
 
 @Service("file-deleteWorker")
 class FileDeleteStep: ProcessingStep {
@@ -43,7 +42,7 @@ class FileDeleteStep: ProcessingStep {
         parallelDegree: Int
     ) =
         FileDeleteWorker(
-            File(arg.ifEmpty { "." }),
+            arg,
             w
         )
 }

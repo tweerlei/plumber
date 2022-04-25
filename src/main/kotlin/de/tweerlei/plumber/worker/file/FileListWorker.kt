@@ -23,26 +23,31 @@ import java.io.File
 import java.time.Instant
 
 class FileListWorker(
-    private val dir: File,
+    private val dir: String,
     limit: Int,
     worker: Worker
 ): GeneratingWorker(limit, worker) {
 
     override fun generateItems(item: WorkItem, fn: (WorkItem) -> Boolean) {
-        dir.listFiles { file -> file.isFile }
-            .orEmpty()
-            .all { file ->
-                fn(file.toWorkItem())
+        File(dir.ifEmpty { "." })
+            .let { directory ->
+                when {
+                    directory.isFile -> arrayOf(directory)
+                    else -> directory.listFiles { file -> file.isFile }
+                        .orEmpty()
+                }.all { file ->
+                    fn(file.toWorkItem(directory))
+                }
             }
-        }
+    }
 
-    private fun File.toWorkItem() =
+    private fun File.toWorkItem(directory: File) =
         WorkItem.of(
             name,
             WellKnownKeys.NAME to name,
             WellKnownKeys.SIZE to length(),
             WellKnownKeys.LAST_MODIFIED to Instant.ofEpochMilli(lastModified()),
-            FileKeys.FILE_PATH to dir.absolutePath,
+            FileKeys.FILE_PATH to directory.absolutePath,
             FileKeys.FILE_NAME to name
         )
 }

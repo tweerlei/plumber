@@ -15,14 +15,13 @@
  */
 package de.tweerlei.plumber.pipeline.steps.file
 
-import de.tweerlei.plumber.pipeline.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
+import de.tweerlei.plumber.pipeline.ProcessingStep
 import de.tweerlei.plumber.worker.WellKnownKeys
-import de.tweerlei.plumber.worker.file.FileReadWorker
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.file.FileKeys
+import de.tweerlei.plumber.worker.file.FileReadWorker
 import org.springframework.stereotype.Service
-import java.io.File
 
 @Service("file-readWorker")
 class FileReadStep: ProcessingStep {
@@ -47,7 +46,7 @@ class FileReadStep: ProcessingStep {
         parallelDegree: Int
     ) =
         FileReadWorker(
-            File(arg.ifEmpty { "." }),
+            arg,
             w
         )
 }

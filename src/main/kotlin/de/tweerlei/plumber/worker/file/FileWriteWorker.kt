@@ -23,20 +23,22 @@ import java.io.File
 import java.io.FileOutputStream
 
 class FileWriteWorker(
-    private val dir: File,
+    private val dir: String,
     worker: Worker
 ): DelegatingWorker(worker) {
 
-    override fun onOpen() {
-        dir.mkdirs()
-    }
-
     override fun doProcess(item: WorkItem) =
         item.getString(WellKnownKeys.NAME)
-            .let { name -> File(dir, name) }
-            .let { file ->
-                FileOutputStream(file).use { stream ->
-                    stream.write(item.getByteArray())
-                }
+            .let { name ->
+                File(item.getIfEmpty(dir, FileKeys.FILE_PATH).ifEmpty { "." })
+                    .let { directory ->
+                        directory.mkdirs()
+                        File(directory, name)
+                            .let { file ->
+                                FileOutputStream(file).use { stream ->
+                                    stream.write(item.getByteArray())
+                                }
+                           }
+                    }
             }.let { true }
 }

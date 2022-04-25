@@ -15,14 +15,13 @@
  */
 package de.tweerlei.plumber.pipeline.steps.file
 
-import de.tweerlei.plumber.pipeline.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
-import de.tweerlei.plumber.worker.file.FileListWorker
+import de.tweerlei.plumber.pipeline.ProcessingStep
 import de.tweerlei.plumber.worker.WellKnownKeys
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.file.FileKeys
+import de.tweerlei.plumber.worker.file.FileListWorker
 import org.springframework.stereotype.Service
-import java.io.File
 
 @Service("file-listWorker")
 class FileListStep: ProcessingStep {
@@ -47,7 +46,7 @@ class FileListStep: ProcessingStep {
         parallelDegree: Int
     ) =
         FileListWorker(
-            File(arg.ifEmpty { "." }),
+            arg,
             params.maxFilesPerThread,
             w
         )

@@ -20,18 +20,19 @@ import java.io.File
 import java.io.IOException
 
 class FileDeleteWorker(
-    private val dir: File,
+    private val dir: String,
     worker: Worker
 ): DelegatingWorker(worker) {
 
-    override fun onOpen() {
-        dir.mkdirs()
-    }
-
     override fun doProcess(item: WorkItem) =
         item.getFirstString(WellKnownKeys.NAME)
-            .let { name -> File(dir, name) }
-            .let { file ->
-                file.delete() || throw IOException("Could not delete $file")
+            .let { name ->
+                File(item.getIfEmpty(dir, FileKeys.FILE_PATH).ifEmpty { "." })
+                    .let { directory ->
+                        File(directory, name)
+                            .let { file ->
+                                file.delete() || throw IOException("Could not delete $file")
+                            }
+                    }
             }
 }

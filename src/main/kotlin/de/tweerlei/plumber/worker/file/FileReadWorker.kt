@@ -19,26 +19,30 @@ import de.tweerlei.plumber.worker.WellKnownKeys
 import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.DelegatingWorker
 import de.tweerlei.plumber.worker.Worker
+import de.tweerlei.plumber.worker.s3.S3Keys
 import java.io.File
 import java.io.FileInputStream
 
 class FileReadWorker(
-    private val dir: File,
+    private val dir: String,
     worker: Worker
 ): DelegatingWorker(worker) {
 
     override fun doProcess(item: WorkItem) =
         item.getFirstString(WellKnownKeys.NAME)
             .let { name ->
-                File(dir, name)
-                    .let { file ->
-                        FileInputStream(file).use { stream ->
-                            stream.readAllBytes()
-                        }
-                    }.also { bytes ->
-                        item.set(dir.absolutePath, FileKeys.FILE_PATH)
-                        item.set(name, FileKeys.FILE_NAME)
-                        item.set(bytes)
+                File(item.getIfEmpty(dir, FileKeys.FILE_PATH).ifEmpty { "." })
+                    .let { directory ->
+                        File(directory, name)
+                            .let { file ->
+                                FileInputStream(file).use { stream ->
+                                    stream.readAllBytes()
+                                }
+                            }.also { bytes ->
+                                item.set(directory.absolutePath, FileKeys.FILE_PATH)
+                                item.set(name, FileKeys.FILE_NAME)
+                                item.set(bytes)
+                            }
                     }
             }.let { true }
 }
