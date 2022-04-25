@@ -15,6 +15,7 @@
  */
 package de.tweerlei.plumber.pipeline
 
+import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.WorkerBuilder
 import mu.KLogging
 import org.springframework.stereotype.Service
@@ -24,7 +25,27 @@ class PipelineBuilder(
     private val factory: ProcessingStepFactory
 ) {
 
-    companion object: KLogging()
+    companion object: KLogging() {
+        private val VIRTUAL_START_WORKER = WorkerDefinition(
+            "<no predecessor>",
+            "",
+            object : ProcessingStep {
+                override val name = "Nothing"
+                override val description = "Start of pipeline"
+                override fun createWorker(
+                    arg: String,
+                    expectedOutput: Class<*>,
+                    w: Worker,
+                    predecessorName: String,
+                    params: PipelineParams,
+                    parallelDegree: Int
+                ): Worker =
+                    throw IllegalStateException("Virtual step")
+            },
+            emptySet(),
+            1
+        )
+    }
 
     fun build(params: PipelineParams) =
         createWorkerDefinitions(params)
@@ -78,8 +99,7 @@ class PipelineBuilder(
                         index,
                         b,
                         step,
-                        if (index == 0) "None" else workers[index - 1].factory.name,
-                        workers.getOrNull(index + 1),
+                        workers.getOrElse(index - 1) { VIRTUAL_START_WORKER },
                         getExpectedOutput(workers, index),
                         params
                     )
@@ -101,20 +121,18 @@ class PipelineBuilder(
         index: Int,
         builder: WorkerBuilder,
         currentWorker: WorkerDefinition,
-        predecessorName: String,
-        nextWorker: WorkerDefinition?,
+        previousWorker: WorkerDefinition,
         expectedOutput: Class<*>,
         params: PipelineParams
     ): WorkerBuilder {
         if (params.explain) {
             logger.info("Step ${String.format("%2d", index)}:${String.format("%4d", currentWorker.parallelDegree)}x ${currentWorker.factory.name}: ${currentWorker.arg}")
+            logger.info("              Required input: ${currentWorker.factory.expectedInputFor(currentWorker.arg).simpleName} ${currentWorker.factory.requiredAttributesFor(currentWorker.arg)}")
             logger.info("              Produces output: ${expectedOutput.simpleName} ${currentWorker.factory.producedAttributesFor(currentWorker.arg)}")
-            if (nextWorker != null)
-                logger.info("              Required output: ${nextWorker.factory.expectedInputFor(nextWorker.arg).simpleName} ${nextWorker.factory.requiredAttributesFor(nextWorker.arg)}")
         }
 
-        if (nextWorker?.factory?.canConnectFrom(currentWorker.producedAttributes, nextWorker.arg) == false) {
-            throw IllegalArgumentException("${currentWorker.action} cannot connect to ${nextWorker.action}")
+        if (!currentWorker.factory.canConnectFrom(previousWorker.producedAttributes, currentWorker.arg)) {
+            throw IllegalArgumentException("${currentWorker.action} cannot connect to ${previousWorker.action}, check required input")
         }
 
         return builder.append { w ->
@@ -122,7 +140,7 @@ class PipelineBuilder(
                 currentWorker.arg,
                 expectedOutput,
                 w,
-                predecessorName,
+                previousWorker.factory.name,
                 params,
                 currentWorker.parallelDegree
             )
