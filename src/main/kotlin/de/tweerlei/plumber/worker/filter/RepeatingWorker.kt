@@ -21,29 +21,24 @@ import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.WrappingWorker
 import mu.KLogging
 
-class RetryingWorker(
+class RepeatingWorker(
     private val name: String,
-    private val numberOfRetries: Int,
+    private val number: Int,
     worker: Worker
 ): WrappingWorker(worker) {
 
     companion object: KLogging()
 
     override fun process(item: WorkItem) {
-        for (i in 0..numberOfRetries) {
+        for (i in 1..number) {
             try {
                 passOn(item)
-                break
             } catch (e: Exception) {
-                if (i < numberOfRetries)
-                    logger.warn {
-                        "$name: Error while processing item $item, retrying ${numberOfRetries - i} times"
-                    }
-                else if (runContext.isFailFast())
+                if (runContext.isFailFast())
                     throw e
                 else
                     logger.error {
-                        "$name: Error while processing item $item, retry limit exceeded\n" +
+                        "$name: Error while processing item $item\n" +
                         e.printStackTraceUpTo(this::class)
                     }
             }
