@@ -15,7 +15,7 @@
  */
 package de.tweerlei.plumber.configuration
 
-import com.amazonaws.auth.*
+import com.amazonaws.auth.DefaultAWSCredentialsProviderChain
 import com.amazonaws.client.builder.AwsClientBuilder
 import com.amazonaws.services.securitytoken.AWSSecurityTokenServiceAsyncClientBuilder
 import org.springframework.beans.factory.annotation.Value
@@ -36,9 +36,6 @@ class STSConfiguration(
             else
                 withEndpointConfiguration(AwsClientBuilder.EndpointConfiguration(awsEndpoint, awsRegion))
 
-            withCredentials(AWSCredentialsProviderChain(
-                EnvironmentVariableCredentialsProvider(),
-                EC2ContainerCredentialsProviderWrapper()
-            ))
+            withCredentials(DefaultAWSCredentialsProviderChain.getInstance())
         }.build()
 }

@@ -16,9 +16,7 @@
 package de.tweerlei.plumber.worker.s3
 
 import com.amazonaws.ClientConfiguration
-import com.amazonaws.auth.AWSCredentialsProviderChain
-import com.amazonaws.auth.EC2ContainerCredentialsProviderWrapper
-import com.amazonaws.auth.EnvironmentVariableCredentialsProvider
+import com.amazonaws.auth.DefaultAWSCredentialsProviderChain
 import com.amazonaws.auth.STSAssumeRoleSessionCredentialsProvider
 import com.amazonaws.client.builder.AwsClientBuilder
 import com.amazonaws.services.s3.AmazonS3
@@ -49,12 +47,7 @@ class S3ClientFactory(
                         .build()
                 )
             } else {
-                withCredentials(
-                    AWSCredentialsProviderChain(
-                        EnvironmentVariableCredentialsProvider(),
-                        EC2ContainerCredentialsProviderWrapper()
-                    )
-                )
+                withCredentials(DefaultAWSCredentialsProviderChain.getInstance())
             }
             withClientConfiguration(ClientConfiguration().withMaxConnections(numberOfThreads))
         }.build()
