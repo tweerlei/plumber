@@ -142,18 +142,23 @@ How do you find out about the types and attributes handled by each step? Use the
 
 An empty pipeline is not allowed, so the simplest pipeline has one step:
 ```
-./plumber.sh log
+./plumber log
 ```
 This will simply log the contents of the received work item(s) which in this case will be empty.
 
 A slightly more useful example that still has no real input nor output looks like this:
 ```
-./plumber.sh value:'Hello, world!' log
+./plumber value:'Hello, world!' log
 ```
 
-You can also use attributes to handle more that one value:
+You can also use attributes to handle more than one value:
 ```
-./plumber.sh value:'Hello' set:greeting value:'world' set:name value:'beautiful' set:attr format:'${greeting}, ${attr} ${name}!' log
+./plumber \
+    value:'Hello' set:greeting \
+    value:'world' set:name \
+    value:'beautiful' set:attr \
+    format:'${greeting}, ${attr} ${name}!' \
+    log
 ```
 While the current value gets overwritten by each `value` step, you can save each one to a named attribute and use those to compose a longer value.
 A simpler alternative would be to just restore a single attribute value using `get:greeting`.
@@ -165,7 +170,12 @@ For debugging purposes, you can also use `dump` instead of `log` to dump all the
 Sometimes a single "current value" is not enough. When you read a row from a database or parse a CSV line, the result will have multiple columns. Such results will usually be stored in a magic attribute named `record`.
 The magic happens when you use the special steps `rec-set`, `rec-get` and `rec-del`. Those will set, get or remove fields from the record, which can then be serialized or written to another DB table:
 ```
-./plumber.sh value:"Hello" rec-set:greeting value:"world" rec-set:name value:"beautiful" rec-set:attr get:record csv-print log
+./plumber \
+    value:"Hello" rec-set:greeting \
+    value:"world" rec-set:name \
+    value:"beautiful" rec-set:attr \
+    get:record csv-print \
+    log
 ```
 (Notice that `csv-print` will actually expect the record as current value, so you have to to `get:record` first.)
 
@@ -174,7 +184,11 @@ The magic happens when you use the special steps `rec-set`, `rec-get` and `rec-d
 For more complex data structures like JSON or XML, the parsed result is stored as a tree of nodes with the magic name `node` that can be modified using special steps
 `node-set`, `node-get` and `node-del` that expect path-style addressing:
 ```
-./plumber.sh value:'{"version":1,"data":{"n":42,"msg":"Hello","read":true}}' json-parse node-get:data/msg log
+./plumber \
+    value:'{"version":1,"data":{"n":42,"msg":"Hello","read":true}}' \
+    json-parse \
+    node-get:data/msg \
+    log
 ```
 
 ## I/O
@@ -191,12 +205,16 @@ Each supported integration provides one or more of the following steps:
 
 Send all text files from /data to an S3 bucket:
 ```
-./plumber.sh file-list:/data find:'\.txt$' filter file-read s3-write:mybucket
+./plumber file-list:/data find:'\.txt$' filter file-read s3-write:mybucket
 ```
 
 Feel free to sprinkle your pipeline with statistics steps to count the items passing through:
 ```
-./plumber.sh file-list:/data count:100 find:'\.txt$' filter count:100 file-read time:100 s3-write:mybucket
+./plumber \
+    file-list:/data \
+    count:100 find:'\.txt$' filter \
+    count:100 file-read \
+    time:100 s3-write:mybucket
 ```
 
 The `count` step doesn't modify items but keeps track of how many items have passed and prints that number every 100 items (in this case). The `time` step will measure the average time it takes to process the next and following steps.
@@ -205,13 +223,19 @@ The `count` step doesn't modify items but keeps track of how many items have pas
 
 Every step can be parallelized using a number of threads. This is quite useful for slow backends like S3 where you can employ 100 threads to fetch contents:
 ```
-./plumber.sh s3-list:mybucket parallel:100 s3-read file-write:/backup
+./plumber \
+    s3-list:mybucket \
+    parallel:100 s3-read \
+    file-write:/backup
 ```
 
 In the last example, all the files in the bucket are listed sequentially.
 If you know the key space, you can also instruct the `*-list` steps to work on partitions of keys:
 ```
-./plumber.sh --start-after=200 --stop-after=400 --key-chars=0123456789abcdef partitions:20 parallel:4 s3-list:mybucket line-write:filenames.txt
+./plumber \
+    partitions:20 --start-after=200 --stop-after=400 --key-chars=0123456789abcdef \
+    parallel:4 s3-list:mybucket \
+    line-write:filenames.txt
 ```
 This will generate 20 partitions for the key space between 200 (exclusive) and 400 (inclusive) that will be sent to 4 parallel threads that will list the files in each partition, continuing with the next partition when done.
 Notice that the last step `line-write` will be forced to run in a single thread to prevent overlapping writes to filenames.txt
