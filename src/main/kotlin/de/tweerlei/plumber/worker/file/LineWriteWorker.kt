@@ -19,7 +19,6 @@ import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.DelegatingWorker
 import de.tweerlei.plumber.worker.Worker
 import java.io.*
-import java.nio.charset.StandardCharsets
 
 class LineWriteWorker(
     private val outputFile: File,

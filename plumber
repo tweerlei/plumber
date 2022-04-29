@@ -1,0 +1,5 @@
+#!/bin/sh
+
+LIB_DIR=$(dirname "$0")
+
+exec java --add-opens java.base/java.lang=ALL-UNNAMED -jar "$LIB_DIR/build/libs/plumber-0.1.0-SNAPSHOT.jar" "$@"

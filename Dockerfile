@@ -16,8 +16,9 @@ FROM openjdk:11-jre AS runtime
 COPY rds-combined-ca-bundle.pem /etc/ssl/certs/rds.crt
 RUN echo y | keytool -importcert -alias rds -file /etc/ssl/certs/rds.crt -cacerts -keypass changeit -storepass changeit
 
-COPY --from=build /build/build/libs/*.jar /app/
+COPY plumber /usr/local/bin/
+COPY --from=build /build/build/libs/*.jar /usr/local/bin/build/libs/
 
 WORKDIR /tmp
 
-ENTRYPOINT [ "java", "--add-opens", "java.base/java.lang=ALL-UNNAMED", "-jar", "/app/plumber-0.1.0-SNAPSHOT.jar" ]
+ENTRYPOINT [ "/usr/local/bin/plumber" ]

@@ -49,6 +49,7 @@ class DynamoDBClientFactory(
             } else {
                 withCredentials(DefaultAWSCredentialsProviderChain.getInstance())
             }
+
             withClientConfiguration(ClientConfiguration().withMaxConnections(numberOfThreads))
         }.build()
 }

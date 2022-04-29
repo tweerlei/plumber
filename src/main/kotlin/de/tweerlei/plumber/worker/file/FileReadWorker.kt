@@ -19,7 +19,6 @@ import de.tweerlei.plumber.worker.WellKnownKeys
 import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.DelegatingWorker
 import de.tweerlei.plumber.worker.Worker
-import de.tweerlei.plumber.worker.s3.S3Keys
 import java.io.File
 import java.io.FileInputStream
 

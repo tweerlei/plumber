@@ -49,6 +49,7 @@ class SQSClientFactory(
             } else {
                 withCredentials(DefaultAWSCredentialsProviderChain.getInstance())
             }
+
             withClientConfiguration(ClientConfiguration().withMaxConnections(numberOfThreads))
         }.build()
 }
