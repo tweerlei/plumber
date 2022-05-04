@@ -32,10 +32,6 @@ class DynamoDBScanStep(
     override val name = "Scan DynamoDB items"
     override val description = "List elements from the given DynamoDB table"
 
-    override fun requiredAttributesFor(arg: String) = setOf(
-        WellKnownKeys.START_AFTER_KEY,
-        WellKnownKeys.END_WITH_KEY
-    )
     override fun producedAttributesFor(arg: String) = setOf(
         WellKnownKeys.RECORD,
         DynamoDBKeys.TABLE_NAME

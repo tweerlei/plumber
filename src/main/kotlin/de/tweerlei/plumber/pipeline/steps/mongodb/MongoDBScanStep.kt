@@ -34,10 +34,6 @@ class MongoDBScanStep(
     override val name = "Scan MongoDB documents"
     override val description = "List documents from the given MongoDB table"
 
-    override fun requiredAttributesFor(arg: String) = setOf(
-        WellKnownKeys.START_AFTER_KEY,
-        WellKnownKeys.END_WITH_KEY
-    )
     override fun producedAttributesFor(arg: String) = setOf(
         WellKnownKeys.NODE,
         MongoDBKeys.DATABASE_NAME,

@@ -32,10 +32,6 @@ class S3ListStep(
     override val name = "List S3 object keys"
     override val description = "List objects from the given S3 bucket"
 
-    override fun requiredAttributesFor(arg: String) = setOf(
-        WellKnownKeys.START_AFTER_KEY,
-        WellKnownKeys.END_WITH_KEY
-    )
     override fun producedAttributesFor(arg: String) = setOf(
         WellKnownKeys.NAME,
         WellKnownKeys.SIZE,
