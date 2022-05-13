@@ -19,18 +19,22 @@ import de.tweerlei.plumber.pipeline.PipelineParams
 import de.tweerlei.plumber.pipeline.ProcessingStep
 import de.tweerlei.plumber.worker.WellKnownKeys
 import de.tweerlei.plumber.worker.Worker
-import de.tweerlei.plumber.worker.file.FileWriteWorker
+import de.tweerlei.plumber.worker.file.FileKeys
+import de.tweerlei.plumber.worker.file.FileReadWorker
 import org.springframework.stereotype.Service
 
-@Service("file-writeWorker")
-class FileWriteStep: ProcessingStep {
+@Service("files-readWorker")
+class FilesReadStep: ProcessingStep {
 
-    override val name = "Write file"
-    override val description = "Write item as file in the given directory"
+    override val name = "Read files"
+    override val description = "Read files from the given base directory"
 
-    override fun isValuePassThrough() = true
     override fun requiredAttributesFor(arg: String) = setOf(
         WellKnownKeys.NAME
+    )
+    override fun producedAttributesFor(arg: String) = setOf(
+        FileKeys.FILE_PATH,
+        FileKeys.FILE_NAME
     )
 
     override fun createWorker(
@@ -41,7 +45,7 @@ class FileWriteStep: ProcessingStep {
         params: PipelineParams,
         parallelDegree: Int
     ) =
-        FileWriteWorker(
+        FileReadWorker(
             arg,
             w
         )

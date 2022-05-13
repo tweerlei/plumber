@@ -23,8 +23,8 @@ import de.tweerlei.plumber.worker.file.FileKeys
 import de.tweerlei.plumber.worker.file.FileListWorker
 import org.springframework.stereotype.Service
 
-@Service("file-listWorker")
-class FileListStep: ProcessingStep {
+@Service("files-listWorker")
+class FilesListStep: ProcessingStep {
 
     override val name = "List files"
     override val description = "Read file names from the given directory"

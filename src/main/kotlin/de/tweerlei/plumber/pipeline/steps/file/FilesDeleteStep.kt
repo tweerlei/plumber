@@ -19,22 +19,18 @@ import de.tweerlei.plumber.pipeline.PipelineParams
 import de.tweerlei.plumber.pipeline.ProcessingStep
 import de.tweerlei.plumber.worker.WellKnownKeys
 import de.tweerlei.plumber.worker.Worker
-import de.tweerlei.plumber.worker.file.FileKeys
-import de.tweerlei.plumber.worker.file.FileReadWorker
+import de.tweerlei.plumber.worker.file.FileDeleteWorker
 import org.springframework.stereotype.Service
 
-@Service("file-readWorker")
-class FileReadStep: ProcessingStep {
+@Service("files-deleteWorker")
+class FilesDeleteStep: ProcessingStep {
 
-    override val name = "Read file"
-    override val description = "Read a file from the given base directory"
+    override val name = "Delete files"
+    override val description = "Delete files from the given directory"
 
+    override fun isValuePassThrough() = true
     override fun requiredAttributesFor(arg: String) = setOf(
         WellKnownKeys.NAME
-    )
-    override fun producedAttributesFor(arg: String) = setOf(
-        FileKeys.FILE_PATH,
-        FileKeys.FILE_NAME
     )
 
     override fun createWorker(
@@ -45,7 +41,7 @@ class FileReadStep: ProcessingStep {
         params: PipelineParams,
         parallelDegree: Int
     ) =
-        FileReadWorker(
+        FileDeleteWorker(
             arg,
             w
         )
