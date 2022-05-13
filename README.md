@@ -141,18 +141,18 @@ How do you find out about the types and attributes handled by each step? Use the
 ## Examples
 
 An empty pipeline is not allowed, so the simplest pipeline has one step:
-```
+```bash
 ./plumber log
 ```
 This will simply log the contents of the received work item(s) which in this case will be empty.
 
 A slightly more useful example that still has no real input nor output looks like this:
-```
+```bash
 ./plumber value:'Hello, world!' log
 ```
 
 You can also use attributes to handle more than one value:
-```
+```bash
 ./plumber \
     value:'Hello' set:greeting \
     value:'world' set:name \
@@ -169,7 +169,7 @@ For debugging purposes, you can also use `dump` instead of `log` to dump all the
 
 Sometimes a single "current value" is not enough. When you read a row from a database or parse a CSV line, the result will have multiple columns. Such results will usually be stored in a magic attribute named `record`.
 The magic happens when you use the special steps `rec-set`, `rec-get` and `rec-del`. Those will set, get or remove fields from the record, which can then be serialized or written to another DB table:
-```
+```bash
 ./plumber \
     value:"Hello" rec-set:greeting \
     value:"world" rec-set:name \
@@ -183,7 +183,7 @@ The magic happens when you use the special steps `rec-set`, `rec-get` and `rec-d
 
 For more complex data structures like JSON or XML, the parsed result is stored as a tree of nodes with the magic name `node` that can be modified using special steps
 `node-set`, `node-get` and `node-del` that expect path-style addressing:
-```
+```bash
 ./plumber \
     value:'{"version":1,"data":{"n":42,"msg":"Hello","read":true}}' \
     json-parse \
@@ -204,12 +204,24 @@ Each supported integration provides one or more of the following steps:
 | `*-delete` | Delete object by key/name.
 
 Send all text files from /data to an S3 bucket:
+```bash
+./plumber \
+    file-list:/data \
+    find:'\.txt$' filter \
+    file-read \
+    s3-write:mybucket
 ```
-./plumber file-list:/data find:'\.txt$' filter file-read s3-write:mybucket
+
+Since the main focus is to transfer large amounts of items, reading a single item is a bit more complicated:
+```bash
+./plumber \
+    value:"filename.txt" set:name \
+    file-read:"/path/to/files" \
+    s3-write:mybucket
 ```
 
 Feel free to sprinkle your pipeline with statistics steps to count the items passing through:
-```
+```bash
 ./plumber \
     file-list:/data \
     count:100 find:'\.txt$' filter \
@@ -222,7 +234,7 @@ The `count` step doesn't modify items but keeps track of how many items have pas
 ## Parallel processing
 
 Every step can be parallelized using a number of threads. This is quite useful for slow backends like S3 where you can employ 100 threads to fetch contents:
-```
+```bash
 ./plumber \
     s3-list:mybucket \
     parallel:100 s3-read \
@@ -231,7 +243,7 @@ Every step can be parallelized using a number of threads. This is quite useful f
 
 In the last example, all the files in the bucket are listed sequentially.
 If you know the key space, you can also instruct the `*-list` steps to work on partitions of keys:
-```
+```bash
 ./plumber \
     partitions:20 --start-after=200 --stop-after=400 --key-chars=0123456789abcdef \
     parallel:4 s3-list:mybucket \

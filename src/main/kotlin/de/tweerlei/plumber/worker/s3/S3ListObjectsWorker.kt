@@ -52,7 +52,10 @@ class S3ListObjectsWorker(
                 if (endWith == null || objectSummary.key <= endWith) {
                     if (fn(objectSummary.toWorkItem())) {
                         itemCount++
-                        if (firstKey == null) firstKey = objectSummary.key
+                        if (firstKey == null) {
+                            firstKey = objectSummary.key
+                            logger.info { "first key: $firstKey" }
+                        }
                         lastKey = objectSummary.key
                     } else {
                         result.nextContinuationToken = null
