@@ -112,6 +112,7 @@ class CommandLineProcessor(
                 numberOfFilesPerRequest = args.getOptionValue("bulk-size")?.toInt() ?: 1000,
                 queueSizePerThread = args.getOptionValue("queue-size")?.toInt() ?: 10,
                 maxFilesPerThread = args.getOptionValue("limit")?.toInt() ?: Int.MAX_VALUE,
+                retryDelaySeconds = args.getOptionValue("retry-delay")?.toInt() ?: 0,
                 maxWaitTimeSeconds = args.getOptionValue("wait")?.toInt() ?: 0,
                 elementName = args.getOptionValue("element-name") ?: "",
                 rootElementName = args.getOptionValue("root-element-name") ?: "",
@@ -126,6 +127,7 @@ class CommandLineProcessor(
                 logger.info("starting range after $startAfterRangeKey up to and including $stopAfterRangeKey")
                 logger.info("generating partitions using key chars $keyChars")
                 logger.info("requesting $numberOfFilesPerRequest file names at once, waiting for up to $maxWaitTimeSeconds seconds for new items")
+                logger.info("delaying retries for $retryDelaySeconds seconds")
                 logger.info("${if (reread) "will" else "won't"} re-read all existing items, ${if (follow) "will" else "won't"} keep polling for new items")
                 logger.info("stopping after $maxFilesPerThread file names")
                 logger.info("${if (failFast) "skipping over" else "failing on"} processing errors")

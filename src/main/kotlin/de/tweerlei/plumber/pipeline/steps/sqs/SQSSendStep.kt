@@ -40,7 +40,7 @@ class SQSSendStep(
         params: PipelineParams,
         parallelDegree: Int
     ) =
-        sqsClientFactory.createAmazonSQSClient(1, params.assumeRoleArn)
+        sqsClientFactory.createAmazonSQSClient(parallelDegree, params.assumeRoleArn)
             .let { client ->
                 SQSSendWorker(
                     arg,

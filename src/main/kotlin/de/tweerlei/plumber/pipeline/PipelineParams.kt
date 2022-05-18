@@ -30,6 +30,7 @@ data class PipelineParams(
     val numberOfFilesPerRequest: Int,
     val maxFilesPerThread: Int,
     val queueSizePerThread: Int,
+    val retryDelaySeconds: Int,
     val maxWaitTimeSeconds: Int,
     val elementName: String,
     val rootElementName: String,

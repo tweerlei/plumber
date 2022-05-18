@@ -24,6 +24,7 @@ import mu.KLogging
 class RetryingWorker(
     private val name: String,
     private val numberOfRetries: Int,
+    private val retryDelaySeconds: Int,
     worker: Worker
 ): WrappingWorker(worker) {
 
@@ -35,17 +36,20 @@ class RetryingWorker(
                 passOn(item)
                 break
             } catch (e: Exception) {
-                if (i < numberOfRetries)
+                if (i < numberOfRetries) {
                     logger.warn {
                         "$name: Error while processing item $item, retrying ${numberOfRetries - i} times"
                     }
-                else if (runContext.isFailFast())
+                    if (retryDelaySeconds > 0)
+                        Thread.sleep(retryDelaySeconds * 1000L)
+                } else if (runContext.isFailFast()) {
                     throw e
-                else
+                } else {
                     logger.error {
                         "$name: Error while processing item $item, retry limit exceeded\n" +
-                        e.printStackTraceUpTo(this::class)
+                                e.printStackTraceUpTo(this::class)
                     }
+                }
             }
         }
     }

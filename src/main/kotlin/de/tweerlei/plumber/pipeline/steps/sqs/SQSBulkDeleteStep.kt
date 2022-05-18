@@ -13,28 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.tweerlei.plumber.pipeline.steps.jdbc
+package de.tweerlei.plumber.pipeline.steps.sqs
 
-import de.tweerlei.plumber.pipeline.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
+import de.tweerlei.plumber.pipeline.ProcessingStep
 import de.tweerlei.plumber.worker.WellKnownKeys
 import de.tweerlei.plumber.worker.Worker
-import de.tweerlei.plumber.worker.jdbc.JdbcKeys
-import de.tweerlei.plumber.worker.jdbc.JdbcSelectWorker
-import de.tweerlei.plumber.worker.jdbc.JdbcTemplateFactory
+import de.tweerlei.plumber.worker.sqs.SQSClientFactory
+import de.tweerlei.plumber.worker.sqs.SQSDeleteBatchWorker
 import org.springframework.stereotype.Service
 
-@Service("jdbc-listWorker")
-class JdbcListStep(
-    private val jdbcTemplateFactory: JdbcTemplateFactory
+@Service("sqs-bulkdeleteWorker")
+class SQSBulkDeleteStep(
+    private val sqsClientFactory: SQSClientFactory
 ): ProcessingStep {
 
-    override val name = "Fetch JDBC rows"
-    override val description = "Retrieve rows from the given JDBC table"
+    override val name = "Delete SQS messages"
+    override val description = "Delete multiple messages from the given SQS queue, use with bulk:<n>"
 
-    override fun producedAttributesFor(arg: String) = setOf(
-        WellKnownKeys.RECORD,
-        JdbcKeys.TABLE_NAME
+    override fun requiredAttributesFor(arg: String) = setOf(
+        WellKnownKeys.WORK_ITEMS
     )
 
     override fun createWorker(
@@ -45,13 +43,11 @@ class JdbcListStep(
         params: PipelineParams,
         parallelDegree: Int
     ) =
-        jdbcTemplateFactory.createJdbcTemplate(parallelDegree)
+        sqsClientFactory.createAmazonSQSClient(parallelDegree, params.assumeRoleArn)
             .let { client ->
-                JdbcSelectWorker(
+                SQSDeleteBatchWorker(
                     arg,
-                    params.primaryKey,
                     client,
-                    params.maxFilesPerThread,
                     w
                 )
             }

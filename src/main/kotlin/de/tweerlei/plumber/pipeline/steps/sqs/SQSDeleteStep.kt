@@ -44,7 +44,7 @@ class SQSDeleteStep(
         params: PipelineParams,
         parallelDegree: Int
     ) =
-        sqsClientFactory.createAmazonSQSClient(1, params.assumeRoleArn)
+        sqsClientFactory.createAmazonSQSClient(parallelDegree, params.assumeRoleArn)
             .let { client ->
                 SQSDeleteWorker(
                     arg,

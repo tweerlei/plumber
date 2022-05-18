@@ -40,6 +40,7 @@ class RetryStep: ProcessingStep {
         RetryingWorker(
             predecessorName,
             arg.toIntOrNull() ?: Int.MAX_VALUE,
+            params.retryDelaySeconds,
             w
         )
 }
