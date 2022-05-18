@@ -36,8 +36,8 @@ class SQSDeleteBatchWorker(
                     items.first().getIfEmpty(queueUrl, SQSKeys.QUEUE_URL),
                     items.map {
                         DeleteMessageBatchRequestEntry(
-                            item.getFirstString(SQSKeys.MESSAGE_ID),
-                            item.getFirstString(SQSKeys.DELETE_HANDLE)
+                            it.getFirstString(SQSKeys.MESSAGE_ID),
+                            it.getFirstString(SQSKeys.DELETE_HANDLE)
                         )
                     }
                 )
