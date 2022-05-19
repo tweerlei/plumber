@@ -30,11 +30,8 @@ class BulkStep: ProcessingStep {
 
     override fun producedAttributesFor(arg: String) = setOf(
         WellKnownKeys.WORK_ITEMS,
-        WellKnownKeys.WORKER_INDEX
+        WellKnownKeys.SIZE
     )
-
-    override fun parallelDegreeFor(arg: String) =
-        arg.toIntOrNull() ?: 1
 
     override fun createWorker(
         arg: String,
@@ -45,9 +42,7 @@ class BulkStep: ProcessingStep {
         parallelDegree: Int
     ) =
         BulkWorker(
-            predecessorName,
-            parallelDegreeFor(arg),
-            params.numberOfFilesPerRequest,
+            arg.toIntOrNull() ?: params.numberOfFilesPerRequest,
             w
         )
 }

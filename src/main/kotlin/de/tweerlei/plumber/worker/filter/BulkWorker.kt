@@ -15,80 +15,68 @@
  */
 package de.tweerlei.plumber.worker.filter
 
-import de.tweerlei.plumber.util.printStackTraceUpTo
 import de.tweerlei.plumber.worker.WellKnownKeys
 import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.WrappingWorker
 import mu.KLogging
-import java.util.*
-import java.util.concurrent.LinkedBlockingQueue
+import java.util.concurrent.ConcurrentLinkedQueue
+import java.util.concurrent.atomic.AtomicReference
 
 class BulkWorker(
-    private val name: String,
-    private val numberOfThreads: Int,
     private val queueSizePerThread: Int,
     worker: Worker
 ): WrappingWorker(worker) {
 
     companion object : KLogging()
 
-    private val blockingQueue = LinkedBlockingQueue<WorkItem>(numberOfThreads * queueSizePerThread)
-    private var threads: List<Thread> = emptyList()
-    private var stop = false
-    private var lastError : Throwable? = null
+    private val accumulator = ThreadLocal<AtomicReference<MutableList<WorkItem>>>()
+    private val allAccumulators = ConcurrentLinkedQueue<AtomicReference<MutableList<WorkItem>>>()
 
-    override fun onOpen() {
-        threads = (1 .. numberOfThreads).map { workerIndex ->
-            Thread({
-                logger.debug("Starting thread")
-                val items = LinkedList<WorkItem>()
-                while (true) {
-                    items.clear()
-                    val itemCount = blockingQueue.drainTo(items, queueSizePerThread)
-                    if (itemCount == 0 && stop) {
-                        break
-                    }
-                    if (itemCount > 0 && !runContext.isInterrupted()) {
-                        val nextItem = WorkItem.of(
-                            items,
-                            WellKnownKeys.WORK_ITEMS to items,
-                            WellKnownKeys.WORKER_INDEX to workerIndex,
-                            WellKnownKeys.SIZE to itemCount
-                        )
-                        try {
-                            passOn(nextItem)
-                        } catch (e: Throwable) {
-                            if (runContext.isFailFast())
-                                lastError = e
-                            else
-                                logger.error {
-                                    "$name: Error while processing item $nextItem\n" +
-                                            e.printStackTraceUpTo(this::class)
-                                }
-                        }
-                    }
+    private fun currentAccumulator() =
+        when (val ref = accumulator.get()) {
+            null -> AtomicReference<MutableList<WorkItem>>()
+                .also {
+                    accumulator.set(it)
+                    allAccumulators.add(it)
                 }
-                logger.debug("Exiting thread")
-            },
-            "$name-worker-$workerIndex")
-        }.toList()
+            else -> ref
+        }.let { ref ->
+            when (val list = ref.get()) {
+                null -> ArrayList<WorkItem>(queueSizePerThread)
+                    .also { ref.set(it) }
+                else -> list
+            }
+        }
 
-        threads.forEach { thread -> thread.start() }
+    private fun resetAccumulator() =
+        accumulator.get()?.set(null)
+
+    private fun passOn(items: List<WorkItem>) {
+        val nextItem = WorkItem.of(
+            items,
+            WellKnownKeys.WORK_ITEMS to items,
+            WellKnownKeys.SIZE to items.size
+        )
+        passOn(nextItem)
     }
 
     override fun process(item: WorkItem) {
-        val e = lastError
-        if (e != null)
-            throw e
+        val items = currentAccumulator()
+        items.add(item)
 
-        if (!runContext.isInterrupted())
-            blockingQueue.put(item)
+        if (items.size >= queueSizePerThread) {
+            resetAccumulator()
+            passOn(items)
+        }
     }
 
     override fun onClose() {
-        stop = true
-        threads.forEach { thread -> thread.join() }
-        threads = emptyList()
+        allAccumulators.forEach { ref ->
+            ref.get()?.let {
+                passOn(it)
+            }
+            ref.set(null)
+        }
     }
 }
