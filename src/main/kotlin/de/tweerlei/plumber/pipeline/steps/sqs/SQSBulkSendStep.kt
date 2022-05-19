@@ -13,23 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.tweerlei.plumber.pipeline.steps.s3
+package de.tweerlei.plumber.pipeline.steps.sqs
 
-import de.tweerlei.plumber.pipeline.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
+import de.tweerlei.plumber.pipeline.ProcessingStep
 import de.tweerlei.plumber.worker.WellKnownKeys
-import de.tweerlei.plumber.worker.s3.S3ClientFactory
 import de.tweerlei.plumber.worker.Worker
-import de.tweerlei.plumber.worker.s3.S3DeleteObjectsWorker
+import de.tweerlei.plumber.worker.sqs.SQSClientFactory
+import de.tweerlei.plumber.worker.sqs.SQSSendBatchWorker
 import org.springframework.stereotype.Service
 
-@Service("s3-bulkdeleteWorker")
-class S3BulkDeleteStep(
-    private val s3ClientFactory: S3ClientFactory
+@Service("sqs-bulkwriteWorker")
+class SQSBulkSendStep(
+    private val sqsClientFactory: SQSClientFactory
 ): ProcessingStep {
 
-    override val name = "Delete S3 objects"
-    override val description = "Deletes multiple objects from the given S3 bucket, use with bulk:<n>"
+    override val name = "Send SQS messages"
+    override val description = "Send multiple messages to the given SQS queue, use with bulk:<n>"
 
     override fun isValuePassThrough() = true
     override fun requiredAttributesFor(arg: String) = setOf(
@@ -44,11 +44,10 @@ class S3BulkDeleteStep(
         params: PipelineParams,
         parallelDegree: Int
     ) =
-        s3ClientFactory.createAmazonS3Client(parallelDegree, params.assumeRoleArn)
+        sqsClientFactory.createAmazonSQSClient(parallelDegree, params.assumeRoleArn)
             .let { client ->
-                S3DeleteObjectsWorker(
+                SQSSendBatchWorker(
                     arg,
-                    params.requesterPays,
                     client,
                     w
                 )
