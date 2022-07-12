@@ -46,7 +46,8 @@ class SummingWorker(
                         if (counter / interval > (counter - size) / interval) {
                             val now = System.currentTimeMillis()
                             val last = lastTime.getAndSet(now)
-                            val perSecond = interval * (counter / interval - (counter - size) / interval) * 1000L / (now - last).coerceAtLeast(1)
+                            val bytes = interval * (counter / interval - (counter - size) / interval)
+                            val perSecond = bytes.toDouble() * 1000 / (now - last).coerceAtLeast(1)
                             logger.info { "$name: Item sum: $counter @ ${perSecond.humanReadable()} byte/s" }
                         }
                         item.set(counter, WellKnownKeys.SUM)

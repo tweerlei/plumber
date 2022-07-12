@@ -34,7 +34,9 @@ class WellKnownKeys {
         const val NODE = "node"
 
         // filter and replace
-        const val FIND_PATTERN = "findPattern"
+        const val MATCH_EXPRESSION = "matchExpression"
+        const val MATCH_INPUT = "matchInput"
+        const val MATCHED_GROUP = "matchedGroup"
 
         // partitioning
         const val START_AFTER_KEY = "startAfterKey"

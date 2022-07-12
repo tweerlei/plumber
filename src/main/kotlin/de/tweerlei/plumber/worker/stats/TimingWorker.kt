@@ -15,6 +15,7 @@
  */
 package de.tweerlei.plumber.worker.stats
 
+import de.tweerlei.plumber.util.humanReadable
 import de.tweerlei.plumber.util.printStackTraceUpTo
 import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.Worker
@@ -59,9 +60,11 @@ class TimingWorker(
         val endTime = System.currentTimeMillis()
 
         val total = totalProcessingTime.addAndGet(endTime - startTime)
-        if ((succ + fail) % interval == 0)
+        if ((succ + fail) % interval == 0) {
+            val perItem = total.toDouble() / (succ + fail)
             logger.info {
-                "$name: $succ / ${succ + fail} ($active active) @ ${total / (succ + fail)} ms/item"
+                "$name: $succ / ${succ + fail} ($active active) @ ${perItem.humanReadable()} ms/item"
+            }
             }
         activeWorkers.decrementAndGet()
     }
@@ -70,9 +73,10 @@ class TimingWorker(
         logger.info { "$name: Items successful: ${successfulFiles.get()}" }
         logger.info { "$name: Items failed: ${failedFiles.get()}" }
         if (successfulFiles.get() + failedFiles.get() > 0) {
+            val perItem = totalProcessingTime.get().toDouble() / (successfulFiles.get() + failedFiles.get())
             logger.info {
                 "$name: Net processing time per item: " +
-                "${totalProcessingTime.get() / (successfulFiles.get() + failedFiles.get())} ms"
+                "${perItem.humanReadable()} ms"
             }
         }
     }

@@ -19,7 +19,6 @@ import de.tweerlei.plumber.worker.WellKnownKeys
 import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.DelegatingWorker
 import de.tweerlei.plumber.worker.Worker
-import java.util.regex.Pattern
 
 class ReplacingWorker(
     private val replacement: String,
@@ -27,9 +26,9 @@ class ReplacingWorker(
 ): DelegatingWorker(worker) {
 
     override fun doProcess(item: WorkItem) =
-        item.getString()
-            .let { value ->
-                item.getAs<Pattern>(WellKnownKeys.FIND_PATTERN).matcher(value).replaceAll(replacement)
+        item.getAs<Regex>(WellKnownKeys.MATCH_EXPRESSION)
+            .let { regex ->
+                regex.replace(item.getString(WellKnownKeys.MATCH_INPUT), replacement)
             }.also { result ->
                 item.set(result)
             }.let { true }

@@ -55,6 +55,7 @@ class CommandLineProcessor(
                 --explain                     Explain resulting plan, don't execute
                 --fail-fast                   Fail on first processing error
                 --log-level=<level>           Set the log level
+                --profile=quiet               Set log level to WARN and disable start-up banner
                 --requester-pays              Requester pays access to S3 buckets
                 --assume-role=<arn>           Assume the given IAM role for all S3 operations
                 --start-after=<key>           Start after the given key
@@ -90,7 +91,7 @@ class CommandLineProcessor(
 
             """.trimIndent())
             .toString()
-            .also { message -> logger.info(message) }
+            .also { message -> logger.warn(message) }
     }
 
     fun parseArguments(args: ApplicationArguments) =

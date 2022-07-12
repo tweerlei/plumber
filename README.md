@@ -25,8 +25,7 @@ files-delete:<arg>            Delete files from the given directory
 files-list:<arg>              Read file names from the given directory
 files-read:<arg>              Read files from the given base directory
 files-write:<arg>             Write items as files in the given directory
-filter:<arg>                  Filter items that do (true) or don't (false) match the previous find:
-find:<arg>                    Find matches of the given regular expression, use with filter: or replace:
+find:<arg>                    Find matches of the given regular expression, use with notnull: or replace:
 format:<arg>                  Produces the argument with all occurrences of ${name} replaced by their value
 get:<arg>                     Set the current value to the given attribute
 group:<arg>                   Log item counts per value at every given number of items

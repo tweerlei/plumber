@@ -94,6 +94,9 @@ class PipelineBuilder(
     ) =
         WorkerBuilder.create()
             .let { builder ->
+                if (params.explain) {
+                    logger.warn("Pipeline that would be executed:")
+                }
                 workers.foldIndexed(builder) { index, b, step ->
                     createWorker(
                         index,
@@ -126,9 +129,9 @@ class PipelineBuilder(
         params: PipelineParams
     ): WorkerBuilder {
         if (params.explain) {
-            logger.info("Step ${String.format("%2d", index)}:${String.format("%4d", currentWorker.parallelDegree)}x ${currentWorker.factory.name}: ${currentWorker.arg}")
-            logger.info("              Required input: ${currentWorker.factory.expectedInputFor(currentWorker.arg).simpleName} ${currentWorker.factory.requiredAttributesFor(currentWorker.arg)}")
-            logger.info("              Produces output: ${expectedOutput.simpleName} ${currentWorker.factory.producedAttributesFor(currentWorker.arg)}")
+            logger.warn("Step ${String.format("%2d", index)}:${String.format("%4d", currentWorker.parallelDegree)}x ${currentWorker.factory.name}: ${currentWorker.arg}")
+            logger.warn("              Required input: ${currentWorker.factory.expectedInputFor(currentWorker.arg).simpleName} ${currentWorker.factory.requiredAttributesFor(currentWorker.arg)}")
+            logger.warn("              Produces output: ${expectedOutput.simpleName} ${currentWorker.factory.producedAttributesFor(currentWorker.arg)}")
         }
 
         if (!currentWorker.factory.canConnectFrom(previousWorker.producedAttributes, currentWorker.arg)) {

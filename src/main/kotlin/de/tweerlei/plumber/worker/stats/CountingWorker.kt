@@ -45,7 +45,7 @@ class CountingWorker(
                 if (counter % interval == 0) {
                     val now = System.currentTimeMillis()
                     val last = lastTime.getAndSet(now)
-                    val perSecond = interval * 1000L / (now - last).coerceAtLeast(1)
+                    val perSecond = interval.toDouble() * 1000 / (now - last).coerceAtLeast(1)
                     logger.info { "$name: Items processed: $counter @ ${perSecond.humanReadable()} items/s" }
                 }
                 item.set(counter, WellKnownKeys.COUNT)

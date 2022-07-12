@@ -19,17 +19,25 @@ import de.tweerlei.plumber.worker.WellKnownKeys
 import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.DelegatingWorker
 import de.tweerlei.plumber.worker.Worker
-import java.util.regex.Pattern
 
 class MatchingWorker(
-    private val keep: Boolean,
+    private val regex: Regex,
     worker: Worker
 ): DelegatingWorker(worker) {
 
     override fun doProcess(item: WorkItem) =
         item.getString()
             .let { value ->
-                item.getAs<Pattern>(WellKnownKeys.FIND_PATTERN)
-                    .matcher(value).find() == keep
+                item.set(value, WellKnownKeys.MATCH_INPUT)
+                item.set(regex, WellKnownKeys.MATCH_EXPRESSION)
+                regex.find(value)
+            }?.let { result ->
+                result.groupValues.forEachIndexed { index, value ->
+                    if (index > 0)
+                        item.set(value, "${WellKnownKeys.MATCHED_GROUP}${index}")
             }
+                result.value
+            }.let { matchedText ->
+                item.set(matchedText)
+            }.let { true }
 }

@@ -29,7 +29,8 @@ class ReplaceStep: ProcessingStep {
     override val description = "Replace all matches of a previous find: with the given replacement"
 
     override fun requiredAttributesFor(arg: String) = setOf(
-        WellKnownKeys.FIND_PATTERN
+        WellKnownKeys.MATCH_EXPRESSION,
+        WellKnownKeys.MATCH_INPUT
     )
 
     override fun createWorker(
