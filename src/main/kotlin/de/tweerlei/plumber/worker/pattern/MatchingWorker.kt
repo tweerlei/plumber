@@ -33,9 +33,8 @@ class MatchingWorker(
                 regex.find(value)
             }?.let { result ->
                 result.groupValues.forEachIndexed { index, value ->
-                    if (index > 0)
-                        item.set(value, "${WellKnownKeys.MATCHED_GROUP}${index}")
-            }
+                    item.set(value, "${WellKnownKeys.MATCHED_GROUP}${index}")
+                }
                 result.value
             }.let { matchedText ->
                 item.set(matchedText)

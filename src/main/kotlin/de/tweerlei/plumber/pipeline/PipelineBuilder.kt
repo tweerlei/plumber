@@ -30,6 +30,7 @@ class PipelineBuilder(
             "<no predecessor>",
             "",
             object : ProcessingStep {
+                override val group = "Npo group"
                 override val name = "Nothing"
                 override val description = "Start of pipeline"
                 override fun createWorker(
