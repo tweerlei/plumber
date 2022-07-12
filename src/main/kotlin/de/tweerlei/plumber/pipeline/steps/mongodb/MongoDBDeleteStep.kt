@@ -31,6 +31,7 @@ class MongoDBDeleteStep(
     private val objectMapper: ObjectMapper
 ): ProcessingStep {
 
+    override val group = "MongoDB"
     override val name = "Delete MongoDB document"
     override val description = "Delete a document from the given MongoDB collection"
 

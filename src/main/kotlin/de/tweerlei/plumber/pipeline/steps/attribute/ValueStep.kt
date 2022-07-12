@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service
 @Service("valueWorker")
 class ValueStep: ProcessingStep {
 
+    override val group = "Attributes"
     override val name = "Set value"
     override val description = "Sets the current value to the given value"
 

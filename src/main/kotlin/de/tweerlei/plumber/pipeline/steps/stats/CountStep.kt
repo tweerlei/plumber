@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service
 @Service("countWorker")
 class CountStep: ProcessingStep {
 
+    override val group = "Logging"
     override val name = "Count items"
     override val description = "Log item counts at every given number of items"
 

@@ -30,6 +30,7 @@ class DynamoDBGetStep(
     private val dynamoDBClientFactory: DynamoDBClientFactory
 ): ProcessingStep {
 
+    override val group = "AWS DynamoDB"
     override val name = "Fetch DynamoDB item"
     override val description = "Read an element from the given DynamoDB table"
 

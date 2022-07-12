@@ -28,6 +28,7 @@ class CsvDecodeStep(
     private val csvMapper: CsvMapper
 ): ProcessingStep {
 
+    override val group = "CSV"
     override val name = "Deserialize from CSV"
     override val description = "Deserialize objects from CSV text"
 

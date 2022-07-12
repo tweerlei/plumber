@@ -29,6 +29,7 @@ class S3ListStep(
     private val s3ClientFactory: S3ClientFactory
 ): ProcessingStep {
 
+    override val group = "AWS S3"
     override val name = "List S3 object keys"
     override val description = "List objects from the given S3 bucket"
 

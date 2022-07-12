@@ -30,6 +30,7 @@ class XmlReadStep(
     private val xmlMapper: XmlMapper
 ): ProcessingStep {
 
+    override val group = "XML"
     override val name = "Read XML objects from file"
     override val description = "Read XML objects from the given file"
 

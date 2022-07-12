@@ -29,6 +29,7 @@ class KafkaReadStep(
     private val kafkaClientFactory: KafkaClientFactory
 ): ProcessingStep {
 
+    override val group = "Apache Kafka"
     override val name = "Receive Kafka messages"
     override val description = "Receive messages from the given Kafka topic"
 

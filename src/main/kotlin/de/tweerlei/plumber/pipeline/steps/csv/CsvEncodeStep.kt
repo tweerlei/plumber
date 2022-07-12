@@ -28,6 +28,7 @@ class CsvEncodeStep(
     private val csvMapper: CsvMapper
 ): ProcessingStep {
 
+    override val group = "CSV"
     override val name = "Serialize to CSV"
     override val description = "Serialize objects to CSV text"
 

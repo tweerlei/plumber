@@ -29,6 +29,7 @@ class NodeDelStep(
     private val objectMapper: ObjectMapper
 ): ProcessingStep {
 
+    override val group = "Nodes"
     override val name = "Remove JSON path"
     override val description = "Remove a subtree of a JSON object using the given JSONPath"
 

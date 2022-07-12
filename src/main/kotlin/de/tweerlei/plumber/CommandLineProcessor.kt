@@ -41,10 +41,13 @@ class CommandLineProcessor(
 
             """.trimIndent())
             .apply {
-                factory.processingStepDescriptions().forEach { (keyword, name) ->
-                    append("$keyword:<arg>".padEnd(30))
-                    append(name)
-                    append("\n")
+                factory.processingStepDescriptions().forEach { (group, steps) ->
+                    append(group).append("\n")
+                    steps.forEach { (keyword, name) ->
+                        append("  $keyword:<arg>".padEnd(30))
+                        append(name)
+                        append("\n")
+                    }
                 }
             }
             .append("""

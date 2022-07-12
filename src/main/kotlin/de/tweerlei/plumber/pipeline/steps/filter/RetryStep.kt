@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service
 @Service("retryWorker")
 class RetryStep: ProcessingStep {
 
+    override val group = "Flow control"
     override val name = "Retry"
     override val description = "Retry the following steps a given number of times on error"
 

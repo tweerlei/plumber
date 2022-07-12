@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service
 @Service("sumWorker")
 class SumStep: ProcessingStep {
 
+    override val group = "Logging"
     override val name = "Calculate size sum"
     override val description = "Log item sum of item sizes every given number of bytes"
 

@@ -23,9 +23,10 @@ import org.springframework.stereotype.Service
 import java.io.File
 import java.nio.charset.StandardCharsets
 
-@Service("line-writeWorker")
+@Service("lines-writeWorker")
 class LineWriteStep: ProcessingStep {
 
+    override val group = "Files"
     override val name = "Write lines to file"
     override val description = "Write lines to the given file"
 

@@ -29,6 +29,7 @@ class NodeSetStep(
     private val objectMapper: ObjectMapper
 ): ProcessingStep {
 
+    override val group = "Nodes"
     override val name = "Set JSON path"
     override val description = "Replace a subtree of a JSON object using the given JSONPath"
 

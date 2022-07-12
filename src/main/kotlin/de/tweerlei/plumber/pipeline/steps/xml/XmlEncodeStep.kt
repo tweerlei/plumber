@@ -28,6 +28,7 @@ class XmlEncodeStep(
     private val xmlMapper: XmlMapper
 ): ProcessingStep {
 
+    override val group = "XML"
     override val name = "Serialize to XML"
     override val description = "Serialize objects to XML text"
 

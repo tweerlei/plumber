@@ -23,9 +23,10 @@ import de.tweerlei.plumber.worker.file.FileKeys
 import org.springframework.stereotype.Service
 import java.io.File
 
-@Service("line-readWorker")
+@Service("lines-readWorker")
 class LineReadStep: ProcessingStep {
 
+    override val group = "Files"
     override val name = "Read lines from file"
     override val description = "Read lines from the given file"
 

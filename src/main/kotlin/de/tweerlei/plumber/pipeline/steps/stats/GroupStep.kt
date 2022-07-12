@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service
 @Service("groupWorker")
 class GroupStep: ProcessingStep {
 
+    override val group = "Logging"
     override val name = "Group items"
     override val description = "Log item counts per value at every given number of items"
 

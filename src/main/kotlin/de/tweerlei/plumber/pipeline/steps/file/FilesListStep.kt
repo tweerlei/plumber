@@ -26,6 +26,7 @@ import org.springframework.stereotype.Service
 @Service("files-listWorker")
 class FilesListStep: ProcessingStep {
 
+    override val group = "Files"
     override val name = "List files"
     override val description = "Read file names from the given directory"
 

@@ -29,6 +29,7 @@ class NodeGetStep(
     private val objectMapper: ObjectMapper
 ): ProcessingStep {
 
+    override val group = "Nodes"
     override val name = "Extract JSON path"
     override val description = "Extract a subtree of a JSON object using the given JSONPath"
 

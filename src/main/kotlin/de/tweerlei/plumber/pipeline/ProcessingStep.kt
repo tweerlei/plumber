@@ -19,6 +19,7 @@ import de.tweerlei.plumber.worker.Worker
 
 interface ProcessingStep {
 
+    val group: String
     val name: String
     val description: String
 

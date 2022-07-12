@@ -28,6 +28,7 @@ class SQSDeleteStep(
     private val sqsClientFactory: SQSClientFactory
 ): ProcessingStep {
 
+    override val group = "AWS SQS"
     override val name = "Delete SQS message"
     override val description = "Delete a message from the given SQS queue"
 

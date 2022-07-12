@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service
 @Service("node-clearWorker")
 class NodeClearStep: ProcessingStep {
 
+    override val group = "Nodes"
     override val name = "Clear JSON"
     override val description = "Clear the curent JSON object"
 

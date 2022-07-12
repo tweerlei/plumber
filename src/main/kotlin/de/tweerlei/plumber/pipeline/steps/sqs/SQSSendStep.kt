@@ -27,6 +27,7 @@ class SQSSendStep(
     private val sqsClientFactory: SQSClientFactory
 ): ProcessingStep {
 
+    override val group = "AWS SQS"
     override val name = "Send SQS message"
     override val description = "Send a message to the given SQS queue"
 

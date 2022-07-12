@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service
 @Service("notnullWorker")
 class NotNullStep: ProcessingStep {
 
+    override val group = "Flow control"
     override val name = "Filter not null"
     override val description = "Keep only items that are not null (true) or null (false)"
 

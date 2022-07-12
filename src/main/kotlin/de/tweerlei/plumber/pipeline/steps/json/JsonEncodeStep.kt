@@ -28,6 +28,7 @@ class JsonEncodeStep(
     private val objectMapper: ObjectMapper
 ): ProcessingStep {
 
+    override val group = "JSON"
     override val name = "Serialize to JSON"
     override val description = "Serialize objects to JSON text"
 

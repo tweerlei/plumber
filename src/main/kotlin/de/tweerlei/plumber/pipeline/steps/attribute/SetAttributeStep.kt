@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service
 @Service("setWorker")
 class SetAttributeStep: ProcessingStep {
 
+    override val group = "Attributes"
     override val name = "Set attribute"
     override val description = "Set the given attribute to the current value"
 

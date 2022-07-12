@@ -32,6 +32,7 @@ class MongoDBGetStep(
     private val objectMapper: ObjectMapper
 ): ProcessingStep {
 
+    override val group = "MongoDB"
     override val name = "Fetch MongoDB document"
     override val description = "Read a document from the given MongoDB collection"
 

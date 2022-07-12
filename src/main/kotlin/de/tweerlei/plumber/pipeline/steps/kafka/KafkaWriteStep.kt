@@ -28,6 +28,7 @@ class KafkaWriteStep(
     private val kafkaClientFactory: KafkaClientFactory
 ): ProcessingStep {
 
+    override val group = "Apache Kafka"
     override val name = "Send Kafka message"
     override val description = "Send a message to the given Kafka topic"
 

@@ -29,6 +29,7 @@ class JsonWriteStep(
     private val objectMapper: ObjectMapper
 ): ProcessingStep {
 
+    override val group = "JSON"
     override val name = "Write value as JSON"
     override val description = "Write current value as JSON object to the given file"
 

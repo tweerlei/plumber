@@ -29,6 +29,7 @@ class SQSReceiveStep(
     private val sqsClientFactory: SQSClientFactory
 ): ProcessingStep {
 
+    override val group = "AWS SQS"
     override val name = "Receive SQS messages"
     override val description = "Receive messages from the given SQS queue"
 

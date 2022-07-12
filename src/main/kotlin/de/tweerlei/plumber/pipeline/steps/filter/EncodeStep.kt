@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service
 @Service("text-writeWorker")
 class EncodeStep: ProcessingStep {
 
+    override val group = "Text"
     override val name = "Encode binary data"
     override val description = "Encode binary data as text using the given algorithm"
 

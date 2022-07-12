@@ -29,6 +29,7 @@ class DynamoDBPutStep(
     private val dynamoDBClientFactory: DynamoDBClientFactory
 ): ProcessingStep {
 
+    override val group = "AWS DynamoDB"
     override val name = "Put DynamoDB item"
     override val description = "Write an element to the given DynamoDB table"
 

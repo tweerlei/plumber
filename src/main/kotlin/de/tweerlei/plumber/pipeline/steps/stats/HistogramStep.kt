@@ -26,6 +26,7 @@ import org.springframework.stereotype.Service
 @Service("histogramWorker")
 class HistogramStep: ProcessingStep {
 
+    override val group = "Logging"
     override val name = "Histogram"
     override val description = "Build a histogram with the given number of buckets"
 

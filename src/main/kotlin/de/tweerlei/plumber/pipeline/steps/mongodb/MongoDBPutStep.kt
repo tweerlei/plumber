@@ -30,6 +30,7 @@ class MongoDBPutStep(
     private val objectMapper: ObjectMapper
 ): ProcessingStep {
 
+    override val group = "MongoDB"
     override val name = "Put MongoDB document"
     override val description = "Insert a document into the given MongoDB collection"
 

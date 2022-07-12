@@ -29,6 +29,7 @@ class NodeSubStep(
     private val objectMapper: ObjectMapper
 ): ProcessingStep {
 
+    override val group = "Nodes"
     override val name = "Extract JSON node"
     override val description = "Replace the current node with one of its sub nodes"
 

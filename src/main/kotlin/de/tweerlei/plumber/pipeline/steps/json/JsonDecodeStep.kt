@@ -28,6 +28,7 @@ class JsonDecodeStep(
     private val objectMapper: ObjectMapper
 ): ProcessingStep {
 
+    override val group = "JSON"
     override val name = "Deserialize from JSON"
     override val description = "Deserialize objects from JSON text"
 

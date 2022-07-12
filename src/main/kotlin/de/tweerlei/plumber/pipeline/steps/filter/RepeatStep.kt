@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service
 @Service("repeatWorker")
 class RepeatStep: ProcessingStep {
 
+    override val group = "Flow control"
     override val name = "Repeat"
     override val description = "Repeat the following steps a given number of times"
 

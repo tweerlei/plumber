@@ -29,6 +29,7 @@ class S3ReadStep(
     private val s3ClientFactory: S3ClientFactory
 ): ProcessingStep {
 
+    override val group = "AWS S3"
     override val name = "Fetch S3 object"
     override val description = "Get an object from the given S3 bucket"
 

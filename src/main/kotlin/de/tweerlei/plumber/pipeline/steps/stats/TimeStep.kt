@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service
 @Service("timeWorker")
 class TimeStep: ProcessingStep {
 
+    override val group = "Logging"
     override val name = "Time item throughput"
     override val description = "Log item throughput every given number of items"
 

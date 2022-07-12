@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service
 @Service("text-readWorker")
 class DecodeStep: ProcessingStep {
 
+    override val group = "Text"
     override val name = "Decode binary data"
     override val description = "Decode binary data from a string using the given algorithm"
 

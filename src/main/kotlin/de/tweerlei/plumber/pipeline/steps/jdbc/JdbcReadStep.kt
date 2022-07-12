@@ -30,6 +30,7 @@ class JdbcReadStep(
     private val jdbcTemplateFactory: JdbcTemplateFactory
 ): ProcessingStep {
 
+    override val group = "JDBC"
     override val name = "Fetch JDBC row"
     override val description = "Retrieve a row from the given JDBC table"
 

@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service
 @Service("rec-getWorker")
 class RecordGetStep: ProcessingStep {
 
+    override val group = "Records"
     override val name = "Get record field"
     override val description = "Set the given record field as current value"
 

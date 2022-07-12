@@ -26,6 +26,7 @@ import org.springframework.stereotype.Service
 @Service("dynamodb-keyWorker")
 class DynamoDBKeyStep: ProcessingStep {
 
+    override val group = "AWS DynamoDB"
     override val name = "Build DynamoDB key"
     override val description = "Convert item to a DynamoDB key with the specified range key"
 

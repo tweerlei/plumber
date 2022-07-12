@@ -29,6 +29,7 @@ class DynamoDBScanStep(
     private val dynamoDBClientFactory: DynamoDBClientFactory
 ): ProcessingStep {
 
+    override val group = "AWS DynamoDB"
     override val name = "Scan DynamoDB items"
     override val description = "List elements from the given DynamoDB table"
 

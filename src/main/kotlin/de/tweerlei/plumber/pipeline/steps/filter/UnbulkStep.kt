@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service
 @Service("unbulkWorker")
 class UnbulkStep: ProcessingStep {
 
+    override val group = "Flow control"
     override val name = "Un-bulk items"
     override val description = "Split bulks into separate items again"
 

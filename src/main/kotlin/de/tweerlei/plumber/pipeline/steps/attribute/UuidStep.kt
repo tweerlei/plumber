@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service
 @Service("uuidWorker")
 class UuidStep: ProcessingStep {
 
+    override val group = "Text"
     override val name = "Generate UUIDs"
     override val description = "Generate random UUIDs"
 

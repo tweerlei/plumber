@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service
 @Service("lengthWorker")
 class LengthStep: ProcessingStep {
 
+    override val group = "Text"
     override val name = "Calculate length"
     override val description = "Calculate the length of the current value"
 

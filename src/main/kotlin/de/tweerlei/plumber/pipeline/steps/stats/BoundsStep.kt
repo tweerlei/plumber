@@ -24,8 +24,9 @@ import org.springframework.stereotype.Service
 @Service("boundsWorker")
 class BoundsStep: ProcessingStep {
 
+    override val group = "Logging"
     override val name = "Calculate bounds"
-    override val description = "Report smallest and largest value"
+    override val description = "Log smallest and largest value"
 
     override fun isValuePassThrough() = true
 

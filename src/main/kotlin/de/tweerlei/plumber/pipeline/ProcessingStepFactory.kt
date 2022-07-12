@@ -16,6 +16,7 @@
 package de.tweerlei.plumber.pipeline
 
 import org.springframework.stereotype.Service
+import java.util.TreeMap
 
 @Service
 class ProcessingStepFactory(
@@ -27,11 +28,20 @@ class ProcessingStepFactory(
     }
 
     fun processingStepFor(stepName: String) =
-        processingSteps["$stepName$BEAN_SUFFIX"] ?: throw IllegalArgumentException("Unknown worker type '$stepName'")
+        processingSteps[stepNameToBeanName(stepName)] ?: throw IllegalArgumentException("Unknown worker type '$stepName'")
 
     fun processingStepDescriptions() =
-        processingSteps
-            .mapKeys { (key, _) -> key.substring(0, key.length - BEAN_SUFFIX.length) }
-            .mapValues { (_, factory) -> factory.description }
-            .toSortedMap()
+        TreeMap<String, TreeMap<String, String>>().also { map ->
+            processingSteps.entries.forEach { (key, value) ->
+                beanNameToStepName(key).let { stepName ->
+                    map.computeIfAbsent(value.group) { TreeMap<String, String>() }[stepName] = value.description
+                }
+            }
+        }
+
+    private fun stepNameToBeanName(stepName: String) =
+        "$stepName$BEAN_SUFFIX"
+
+    private fun beanNameToStepName(beanName: String) =
+        beanName.substring(0, beanName.length - BEAN_SUFFIX.length)
 }

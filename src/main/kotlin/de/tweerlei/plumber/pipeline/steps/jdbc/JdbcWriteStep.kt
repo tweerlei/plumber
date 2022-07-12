@@ -29,6 +29,7 @@ class JdbcWriteStep(
     private val jdbcTemplateFactory: JdbcTemplateFactory
 ): ProcessingStep {
 
+    override val group = "JDBC"
     override val name = "Insert JDBC rows"
     override val description = "Insert rows into the given JDBC table"
 

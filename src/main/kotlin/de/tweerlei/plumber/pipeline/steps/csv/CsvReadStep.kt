@@ -30,6 +30,7 @@ class CsvReadStep(
     private val csvMapper: CsvMapper
 ): ProcessingStep {
 
+    override val group = "CSV"
     override val name = "Read CSV lines from file"
     override val description = "Read CSV lines from the given file"
 

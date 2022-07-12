@@ -29,6 +29,7 @@ class JdbcRangeStep(
     private val jdbcTemplateFactory: JdbcTemplateFactory
 ): ProcessingStep {
 
+    override val group = "JDBC"
     override val name = "JDBC key range"
     override val description = "Determine the actual range of values for the JDBC primaryKey, use with partition:n"
 

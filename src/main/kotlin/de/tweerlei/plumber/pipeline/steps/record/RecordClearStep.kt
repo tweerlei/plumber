@@ -22,9 +22,10 @@ import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.attribute.UnsettingWorker
 import org.springframework.stereotype.Service
 
-@Service("record-clearWorker")
+@Service("rec-clearWorker")
 class RecordClearStep: ProcessingStep {
 
+    override val group = "Records"
     override val name = "Clear record"
     override val description = "Clear the curent record"
 

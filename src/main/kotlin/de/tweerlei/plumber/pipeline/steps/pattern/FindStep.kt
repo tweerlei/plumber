@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service
 @Service("findWorker")
 class FindStep: ProcessingStep {
 
+    override val group = "Text"
     override val name = "Find by regex"
     override val description = "Find matches of the given regular expression, use with notnull: or replace:"
 

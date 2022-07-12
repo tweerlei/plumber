@@ -28,6 +28,7 @@ class S3BulkDeleteStep(
     private val s3ClientFactory: S3ClientFactory
 ): ProcessingStep {
 
+    override val group = "AWS S3"
     override val name = "Delete S3 objects"
     override val description = "Deletes multiple objects from the given S3 bucket, use with bulk:<n>"
 

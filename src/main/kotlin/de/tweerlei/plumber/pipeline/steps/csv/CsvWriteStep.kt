@@ -29,6 +29,7 @@ class CsvWriteStep(
     private val csvMapper: CsvMapper
 ): ProcessingStep {
 
+    override val group = "CSV"
     override val name = "Write value as CSV"
     override val description = "Write current value as CSV object to the given file"
 

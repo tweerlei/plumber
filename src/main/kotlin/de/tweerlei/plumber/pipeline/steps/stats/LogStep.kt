@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service
 @Service("logWorker")
 class LogStep: ProcessingStep {
 
+    override val group = "Logging"
     override val name = "Log value"
     override val description = "Log the current value"
 

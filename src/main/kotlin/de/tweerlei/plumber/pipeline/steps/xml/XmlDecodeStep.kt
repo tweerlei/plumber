@@ -28,6 +28,7 @@ class XmlDecodeStep(
     private val xmlMapper: XmlMapper
 ): ProcessingStep {
 
+    override val group = "XML"
     override val name = "Deserialize from XML"
     override val description = "Deserialize objects from XML text"
 

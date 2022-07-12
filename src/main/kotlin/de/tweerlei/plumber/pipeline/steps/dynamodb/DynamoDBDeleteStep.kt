@@ -29,6 +29,7 @@ class DynamoDBDeleteStep(
     private val dynamoDBClientFactory: DynamoDBClientFactory
 ): ProcessingStep {
 
+    override val group = "AWS DynamoDB"
     override val name = "Delete DynamoDB item"
     override val description = "Delete an element from the given DynamoDB table"
 

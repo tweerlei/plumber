@@ -28,6 +28,7 @@ class S3WriteStep(
     private val s3ClientFactory: S3ClientFactory
 ): ProcessingStep {
 
+    override val group = "AWS S3"
     override val name = "Write S3 object"
     override val description = "Put an object into the given S3 bucket"
 

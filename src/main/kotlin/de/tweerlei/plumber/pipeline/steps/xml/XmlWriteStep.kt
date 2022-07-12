@@ -29,6 +29,7 @@ class XmlWriteStep(
     private val xmlMapper: XmlMapper
 ): ProcessingStep {
 
+    override val group = "XML"
     override val name = "Write value as XML"
     override val description = "Write current value as XML object to the given file"
 

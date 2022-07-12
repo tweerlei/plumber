@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service
 @Service("delayWorker")
 class DelayStep: ProcessingStep {
 
+    override val group = "Flow control"
     override val name = "Delay processing"
     override val description = "Delay following steps by the given number of milliseconds"
 

@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service
 @Service("parallelWorker")
 class ParallelStep: ProcessingStep {
 
+    override val group = "Flow control"
     override val name = "Parallel execution"
     override val description = "Execute following steps using the given number of threads"
 

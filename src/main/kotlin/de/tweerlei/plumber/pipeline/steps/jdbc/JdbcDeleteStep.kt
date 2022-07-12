@@ -29,6 +29,7 @@ class JdbcDeleteStep(
     private val jdbcTemplateFactory: JdbcTemplateFactory
 ): ProcessingStep {
 
+    override val group = "JDBC"
     override val name = "Delete JDBC row"
     override val description = "Delete a row from the given JDBC table"
 

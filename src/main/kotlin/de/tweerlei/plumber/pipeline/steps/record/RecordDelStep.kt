@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service
 @Service("rec-delWorker")
 class RecordDelStep: ProcessingStep {
 
+    override val group = "Records"
     override val name = "Remove record field"
     override val description = "Remove the given field from the current record"
 

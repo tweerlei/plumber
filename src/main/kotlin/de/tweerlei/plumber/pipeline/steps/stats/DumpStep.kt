@@ -24,8 +24,9 @@ import org.springframework.stereotype.Service
 @Service("dumpWorker")
 class DumpStep: ProcessingStep {
 
+    override val group = "Logging"
     override val name = "Dump state"
-    override val description = "Dump pipeline state"
+    override val description = "Dump raw item contents"
 
     override fun isValuePassThrough() = true
 

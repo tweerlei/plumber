@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service
 @Service("formatWorker")
 class FormatStep: ProcessingStep {
 
+    override val group = "Text"
     override val name = "Format text"
     override val description = "Produces the argument with all occurrences of \${name} replaced by their value"
 

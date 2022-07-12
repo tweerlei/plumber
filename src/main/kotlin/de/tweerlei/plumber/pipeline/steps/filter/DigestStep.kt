@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service
 @Service("digestWorker")
 class DigestStep: ProcessingStep {
 
+    override val group = "Text"
     override val name = "Calculate digest"
     override val description = "Calculate a message digest using the given algorithm"
 

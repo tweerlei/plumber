@@ -28,6 +28,7 @@ class SQSBulkDeleteStep(
     private val sqsClientFactory: SQSClientFactory
 ): ProcessingStep {
 
+    override val group = "AWS SQS"
     override val name = "Delete SQS messages"
     override val description = "Delete multiple messages from the given SQS queue, use with bulk:<n>"
 

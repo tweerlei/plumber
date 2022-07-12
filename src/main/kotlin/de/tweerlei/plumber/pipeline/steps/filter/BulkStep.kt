@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service
 @Service("bulkWorker")
 class BulkStep: ProcessingStep {
 
+    override val group = "Flow control"
     override val name = "Bulk execution"
     override val description = "Execute following steps using chunks of items"
 

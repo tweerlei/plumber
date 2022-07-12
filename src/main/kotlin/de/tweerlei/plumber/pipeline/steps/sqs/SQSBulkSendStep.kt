@@ -28,6 +28,7 @@ class SQSBulkSendStep(
     private val sqsClientFactory: SQSClientFactory
 ): ProcessingStep {
 
+    override val group = "AWS SQS"
     override val name = "Send SQS messages"
     override val description = "Send multiple messages to the given SQS queue, use with bulk:<n>"
 
