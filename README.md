@@ -135,7 +135,7 @@ The `file-list` step, for example, will generate items where the "current value"
 
 Each step knows which attributes it expects and what kind of "current value" it is able to process, so you won't be able to chain steps in an order that doesn't make sense.
 
-How do you find out about the types and attributes handled by each step? Use the `--explain` option to see what going on.
+How do you find out about the types and attributes handled by each step? Use the `--explain` option to see what's going on.
 
 ## Examples
 
@@ -163,6 +163,27 @@ While the current value gets overwritten by each `value` step, you can save each
 A simpler alternative would be to just restore a single attribute value using `get:greeting`.
 
 For debugging purposes, you can also use `dump` instead of `log` to dump all the contents of the item received by that step.
+
+## Find and replace
+
+You can match the current value against a regular expression:
+```bash
+./plumber \
+    value:'The quick brown fox' \
+    find:'q.*k (\S+)' \
+    log
+```
+This will yield the matched substring (`quick` in this case) as current value and the matched subgroup as attribute `matchedGroup1` with the value `brown`.
+To discard items that didn't match the pattern, use `notnull` or `notnull:false` to keep only those.
+Replacing the matched substring is possible with the `replace` step that also supports references to groups:
+
+```bash
+./plumber \
+    value:'The quick brown fox' \
+    find:'The (\S+) (\S+) (\S+)' \
+    replace:'The $2 $1 bear' \
+    log
+```
 
 ## Records
 
@@ -229,6 +250,19 @@ Feel free to sprinkle your pipeline with statistics steps to count the items pas
 ```
 
 The `count` step doesn't modify items but keeps track of how many items have passed and prints that number every 100 items (in this case). The `time` step will measure the average time it takes to process the next and following steps.
+
+## Bulk operations
+
+Some I/O operations are faster when multiple items can be processed at once.
+Input operations like `s3-list` will use bulk mode by default with a limit of 1000 (adjustable via `--bulk-size`). Received items will then be processed individually.
+Currently, output operations usually work on single items. There are special steps that support bulk mode like `s3-bulkdelete`. To make use of them, items have to be bulked:
+```bash
+./plumber \
+    s3-list:mybucket \
+    bulk:100 \
+    s3-bulkdelete
+```
+If you want to chain "normal" steps to bulk steps, you will have to `unbulk` the items again. 
 
 ## Parallel processing
 
