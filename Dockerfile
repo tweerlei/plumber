@@ -1,6 +1,6 @@
 FROM openjdk:11-jdk AS build
 
-COPY *.kts gradlew* /build/
+COPY *.kts *.properties gradlew* /build/
 COPY gradle /build/gradle
 
 WORKDIR /build
