@@ -16,7 +16,8 @@ FROM openjdk:11-jre AS runtime
 
 # Add the AWS RDS CA to the JVM trust store
 COPY rds-combined-ca-bundle.pem /etc/ssl/certs/rds.crt
-RUN echo y | keytool -importcert -alias rds -file /etc/ssl/certs/rds.crt -cacerts -keypass changeit -storepass changeit
+RUN echo y | keytool -importcert -alias rds -file /etc/ssl/certs/rds.crt -cacerts -keypass changeit -storepass changeit && \
+	rm -f /usr/local/bin/docker-java-home
 
 COPY plumber /usr/local/bin/
 COPY --from=build /build/build/libs/*.jar /usr/local/bin/build/libs/
