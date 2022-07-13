@@ -13,33 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.tweerlei.plumber.worker.filter
+package de.tweerlei.plumber.worker.text
 
-import de.tweerlei.plumber.worker.WellKnownKeys
 import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.DelegatingWorker
 import de.tweerlei.plumber.worker.Worker
+import java.util.regex.Matcher
+import java.util.regex.Pattern
 
-class LengthWorker(
+class FormattingWorker(
+    private val formatString: String,
     worker: Worker
 ): DelegatingWorker(worker) {
 
-    override fun doProcess(item: WorkItem) =
-        item.getOptional()
-            .size()
-            .also { size ->
-                item.set(size, WellKnownKeys.SIZE)
-                item.set(size)
-            }.let { true }
+    companion object {
+        private val PATTERN = Pattern.compile("\\$\\{([^}]*)\\}")
+    }
 
-    private fun Any?.size() =
-        when (this) {
-            null -> 0
-            is String -> length
-            is ByteArray -> size
-            is Map<*, *> -> size
-            is Collection<*> -> size
-//            is Number -> toInt()
-            else -> toString().length
-        }
+    override fun doProcess(item: WorkItem) =
+        PATTERN.matcher(formatString).replaceAll { result ->
+            item.getOptional(result.group(1))?.toString().orEmpty().let { value ->
+                Matcher.quoteReplacement(value)
+            }
+        }.also { result ->
+            item.set(result)
+        }.let { true }
 }

@@ -13,26 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.tweerlei.plumber.pipeline.steps.pattern
+package de.tweerlei.plumber.pipeline.steps.text
 
 import de.tweerlei.plumber.pipeline.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
-import de.tweerlei.plumber.worker.WellKnownKeys
 import de.tweerlei.plumber.worker.Worker
-import de.tweerlei.plumber.worker.pattern.ReplacingWorker
+import de.tweerlei.plumber.worker.text.UUIDWorker
 import org.springframework.stereotype.Service
 
-@Service("replaceWorker")
-class ReplaceStep: ProcessingStep {
+@Service("uuidWorker")
+class UuidStep: ProcessingStep {
 
     override val group = "Text"
-    override val name = "Replace text"
-    override val description = "Replace all matches of a previous find: with the given replacement"
-
-    override fun requiredAttributesFor(arg: String) = setOf(
-        WellKnownKeys.MATCH_EXPRESSION,
-        WellKnownKeys.MATCH_INPUT
-    )
+    override val name = "Generate UUIDs"
+    override val description = "Generate random UUIDs"
 
     override fun createWorker(
         arg: String,
@@ -42,5 +36,5 @@ class ReplaceStep: ProcessingStep {
         params: PipelineParams,
         parallelDegree: Int
     ) =
-        ReplacingWorker(arg, w)
+        UUIDWorker(params.maxFilesPerThread, w)
 }

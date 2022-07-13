@@ -16,11 +16,11 @@
 package de.tweerlei.plumber.worker.csv
 
 import com.fasterxml.jackson.dataformat.csv.CsvMapper
+import de.tweerlei.plumber.worker.TestWorkerRunner
 import de.tweerlei.plumber.worker.WorkItem
-import de.tweerlei.plumber.worker.WorkerBuilder
 import de.tweerlei.plumber.worker.record.RecordGetWorker
-import de.tweerlei.plumber.worker.stats.CollectingWorker
-import org.junit.jupiter.api.Assertions.assertEquals
+import io.kotest.matchers.nulls.shouldNotBeNull
+import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
 import java.nio.charset.StandardCharsets
 
@@ -32,17 +32,15 @@ class CsvWorkerTest {
         val csv = """Hello,42,true,null,"Hello,42,false,null""""
         val objectMapper = CsvMapper()
 
-        val items = mutableListOf<WorkItem>()
-        WorkerBuilder.create()
+        val item = TestWorkerRunner()
             .append { w -> FromCsvWorker(objectMapper, w) }
             .append { w -> RecordGetWorker("4", w) }
             .append { w -> FromCsvWorker(objectMapper, w) }
             .append { w -> ToCsvWorker(objectMapper, w) }
-            .append { w -> CollectingWorker(items, w) }
-            .build()
-            .process(WorkItem.of(csv.toByteArray(StandardCharsets.UTF_8)))
+            .run(WorkItem.of(csv.toByteArray(StandardCharsets.UTF_8)))
+            .singleOrNull()
 
-        assertEquals(1, items.size)
-        assertEquals("Hello,42,false,null\n", items[0].getAs<String>())
+        item.shouldNotBeNull()
+        item.getAs<String>().shouldBe("Hello,42,false,null\n", )
     }
 }

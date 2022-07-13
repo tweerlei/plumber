@@ -13,25 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.tweerlei.plumber.pipeline.steps.filter
+package de.tweerlei.plumber.pipeline.steps.text
 
 import de.tweerlei.plumber.pipeline.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
 import de.tweerlei.plumber.worker.WellKnownKeys
 import de.tweerlei.plumber.worker.Worker
-import de.tweerlei.plumber.worker.filter.DigestWorker
+import de.tweerlei.plumber.worker.text.LengthWorker
 import org.springframework.stereotype.Service
 
-@Service("digestWorker")
-class DigestStep: ProcessingStep {
+@Service("lengthWorker")
+class LengthStep: ProcessingStep {
 
     override val group = "Text"
-    override val name = "Calculate digest"
-    override val description = "Calculate a message digest using the given algorithm"
+    override val name = "Calculate length"
+    override val description = "Calculate the length of the current value"
 
     override fun producedAttributesFor(arg: String) = setOf(
-        WellKnownKeys.DIGEST,
-        WellKnownKeys.DIGEST_ALGORITHM
+        WellKnownKeys.SIZE
     )
 
     override fun createWorker(
@@ -42,8 +41,5 @@ class DigestStep: ProcessingStep {
         params: PipelineParams,
         parallelDegree: Int
     ) =
-        DigestWorker(
-            arg.ifEmpty { "sha1" },
-            w
-        )
+        LengthWorker(w)
 }

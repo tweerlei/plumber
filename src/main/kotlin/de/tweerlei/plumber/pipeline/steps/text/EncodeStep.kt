@@ -13,26 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.tweerlei.plumber.pipeline.steps.pattern
+package de.tweerlei.plumber.pipeline.steps.text
 
 import de.tweerlei.plumber.pipeline.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
-import de.tweerlei.plumber.worker.WellKnownKeys
 import de.tweerlei.plumber.worker.Worker
-import de.tweerlei.plumber.worker.pattern.MatchingWorker
+import de.tweerlei.plumber.worker.text.EncodingWorker
 import org.springframework.stereotype.Service
 
-@Service("findWorker")
-class FindStep: ProcessingStep {
+@Service("text-writeWorker")
+class EncodeStep: ProcessingStep {
 
     override val group = "Text"
-    override val name = "Find by regex"
-    override val description = "Find matches of the given regular expression, use with notnull: or replace:"
-
-    override fun producedAttributesFor(arg: String) = setOf(
-        WellKnownKeys.MATCH_EXPRESSION,
-        WellKnownKeys.MATCH_INPUT
-    )
+    override val name = "Encode binary data"
+    override val description = "Encode binary data as text using the given algorithm"
 
     override fun createWorker(
         arg: String,
@@ -42,5 +36,8 @@ class FindStep: ProcessingStep {
         params: PipelineParams,
         parallelDegree: Int
     ) =
-        MatchingWorker(Regex(arg), w)
+        EncodingWorker(
+            arg.ifEmpty { "hex" },
+            w
+        )
 }

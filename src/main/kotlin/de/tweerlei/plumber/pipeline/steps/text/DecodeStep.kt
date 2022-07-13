@@ -13,20 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.tweerlei.plumber.pipeline.steps.attribute
+package de.tweerlei.plumber.pipeline.steps.text
 
 import de.tweerlei.plumber.pipeline.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
 import de.tweerlei.plumber.worker.Worker
-import de.tweerlei.plumber.worker.attribute.FormattingWorker
+import de.tweerlei.plumber.worker.text.DecodingWorker
 import org.springframework.stereotype.Service
 
-@Service("formatWorker")
-class FormatStep: ProcessingStep {
+@Service("text-readWorker")
+class DecodeStep: ProcessingStep {
 
     override val group = "Text"
-    override val name = "Format text"
-    override val description = "Produces the argument with all occurrences of \${name} replaced by their value"
+    override val name = "Decode binary data"
+    override val description = "Decode binary data from a string using the given algorithm"
 
     override fun createWorker(
         arg: String,
@@ -36,5 +36,8 @@ class FormatStep: ProcessingStep {
         params: PipelineParams,
         parallelDegree: Int
     ) =
-        FormattingWorker(arg, w)
+        DecodingWorker(
+            arg.ifEmpty { "hex" },
+            w
+        )
 }

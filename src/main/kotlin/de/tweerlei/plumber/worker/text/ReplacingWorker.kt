@@ -13,40 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.tweerlei.plumber.worker.filter
+package de.tweerlei.plumber.worker.text
 
+import de.tweerlei.plumber.worker.WellKnownKeys
 import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.DelegatingWorker
 import de.tweerlei.plumber.worker.Worker
-import java.nio.charset.Charset
-import java.util.*
 
-class DecodingWorker(
-    private val alg: String,
+class ReplacingWorker(
+    private val replacement: String,
     worker: Worker
 ): DelegatingWorker(worker) {
 
     override fun doProcess(item: WorkItem) =
-        item.getString()
-            .let { encoded ->
-                when (alg) {
-                    "base64" -> decodeBase64(encoded)
-                    "hex" -> decodeHex(encoded)
-                    else -> encoded.toByteArray(Charset.forName(alg))
-                }.also { bytes ->
-                    item.set(bytes)
-                }
+        item.getAs<Regex>(WellKnownKeys.MATCH_EXPRESSION)
+            .let { regex ->
+                regex.replace(item.getString(WellKnownKeys.MATCH_INPUT), replacement)
+            }.also { result ->
+                item.set(result)
             }.let { true }
-
-    private fun decodeBase64(encoded: String): ByteArray =
-        Base64.getDecoder().decode(encoded)
-
-    private fun decodeHex(encoded: String) =
-        encoded.split(Regex(".."))
-            .let { bytes ->
-                ByteArray(bytes.size)
-                .also { arr ->
-                    bytes.forEachIndexed { index, s -> arr[index] = s.toByte(16) }
-                }
-            }
 }

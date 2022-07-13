@@ -13,22 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.tweerlei.plumber.worker.attribute
+package de.tweerlei.plumber.worker.filter
 
+import de.tweerlei.plumber.worker.TestWorkerRunner
 import de.tweerlei.plumber.worker.WorkItem
-import de.tweerlei.plumber.worker.GeneratingWorker
-import de.tweerlei.plumber.worker.Worker
-import java.util.*
+import io.kotest.matchers.shouldBe
+import org.junit.jupiter.api.Test
 
-class UUIDWorker(
-    limit: Int,
-    worker: Worker
-): GeneratingWorker(limit, worker) {
+class RepeatingWorkerTest {
 
-    override fun generateItems(item: WorkItem, fn: (WorkItem) -> Boolean) {
-        generateSequence { UUID.randomUUID().toString() }
-            .all { uuid ->
-                fn(WorkItem.of(uuid))
-            }
+    @Test
+    fun `When repeating items Then all items are passed through`() {
+        val items = TestWorkerRunner()
+            .append { w -> RepeatingWorker("repeat", 10, w) }
+            .run(WorkItem.of(""))
+
+        items.size.shouldBe(10)
     }
 }

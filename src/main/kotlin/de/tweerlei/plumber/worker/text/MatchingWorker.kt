@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.tweerlei.plumber.worker.pattern
+package de.tweerlei.plumber.worker.text
 
 import de.tweerlei.plumber.worker.WellKnownKeys
 import de.tweerlei.plumber.worker.WorkItem

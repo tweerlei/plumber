@@ -13,31 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.tweerlei.plumber.worker
+package de.tweerlei.plumber.worker.filter
 
-import de.tweerlei.plumber.worker.attribute.UUIDWorker
-import de.tweerlei.plumber.worker.stats.CollectingWorker
+import de.tweerlei.plumber.worker.TestWorkerRunner
+import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.stats.CountingWorker
-import de.tweerlei.plumber.worker.filter.MultithreadedWorker
-import org.junit.jupiter.api.Assertions.assertEquals
+import de.tweerlei.plumber.worker.text.UUIDWorker
+import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
-import org.mockito.Mockito
-import java.util.concurrent.ConcurrentLinkedQueue
 
 class MultithreadedWorkerTest {
 
     @Test
     fun `When using multiple threads Then all items are passed through`() {
-        val items = ConcurrentLinkedQueue<WorkItem>()
-        WorkerBuilder.create()
+        val items = TestWorkerRunner()
             .append { w -> UUIDWorker(100, w) }
             .append { w -> MultithreadedWorker("parallel", 4, 4, w) }
             .append { w -> CountingWorker("test", 100, w) }
-            .append { w -> CollectingWorker(items, w) }
-            .build()
-            .open(Mockito.mock(Worker.RunContext::class.java))
-            .use { worker -> worker.process(WorkItem.of("")) }
+            .run(WorkItem.of(""))
 
-        assertEquals(100, items.size)
+        items.size.shouldBe(100)
     }
 }

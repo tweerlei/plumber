@@ -13,24 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.tweerlei.plumber.pipeline.steps.filter
+package de.tweerlei.plumber.pipeline.steps.text
 
 import de.tweerlei.plumber.pipeline.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
 import de.tweerlei.plumber.worker.WellKnownKeys
 import de.tweerlei.plumber.worker.Worker
-import de.tweerlei.plumber.worker.filter.LengthWorker
+import de.tweerlei.plumber.worker.text.ReplacingWorker
 import org.springframework.stereotype.Service
 
-@Service("lengthWorker")
-class LengthStep: ProcessingStep {
+@Service("replaceWorker")
+class ReplaceStep: ProcessingStep {
 
     override val group = "Text"
-    override val name = "Calculate length"
-    override val description = "Calculate the length of the current value"
+    override val name = "Replace text"
+    override val description = "Replace all matches of a previous find: with the given replacement"
 
-    override fun producedAttributesFor(arg: String) = setOf(
-        WellKnownKeys.SIZE
+    override fun requiredAttributesFor(arg: String) = setOf(
+        WellKnownKeys.MATCH_EXPRESSION,
+        WellKnownKeys.MATCH_INPUT
     )
 
     override fun createWorker(
@@ -41,5 +42,5 @@ class LengthStep: ProcessingStep {
         params: PipelineParams,
         parallelDegree: Int
     ) =
-        LengthWorker(w)
+        ReplacingWorker(arg, w)
 }

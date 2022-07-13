@@ -13,20 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.tweerlei.plumber.pipeline.steps.attribute
+package de.tweerlei.plumber.pipeline.steps.text
 
 import de.tweerlei.plumber.pipeline.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
+import de.tweerlei.plumber.worker.WellKnownKeys
 import de.tweerlei.plumber.worker.Worker
-import de.tweerlei.plumber.worker.attribute.UUIDWorker
+import de.tweerlei.plumber.worker.text.DigestWorker
 import org.springframework.stereotype.Service
 
-@Service("uuidWorker")
-class UuidStep: ProcessingStep {
+@Service("digestWorker")
+class DigestStep: ProcessingStep {
 
     override val group = "Text"
-    override val name = "Generate UUIDs"
-    override val description = "Generate random UUIDs"
+    override val name = "Calculate digest"
+    override val description = "Calculate a message digest using the given algorithm"
+
+    override fun producedAttributesFor(arg: String) = setOf(
+        WellKnownKeys.DIGEST,
+        WellKnownKeys.DIGEST_ALGORITHM
+    )
 
     override fun createWorker(
         arg: String,
@@ -36,5 +42,8 @@ class UuidStep: ProcessingStep {
         params: PipelineParams,
         parallelDegree: Int
     ) =
-        UUIDWorker(params.maxFilesPerThread, w)
+        DigestWorker(
+            arg.ifEmpty { "sha1" },
+            w
+        )
 }

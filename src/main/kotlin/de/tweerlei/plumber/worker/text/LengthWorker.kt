@@ -13,35 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.tweerlei.plumber.worker.filter
+package de.tweerlei.plumber.worker.text
 
 import de.tweerlei.plumber.worker.WellKnownKeys
 import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.DelegatingWorker
 import de.tweerlei.plumber.worker.Worker
-import java.io.OutputStream
-import java.security.DigestOutputStream
-import java.security.MessageDigest
 
-class DigestWorker(
-    private val alg: String,
+class LengthWorker(
     worker: Worker
 ): DelegatingWorker(worker) {
 
     override fun doProcess(item: WorkItem) =
-        item.getByteArray()
-            .digest(alg)
-            .also { digest ->
-                item.set(alg, WellKnownKeys.DIGEST_ALGORITHM)
-                item.set(digest, WellKnownKeys.DIGEST)
-                item.set(digest)
+        item.getOptional()
+            .size()
+            .also { size ->
+                item.set(size, WellKnownKeys.SIZE)
+                item.set(size)
             }.let { true }
 
-    private fun ByteArray.digest(alg: String): ByteArray =
-        MessageDigest.getInstance(alg)
-            .also { digest ->
-                DigestOutputStream(OutputStream.nullOutputStream(), digest).use { stream ->
-                    stream.write(this)
-                }
-            }.digest()
+    private fun Any?.size() =
+        when (this) {
+            null -> 0
+            is String -> length
+            is ByteArray -> size
+            is Map<*, *> -> size
+            is Collection<*> -> size
+//            is Number -> toInt()
+            else -> toString().length
+        }
 }

@@ -13,20 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.tweerlei.plumber.pipeline.steps.filter
+package de.tweerlei.plumber.pipeline.steps.text
 
 import de.tweerlei.plumber.pipeline.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
 import de.tweerlei.plumber.worker.Worker
-import de.tweerlei.plumber.worker.filter.EncodingWorker
+import de.tweerlei.plumber.worker.text.FormattingWorker
 import org.springframework.stereotype.Service
 
-@Service("text-writeWorker")
-class EncodeStep: ProcessingStep {
+@Service("formatWorker")
+class FormatStep: ProcessingStep {
 
     override val group = "Text"
-    override val name = "Encode binary data"
-    override val description = "Encode binary data as text using the given algorithm"
+    override val name = "Format text"
+    override val description = "Produces the argument with all occurrences of \${name} replaced by their value"
 
     override fun createWorker(
         arg: String,
@@ -36,8 +36,5 @@ class EncodeStep: ProcessingStep {
         params: PipelineParams,
         parallelDegree: Int
     ) =
-        EncodingWorker(
-            arg.ifEmpty { "hex" },
-            w
-        )
+        FormattingWorker(arg, w)
 }

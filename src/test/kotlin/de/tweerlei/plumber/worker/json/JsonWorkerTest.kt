@@ -18,11 +18,11 @@ package de.tweerlei.plumber.worker.json
 import com.fasterxml.jackson.core.JsonPointer
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
+import de.tweerlei.plumber.worker.TestWorkerRunner
 import de.tweerlei.plumber.worker.WorkItem
-import de.tweerlei.plumber.worker.WorkerBuilder
 import de.tweerlei.plumber.worker.node.NodeGetWorker
-import de.tweerlei.plumber.worker.stats.CollectingWorker
-import org.junit.jupiter.api.Assertions.assertEquals
+import io.kotest.matchers.nulls.shouldNotBeNull
+import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
 import java.nio.charset.StandardCharsets
 
@@ -45,16 +45,14 @@ class JsonWorkerTest {
         """
         val objectMapper = ObjectMapper()
 
-        val items = mutableListOf<WorkItem>()
-        WorkerBuilder.create()
+        val item = TestWorkerRunner()
             .append { w -> FromJsonWorker(JsonNode::class.java, objectMapper, w) }
             .append { w -> NodeGetWorker(JsonPointer.compile("/obj"), w) }
             .append { w -> ToJsonWorker(objectMapper, false, w) }
-            .append { w -> CollectingWorker(items, w) }
-            .build()
-            .process(WorkItem.of(json.toByteArray(StandardCharsets.UTF_8)))
+            .run(WorkItem.of(json.toByteArray(StandardCharsets.UTF_8)))
+            .singleOrNull()
 
-        assertEquals(1, items.size)
-        assertEquals("""{"string":"Hello","number":42,"boolean":true,"null":null,"array":[1,2,3]}""", items[0].getAs<String>())
+        item.shouldNotBeNull()
+        item.getAs<String>().shouldBe("""{"string":"Hello","number":42,"boolean":true,"null":null,"array":[1,2,3]}""")
     }
 }

@@ -13,29 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.tweerlei.plumber.worker.attribute
+package de.tweerlei.plumber.worker.text
 
 import de.tweerlei.plumber.worker.WorkItem
-import de.tweerlei.plumber.worker.DelegatingWorker
+import de.tweerlei.plumber.worker.GeneratingWorker
 import de.tweerlei.plumber.worker.Worker
-import java.util.regex.Matcher
-import java.util.regex.Pattern
+import java.util.*
 
-class FormattingWorker(
-    private val formatString: String,
+class UUIDWorker(
+    limit: Int,
     worker: Worker
-): DelegatingWorker(worker) {
+): GeneratingWorker(limit, worker) {
 
-    companion object {
-        private val PATTERN = Pattern.compile("\\$\\{([^}]*)\\}")
-    }
-
-    override fun doProcess(item: WorkItem) =
-        PATTERN.matcher(formatString).replaceAll { result ->
-            item.getOptional(result.group(1))?.toString().orEmpty().let { value ->
-                Matcher.quoteReplacement(value)
+    override fun generateItems(item: WorkItem, fn: (WorkItem) -> Boolean) {
+        generateSequence { UUID.randomUUID().toString() }
+            .all { uuid ->
+                fn(WorkItem.of(uuid))
             }
-        }.also { result ->
-            item.set(result)
-        }.let { true }
+    }
 }

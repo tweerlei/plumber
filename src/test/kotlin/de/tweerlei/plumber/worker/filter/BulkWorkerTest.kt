@@ -13,23 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.tweerlei.plumber.worker.pattern
+package de.tweerlei.plumber.worker.filter
 
+import de.tweerlei.plumber.worker.TestWorkerRunner
 import de.tweerlei.plumber.worker.WellKnownKeys
 import de.tweerlei.plumber.worker.WorkItem
-import de.tweerlei.plumber.worker.DelegatingWorker
-import de.tweerlei.plumber.worker.Worker
+import de.tweerlei.plumber.worker.text.UUIDWorker
+import io.kotest.matchers.shouldBe
+import org.junit.jupiter.api.Test
 
-class ReplacingWorker(
-    private val replacement: String,
-    worker: Worker
-): DelegatingWorker(worker) {
+class BulkWorkerTest {
 
-    override fun doProcess(item: WorkItem) =
-        item.getAs<Regex>(WellKnownKeys.MATCH_EXPRESSION)
-            .let { regex ->
-                regex.replace(item.getString(WellKnownKeys.MATCH_INPUT), replacement)
-            }.also { result ->
-                item.set(result)
-            }.let { true }
+    @Test
+    fun `When bulking items Then all items are passed through`() {
+        val items = TestWorkerRunner()
+            .append { w -> UUIDWorker(19, w) }
+            .append { w -> BulkWorker(10, w) }
+            .run(WorkItem.of(""))
+
+        items.size.shouldBe(2)
+        items.fold(0) { acc, item ->
+            acc + item.getAs<List<*>>(WellKnownKeys.WORK_ITEMS).size
+        }.shouldBe(19)
+    }
 }
