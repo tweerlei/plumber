@@ -1,5 +1,6 @@
 #!/bin/sh
 
 LIB_DIR=$(dirname "$0")
+JAR_FILE=$(echo "$LIB_DIR/build/libs/plumber-"*.jar)
 
-exec java --add-opens java.base/java.lang=ALL-UNNAMED -jar "$LIB_DIR/build/libs/plumber-0.1.0-SNAPSHOT.jar" "$@"
+exec java --add-opens java.base/java.lang=ALL-UNNAMED -jar "$JAR_FILE" "$@"
