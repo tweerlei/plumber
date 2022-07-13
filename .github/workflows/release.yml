@@ -1,0 +1,42 @@
+name: Docker Image Release
+
+on:
+  push:
+    tags: [ '*' ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+      packages: write
+
+    steps:
+
+    - name: Log in to Github container registry
+      uses: docker/login-action@v1
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Build and push the Docker image
+      id: docker-build
+      uses: docker/build-push-action@v2
+      with:
+        push: true
+        tags: ghcr.io/${{ github.repository }}:${{ github.ref_name }}
+
+    - name: Extract files from the image
+      id: build-tar
+      run: |
+        CONTAINER_ID=$(docker create "${{ steps.docker-build.outputs.imageid }}")
+        docker cp "$CONTAINER_ID/usr/local/bin" - | gzip > "plumber-${{ github.ref_name }}.tar.gz"
+        docker rm "$CONTAINER_ID"
+        echo "::set-output name=tarball::plumber-${{ github.ref_name }}.tar.gz"
+
+    - name: Create a release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: ${{ steps.build-tar.outputs.tarball }}
