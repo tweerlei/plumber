@@ -1,5 +1,7 @@
 FROM openjdk:11-jdk AS build
 
+ARG PACKAGE_VERSION=0.0.1-SNAPSHOT
+
 COPY *.kts *.properties gradlew* /build/
 COPY gradle /build/gradle
 
@@ -7,7 +9,7 @@ WORKDIR /build
 RUN ./gradlew --no-daemon dependencies >/dev/null
 
 COPY src /build/src
-RUN ./gradlew build --no-daemon
+RUN ./gradlew --no-daemon -Pversion=${PACKAGE_VERSION} build
 
 
 FROM openjdk:11-jre AS runtime

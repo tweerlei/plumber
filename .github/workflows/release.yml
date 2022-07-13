@@ -25,6 +25,7 @@ jobs:
       id: docker-build
       uses: docker/build-push-action@v2
       with:
+        build-args: PACKAGE_VERSION=${{ github.ref_name }}
         push: true
         tags: ghcr.io/${{ github.repository }}:${{ github.ref_name }}
 
