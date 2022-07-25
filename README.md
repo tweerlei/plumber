@@ -28,9 +28,17 @@ Apache Kafka
   kafka-read:<arg>            Receive messages from the given Kafka topic
   kafka-write:<arg>           Send a message to the given Kafka topic
 Attributes
+  and:<arg>                   Logically AND the current value with the given attribute's value
   get:<arg>                   Set the current value to the given attribute
+  is-equal:<arg>              Compare the current value to the given value resulting in a boolean
+  is-greater:<arg>            Compare the current value to the given value resulting in a boolean
+  is-less:<arg>               Compare the current value to the given value resulting in a boolean
+  is-null:<arg>               Test if the current value is null resulting in a boolean
+  not:<arg>                   Logically negate the current value
+  or:<arg>                    Logically OR the current value with the given attribute's value
   set:<arg>                   Set the given attribute to the current value
   value:<arg>                 Sets the current value to the given value
+  xor:<arg>                   Logically XOR the current value with the given attribute's value
 CSV
   csv-parse:<arg>             Deserialize objects from CSV text
   csv-print:<arg>             Serialize objects to CSV text
@@ -46,7 +54,7 @@ Files
 Flow control
   bulk:<arg>                  Execute following steps using chunks of items
   delay:<arg>                 Delay following steps by the given number of milliseconds
-  notnull:<arg>               Keep only items that are not null (true) or null (false)
+  filter:<arg>                Keep only items that evaluate to the given boolean
   parallel:<arg>              Execute following steps using the given number of threads
   partitions:<arg>            Generate key ranges for n partitions, use with parallel:<n>
   repeat:<arg>                Repeat the following steps a given number of times
@@ -67,6 +75,7 @@ Logging
   bounds:<arg>                Log smallest and largest value
   count:<arg>                 Log item counts at every given number of items
   dump:<arg>                  Dump raw item contents
+  error:<arg>                 Throw an error every given number of items
   group:<arg>                 Log item counts per value at every given number of items
   histogram:<arg>             Build a histogram with the given number of buckets
   log:<arg>                   Log the current value
@@ -80,9 +89,15 @@ MongoDB
 Nodes
   node-clear:<arg>            Clear the curent JSON object
   node-del:<arg>              Remove a subtree of a JSON object using the given JSONPath
+  node-each:<arg>             Extract elements from a subtree of a JSON object using the given JSONPath
   node-get:<arg>              Extract a subtree of a JSON object using the given JSONPath
   node-set:<arg>              Replace a subtree of a JSON object using the given JSONPath
   node-sub:<arg>              Replace the current node with one of its sub nodes
+Ranges
+  is-inrange:<arg>            Compare the current value to the current range resulting in a boolean
+  range-each:<arg>            Generate items with the values of the input item's range using the given increment
+  range-get:<arg>             Get a range field, one of (start, end)
+  range-set:<arg>             Set a range field, e.g. for usage with each:, one of (start, end)
 Records
   rec-clear:<arg>             Clear the curent record
   rec-del:<arg>               Remove the given field from the current record
@@ -183,6 +198,30 @@ A simpler alternative would be to just restore a single attribute value using `g
 
 For debugging purposes, you can also use `dump` instead of `log` to dump all the contents of the item received by that step.
 
+## Values
+
+Values given on the command line (e.g. via `value:`) are automatically converted to an appropriate internal type:
+
+| Input                | Type    | Output               |
+|----------------------|---------|----------------------|
+| null                 | null    |                      |
+| true                 | Boolean | true                 |
+| false                | Boolean | false                |
+| 042                  | Integer | 42                   |
+| 3.14                 | Double  | 3.14                 |
+| 3e2                  | Double  | 300                  |
+| 2022-03-14T15:30:00Z | Instant | 2022-03-14T15:30:00Z |
+
+If you don't want that, use two colons:
+
+```bash
+./plumber \
+    value:0123 \
+    log \
+    value::0123 \
+    log
+```
+
 ## Find and replace
 
 You can match the current value against a regular expression:
@@ -203,6 +242,41 @@ Replacing the matched substring is possible with the `replace` step that also su
     replace:'The $2 $1 bear' \
     log
 ```
+
+## Ranges
+
+Ranges are used for example to specify bounds when querying input sources:
+
+```bash
+./plumber \
+    jdbc-range:mytable --primary-key=id \
+    jdbc-select \
+    log
+```
+
+Here, the `jdbc-range` step creates a range from the minimum and maximum values of the `id` column and passes that to the `jdbc-select` step, which then will use it to create its SELECT query.
+You can build a range manually as well:
+
+```bash
+./plumber \
+    value:0 range-set:start \
+    value:100 range-set:end \
+    jdbc-select:mytable --primary-key=id \
+    log
+```
+
+Note that a range **excludes** the start element, so this will SELECT all rows where the `id` is between 1 and 10.
+If the range has integer bounds, it is also possible to iterate over elements using a given step:
+
+```bash
+./plumber \
+    value:0 range-set:start \
+    value:100 range-set:end \
+    range-each:2 \
+    log
+```
+
+This will produce items `2`, `4`, `6`, `8` and `10`.
 
 ## Records
 
@@ -230,17 +304,27 @@ For more complex data structures like JSON or XML, the parsed result is stored a
     log
 ```
 
+JSON arrays can be extracted into separate items:
+
+```bash
+./plumber \
+    value:'{"array":[9, 8, 7, 6]}' \
+    json-parse \
+    node-each:array \
+    log
+```
+
 ## I/O
 
 The main purpose of a data pipeline is to actually transfer data.
 Each supported integration provides one or more of the following steps:
 
-| step       | purpose
-|------------|---------
-| `*-list`   | List available objects. Usually, this excludes object contents.
-| `*-read`   | Fetch object contents by key/name.
-| `*-write`  | Store an object.
-| `*-delete` | Delete object by key/name.
+| step       | purpose                                                         |
+|------------|-----------------------------------------------------------------|
+| `*-list`   | List available objects. Usually, this excludes object contents. |
+| `*-read`   | Fetch object contents by key/name.                              |
+| `*-write`  | Store an object.                                                |
+| `*-delete` | Delete object by key/name.                                      |
 
 Send all text files from /data to an S3 bucket:
 ```bash
