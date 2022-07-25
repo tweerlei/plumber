@@ -28,6 +28,10 @@ class AndStep: ProcessingStep {
     override val name = "Compare"
     override val description = "Logically AND the current value with the given attribute's value"
 
+    override fun requiredAttributesFor(arg: String) = setOf(
+        arg
+    )
+
     override fun createWorker(
         arg: String,
         expectedOutput: Class<*>,

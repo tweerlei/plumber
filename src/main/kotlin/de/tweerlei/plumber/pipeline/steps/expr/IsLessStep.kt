@@ -27,7 +27,11 @@ class IsLessStep: ProcessingStep {
 
     override val group = "Attributes"
     override val name = "Compare"
-    override val description = "Compare the current value to the given value resulting in a boolean"
+    override val description = "Compare the current value to the given attribute's value resulting in a boolean"
+
+    override fun requiredAttributesFor(arg: String) = setOf(
+        arg
+    )
 
     override fun createWorker(
         arg: String,
@@ -37,5 +41,5 @@ class IsLessStep: ProcessingStep {
         params: PipelineParams,
         parallelDegree: Int
     ) =
-        LessThanWorker(arg.toWorkItemValue(), w)
+        LessThanWorker(arg, w)
 }

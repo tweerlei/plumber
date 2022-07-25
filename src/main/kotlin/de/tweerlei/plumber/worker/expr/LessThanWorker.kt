@@ -20,13 +20,13 @@ import de.tweerlei.plumber.worker.DelegatingWorker
 import de.tweerlei.plumber.worker.Worker
 
 class LessThanWorker(
-    private val compareWith: Comparable<*>?,
+    private val key: String,
     worker: Worker
 ): DelegatingWorker(worker) {
 
     override fun doProcess(item: WorkItem) =
         item.getOptionalAs<Comparable<Any>>().let { value ->
-            value.nullableCompareTo(compareWith)
+            value.nullableCompareTo(item.getOptional(key))
         }.also {
             item.set(it)
         }.let { true }

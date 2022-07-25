@@ -20,13 +20,13 @@ import de.tweerlei.plumber.worker.DelegatingWorker
 import de.tweerlei.plumber.worker.Worker
 
 class EqualsWorker(
-    private val compareWith: Any?,
+    private val key: String,
     worker: Worker
 ): DelegatingWorker(worker) {
 
     override fun doProcess(item: WorkItem) =
         item.getOptional().let { value ->
-            value == compareWith
+            value == item.getOptional(key)
         }.also {
             item.set(it)
         }.let { true }

@@ -27,7 +27,11 @@ class IsGreaterStep: ProcessingStep {
 
     override val group = "Attributes"
     override val name = "Compare"
-    override val description = "Compare the current value to the given value resulting in a boolean"
+    override val description = "Compare the current value to the given attribute's value resulting in a boolean"
+
+    override fun requiredAttributesFor(arg: String) = setOf(
+        arg
+    )
 
     override fun createWorker(
         arg: String,
@@ -37,5 +41,5 @@ class IsGreaterStep: ProcessingStep {
         params: PipelineParams,
         parallelDegree: Int
     ) =
-        GreaterThanWorker(arg.toWorkItemValue(), w)
+        GreaterThanWorker(arg, w)
 }
