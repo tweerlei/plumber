@@ -13,18 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.tweerlei.plumber.worker.attribute
+package de.tweerlei.plumber.worker.expr
 
 import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.DelegatingWorker
 import de.tweerlei.plumber.worker.Worker
 
-class UnsettingWorker(
-    private val key: String,
+class LessThanWorker(
+    private val compareWith: Comparable<*>?,
     worker: Worker
 ): DelegatingWorker(worker) {
 
     override fun doProcess(item: WorkItem) =
-        item.set(null, key)
-            .let { true }
+        item.getOptionalAs<Comparable<Any>>().let { value ->
+            value.nullableCompareTo(compareWith)
+        }.also {
+            item.set(it)
+        }.let { true }
+
+    private fun <T> Comparable<T>?.nullableCompareTo(b: T?) =
+        when {
+            this == null && b == null -> false
+            this == null -> true
+            b == null -> false
+            else -> this < b
+        }
 }

@@ -17,6 +17,8 @@ package de.tweerlei.plumber.pipeline.steps.attribute
 
 import de.tweerlei.plumber.pipeline.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
+import de.tweerlei.plumber.pipeline.toWorkItemValue
+import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.attribute.SettingWorker
 import org.springframework.stereotype.Service
@@ -36,5 +38,5 @@ class ValueStep: ProcessingStep {
         params: PipelineParams,
         parallelDegree: Int
     ) =
-        SettingWorker(arg, w)
+        SettingWorker(mapOf(WorkItem.DEFAULT_KEY to arg.toWorkItemValue()), w)
 }

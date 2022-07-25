@@ -30,8 +30,7 @@ class PartitionsStep: ProcessingStep {
     override val description = "Generate key ranges for n partitions, use with parallel:<n>"
 
     override fun producedAttributesFor(arg: String) = setOf(
-        WellKnownKeys.START_AFTER_KEY,
-        WellKnownKeys.END_WITH_KEY
+        WellKnownKeys.RANGE
     )
 
     override fun createWorker(

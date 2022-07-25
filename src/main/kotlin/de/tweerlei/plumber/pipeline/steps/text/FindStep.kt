@@ -15,11 +15,11 @@
  */
 package de.tweerlei.plumber.pipeline.steps.text
 
-import de.tweerlei.plumber.pipeline.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
-import de.tweerlei.plumber.worker.WellKnownKeys
+import de.tweerlei.plumber.pipeline.ProcessingStep
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.text.MatchingWorker
+import de.tweerlei.plumber.worker.text.TextKeys
 import org.springframework.stereotype.Service
 
 @Service("findWorker")
@@ -30,8 +30,8 @@ class FindStep: ProcessingStep {
     override val description = "Find matches of the given regular expression, use with notnull: or replace:"
 
     override fun producedAttributesFor(arg: String) = setOf(
-        WellKnownKeys.MATCH_EXPRESSION,
-        WellKnownKeys.MATCH_INPUT
+        TextKeys.MATCH_EXPRESSION,
+        TextKeys.MATCH_INPUT
     )
 
     override fun createWorker(

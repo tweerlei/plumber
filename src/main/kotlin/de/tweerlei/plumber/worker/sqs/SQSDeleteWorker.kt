@@ -17,9 +17,7 @@ package de.tweerlei.plumber.worker.sqs
 
 import com.amazonaws.services.sqs.AmazonSQS
 import com.amazonaws.services.sqs.model.DeleteMessageRequest
-import de.tweerlei.plumber.worker.WorkItem
-import de.tweerlei.plumber.worker.DelegatingWorker
-import de.tweerlei.plumber.worker.Worker
+import de.tweerlei.plumber.worker.*
 
 class SQSDeleteWorker(
     private val queueUrl: String,
@@ -28,10 +26,10 @@ class SQSDeleteWorker(
 ): DelegatingWorker(worker) {
 
     override fun doProcess(item: WorkItem) =
-        item.getString(SQSKeys.DELETE_HANDLE)
+        item.getOptional(SQSKeys.DELETE_HANDLE).coerceToString()
             .let { handle ->
                 deleteFile(
-                    item.getIfEmpty(queueUrl, SQSKeys.QUEUE_URL),
+                    queueUrl.ifEmptyGetFrom(item, SQSKeys.QUEUE_URL),
                     handle
                 )
             }.let { true }

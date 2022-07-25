@@ -29,7 +29,7 @@ class JdbcSelectOneWorker(
 
     override fun doProcess(item: WorkItem) =
         selectRow(
-            item.getIfEmpty(tableName, JdbcKeys.TABLE_NAME),
+            tableName.ifEmptyGetFrom(item, JdbcKeys.TABLE_NAME),
             item.getOptional()
         ) { rs, _ ->
             rs.toRecord()

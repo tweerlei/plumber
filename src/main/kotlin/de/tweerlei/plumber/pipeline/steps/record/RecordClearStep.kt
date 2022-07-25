@@ -19,7 +19,7 @@ import de.tweerlei.plumber.pipeline.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
 import de.tweerlei.plumber.worker.WellKnownKeys
 import de.tweerlei.plumber.worker.Worker
-import de.tweerlei.plumber.worker.attribute.UnsettingWorker
+import de.tweerlei.plumber.worker.attribute.SettingWorker
 import org.springframework.stereotype.Service
 
 @Service("rec-clearWorker")
@@ -39,5 +39,5 @@ class RecordClearStep: ProcessingStep {
         params: PipelineParams,
         parallelDegree: Int
     ) =
-        UnsettingWorker(WellKnownKeys.RECORD, w)
+        SettingWorker(mapOf(WellKnownKeys.RECORD to null), w)
 }

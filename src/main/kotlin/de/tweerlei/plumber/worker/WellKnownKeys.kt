@@ -30,17 +30,9 @@ class WellKnownKeys {
         const val SUM = "sum"
 
         // records
+        const val RANGE = "range"
         const val RECORD = "record"
         const val NODE = "node"
-
-        // filter and replace
-        const val MATCH_EXPRESSION = "matchExpression"
-        const val MATCH_INPUT = "matchInput"
-        const val MATCHED_GROUP = "matchedGroup"
-
-        // partitioning
-        const val START_AFTER_KEY = "startAfterKey"
-        const val END_WITH_KEY = "endWithKey"
 
         // parallel processing
         const val WORKER_INDEX = "workerIndex"

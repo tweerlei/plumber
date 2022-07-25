@@ -18,9 +18,7 @@ package de.tweerlei.plumber.worker.stats
 import de.tweerlei.plumber.util.Histogram
 import de.tweerlei.plumber.util.StringHistogram
 import de.tweerlei.plumber.util.StringPacker
-import de.tweerlei.plumber.worker.WorkItem
-import de.tweerlei.plumber.worker.DelegatingWorker
-import de.tweerlei.plumber.worker.Worker
+import de.tweerlei.plumber.worker.*
 import mu.KLogging
 
 class HistogramWorker(
@@ -38,8 +36,8 @@ class HistogramWorker(
 
     override fun doProcess(item: WorkItem) =
         when {
-            item.getOptional() is Number -> numberHistogram.add(item.getLong())
-            else -> stringHistogram.add(item.getString())
+            item.getOptional() is Number -> numberHistogram.add(item.getOptional().coerceToLong())
+            else -> stringHistogram.add(item.getOptional().coerceToString())
         }.let { true }
 
     override fun onClose() {

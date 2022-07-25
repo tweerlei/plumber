@@ -39,7 +39,6 @@ class RepeatStep: ProcessingStep {
         parallelDegree: Int
     ) =
         RepeatingWorker(
-            predecessorName,
             arg.toIntOrNull() ?: Int.MAX_VALUE,
             w
         )

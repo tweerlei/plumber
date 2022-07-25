@@ -17,9 +17,7 @@ package de.tweerlei.plumber.worker.sqs
 
 import com.amazonaws.services.sqs.AmazonSQS
 import com.amazonaws.services.sqs.model.SendMessageRequest
-import de.tweerlei.plumber.worker.WorkItem
-import de.tweerlei.plumber.worker.DelegatingWorker
-import de.tweerlei.plumber.worker.Worker
+import de.tweerlei.plumber.worker.*
 
 class SQSSendWorker(
     private val queueUrl: String,
@@ -28,10 +26,10 @@ class SQSSendWorker(
 ): DelegatingWorker(worker) {
 
     override fun doProcess(item: WorkItem) =
-        item.getString()
+        item.getOptional().coerceToString()
             .let { body ->
                 sendFile(
-                    item.getIfEmpty(queueUrl, SQSKeys.QUEUE_URL),
+                    queueUrl.ifEmptyGetFrom(item, SQSKeys.QUEUE_URL),
                     body
                 )
             }.let { true }

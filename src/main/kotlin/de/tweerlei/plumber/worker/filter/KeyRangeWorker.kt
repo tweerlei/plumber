@@ -17,10 +17,7 @@ package de.tweerlei.plumber.worker.filter
 
 import de.tweerlei.plumber.util.KeyRange
 import de.tweerlei.plumber.util.KeyRangeGenerator
-import de.tweerlei.plumber.worker.WellKnownKeys
-import de.tweerlei.plumber.worker.WorkItem
-import de.tweerlei.plumber.worker.GeneratingWorker
-import de.tweerlei.plumber.worker.Worker
+import de.tweerlei.plumber.worker.*
 
 class KeyRangeWorker(
     private val partitions: Int,
@@ -32,23 +29,24 @@ class KeyRangeWorker(
 ): GeneratingWorker(limit, worker) {
 
     override fun generateItems(item: WorkItem, fn: (WorkItem) -> Boolean) {
-        if (item.has(WellKnownKeys.START_AFTER_KEY) && item.has(WellKnownKeys.END_WITH_KEY))
+        if (item.has(WellKnownKeys.RANGE))
             generateNumberRanges(item, fn)
         else
             generateStringRanges(fn)
     }
 
     private fun generateNumberRanges(item: WorkItem, fn: (WorkItem) -> Boolean) {
-        val minValue = item.getLong(WellKnownKeys.START_AFTER_KEY)
-        val maxValue = item.getLong(WellKnownKeys.END_WITH_KEY)
+        val range = item.getAs<Range>(WellKnownKeys.RANGE)
+        val minValue = range.startAfter.coerceToLong()
+        val maxValue = range.endWith.coerceToLong()
         val n = maxValue - minValue
         if (n <= partitions) {
             for (i in minValue until maxValue) {
                 fn(toWorkItem(i, i + 1))
             }
         } else {
-            for (i in 1 until partitions) {
-                fn(toWorkItem(i * n / partitions, (i + 1) * n / partitions))
+            for (i in 0 until partitions) {
+                fn(toWorkItem(minValue + i * n / partitions, minValue + (i + 1) * n / partitions))
             }
         }
     }
@@ -56,8 +54,7 @@ class KeyRangeWorker(
     private fun toWorkItem(startAfter: Long, endWith: Long) =
         WorkItem.of(
             null,
-            WellKnownKeys.START_AFTER_KEY to startAfter,
-            WellKnownKeys.END_WITH_KEY to endWith
+            WellKnownKeys.RANGE to Range(startAfter, endWith)
         )
 
     private fun generateStringRanges(fn: (WorkItem) -> Boolean) {
@@ -69,9 +66,7 @@ class KeyRangeWorker(
     }
 
     private fun KeyRange.toWorkItem() =
-        WorkItem.of(startAfterKey.orEmpty())
-            .apply {
-                set(startAfterKey, WellKnownKeys.START_AFTER_KEY)
-                set(endWithKey, WellKnownKeys.END_WITH_KEY)
-            }
+        WorkItem.of(null,
+            WellKnownKeys.RANGE to Range(startAfterKey, endWithKey)
+        )
 }

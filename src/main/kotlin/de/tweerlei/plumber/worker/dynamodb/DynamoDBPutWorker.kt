@@ -31,7 +31,7 @@ class DynamoDBPutWorker(
             .toDynamoDB()
             .also { attributes ->
                 putItem(
-                    item.getIfEmpty(tableName, DynamoDBKeys.TABLE_NAME),
+                    tableName.ifEmptyGetFrom(item, DynamoDBKeys.TABLE_NAME),
                     attributes
                 )
             }.let { true }

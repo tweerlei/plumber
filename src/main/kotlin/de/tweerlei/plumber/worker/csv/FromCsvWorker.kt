@@ -24,7 +24,7 @@ class FromCsvWorker(
 ): DelegatingWorker(worker) {
 
     override fun doProcess(item: WorkItem) =
-        item.getString()
+        item.getOptional().coerceToString()
             .let { value ->
                 csvMapper.readValue(value, Array<String>::class.java)
                     ?.let { arr ->

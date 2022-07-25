@@ -33,7 +33,7 @@ class DynamoDBDeleteWorker(
             .toDynamoDB()
             .let { attributes ->
                 deleteItem(
-                    item.getIfEmpty(tableName, DynamoDBKeys.TABLE_NAME),
+                    tableName.ifEmptyGetFrom(item, DynamoDBKeys.TABLE_NAME),
                     attributes.extractKey(partitionKey, rangeKey)
                 )
             }.let { true }

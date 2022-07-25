@@ -15,32 +15,28 @@
  */
 package de.tweerlei.plumber.worker.dynamodb
 
-import de.tweerlei.plumber.worker.WellKnownKeys
-import de.tweerlei.plumber.worker.WorkItem
-import de.tweerlei.plumber.worker.DelegatingWorker
-import de.tweerlei.plumber.worker.Worker
-import de.tweerlei.plumber.worker.Record
+import de.tweerlei.plumber.worker.*
 
 class DynamoDBKeyWorker(
     private val partitionKey: String,
     private val rangeKey: String?,
-    private val rangeKeyValue: String,
+    private val rangeKeyValue: Any?,
     worker: Worker
 ): DelegatingWorker(worker) {
 
     override fun doProcess(item: WorkItem) =
-        item.getString()
+        item.getOptional().coerceToString()
             .let { key ->
                 when (rangeKey) {
                     null -> item.apply {
-                        setString(key, DynamoDBKeys.PARTITION_KEY)
+                        set(key.toComparable(), DynamoDBKeys.PARTITION_KEY)
                         Record(
                             partitionKey to get(DynamoDBKeys.PARTITION_KEY)
                         )
                     }
                     else -> item.apply {
-                        setString(key, DynamoDBKeys.PARTITION_KEY)
-                        setString(rangeKeyValue, DynamoDBKeys.RANGE_KEY)
+                        set(key.toComparable(), DynamoDBKeys.PARTITION_KEY)
+                        set(rangeKeyValue, DynamoDBKeys.RANGE_KEY)
                         Record(
                             partitionKey to get(DynamoDBKeys.PARTITION_KEY),
                             rangeKey to get(DynamoDBKeys.RANGE_KEY)

@@ -18,6 +18,7 @@ package de.tweerlei.plumber.worker.file
 import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.DelegatingWorker
 import de.tweerlei.plumber.worker.Worker
+import de.tweerlei.plumber.worker.coerceToByteArray
 import java.io.*
 
 class LineWriteWorker(
@@ -33,7 +34,9 @@ class LineWriteWorker(
     }
 
     override fun doProcess(item: WorkItem) =
-        stream.write(item.getByteArray())
+        item.getOptional()
+            .coerceToByteArray()
+            .also { bytes -> stream.write(bytes) }
             .also { stream.write(separator) }
             .let { true }
 

@@ -20,11 +20,12 @@ import de.tweerlei.plumber.worker.DelegatingWorker
 import de.tweerlei.plumber.worker.Worker
 
 class SettingWorker(
-    private val value: String,
+    private val values: Map<String, Any?>,
     worker: Worker
 ): DelegatingWorker(worker) {
 
     override fun doProcess(item: WorkItem) =
-        item.setString(value)
-            .let { true }
+        values.forEach { (key, value) ->
+            item.set(value, key)
+        }.let { true }
 }

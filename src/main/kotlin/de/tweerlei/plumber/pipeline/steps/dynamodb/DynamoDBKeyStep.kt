@@ -17,6 +17,7 @@ package de.tweerlei.plumber.pipeline.steps.dynamodb
 
 import de.tweerlei.plumber.pipeline.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
+import de.tweerlei.plumber.pipeline.toWorkItemValue
 import de.tweerlei.plumber.worker.WellKnownKeys
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.dynamodb.DynamoDBKeyWorker
@@ -47,7 +48,7 @@ class DynamoDBKeyStep: ProcessingStep {
         DynamoDBKeyWorker(
             params.partitionKey.ifEmpty { throw IllegalArgumentException("No partition key specified") },
             params.rangeKey,
-            arg,
+            arg.toWorkItemValue(),
             w
         )
 }

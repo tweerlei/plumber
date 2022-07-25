@@ -23,6 +23,7 @@ import com.mongodb.client.MongoClient
 import de.tweerlei.plumber.worker.*
 import mu.KLogging
 import org.bson.Document
+import java.time.Instant
 import java.util.*
 
 class MongoDBScanWorker(
@@ -39,8 +40,9 @@ class MongoDBScanWorker(
     companion object : KLogging()
 
     override fun generateItems(item: WorkItem, fn: (WorkItem) -> Boolean) {
-        val startAfter = item.toKey(WellKnownKeys.START_AFTER_KEY)
-        val endWith = item.toKey(WellKnownKeys.END_WITH_KEY)
+        val range = item.getOptionalAs<Range>(WellKnownKeys.RANGE)
+        val startAfter = range?.startAfter.toKey()
+        val endWith = range?.endWith.toKey()
         logger.info { "fetching elements from $startAfter to $endWith" }
 
         var firstKey: Any? = null
@@ -73,11 +75,11 @@ class MongoDBScanWorker(
             else -> mongoClient.getDatabase(databaseName).getCollection(collectionName).find(startAfter)
         }
 
-    private fun WorkItem.toKey(attribute: String) =
-        if (has(attribute))
+    private fun Comparable<*>?.toKey() =
+        if (this != null)
             JsonNodeFactory.instance.objectNode()
-                .also { node ->
-                    node.set<ObjectNode>(primaryKey, getOptionalAs<JsonNode>(attribute))
+                .apply {
+                    set<ObjectNode>(primaryKey, this.coerceToJsonNode())
                 }
         else
             null

@@ -25,7 +25,7 @@ class RepeatingWorkerTest {
     @Test
     fun `When repeating items Then all items are passed through`() {
         val items = TestWorkerRunner()
-            .append { w -> RepeatingWorker("repeat", 10, w) }
+            .append { w -> RepeatingWorker(10, w) }
             .run(WorkItem.of(""))
 
         items.size.shouldBe(10)

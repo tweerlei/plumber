@@ -15,10 +15,7 @@
  */
 package de.tweerlei.plumber.worker.file
 
-import de.tweerlei.plumber.worker.WellKnownKeys
-import de.tweerlei.plumber.worker.WorkItem
-import de.tweerlei.plumber.worker.DelegatingWorker
-import de.tweerlei.plumber.worker.Worker
+import de.tweerlei.plumber.worker.*
 import java.io.File
 import java.io.FileInputStream
 
@@ -28,9 +25,9 @@ class FileReadWorker(
 ): DelegatingWorker(worker) {
 
     override fun doProcess(item: WorkItem) =
-        item.getFirstString(WellKnownKeys.NAME)
+        item.getFirst(WellKnownKeys.NAME).coerceToString()
             .let { name ->
-                File(item.getIfEmpty(dir, FileKeys.FILE_PATH).ifEmpty { "." })
+                File(dir.ifEmptyGetFrom(item, FileKeys.FILE_PATH).ifEmpty { "." })
                     .let { directory ->
                         File(directory, name)
                             .let { file ->

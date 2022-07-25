@@ -13,20 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.tweerlei.plumber.pipeline.steps.filter
+package de.tweerlei.plumber.pipeline.steps.expr
 
-import de.tweerlei.plumber.pipeline.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
+import de.tweerlei.plumber.pipeline.ProcessingStep
 import de.tweerlei.plumber.worker.Worker
-import de.tweerlei.plumber.worker.filter.FilteringWorker
+import de.tweerlei.plumber.worker.expr.OrWorker
 import org.springframework.stereotype.Service
 
-@Service("notnullWorker")
-class NotNullStep: ProcessingStep {
+@Service("orWorker")
+class OrStep: ProcessingStep {
 
-    override val group = "Flow control"
-    override val name = "Filter not null"
-    override val description = "Keep only items that are not null (true) or null (false)"
+    override val group = "Attributes"
+    override val name = "Compare"
+    override val description = "Logically OR the current value with the given attribute's value"
 
     override fun createWorker(
         arg: String,
@@ -36,7 +36,5 @@ class NotNullStep: ProcessingStep {
         params: PipelineParams,
         parallelDegree: Int
     ) =
-        FilteringWorker({ item ->
-            (item.getOptional() != null) == (arg.toBooleanStrictOrNull() ?: true)
-        }, w)
+        OrWorker(arg, w)
 }

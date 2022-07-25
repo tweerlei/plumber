@@ -29,9 +29,10 @@ class JdbcSelectWorker(
 ): GeneratingWorker(limit, worker) {
 
     override fun generateItems(item: WorkItem, fn: (WorkItem) -> Boolean) {
-        val startAfter = item.getOptional(WellKnownKeys.START_AFTER_KEY)
-        val endWith = item.getOptional(WellKnownKeys.END_WITH_KEY)
-        val table = item.getIfEmpty(tableName, JdbcKeys.TABLE_NAME)
+        val range = item.getOptionalAs<Range>(WellKnownKeys.RANGE)
+        val startAfter = range?.startAfter
+        val endWith = range?.endWith
+        val table = tableName.ifEmptyGetFrom(item, JdbcKeys.TABLE_NAME)
         val extractRows = ResultSetExtractor<Int> { rs ->
             var keepGenerating = true
             var itemCount = 0

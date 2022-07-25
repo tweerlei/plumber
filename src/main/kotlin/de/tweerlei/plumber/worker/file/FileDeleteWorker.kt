@@ -25,9 +25,9 @@ class FileDeleteWorker(
 ): DelegatingWorker(worker) {
 
     override fun doProcess(item: WorkItem) =
-        item.getFirstString(WellKnownKeys.NAME)
+        item.getFirst(WellKnownKeys.NAME).coerceToString()
             .let { name ->
-                File(item.getIfEmpty(dir, FileKeys.FILE_PATH).ifEmpty { "." })
+                File(dir.ifEmptyGetFrom(item, FileKeys.FILE_PATH).ifEmpty { "." })
                     .let { directory ->
                         File(directory, name)
                             .let { file ->

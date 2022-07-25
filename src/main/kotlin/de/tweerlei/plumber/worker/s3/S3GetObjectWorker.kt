@@ -17,10 +17,7 @@ package de.tweerlei.plumber.worker.s3
 
 import com.amazonaws.services.s3.AmazonS3
 import com.amazonaws.services.s3.model.GetObjectRequest
-import de.tweerlei.plumber.worker.WellKnownKeys
-import de.tweerlei.plumber.worker.WorkItem
-import de.tweerlei.plumber.worker.DelegatingWorker
-import de.tweerlei.plumber.worker.Worker
+import de.tweerlei.plumber.worker.*
 
 class S3GetObjectWorker(
     private val bucketName: String,
@@ -30,10 +27,10 @@ class S3GetObjectWorker(
 ): DelegatingWorker(worker) {
 
     override fun doProcess(item: WorkItem) =
-        item.getFirstString(WellKnownKeys.NAME)
+        item.getFirst(WellKnownKeys.NAME).coerceToString()
             .let { name ->
                 getFile(
-                    item.getIfEmpty(bucketName, S3Keys.BUCKET_NAME),
+                    bucketName.ifEmptyGetFrom(item, S3Keys.BUCKET_NAME),
                     name
                 )
             }.also { file ->

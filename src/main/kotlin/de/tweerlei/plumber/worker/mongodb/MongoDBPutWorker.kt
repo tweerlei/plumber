@@ -34,8 +34,8 @@ class MongoDBPutWorker(
             .toMongoDB(objectMapper)
             .also { attributes ->
                 putItem(
-                    item.getIfEmpty(databaseName, MongoDBKeys.DATABASE_NAME),
-                    item.getIfEmpty(collectionName, MongoDBKeys.COLLECTION_NAME),
+                    databaseName.ifEmptyGetFrom(item, MongoDBKeys.DATABASE_NAME),
+                    collectionName.ifEmptyGetFrom(item, MongoDBKeys.COLLECTION_NAME),
                     attributes
                 )
             }.let { true }

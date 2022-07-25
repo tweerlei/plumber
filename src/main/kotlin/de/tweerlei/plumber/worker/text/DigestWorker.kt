@@ -15,10 +15,7 @@
  */
 package de.tweerlei.plumber.worker.text
 
-import de.tweerlei.plumber.worker.WellKnownKeys
-import de.tweerlei.plumber.worker.WorkItem
-import de.tweerlei.plumber.worker.DelegatingWorker
-import de.tweerlei.plumber.worker.Worker
+import de.tweerlei.plumber.worker.*
 import java.io.OutputStream
 import java.security.DigestOutputStream
 import java.security.MessageDigest
@@ -29,7 +26,8 @@ class DigestWorker(
 ): DelegatingWorker(worker) {
 
     override fun doProcess(item: WorkItem) =
-        item.getByteArray()
+        item.getOptional()
+            .coerceToByteArray()
             .digest(alg)
             .also { digest ->
                 item.set(alg, WellKnownKeys.DIGEST_ALGORITHM)

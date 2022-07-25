@@ -18,6 +18,7 @@ package de.tweerlei.plumber.worker.text
 import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.DelegatingWorker
 import de.tweerlei.plumber.worker.Worker
+import de.tweerlei.plumber.worker.coerceToByteArray
 import java.nio.charset.Charset
 import java.util.*
 
@@ -27,7 +28,8 @@ class EncodingWorker(
 ): DelegatingWorker(worker) {
 
     override fun doProcess(item: WorkItem) =
-        item.getByteArray()
+        item.getOptional()
+            .coerceToByteArray()
             .let { bytes ->
                 when (alg) {
                     "base64" -> encodeBase64(bytes)

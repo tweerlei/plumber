@@ -15,10 +15,10 @@
  */
 package de.tweerlei.plumber.worker.text
 
-import de.tweerlei.plumber.worker.WellKnownKeys
-import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.DelegatingWorker
+import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.Worker
+import de.tweerlei.plumber.worker.coerceToString
 
 class ReplacingWorker(
     private val replacement: String,
@@ -26,9 +26,9 @@ class ReplacingWorker(
 ): DelegatingWorker(worker) {
 
     override fun doProcess(item: WorkItem) =
-        item.getAs<Regex>(WellKnownKeys.MATCH_EXPRESSION)
+        item.getAs<Regex>(TextKeys.MATCH_EXPRESSION)
             .let { regex ->
-                regex.replace(item.getString(WellKnownKeys.MATCH_INPUT), replacement)
+                regex.replace(item.getOptional(TextKeys.MATCH_INPUT).coerceToString(), replacement)
             }.also { result ->
                 item.set(result)
             }.let { true }

@@ -34,8 +34,7 @@ class JdbcRangeStep(
     override val description = "Determine the actual range of values for the JDBC primaryKey, use with partition:n"
 
     override fun producedAttributesFor(arg: String) = setOf(
-        WellKnownKeys.START_AFTER_KEY,
-        WellKnownKeys.END_WITH_KEY,
+        WellKnownKeys.RANGE,
         JdbcKeys.TABLE_NAME
     )
 

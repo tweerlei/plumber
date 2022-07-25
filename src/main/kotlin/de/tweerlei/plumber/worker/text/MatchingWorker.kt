@@ -15,10 +15,10 @@
  */
 package de.tweerlei.plumber.worker.text
 
-import de.tweerlei.plumber.worker.WellKnownKeys
-import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.DelegatingWorker
+import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.Worker
+import de.tweerlei.plumber.worker.coerceToString
 
 class MatchingWorker(
     private val regex: Regex,
@@ -26,14 +26,14 @@ class MatchingWorker(
 ): DelegatingWorker(worker) {
 
     override fun doProcess(item: WorkItem) =
-        item.getString()
+        item.getOptional().coerceToString()
             .let { value ->
-                item.set(value, WellKnownKeys.MATCH_INPUT)
-                item.set(regex, WellKnownKeys.MATCH_EXPRESSION)
+                item.set(value, TextKeys.MATCH_INPUT)
+                item.set(regex, TextKeys.MATCH_EXPRESSION)
                 regex.find(value)
             }?.let { result ->
                 result.groupValues.forEachIndexed { index, value ->
-                    item.set(value, "${WellKnownKeys.MATCHED_GROUP}${index}")
+                    item.set(value, "${TextKeys.MATCHED_GROUP}${index}")
                 }
                 result.value
             }.let { matchedText ->

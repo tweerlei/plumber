@@ -15,33 +15,21 @@
  */
 package de.tweerlei.plumber.worker.filter
 
-import de.tweerlei.plumber.util.printStackTraceUpTo
+import de.tweerlei.plumber.worker.GeneratingWorker
 import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.Worker
-import de.tweerlei.plumber.worker.WrappingWorker
 import mu.KLogging
 
 class RepeatingWorker(
-    private val name: String,
     private val number: Int,
     worker: Worker
-): WrappingWorker(worker) {
+): GeneratingWorker(Int.MAX_VALUE, worker) {
 
     companion object: KLogging()
 
-    override fun process(item: WorkItem) {
-        for (i in 1..number) {
-            try {
-                passOn(item)
-            } catch (e: Exception) {
-                if (runContext.isFailFast())
-                    throw e
-                else
-                    logger.error {
-                        "$name: Error while processing item $item\n" +
-                        e.printStackTraceUpTo(this::class)
-                    }
-            }
+    override fun generateItems(item: WorkItem, fn: (WorkItem) -> Boolean) {
+        (1..number).all {
+            fn(item)
         }
     }
 }

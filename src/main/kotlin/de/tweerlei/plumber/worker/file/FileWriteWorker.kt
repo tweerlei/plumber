@@ -15,10 +15,7 @@
  */
 package de.tweerlei.plumber.worker.file
 
-import de.tweerlei.plumber.worker.WellKnownKeys
-import de.tweerlei.plumber.worker.WorkItem
-import de.tweerlei.plumber.worker.DelegatingWorker
-import de.tweerlei.plumber.worker.Worker
+import de.tweerlei.plumber.worker.*
 import java.io.File
 import java.io.FileOutputStream
 
@@ -28,15 +25,16 @@ class FileWriteWorker(
 ): DelegatingWorker(worker) {
 
     override fun doProcess(item: WorkItem) =
-        item.getString(WellKnownKeys.NAME)
+        item.getOptional(WellKnownKeys.NAME).coerceToString()
             .let { name ->
-                File(item.getIfEmpty(dir, FileKeys.FILE_PATH).ifEmpty { "." })
+                File(dir.ifEmptyGetFrom(item, FileKeys.FILE_PATH).ifEmpty { "." })
                     .let { directory ->
                         directory.mkdirs()
                         File(directory, name)
                             .let { file ->
                                 FileOutputStream(file).use { stream ->
-                                    stream.write(item.getByteArray())
+                                    stream.write(item.getOptional().coerceToByteArray()
+                                    )
                                 }
                            }
                     }

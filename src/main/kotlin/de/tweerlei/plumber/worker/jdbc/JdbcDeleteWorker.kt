@@ -36,7 +36,7 @@ class JdbcDeleteWorker(
     private fun deleterFor(item: WorkItem) =
         when (val v = deleter) {
             null -> Deleter.from(
-                    item.getIfEmpty(tableName, JdbcKeys.TABLE_NAME),
+                    tableName.ifEmptyGetFrom(item, JdbcKeys.TABLE_NAME),
                     primaryKey
                 ).also { deleter = it }
             else -> v

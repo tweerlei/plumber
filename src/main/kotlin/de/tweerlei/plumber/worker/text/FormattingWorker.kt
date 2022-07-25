@@ -18,8 +18,6 @@ package de.tweerlei.plumber.worker.text
 import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.DelegatingWorker
 import de.tweerlei.plumber.worker.Worker
-import java.util.regex.Matcher
-import java.util.regex.Pattern
 
 class FormattingWorker(
     private val formatString: String,
@@ -27,14 +25,15 @@ class FormattingWorker(
 ): DelegatingWorker(worker) {
 
     companion object {
-        private val PATTERN = Pattern.compile("\\$\\{([^}]*)\\}")
+        private val REGEX = Regex("\\$\\{([^}]*)\\}")
     }
 
     override fun doProcess(item: WorkItem) =
-        PATTERN.matcher(formatString).replaceAll { result ->
-            item.getOptional(result.group(1))?.toString().orEmpty().let { value ->
-                Matcher.quoteReplacement(value)
-            }
+        REGEX.replace(formatString) { match ->
+            match.groups[1]?.value
+                ?.let { varName ->
+                    item.getOptional(varName)?.toString()
+                }.orEmpty()
         }.also { result ->
             item.set(result)
         }.let { true }

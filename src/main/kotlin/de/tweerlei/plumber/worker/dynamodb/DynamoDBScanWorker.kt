@@ -37,8 +37,9 @@ class DynamoDBScanWorker(
     companion object : KLogging()
 
     override fun generateItems(item: WorkItem, fn: (WorkItem) -> Boolean) {
-        val startAfter = item.toKey(WellKnownKeys.START_AFTER_KEY, startAfterRange)
-        val endWith = item.toKey(WellKnownKeys.END_WITH_KEY, endWithRange)
+        val range = item.getOptionalAs<Range>(WellKnownKeys.RANGE)
+        val startAfter = range?.startAfter.toKey(startAfterRange)
+        val endWith = range?.endWith.toKey(endWithRange)
         logger.info { "fetching elements from $startAfter to $endWith" }
 
         var result: ScanResult? = null
@@ -75,22 +76,16 @@ class DynamoDBScanWorker(
             .withExclusiveStartKey(continueAfter ?: startAfter)
             .let { request -> amazonDynamoDBClient.scan(request) }
 
-    private fun WorkItem.toKey(attribute: String, rangeKeyValue: String?) =
-        if (has(attribute))
+    private fun Comparable<*>?.toKey(rangeKeyValue: String?) =
+        if (this != null)
             Record(
-                partitionKey to getOptionalAs<Comparable<Any>>(attribute)
+                partitionKey to this
             ).also { map ->
                 if (rangeKey != null && rangeKeyValue != null)
-                    map[rangeKey] = convertType(rangeKeyValue)
+                    map[rangeKey] = rangeKeyValue.toComparable()
             }
         else
             null
-
-    private fun convertType(value: String) =
-        WorkItem.of(null).let { item ->
-            item.setString(value)
-            item.getAs<Comparable<Any>>()
-        }
 
     @Suppress("UNCHECKED_CAST")
     private fun Record.isNotAfter(maxKey: Record?) =

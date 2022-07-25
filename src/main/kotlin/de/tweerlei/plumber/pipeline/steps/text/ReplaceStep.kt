@@ -15,11 +15,11 @@
  */
 package de.tweerlei.plumber.pipeline.steps.text
 
-import de.tweerlei.plumber.pipeline.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
-import de.tweerlei.plumber.worker.WellKnownKeys
+import de.tweerlei.plumber.pipeline.ProcessingStep
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.text.ReplacingWorker
+import de.tweerlei.plumber.worker.text.TextKeys
 import org.springframework.stereotype.Service
 
 @Service("replaceWorker")
@@ -30,8 +30,8 @@ class ReplaceStep: ProcessingStep {
     override val description = "Replace all matches of a previous find: with the given replacement"
 
     override fun requiredAttributesFor(arg: String) = setOf(
-        WellKnownKeys.MATCH_EXPRESSION,
-        WellKnownKeys.MATCH_INPUT
+        TextKeys.MATCH_EXPRESSION,
+        TextKeys.MATCH_INPUT
     )
 
     override fun createWorker(
