@@ -16,9 +16,9 @@
 package de.tweerlei.plumber.pipeline.steps.expr
 
 import de.tweerlei.plumber.pipeline.PipelineParams
-import de.tweerlei.plumber.pipeline.ProcessingStep
+import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.worker.Worker
-import de.tweerlei.plumber.worker.expr.XorWorker
+import de.tweerlei.plumber.worker.impl.expr.XorWorker
 import org.springframework.stereotype.Service
 
 @Service("xorWorker")

@@ -15,13 +15,12 @@
  */
 package de.tweerlei.plumber.pipeline.steps.jdbc
 
-import de.tweerlei.plumber.pipeline.ProcessingStep
+import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
-import de.tweerlei.plumber.worker.Record
-import de.tweerlei.plumber.worker.WellKnownKeys
+import de.tweerlei.plumber.worker.types.Record
 import de.tweerlei.plumber.worker.Worker
-import de.tweerlei.plumber.worker.jdbc.JdbcDeleteWorker
-import de.tweerlei.plumber.worker.jdbc.JdbcTemplateFactory
+import de.tweerlei.plumber.worker.impl.jdbc.JdbcDeleteWorker
+import de.tweerlei.plumber.worker.impl.jdbc.JdbcTemplateFactory
 import org.springframework.stereotype.Service
 
 @Service("jdbc-deleteWorker")

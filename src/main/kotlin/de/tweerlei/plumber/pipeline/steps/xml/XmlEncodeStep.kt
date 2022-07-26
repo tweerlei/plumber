@@ -16,11 +16,11 @@
 package de.tweerlei.plumber.pipeline.steps.xml
 
 import com.fasterxml.jackson.dataformat.xml.XmlMapper
-import de.tweerlei.plumber.pipeline.ProcessingStep
+import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
-import de.tweerlei.plumber.worker.WellKnownKeys
+import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.Worker
-import de.tweerlei.plumber.worker.xml.ToXmlWorker
+import de.tweerlei.plumber.worker.impl.xml.ToXmlWorker
 import org.springframework.stereotype.Service
 
 @Service("xml-printWorker")

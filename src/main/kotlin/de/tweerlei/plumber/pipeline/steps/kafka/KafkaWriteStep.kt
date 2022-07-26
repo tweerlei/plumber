@@ -15,12 +15,12 @@
  */
 package de.tweerlei.plumber.pipeline.steps.kafka
 
-import de.tweerlei.plumber.pipeline.ProcessingStep
+import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
 import de.tweerlei.plumber.worker.Worker
-import de.tweerlei.plumber.worker.kafka.KafkaClientFactory
-import de.tweerlei.plumber.worker.kafka.KafkaKeys
-import de.tweerlei.plumber.worker.kafka.KafkaSendWorker
+import de.tweerlei.plumber.worker.impl.kafka.KafkaClientFactory
+import de.tweerlei.plumber.worker.impl.kafka.KafkaKeys
+import de.tweerlei.plumber.worker.impl.kafka.KafkaSendWorker
 import org.springframework.stereotype.Service
 
 @Service("kafka-writeWorker")

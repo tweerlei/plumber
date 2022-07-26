@@ -15,10 +15,10 @@
  */
 package de.tweerlei.plumber.pipeline.steps.text
 
-import de.tweerlei.plumber.pipeline.ProcessingStep
+import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
 import de.tweerlei.plumber.worker.Worker
-import de.tweerlei.plumber.worker.text.UUIDWorker
+import de.tweerlei.plumber.worker.impl.text.UUIDWorker
 import org.springframework.stereotype.Service
 
 @Service("uuidWorker")

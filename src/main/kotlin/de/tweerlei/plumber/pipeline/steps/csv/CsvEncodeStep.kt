@@ -16,11 +16,11 @@
 package de.tweerlei.plumber.pipeline.steps.csv
 
 import com.fasterxml.jackson.dataformat.csv.CsvMapper
-import de.tweerlei.plumber.pipeline.ProcessingStep
+import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
-import de.tweerlei.plumber.worker.Record
+import de.tweerlei.plumber.worker.types.Record
 import de.tweerlei.plumber.worker.Worker
-import de.tweerlei.plumber.worker.csv.ToCsvWorker
+import de.tweerlei.plumber.worker.impl.csv.ToCsvWorker
 import org.springframework.stereotype.Service
 
 @Service("csv-printWorker")

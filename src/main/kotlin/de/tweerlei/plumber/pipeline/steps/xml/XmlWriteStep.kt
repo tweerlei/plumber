@@ -16,11 +16,10 @@
 package de.tweerlei.plumber.pipeline.steps.xml
 
 import com.fasterxml.jackson.dataformat.xml.XmlMapper
-import de.tweerlei.plumber.pipeline.ProcessingStep
+import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
 import de.tweerlei.plumber.worker.Worker
-import de.tweerlei.plumber.worker.filter.MultithreadedWorker
-import de.tweerlei.plumber.worker.xml.XmlWriteWorker
+import de.tweerlei.plumber.worker.impl.xml.XmlWriteWorker
 import org.springframework.stereotype.Service
 import java.io.File
 

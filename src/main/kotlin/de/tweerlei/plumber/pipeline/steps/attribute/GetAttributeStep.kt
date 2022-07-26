@@ -15,11 +15,11 @@
  */
 package de.tweerlei.plumber.pipeline.steps.attribute
 
-import de.tweerlei.plumber.pipeline.ProcessingStep
+import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
 import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.Worker
-import de.tweerlei.plumber.worker.attribute.ModifyingWorker
+import de.tweerlei.plumber.worker.impl.attribute.ModifyingWorker
 import org.springframework.stereotype.Service
 
 @Service("getWorker")

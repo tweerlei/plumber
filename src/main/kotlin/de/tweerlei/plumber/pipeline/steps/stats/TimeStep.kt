@@ -15,9 +15,9 @@
  */
 package de.tweerlei.plumber.pipeline.steps.stats
 
-import de.tweerlei.plumber.pipeline.ProcessingStep
+import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
-import de.tweerlei.plumber.worker.stats.TimingWorker
+import de.tweerlei.plumber.worker.impl.stats.TimingWorker
 import de.tweerlei.plumber.worker.Worker
 import org.springframework.stereotype.Service
 

@@ -16,13 +16,13 @@
 package de.tweerlei.plumber.pipeline.steps.mongodb
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import de.tweerlei.plumber.pipeline.ProcessingStep
+import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
-import de.tweerlei.plumber.worker.WellKnownKeys
+import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.Worker
-import de.tweerlei.plumber.worker.mongodb.MongoClientFactory
-import de.tweerlei.plumber.worker.mongodb.MongoDBKeys
-import de.tweerlei.plumber.worker.mongodb.MongoDBScanWorker
+import de.tweerlei.plumber.worker.impl.mongodb.MongoClientFactory
+import de.tweerlei.plumber.worker.impl.mongodb.MongoDBKeys
+import de.tweerlei.plumber.worker.impl.mongodb.MongoDBScanWorker
 import org.springframework.stereotype.Service
 
 @Service("mongodb-listWorker")

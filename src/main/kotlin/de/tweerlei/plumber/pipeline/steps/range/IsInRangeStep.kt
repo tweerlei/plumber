@@ -16,9 +16,9 @@
 package de.tweerlei.plumber.pipeline.steps.range
 
 import de.tweerlei.plumber.pipeline.PipelineParams
-import de.tweerlei.plumber.pipeline.ProcessingStep
+import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.worker.Worker
-import de.tweerlei.plumber.worker.range.InRangeWorker
+import de.tweerlei.plumber.worker.impl.range.InRangeWorker
 import org.springframework.stereotype.Service
 
 @Service("is-inrangeWorker")

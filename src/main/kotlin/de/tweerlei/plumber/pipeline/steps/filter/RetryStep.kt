@@ -15,10 +15,10 @@
  */
 package de.tweerlei.plumber.pipeline.steps.filter
 
-import de.tweerlei.plumber.pipeline.ProcessingStep
+import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
 import de.tweerlei.plumber.worker.Worker
-import de.tweerlei.plumber.worker.filter.RetryingWorker
+import de.tweerlei.plumber.worker.impl.filter.RetryingWorker
 import org.springframework.stereotype.Service
 
 @Service("retryWorker")

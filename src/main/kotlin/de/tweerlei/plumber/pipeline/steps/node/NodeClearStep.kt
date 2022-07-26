@@ -15,11 +15,11 @@
  */
 package de.tweerlei.plumber.pipeline.steps.node
 
-import de.tweerlei.plumber.pipeline.ProcessingStep
+import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
-import de.tweerlei.plumber.worker.WellKnownKeys
+import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.Worker
-import de.tweerlei.plumber.worker.attribute.SettingWorker
+import de.tweerlei.plumber.worker.impl.attribute.SettingWorker
 import org.springframework.stereotype.Service
 
 @Service("node-clearWorker")

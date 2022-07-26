@@ -16,11 +16,11 @@
 package de.tweerlei.plumber.pipeline.steps.range
 
 import de.tweerlei.plumber.pipeline.PipelineParams
-import de.tweerlei.plumber.pipeline.ProcessingStep
-import de.tweerlei.plumber.worker.WellKnownKeys
+import de.tweerlei.plumber.pipeline.steps.ProcessingStep
+import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.Worker
-import de.tweerlei.plumber.worker.range.RangeGetWorker
-import de.tweerlei.plumber.worker.range.RangeKey
+import de.tweerlei.plumber.worker.impl.range.RangeGetWorker
+import de.tweerlei.plumber.worker.impl.range.RangeKey
 import org.springframework.stereotype.Service
 
 @Service("range-getWorker")

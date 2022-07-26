@@ -15,10 +15,10 @@
  */
 package de.tweerlei.plumber.pipeline.steps.stats
 
-import de.tweerlei.plumber.pipeline.ProcessingStep
+import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
 import de.tweerlei.plumber.worker.Worker
-import de.tweerlei.plumber.worker.stats.DumpingWorker
+import de.tweerlei.plumber.worker.impl.stats.DumpingWorker
 import org.springframework.stereotype.Service
 
 @Service("dumpWorker")

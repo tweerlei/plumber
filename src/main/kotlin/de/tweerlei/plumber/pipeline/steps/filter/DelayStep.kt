@@ -15,10 +15,10 @@
  */
 package de.tweerlei.plumber.pipeline.steps.filter
 
-import de.tweerlei.plumber.pipeline.ProcessingStep
+import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
 import de.tweerlei.plumber.worker.Worker
-import de.tweerlei.plumber.worker.filter.DelayWorker
+import de.tweerlei.plumber.worker.impl.filter.DelayWorker
 import org.springframework.stereotype.Service
 
 @Service("delayWorker")

@@ -16,10 +16,9 @@
 package de.tweerlei.plumber.pipeline.steps.expr
 
 import de.tweerlei.plumber.pipeline.PipelineParams
-import de.tweerlei.plumber.pipeline.ProcessingStep
-import de.tweerlei.plumber.pipeline.toWorkItemValue
+import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.worker.Worker
-import de.tweerlei.plumber.worker.expr.EqualsWorker
+import de.tweerlei.plumber.worker.impl.expr.EqualsWorker
 import org.springframework.stereotype.Service
 
 @Service("is-equalWorker")

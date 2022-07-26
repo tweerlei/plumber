@@ -18,10 +18,10 @@ package de.tweerlei.plumber.pipeline.steps.node
 import com.fasterxml.jackson.core.JsonPointer
 import com.fasterxml.jackson.databind.ObjectMapper
 import de.tweerlei.plumber.pipeline.PipelineParams
-import de.tweerlei.plumber.pipeline.ProcessingStep
-import de.tweerlei.plumber.worker.WellKnownKeys
+import de.tweerlei.plumber.pipeline.steps.ProcessingStep
+import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.Worker
-import de.tweerlei.plumber.worker.node.NodeEachWorker
+import de.tweerlei.plumber.worker.impl.node.NodeEachWorker
 import org.springframework.stereotype.Service
 
 @Service("node-eachWorker")

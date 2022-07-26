@@ -15,13 +15,13 @@
  */
 package de.tweerlei.plumber.pipeline.steps.jdbc
 
-import de.tweerlei.plumber.pipeline.ProcessingStep
+import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
-import de.tweerlei.plumber.worker.WellKnownKeys
+import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.Worker
-import de.tweerlei.plumber.worker.jdbc.JdbcKeys
-import de.tweerlei.plumber.worker.jdbc.JdbcRangeWorker
-import de.tweerlei.plumber.worker.jdbc.JdbcTemplateFactory
+import de.tweerlei.plumber.worker.impl.jdbc.JdbcKeys
+import de.tweerlei.plumber.worker.impl.jdbc.JdbcRangeWorker
+import de.tweerlei.plumber.worker.impl.jdbc.JdbcTemplateFactory
 import org.springframework.stereotype.Service
 
 @Service("jdbc-rangeWorker")

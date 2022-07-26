@@ -15,9 +15,9 @@
  */
 package de.tweerlei.plumber.pipeline.steps.file
 
-import de.tweerlei.plumber.pipeline.ProcessingStep
+import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
-import de.tweerlei.plumber.worker.file.LineWriteWorker
+import de.tweerlei.plumber.worker.impl.file.LineWriteWorker
 import de.tweerlei.plumber.worker.Worker
 import org.springframework.stereotype.Service
 import java.io.File

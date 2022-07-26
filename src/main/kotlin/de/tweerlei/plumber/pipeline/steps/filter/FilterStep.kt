@@ -15,11 +15,11 @@
  */
 package de.tweerlei.plumber.pipeline.steps.filter
 
-import de.tweerlei.plumber.pipeline.ProcessingStep
+import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
 import de.tweerlei.plumber.worker.Worker
-import de.tweerlei.plumber.worker.coerceToBoolean
-import de.tweerlei.plumber.worker.filter.FilteringWorker
+import de.tweerlei.plumber.worker.types.coerceToBoolean
+import de.tweerlei.plumber.worker.impl.filter.FilteringWorker
 import org.springframework.stereotype.Service
 
 @Service("filterWorker")

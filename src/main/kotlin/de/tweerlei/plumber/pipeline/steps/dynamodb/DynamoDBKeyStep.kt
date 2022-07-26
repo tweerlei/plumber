@@ -15,13 +15,13 @@
  */
 package de.tweerlei.plumber.pipeline.steps.dynamodb
 
-import de.tweerlei.plumber.pipeline.ProcessingStep
+import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
-import de.tweerlei.plumber.pipeline.toWorkItemValue
-import de.tweerlei.plumber.worker.WellKnownKeys
+import de.tweerlei.plumber.pipeline.steps.toWorkItemValue
+import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.Worker
-import de.tweerlei.plumber.worker.dynamodb.DynamoDBKeyWorker
-import de.tweerlei.plumber.worker.dynamodb.DynamoDBKeys
+import de.tweerlei.plumber.worker.impl.dynamodb.DynamoDBKeyWorker
+import de.tweerlei.plumber.worker.impl.dynamodb.DynamoDBKeys
 import org.springframework.stereotype.Service
 
 @Service("dynamodb-keyWorker")

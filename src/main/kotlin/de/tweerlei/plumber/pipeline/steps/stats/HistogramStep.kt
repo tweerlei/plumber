@@ -15,10 +15,9 @@
  */
 package de.tweerlei.plumber.pipeline.steps.stats
 
-import de.tweerlei.plumber.pipeline.ProcessingStep
+import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
-import de.tweerlei.plumber.worker.stats.HistogramWorker
-import de.tweerlei.plumber.worker.filter.MultithreadedWorker
+import de.tweerlei.plumber.worker.impl.stats.HistogramWorker
 import de.tweerlei.plumber.util.KeyRangeGenerator
 import de.tweerlei.plumber.worker.Worker
 import org.springframework.stereotype.Service

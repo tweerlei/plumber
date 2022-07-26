@@ -15,6 +15,8 @@
  */
 package de.tweerlei.plumber.pipeline
 
+import de.tweerlei.plumber.pipeline.steps.ProcessingStep
+import de.tweerlei.plumber.pipeline.steps.ProcessingStepFactory
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.WorkerBuilder
 import mu.KLogging
@@ -135,8 +137,8 @@ class PipelineBuilder(
             logger.warn("              Produces output: ${expectedOutput.simpleName} ${currentWorker.factory.producedAttributesFor(currentWorker.arg)}")
         }
 
-        if (!currentWorker.factory.canConnectFrom(previousWorker.producedAttributes, currentWorker.arg)) {
-            throw IllegalArgumentException("${currentWorker.action} cannot connect to ${previousWorker.action}, check required input")
+        currentWorker.factory.missingRequiredAttributesFor(previousWorker.producedAttributes, currentWorker.arg)?.also { missing ->
+            throw IllegalArgumentException("'${currentWorker.action}' cannot connect to '${previousWorker.action}' due to missing attributes $missing")
         }
 
         return builder.append { w ->

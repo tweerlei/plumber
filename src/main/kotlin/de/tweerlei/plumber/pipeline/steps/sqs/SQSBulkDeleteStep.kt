@@ -16,11 +16,11 @@
 package de.tweerlei.plumber.pipeline.steps.sqs
 
 import de.tweerlei.plumber.pipeline.PipelineParams
-import de.tweerlei.plumber.pipeline.ProcessingStep
-import de.tweerlei.plumber.worker.WellKnownKeys
+import de.tweerlei.plumber.pipeline.steps.ProcessingStep
+import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.Worker
-import de.tweerlei.plumber.worker.sqs.SQSClientFactory
-import de.tweerlei.plumber.worker.sqs.SQSDeleteBatchWorker
+import de.tweerlei.plumber.worker.impl.sqs.SQSClientFactory
+import de.tweerlei.plumber.worker.impl.sqs.SQSDeleteBatchWorker
 import org.springframework.stereotype.Service
 
 @Service("sqs-bulkdeleteWorker")

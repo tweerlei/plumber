@@ -15,10 +15,10 @@
  */
 package de.tweerlei.plumber.pipeline.steps.text
 
-import de.tweerlei.plumber.pipeline.ProcessingStep
+import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
 import de.tweerlei.plumber.worker.Worker
-import de.tweerlei.plumber.worker.text.DecodingWorker
+import de.tweerlei.plumber.worker.impl.text.DecodingWorker
 import org.springframework.stereotype.Service
 
 @Service("text-readWorker")

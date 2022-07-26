@@ -15,7 +15,7 @@
  */
 package de.tweerlei.plumber
 
-import de.tweerlei.plumber.pipeline.ProcessingStepFactory
+import de.tweerlei.plumber.pipeline.steps.ProcessingStepFactory
 import de.tweerlei.plumber.pipeline.PipelineParams
 import mu.KLogging
 import org.springframework.boot.ApplicationArguments

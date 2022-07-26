@@ -17,11 +17,11 @@ package de.tweerlei.plumber.pipeline.steps.mongodb
 
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
-import de.tweerlei.plumber.pipeline.ProcessingStep
+import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
 import de.tweerlei.plumber.worker.Worker
-import de.tweerlei.plumber.worker.mongodb.MongoClientFactory
-import de.tweerlei.plumber.worker.mongodb.MongoDBPutWorker
+import de.tweerlei.plumber.worker.impl.mongodb.MongoClientFactory
+import de.tweerlei.plumber.worker.impl.mongodb.MongoDBPutWorker
 import org.springframework.stereotype.Service
 
 @Service("mongodb-writeWorker")

@@ -16,10 +16,10 @@
 package de.tweerlei.plumber.pipeline.steps.text
 
 import de.tweerlei.plumber.pipeline.PipelineParams
-import de.tweerlei.plumber.pipeline.ProcessingStep
+import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.worker.Worker
-import de.tweerlei.plumber.worker.text.ReplacingWorker
-import de.tweerlei.plumber.worker.text.TextKeys
+import de.tweerlei.plumber.worker.impl.text.ReplacingWorker
+import de.tweerlei.plumber.worker.impl.text.TextKeys
 import org.springframework.stereotype.Service
 
 @Service("replaceWorker")

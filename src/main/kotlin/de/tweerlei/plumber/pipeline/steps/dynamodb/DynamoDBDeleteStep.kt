@@ -15,13 +15,13 @@
  */
 package de.tweerlei.plumber.pipeline.steps.dynamodb
 
-import de.tweerlei.plumber.pipeline.ProcessingStep
+import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
-import de.tweerlei.plumber.worker.Record
-import de.tweerlei.plumber.worker.WellKnownKeys
+import de.tweerlei.plumber.worker.types.Record
+import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.Worker
-import de.tweerlei.plumber.worker.dynamodb.DynamoDBClientFactory
-import de.tweerlei.plumber.worker.dynamodb.DynamoDBDeleteWorker
+import de.tweerlei.plumber.worker.impl.dynamodb.DynamoDBClientFactory
+import de.tweerlei.plumber.worker.impl.dynamodb.DynamoDBDeleteWorker
 import org.springframework.stereotype.Service
 
 @Service("dynamodb-deleteWorker")
