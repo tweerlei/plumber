@@ -15,11 +15,12 @@
  */
 package de.tweerlei.plumber.worker.impl.file
 
-import de.tweerlei.plumber.worker.*
+import de.tweerlei.plumber.worker.WorkItem
+import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.DelegatingWorker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
-import de.tweerlei.plumber.worker.types.coerceToString
 import de.tweerlei.plumber.worker.impl.ifEmptyGetFrom
+import de.tweerlei.plumber.worker.types.coerceToString
 import java.io.File
 import java.io.IOException
 
@@ -31,7 +32,7 @@ class FileDeleteWorker(
     override fun doProcess(item: WorkItem) =
         item.getFirst(WellKnownKeys.NAME).coerceToString()
             .let { name ->
-                File(dir.ifEmptyGetFrom(item, FileKeys.FILE_PATH).ifEmpty { "." })
+                File(dir.ifEmptyGetFrom(item, WellKnownKeys.PATH).ifEmpty { "." })
                     .let { directory ->
                         File(directory, name)
                             .let { file ->

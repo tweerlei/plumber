@@ -15,13 +15,15 @@
  */
 package de.tweerlei.plumber.worker.impl.file
 
-import de.tweerlei.plumber.worker.*
+import de.tweerlei.plumber.worker.WorkItem
+import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.DelegatingWorker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
-import de.tweerlei.plumber.worker.types.coerceToString
 import de.tweerlei.plumber.worker.impl.ifEmptyGetFrom
+import de.tweerlei.plumber.worker.types.coerceToString
 import java.io.File
 import java.io.FileInputStream
+import java.time.Instant
 
 class FileReadWorker(
     private val dir: String,
@@ -31,17 +33,19 @@ class FileReadWorker(
     override fun doProcess(item: WorkItem) =
         item.getFirst(WellKnownKeys.NAME).coerceToString()
             .let { name ->
-                File(dir.ifEmptyGetFrom(item, FileKeys.FILE_PATH).ifEmpty { "." })
+                File(dir.ifEmptyGetFrom(item, WellKnownKeys.PATH).ifEmpty { "." })
                     .let { directory ->
                         File(directory, name)
                             .let { file ->
                                 FileInputStream(file).use { stream ->
                                     stream.readAllBytes()
+                                }.also { bytes ->
+                                    item.set(directory.absolutePath, WellKnownKeys.PATH)
+                                    item.set(name, WellKnownKeys.NAME)
+                                    item.set(file.length(), WellKnownKeys.SIZE)
+                                    item.set(Instant.ofEpochMilli(file.lastModified()), WellKnownKeys.LAST_MODIFIED)
+                                    item.set(bytes)
                                 }
-                            }.also { bytes ->
-                                item.set(directory.absolutePath, FileKeys.FILE_PATH)
-                                item.set(name, FileKeys.FILE_NAME)
-                                item.set(bytes)
                             }
                     }
             }.let { true }

@@ -18,31 +18,39 @@ package de.tweerlei.plumber.worker.impl
 class WellKnownKeys {
 
     companion object {
-        // last test result (Boolean)
-        const val TEST_RESULT = "testResult"
-
-        // common metadata
+        /** file path (String) */
+        const val PATH = "path"
+        /** file name (String) */
         const val NAME = "name"
+        /** file size (Long) */
         const val SIZE = "size"
+        /** file modification time (Instant) */
         const val LAST_MODIFIED = "lastModified"
+
+        /** content digest (String) */
         const val DIGEST = "digest"
+        /** digest algorithm used (String) */
         const val DIGEST_ALGORITHM = "digestAlgorithm"
 
-        // aggregate values
+        /** item count (Long) */
         const val COUNT = "count"
+        /** sum of item sizes (Long) */
         const val SUM = "sum"
 
-        // default range (Range)
+        /** last test result (Boolean) */
+        const val TEST_RESULT = "testResult"
+
+        /** default range (Range) */
         const val RANGE = "range"
-        // default record (Record)
+        /** default record (Record) */
         const val RECORD = "record"
-        // default node (JsonNode)
+        /** default node (JsonNode) */
         const val NODE = "node"
 
-        // parallel processing (Int)
+        /** parallel processing (Long) */
         const val WORKER_INDEX = "workerIndex"
 
-        // bulk processing (List<WorkItem>)
+        /** bulk processing (List<WorkItem>) */
         const val WORK_ITEMS = "workItems"
     }
 }

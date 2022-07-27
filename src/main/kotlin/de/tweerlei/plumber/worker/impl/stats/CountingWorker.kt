@@ -16,23 +16,22 @@
 package de.tweerlei.plumber.worker.impl.stats
 
 import de.tweerlei.plumber.util.humanReadable
-import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.WorkItem
-import de.tweerlei.plumber.worker.impl.DelegatingWorker
 import de.tweerlei.plumber.worker.Worker
+import de.tweerlei.plumber.worker.impl.DelegatingWorker
+import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import mu.KLogging
-import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.atomic.AtomicLong
 
 class CountingWorker(
     private val name: String,
-    private val interval: Int,
+    private val interval: Long,
     worker: Worker
 ): DelegatingWorker(worker) {
 
     companion object: KLogging()
 
-    private val sentFiles = AtomicInteger()
+    private val sentFiles = AtomicLong()
     private var lastTime = AtomicLong()
 
     override fun onOpen() {
@@ -42,7 +41,7 @@ class CountingWorker(
     override fun doProcess(item: WorkItem) =
         sentFiles.incrementAndGet()
             .also { counter ->
-                if (counter % interval == 0) {
+                if (counter % interval == 0L) {
                     val now = System.currentTimeMillis()
                     val last = lastTime.getAndSet(now)
                     val perSecond = interval.toDouble() * 1000 / (now - last).coerceAtLeast(1)

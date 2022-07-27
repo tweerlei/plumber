@@ -15,14 +15,16 @@
  */
 package de.tweerlei.plumber.worker.impl.file
 
-import de.tweerlei.plumber.worker.*
+import de.tweerlei.plumber.worker.WorkItem
+import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.DelegatingWorker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
+import de.tweerlei.plumber.worker.impl.ifEmptyGetFrom
 import de.tweerlei.plumber.worker.types.coerceToByteArray
 import de.tweerlei.plumber.worker.types.coerceToString
-import de.tweerlei.plumber.worker.impl.ifEmptyGetFrom
 import java.io.File
 import java.io.FileOutputStream
+import java.time.Instant
 
 class FileWriteWorker(
     private val dir: String,
@@ -32,7 +34,7 @@ class FileWriteWorker(
     override fun doProcess(item: WorkItem) =
         item.getOptional(WellKnownKeys.NAME).coerceToString()
             .let { name ->
-                File(dir.ifEmptyGetFrom(item, FileKeys.FILE_PATH).ifEmpty { "." })
+                File(dir.ifEmptyGetFrom(item, WellKnownKeys.PATH).ifEmpty { "." })
                     .let { directory ->
                         directory.mkdirs()
                         File(directory, name)
@@ -40,6 +42,9 @@ class FileWriteWorker(
                                 FileOutputStream(file).use { stream ->
                                     stream.write(item.getOptional().coerceToByteArray()
                                     )
+                                }
+                                item.getOptionalAs<Instant>(WellKnownKeys.LAST_MODIFIED)?.let { lastMod ->
+                                    file.setLastModified(lastMod.toEpochMilli())
                                 }
                            }
                     }

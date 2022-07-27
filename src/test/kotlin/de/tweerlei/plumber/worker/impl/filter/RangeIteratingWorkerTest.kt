@@ -32,7 +32,7 @@ class RangeIteratingWorkerTest {
             .append { w -> SettingWorker(mapOf(
                 WellKnownKeys.RANGE to Range(0L, 10L)
             ), w) }
-            .append { w -> RangeIteratingWorker(1, Int.MAX_VALUE, w) }
+            .append { w -> RangeIteratingWorker(1, Long.MAX_VALUE, w) }
             .run(WorkItem.of(""))
             .toList()
 
@@ -55,7 +55,7 @@ class RangeIteratingWorkerTest {
             .append { w -> SettingWorker(mapOf(
                 WellKnownKeys.RANGE to Range(0L, 10L)
             ), w) }
-            .append { w -> RangeIteratingWorker(2, Int.MAX_VALUE, w) }
+            .append { w -> RangeIteratingWorker(2, Long.MAX_VALUE, w) }
             .run(WorkItem.of(""))
             .toList()
 
@@ -73,7 +73,7 @@ class RangeIteratingWorkerTest {
             .append { w -> SettingWorker(mapOf(
                 WellKnownKeys.RANGE to Range(10L, 0L)
             ), w) }
-            .append { w -> RangeIteratingWorker(-2, Int.MAX_VALUE, w) }
+            .append { w -> RangeIteratingWorker(-2, Long.MAX_VALUE, w) }
             .run(WorkItem.of(""))
             .toList()
 
@@ -91,7 +91,7 @@ class RangeIteratingWorkerTest {
             .append { w -> SettingWorker(mapOf(
                 WellKnownKeys.RANGE to Range(10L, 0L)
             ), w) }
-            .append { w -> RangeIteratingWorker(2, Int.MAX_VALUE, w) }
+            .append { w -> RangeIteratingWorker(2, Long.MAX_VALUE, w) }
             .run(WorkItem.of(""))
             .toList()
 
@@ -104,7 +104,7 @@ class RangeIteratingWorkerTest {
             .append { w -> SettingWorker(mapOf(
                 WellKnownKeys.RANGE to Range(0L, 10L)
             ), w) }
-            .append { w -> RangeIteratingWorker(-2, Int.MAX_VALUE, w) }
+            .append { w -> RangeIteratingWorker(-2, Long.MAX_VALUE, w) }
             .run(WorkItem.of(""))
             .toList()
 

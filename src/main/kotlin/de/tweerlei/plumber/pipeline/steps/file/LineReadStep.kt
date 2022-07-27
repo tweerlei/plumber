@@ -15,11 +15,11 @@
  */
 package de.tweerlei.plumber.pipeline.steps.file
 
-import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
-import de.tweerlei.plumber.worker.impl.file.LineReadWorker
+import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.worker.Worker
-import de.tweerlei.plumber.worker.impl.file.FileKeys
+import de.tweerlei.plumber.worker.impl.WellKnownKeys
+import de.tweerlei.plumber.worker.impl.file.LineReadWorker
 import org.springframework.stereotype.Service
 import java.io.File
 
@@ -31,9 +31,8 @@ class LineReadStep: ProcessingStep {
     override val description = "Read lines from the given file"
 
     override fun producedAttributesFor(arg: String) = setOf(
-        FileKeys.FILE_PATH,
-        FileKeys.FILE_NAME,
-        FileKeys.LINE_NUMBER
+        WellKnownKeys.PATH,
+        WellKnownKeys.NAME
     )
 
     override fun createWorker(

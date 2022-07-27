@@ -19,18 +19,19 @@ import com.fasterxml.jackson.core.JsonFactory
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import de.tweerlei.plumber.worker.WorkItem
+import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.GeneratingWorker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
-import de.tweerlei.plumber.worker.Worker
-import de.tweerlei.plumber.worker.impl.file.FileKeys
 import mu.KLogging
-import java.io.*
+import java.io.File
+import java.io.FileInputStream
+import java.io.InputStream
 
 class JsonReadWorker<T>(
     private val file: File,
     private val itemType: Class<T>,
     private val objectMapper: ObjectMapper,
-    limit: Int,
+    limit: Long,
     worker: Worker
 ): GeneratingWorker(limit, worker) {
 
@@ -64,8 +65,8 @@ class JsonReadWorker<T>(
     private fun Any.toWorkItem() =
         WorkItem.of(
             this,
-            FileKeys.FILE_PATH to file.parentFile?.absolutePath,
-            FileKeys.FILE_NAME to file.name
+            WellKnownKeys.PATH to file.parentFile?.absolutePath,
+            WellKnownKeys.NAME to file.name
         ).also { item ->
             if (this is JsonNode)
                 item.set(this, WellKnownKeys.NODE)

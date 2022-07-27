@@ -15,26 +15,26 @@
  */
 package de.tweerlei.plumber.worker.impl.stats
 
-import de.tweerlei.plumber.worker.impl.DelegatingWorker
 import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.Worker
+import de.tweerlei.plumber.worker.impl.DelegatingWorker
 import mu.KLogging
-import java.util.concurrent.atomic.AtomicInteger
+import java.util.concurrent.atomic.AtomicLong
 
 class ErrorWorker(
     private val name: String,
-    private val interval: Int,
+    private val interval: Long,
     worker: Worker
 ): DelegatingWorker(worker) {
 
     companion object: KLogging()
 
-    private val sentFiles = AtomicInteger()
+    private val sentFiles = AtomicLong()
 
     override fun doProcess(item: WorkItem) =
         sentFiles.incrementAndGet()
             .also { counter ->
-                if (counter % interval == 0) {
+                if (counter % interval == 0L) {
                     throw RuntimeException("Triggered error after $counter items")
                 }
             }.let { true }

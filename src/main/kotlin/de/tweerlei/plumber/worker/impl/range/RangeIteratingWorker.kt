@@ -23,7 +23,7 @@ import mu.KLogging
 
 class RangeIteratingWorker(
     private val step: Long,
-    limit: Int,
+    limit: Long,
     worker: Worker
 ): GeneratingWorker(limit, worker) {
 

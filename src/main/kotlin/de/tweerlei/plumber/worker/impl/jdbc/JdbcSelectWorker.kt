@@ -29,7 +29,7 @@ class JdbcSelectWorker(
     private val tableName: String,
     private val primaryKey: String,
     private val jdbcTemplate: JdbcTemplate,
-    limit: Int,
+    limit: Long,
     worker: Worker
 ): GeneratingWorker(limit, worker) {
 

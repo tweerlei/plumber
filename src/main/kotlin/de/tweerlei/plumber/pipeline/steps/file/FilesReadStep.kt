@@ -17,9 +17,8 @@ package de.tweerlei.plumber.pipeline.steps.file
 
 import de.tweerlei.plumber.pipeline.PipelineParams
 import de.tweerlei.plumber.pipeline.steps.ProcessingStep
-import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.Worker
-import de.tweerlei.plumber.worker.impl.file.FileKeys
+import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.impl.file.FileReadWorker
 import org.springframework.stereotype.Service
 
@@ -34,8 +33,9 @@ class FilesReadStep: ProcessingStep {
         WellKnownKeys.NAME
     )
     override fun producedAttributesFor(arg: String) = setOf(
-        FileKeys.FILE_PATH,
-        FileKeys.FILE_NAME
+        WellKnownKeys.PATH,
+        WellKnownKeys.SIZE,
+        WellKnownKeys.LAST_MODIFIED
     )
 
     override fun createWorker(

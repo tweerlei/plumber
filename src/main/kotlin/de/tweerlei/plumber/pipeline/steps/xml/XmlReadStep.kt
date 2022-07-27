@@ -16,11 +16,10 @@
 package de.tweerlei.plumber.pipeline.steps.xml
 
 import com.fasterxml.jackson.dataformat.xml.XmlMapper
-import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
-import de.tweerlei.plumber.worker.impl.WellKnownKeys
+import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.worker.Worker
-import de.tweerlei.plumber.worker.impl.file.FileKeys
+import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.impl.xml.XmlReadWorker
 import org.springframework.stereotype.Service
 import java.io.File
@@ -35,9 +34,9 @@ class XmlReadStep(
     override val description = "Read XML objects from the given file"
 
     override fun producedAttributesFor(arg: String) = setOf(
-        WellKnownKeys.NODE,
-        FileKeys.FILE_PATH,
-        FileKeys.FILE_NAME
+        WellKnownKeys.PATH,
+        WellKnownKeys.NAME,
+        WellKnownKeys.NODE
     )
 
     override fun createWorker(

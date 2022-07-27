@@ -22,16 +22,17 @@ import de.tweerlei.plumber.worker.types.coerceToString
 import mu.KLogging
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicInteger
+import java.util.concurrent.atomic.AtomicLong
 
 class GroupingWorker(
     private val name: String,
-    private val interval: Int,
+    private val interval: Long,
     worker: Worker
 ): DelegatingWorker(worker) {
 
     companion object: KLogging()
 
-    private val counters = ConcurrentHashMap<String, AtomicInteger>()
+    private val counters = ConcurrentHashMap<String, AtomicLong>()
 
     override fun doProcess(item: WorkItem) =
         item.getOptional().coerceToString()
@@ -39,7 +40,7 @@ class GroupingWorker(
                 counterFor(value)
                     .incrementAndGet()
                     .also { counter ->
-                        if (counter % interval == 0) {
+                        if (counter % interval == 0L) {
                             logger.info { "$name: $value: $counter" }
                         }
                         item.set(counter, WellKnownKeys.COUNT)
@@ -48,7 +49,7 @@ class GroupingWorker(
 
     private fun counterFor(value: String) =
         counters[value]
-            ?: AtomicInteger().let {
+            ?: AtomicLong().let {
                 counters.putIfAbsent(value, it) ?: it
             }
 

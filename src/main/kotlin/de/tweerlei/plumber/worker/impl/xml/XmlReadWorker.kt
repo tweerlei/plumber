@@ -18,12 +18,13 @@ package de.tweerlei.plumber.worker.impl.xml
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.dataformat.xml.XmlMapper
 import de.tweerlei.plumber.worker.WorkItem
+import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.GeneratingWorker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
-import de.tweerlei.plumber.worker.Worker
-import de.tweerlei.plumber.worker.impl.file.FileKeys
 import mu.KLogging
-import java.io.*
+import java.io.File
+import java.io.FileInputStream
+import java.io.InputStream
 import javax.xml.stream.XMLInputFactory
 import javax.xml.stream.XMLStreamConstants.START_ELEMENT
 
@@ -32,7 +33,7 @@ class XmlReadWorker<T>(
     private val elementName: String,
     private val itemType: Class<T>,
     private val xmlMapper: XmlMapper,
-    limit: Int,
+    limit: Long,
     worker: Worker
 ): GeneratingWorker(limit, worker) {
 
@@ -72,8 +73,8 @@ class XmlReadWorker<T>(
     private fun Any.toWorkItem() =
         WorkItem.of(
             this,
-            FileKeys.FILE_PATH to file.parentFile?.absolutePath,
-            FileKeys.FILE_NAME to file.name
+            WellKnownKeys.PATH to file.parentFile?.absolutePath,
+            WellKnownKeys.NAME to file.name
         ).also { item ->
             if (this is JsonNode)
                 item.set(this, WellKnownKeys.NODE)

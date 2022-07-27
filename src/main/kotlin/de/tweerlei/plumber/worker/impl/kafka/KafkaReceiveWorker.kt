@@ -30,7 +30,7 @@ class KafkaReceiveWorker(
     private val waitSeconds: Int,
     private val follow: Boolean,
     private val consumer: KafkaConsumer<String, String>,
-    limit: Int,
+    limit: Long,
     worker: Worker
 ): GeneratingWorker(limit, worker) {
 

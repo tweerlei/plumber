@@ -15,16 +15,16 @@
  */
 package de.tweerlei.plumber.worker.impl.file
 
-import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.WorkItem
-import de.tweerlei.plumber.worker.impl.GeneratingWorker
 import de.tweerlei.plumber.worker.Worker
+import de.tweerlei.plumber.worker.impl.GeneratingWorker
+import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import java.io.File
 import java.time.Instant
 
 class FileListWorker(
     private val dir: String,
-    limit: Int,
+    limit: Long,
     worker: Worker
 ): GeneratingWorker(limit, worker) {
 
@@ -44,10 +44,9 @@ class FileListWorker(
     private fun File.toWorkItem(directory: File) =
         WorkItem.of(
             name,
+            WellKnownKeys.PATH to directory.absolutePath,
             WellKnownKeys.NAME to name,
             WellKnownKeys.SIZE to length(),
-            WellKnownKeys.LAST_MODIFIED to Instant.ofEpochMilli(lastModified()),
-            FileKeys.FILE_PATH to directory.absolutePath,
-            FileKeys.FILE_NAME to name
+            WellKnownKeys.LAST_MODIFIED to Instant.ofEpochMilli(lastModified())
         )
 }

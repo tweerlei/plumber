@@ -28,7 +28,7 @@ class KeyRangeWorker(
     private val keyChars: String?,
     private val startAfterKey: String?,
     private val stopAfterKey: String?,
-    limit: Int,
+    limit: Long,
     worker: Worker
 ): GeneratingWorker(limit, worker) {
 

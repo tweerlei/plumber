@@ -115,7 +115,7 @@ class CommandLineProcessor(
                 rangeKey = args.getOptionValue("range-key"),
                 numberOfFilesPerRequest = args.getOptionValue("bulk-size")?.toInt() ?: 1000,
                 queueSizePerThread = args.getOptionValue("queue-size")?.toInt() ?: 10,
-                maxFilesPerThread = args.getOptionValue("limit")?.toInt() ?: Int.MAX_VALUE,
+                maxFilesPerThread = args.getOptionValue("limit")?.toLong() ?: Long.MAX_VALUE,
                 retryDelaySeconds = args.getOptionValue("retry-delay")?.toInt() ?: 0,
                 maxWaitTimeSeconds = args.getOptionValue("wait")?.toInt() ?: 0,
                 elementName = args.getOptionValue("element-name") ?: "",

@@ -40,7 +40,7 @@ class TimeStep: ProcessingStep {
     ) =
         TimingWorker(
             predecessorName,
-            arg.toIntOrNull() ?: Int.MAX_VALUE,
+            arg.toLongOrNull() ?: Long.MAX_VALUE,
             w
         )
 }

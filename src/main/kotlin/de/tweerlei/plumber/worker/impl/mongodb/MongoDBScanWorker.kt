@@ -36,7 +36,7 @@ class MongoDBScanWorker(
     private val numberOfFilesPerRequest: Int,
     private val mongoClient: MongoClient,
     private val objectMapper: ObjectMapper,
-    limit: Int,
+    limit: Long,
     worker: Worker
 ): GeneratingWorker(limit, worker) {
 

@@ -17,18 +17,20 @@ package de.tweerlei.plumber.worker.impl.csv
 
 import com.fasterxml.jackson.dataformat.csv.CsvMapper
 import com.fasterxml.jackson.dataformat.csv.CsvSchema
-import de.tweerlei.plumber.worker.*
-import de.tweerlei.plumber.worker.impl.file.FileKeys
+import de.tweerlei.plumber.worker.WorkItem
+import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.GeneratingWorker
-import de.tweerlei.plumber.worker.types.Record
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
+import de.tweerlei.plumber.worker.types.Record
 import mu.KLogging
-import java.io.*
+import java.io.File
+import java.io.FileInputStream
+import java.io.InputStream
 
 class CsvReadWorker(
     private val file: File,
     private val csvMapper: CsvMapper,
-    limit: Int,
+    limit: Long,
     worker: Worker
 ): GeneratingWorker(limit, worker) {
 
@@ -62,8 +64,8 @@ class CsvReadWorker(
     private fun Record.toWorkItem() =
         WorkItem.of(
             this,
-            FileKeys.FILE_PATH to file.parentFile?.absolutePath,
-            FileKeys.FILE_NAME to file.name
+            WellKnownKeys.PATH to file.parentFile?.absolutePath,
+            WellKnownKeys.NAME to file.name
         ).also { item ->
             item.set(this, WellKnownKeys.RECORD)
         }

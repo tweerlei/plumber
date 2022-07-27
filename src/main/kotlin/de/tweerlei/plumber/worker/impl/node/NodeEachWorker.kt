@@ -23,7 +23,7 @@ import de.tweerlei.plumber.worker.impl.WellKnownKeys
 
 class NodeEachWorker(
     private val ptr: JsonPointer,
-    limit: Int,
+    limit: Long,
     worker: Worker
 ): GeneratingWorker(limit, worker) {
 

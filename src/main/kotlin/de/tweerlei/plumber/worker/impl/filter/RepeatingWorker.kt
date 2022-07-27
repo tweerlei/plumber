@@ -23,7 +23,7 @@ import mu.KLogging
 class RepeatingWorker(
     private val number: Int,
     worker: Worker
-): GeneratingWorker(Int.MAX_VALUE, worker) {
+): GeneratingWorker(Long.MAX_VALUE, worker) {
 
     companion object: KLogging()
 

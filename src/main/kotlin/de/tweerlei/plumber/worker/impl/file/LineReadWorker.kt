@@ -16,24 +16,25 @@
 package de.tweerlei.plumber.worker.impl.file
 
 import de.tweerlei.plumber.worker.WorkItem
-import de.tweerlei.plumber.worker.impl.GeneratingWorker
 import de.tweerlei.plumber.worker.Worker
+import de.tweerlei.plumber.worker.impl.GeneratingWorker
+import de.tweerlei.plumber.worker.impl.WellKnownKeys
+import java.io.BufferedReader
 import java.io.File
 import java.io.FileInputStream
 import java.io.InputStreamReader
-import java.io.LineNumberReader
 import java.nio.charset.StandardCharsets
 
 class LineReadWorker(
     private val file: File,
-    limit: Int,
+    limit: Long,
     worker: Worker
 ): GeneratingWorker(limit, worker) {
 
-    private lateinit var reader: LineNumberReader
+    private lateinit var reader: BufferedReader
 
     override fun onOpen() {
-        reader = LineNumberReader(InputStreamReader(FileInputStream(file), StandardCharsets.UTF_8))
+        reader = BufferedReader(InputStreamReader(FileInputStream(file), StandardCharsets.UTF_8))
     }
 
     override fun generateItems(item: WorkItem, fn: (WorkItem) -> Boolean) {
@@ -45,13 +46,12 @@ class LineReadWorker(
         }
     }
 
-    private fun LineNumberReader.nextWorkItem() =
+    private fun BufferedReader.nextWorkItem() =
         readLine()
             ?.let { line ->
                 WorkItem.of(
                     line,
-                    FileKeys.FILE_NAME to file.name,
-                    FileKeys.LINE_NUMBER to lineNumber
+                    WellKnownKeys.NAME to file.name
                 )
             }
 

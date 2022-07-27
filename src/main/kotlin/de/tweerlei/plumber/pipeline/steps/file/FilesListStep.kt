@@ -17,9 +17,8 @@ package de.tweerlei.plumber.pipeline.steps.file
 
 import de.tweerlei.plumber.pipeline.PipelineParams
 import de.tweerlei.plumber.pipeline.steps.ProcessingStep
-import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.Worker
-import de.tweerlei.plumber.worker.impl.file.FileKeys
+import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.impl.file.FileListWorker
 import org.springframework.stereotype.Service
 
@@ -31,11 +30,10 @@ class FilesListStep: ProcessingStep {
     override val description = "Read file names from the given directory"
 
     override fun producedAttributesFor(arg: String) = setOf(
+        WellKnownKeys.PATH,
         WellKnownKeys.NAME,
         WellKnownKeys.SIZE,
-        WellKnownKeys.LAST_MODIFIED,
-        FileKeys.FILE_PATH,
-        FileKeys.FILE_NAME
+        WellKnownKeys.LAST_MODIFIED
     )
 
     override fun createWorker(

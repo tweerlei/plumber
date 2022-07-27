@@ -45,7 +45,7 @@ class CountStep: ProcessingStep {
     ) =
         CountingWorker(
             predecessorName,
-            arg.toIntOrNull() ?: Int.MAX_VALUE,
+            arg.toLongOrNull() ?: Long.MAX_VALUE,
             w
         )
 }

@@ -44,7 +44,7 @@ class GroupStep: ProcessingStep {
     ) =
         GroupingWorker(
             predecessorName,
-            arg.toIntOrNull() ?: Int.MAX_VALUE,
+            arg.toLongOrNull() ?: Long.MAX_VALUE,
             w
         )
 }

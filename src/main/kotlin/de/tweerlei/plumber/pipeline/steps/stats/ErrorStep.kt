@@ -40,7 +40,7 @@ class ErrorStep: ProcessingStep {
     ) =
         ErrorWorker(
             predecessorName,
-            arg.toIntOrNull() ?: 1,
+            arg.toLongOrNull() ?: 1,
             w
         )
 }

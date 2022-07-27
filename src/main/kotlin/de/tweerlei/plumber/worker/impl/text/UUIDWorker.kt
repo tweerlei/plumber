@@ -21,7 +21,7 @@ import de.tweerlei.plumber.worker.Worker
 import java.util.*
 
 class UUIDWorker(
-    limit: Int,
+    limit: Long,
     worker: Worker
 ): GeneratingWorker(limit, worker) {
 

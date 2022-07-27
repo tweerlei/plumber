@@ -31,7 +31,7 @@ class SQSReceiveWorker(
     private val waitSeconds: Int,
     private val follow: Boolean,
     private val amazonSQSClient: AmazonSQS,
-    limit: Int,
+    limit: Long,
     worker: Worker
 ): GeneratingWorker(limit, worker) {
 

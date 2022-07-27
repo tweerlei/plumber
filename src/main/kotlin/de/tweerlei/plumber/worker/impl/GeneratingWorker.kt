@@ -21,13 +21,13 @@ import de.tweerlei.plumber.worker.Worker
 import mu.KLogging
 
 abstract class GeneratingWorker(
-    private val limit: Int,
+    private val limit: Long,
     worker: Worker
 ): WrappingWorker(worker) {
 
     companion object: KLogging()
 
-    private var count = 0
+    private var count = 0L
 
     final override fun process(item: WorkItem) {
         generateItems(item) { newItem ->

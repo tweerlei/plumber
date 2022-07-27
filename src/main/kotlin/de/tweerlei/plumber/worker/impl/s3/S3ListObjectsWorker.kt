@@ -31,7 +31,7 @@ class S3ListObjectsWorker(
     private val requesterPays: Boolean,
     private val numberOfFilesPerRequest: Int,
     private val amazonS3Client: AmazonS3,
-    limit: Int,
+    limit: Long,
     worker: Worker
 ): GeneratingWorker(limit, worker) {
 

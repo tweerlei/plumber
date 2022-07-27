@@ -28,7 +28,7 @@ data class PipelineParams(
     val partitionKey: String,
     val rangeKey: String?,
     val numberOfFilesPerRequest: Int,
-    val maxFilesPerThread: Int,
+    val maxFilesPerThread: Long,
     val queueSizePerThread: Int,
     val retryDelaySeconds: Int,
     val maxWaitTimeSeconds: Int,

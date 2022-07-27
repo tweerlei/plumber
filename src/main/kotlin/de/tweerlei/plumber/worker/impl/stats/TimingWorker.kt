@@ -26,22 +26,22 @@ import java.util.concurrent.atomic.AtomicLong
 
 class TimingWorker(
     private val name: String,
-    private val interval: Int,
+    private val interval: Long,
     worker: Worker
 ): WrappingWorker(worker) {
 
     companion object: KLogging()
 
     private val activeWorkers = AtomicInteger()
-    private val successfulFiles = AtomicInteger()
-    private val failedFiles = AtomicInteger()
+    private val successfulFiles = AtomicLong()
+    private val failedFiles = AtomicLong()
     private val totalProcessingTime = AtomicLong()
 
     override fun process(item: WorkItem) {
         val active = activeWorkers.incrementAndGet()
         val startTime = System.currentTimeMillis()
-        var succ: Int
-        var fail: Int
+        var succ: Long
+        var fail: Long
         try {
             passOn(item)
             succ = successfulFiles.incrementAndGet()
@@ -60,7 +60,7 @@ class TimingWorker(
         val endTime = System.currentTimeMillis()
 
         val total = totalProcessingTime.addAndGet(endTime - startTime)
-        if ((succ + fail) % interval == 0) {
+        if ((succ + fail) % interval == 0L) {
             val perItem = total.toDouble() / (succ + fail)
             logger.info {
                 "$name: $succ / ${succ + fail} ($active active) @ ${perItem.humanReadable()} ms/item"

@@ -22,7 +22,7 @@ import de.tweerlei.plumber.worker.Worker
 
 class UnbulkWorker(
     worker: Worker
-): GeneratingWorker(Int.MAX_VALUE, worker) {
+): GeneratingWorker(Long.MAX_VALUE, worker) {
 
     override fun generateItems(item: WorkItem, fn: (WorkItem) -> Boolean) {
         item.getAs<List<WorkItem>>(WellKnownKeys.WORK_ITEMS)

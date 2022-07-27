@@ -21,7 +21,7 @@ import de.tweerlei.plumber.worker.Worker
 
 class CollectionWorker(
     private val items: Collection<WorkItem>,
-    limit: Int,
+    limit: Long,
     worker: Worker
 ): GeneratingWorker(limit, worker) {
 

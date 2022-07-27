@@ -35,7 +35,7 @@ class DynamoDBScanWorker(
     private val endWithRange: String?,
     private val numberOfFilesPerRequest: Int,
     private val amazonDynamoDBClient: AmazonDynamoDB,
-    limit: Int,
+    limit: Long,
     worker: Worker
 ): GeneratingWorker(limit, worker) {
 
