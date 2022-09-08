@@ -46,7 +46,7 @@ class JdbcDeleteStep(
             .let { client ->
                 JdbcDeleteWorker(
                     arg,
-                    params.primaryKey.ifEmpty { "id" },
+                    params.primaryKey.toJdbcPrimaryKey(),
                     client,
                     w
                 )

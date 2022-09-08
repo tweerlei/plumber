@@ -29,14 +29,15 @@ Apache Kafka
   kafka-write:<arg>           Send a message to the given Kafka topic
 Attributes
   and:<arg>                   Logically AND the current value with the given attribute's value
+  else:<arg>                  Sets the current value to the given attribute's value if a previous then: did not match
   get:<arg>                   Set the current value to the given attribute
-  is-equal:<arg>              Compare the current value to the given value resulting in a boolean
-  is-greater:<arg>            Compare the current value to the given value resulting in a boolean
-  is-less:<arg>               Compare the current value to the given value resulting in a boolean
-  is-null:<arg>               Test if the current value is null resulting in a boolean
+  is-equal:<arg>              Compare the current value to the given attribute's value resulting in a boolean
+  is-greater:<arg>            Compare the current value to the given attribute's value resulting in a boolean
+  is-less:<arg>               Compare the current value to the given attribute's value resulting in a boolean
   not:<arg>                   Logically negate the current value
   or:<arg>                    Logically OR the current value with the given attribute's value
   set:<arg>                   Set the given attribute to the current value
+  then:<arg>                  Sets the current value to the given attribute's value if current value is truthy
   value:<arg>                 Sets the current value to the given value
   xor:<arg>                   Logically XOR the current value with the given attribute's value
 CSV
@@ -101,6 +102,7 @@ Ranges
 Records
   rec-clear:<arg>             Clear the curent record
   rec-del:<arg>               Remove the given field from the current record
+  rec-each:<arg>              Convert record elements to individual items
   rec-get:<arg>               Set the given record field as current value
   rec-set:<arg>               Set the given record field to the current value
 Text
@@ -135,6 +137,7 @@ Supported global options are:
 --primary-key=<name>          Use the given JDBC column as primary key
 --partition-key=<name>        Use the given DynamoDB attribute as partition key
 --range-key=<name>            Use the given DynamoDB attribute as range key
+--select=<fields>             Database fields to fetch, separated by commas
 --element-name=<name>         Set XML element name to read/write
 --root-element-name=<name>    Set XML root element name to wrap output in
 --pretty-print                Pretty print JSON and XML output
@@ -147,16 +150,19 @@ Supported global options are:
 
 Credentials can be passed via environment variables:
 
-AWS_*                                 Set AWS credentials                                 
-PLUMBER_JDBC_DATASOURCE_URL           Set JDBC url
-PLUMBER_JDBC_DATASOURCE_USERNAME      Set JDBC user name
-PLUMBER_JDBC_DATASOURCE_PASSWORD      Set JDBC password
-PLUMBER_MONGODB_CLIENT_URI            Set MongoDB uri
-PLUMBER_MONGODB_CLIENT_USERNAME       Set MongoDB user name
-PLUMBER_MONGODB_CLIENT_PASSWORD       Set MongoDB password
-PLUMBER_MONGODB_CLIENT_SSLROOTCERT    Set MongoDB SSL CA certificate
-PLUMBER_KAFKA_CONSUMER_*              Set Kafka consumer config
-PLUMBER_KAFKA_PRODUCER_*              Set Kafka producer config
+AWS_*                                          Set AWS credentials
+PLUMBER_JDBC_DATASOURCE_DRIVERCLASSNAME        Set JDBC driver class name
+PLUMBER_JDBC_DATASOURCE_URL                    Set JDBC url
+PLUMBER_JDBC_DATASOURCE_USERNAME               Set JDBC user name
+PLUMBER_JDBC_DATASOURCE_PASSWORD               Set JDBC password
+PLUMBER_MONGODB_CLIENT_URI                     Set MongoDB uri
+PLUMBER_MONGODB_CLIENT_USERNAME                Set MongoDB user name
+PLUMBER_MONGODB_CLIENT_PASSWORD                Set MongoDB password
+PLUMBER_MONGODB_CLIENT_DATABASE                Set MongoDB database
+PLUMBER_MONGODB_CLIENT_AUTHENTICATIONDATABASE  Set MongoDB authentication database
+PLUMBER_MONGODB_CLIENT_SSLROOTCERT             Set MongoDB SSL CA certificate
+PLUMBER_KAFKA_CONSUMER_*                       Set Kafka consumer config
+PLUMBER_KAFKA_PRODUCER_*                       Set Kafka producer config
 ```
 
 ## How it works
@@ -207,7 +213,7 @@ Values given on the command line (e.g. via `value:`) are automatically converted
 | null                 | null    |                      |
 | true                 | Boolean | true                 |
 | false                | Boolean | false                |
-| 042                  | Integer | 42                   |
+| 042                  | Long    | 42                   |
 | 3.14                 | Double  | 3.14                 |
 | 3e2                  | Double  | 300                  |
 | 2022-03-14T15:30:00Z | Instant | 2022-03-14T15:30:00Z |
@@ -232,7 +238,7 @@ You can match the current value against a regular expression:
     log
 ```
 This will yield the matched substring (`quick` in this case) as current value and the matched subgroup as attribute `matchedGroup1` with the value `brown`.
-To discard items that didn't match the pattern, use `notnull` or `notnull:false` to keep only those.
+To discard items that did or did not match the pattern, use `is-equal:null filter:false` (see below).
 Replacing the matched substring is possible with the `replace` step that also supports references to groups:
 
 ```bash
@@ -243,6 +249,51 @@ Replacing the matched substring is possible with the `replace` step that also su
     log
 ```
 
+## Logic and filtering
+
+Values can be compared and results can be combined (also with other boolean attributes) using logical operators:
+
+```bash
+./plumber \
+    value:true set:yes \
+    value:false set:no \
+    value:true \
+    and:no \
+    or:yes \
+    not \
+    log
+```
+
+This is the verbose equivalent of `not ((true and false) or true)`.
+
+```bash
+./plumber \
+    value:Hello set:abc \
+    value:World set:def \
+    value:42 set:limit \
+    value:10 is-greater:limit \
+    not \
+    then:abc else:def \
+    log
+```
+
+This is the verbose equivalent of `if not (10 > 42) then 'Hello' else 'World'`.
+
+Items can then be filtered to keep only those that evaluate to true (default) or false.
+This evaluation also applies to string values, so an empty string, as well as '0' and 'false' will evaluate to false.
+If you want to evaluate 'false' to false, use an explicit `is-equal:`.
+
+```bash
+./plumber \
+    value:2 set:two \
+    value:0,1,2,3,4 csv-parse record-each \
+    set:value \
+    is-equal:two \
+    filter:false \
+    get:value \
+    log
+```
+
 ## Ranges
 
 Ranges are used for example to specify bounds when querying input sources:
@@ -250,7 +301,7 @@ Ranges are used for example to specify bounds when querying input sources:
 ```bash
 ./plumber \
     jdbc-range:mytable --primary-key=id \
-    jdbc-select \
+    jdbc-read \
     log
 ```
 
@@ -261,7 +312,7 @@ You can build a range manually as well:
 ./plumber \
     value:0 range-set:start \
     value:100 range-set:end \
-    jdbc-select:mytable --primary-key=id \
+    jdbc-read:mytable --primary-key=id \
     log
 ```
 
@@ -300,7 +351,7 @@ For more complex data structures like JSON or XML, the parsed result is stored a
 ./plumber \
     value:'{"version":1,"data":{"n":42,"msg":"Hello","read":true}}' \
     json-parse \
-    node-get:data/msg \
+    node-get:'data/msg' \
     log
 ```
 

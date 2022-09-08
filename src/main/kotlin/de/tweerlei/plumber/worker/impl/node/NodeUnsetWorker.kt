@@ -17,17 +17,15 @@ package de.tweerlei.plumber.worker.impl.node
 
 import com.fasterxml.jackson.core.JsonPointer
 import com.fasterxml.jackson.databind.JsonNode
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.ObjectNode
 import de.tweerlei.plumber.worker.WorkItem
+import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.DelegatingWorker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
-import de.tweerlei.plumber.worker.Worker
 
 class NodeUnsetWorker(
     private val p: JsonPointer,
-    private val objectMapper: ObjectMapper,
     worker: Worker
 ): DelegatingWorker(worker) {
 

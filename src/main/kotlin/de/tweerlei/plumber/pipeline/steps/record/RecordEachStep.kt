@@ -13,25 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.tweerlei.plumber.pipeline.steps.node
+package de.tweerlei.plumber.pipeline.steps.record
 
-import com.fasterxml.jackson.core.JsonPointer
 import de.tweerlei.plumber.pipeline.PipelineParams
 import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
-import de.tweerlei.plumber.worker.impl.node.NodeReplaceWorker
+import de.tweerlei.plumber.worker.impl.record.RecordEachWorker
 import org.springframework.stereotype.Service
 
-@Service("node-subWorker")
-class NodeSubStep: ProcessingStep {
+@Service("rec-eachWorker")
+class RecordEachStep: ProcessingStep {
 
-    override val group = "Nodes"
-    override val name = "Extract JSON node"
-    override val description = "Replace the current node with one of its sub nodes"
+    override val group = "Records"
+    override val name = "Expand record"
+    override val description = "Extract record elements to individual items"
 
     override fun requiredAttributesFor(arg: String) = setOf(
-        WellKnownKeys.NODE
+        WellKnownKeys.RECORD
+    )
+    override fun producedAttributesFor(arg: String) = setOf(
+        WellKnownKeys.NAME
     )
 
     override fun createWorker(
@@ -42,5 +44,5 @@ class NodeSubStep: ProcessingStep {
         params: PipelineParams,
         parallelDegree: Int
     ) =
-        NodeReplaceWorker(arg.toJsonPointer(), w)
+        RecordEachWorker(params.maxFilesPerThread, w)
 }

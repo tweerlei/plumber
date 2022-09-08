@@ -18,11 +18,11 @@ package de.tweerlei.plumber.pipeline.steps.xml
 import com.fasterxml.jackson.dataformat.xml.XmlMapper
 import de.tweerlei.plumber.pipeline.PipelineParams
 import de.tweerlei.plumber.pipeline.steps.ProcessingStep
+import de.tweerlei.plumber.pipeline.steps.file.toInputFile
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.impl.xml.XmlReadWorker
 import org.springframework.stereotype.Service
-import java.io.File
 
 @Service("xml-readWorker")
 class XmlReadStep(
@@ -48,7 +48,7 @@ class XmlReadStep(
         parallelDegree: Int
     ) =
         XmlReadWorker(
-            File(arg.ifEmpty { "/dev/stdin" }),
+            arg.toInputFile(),
             params.elementName,
             expectedOutput,
             xmlMapper,

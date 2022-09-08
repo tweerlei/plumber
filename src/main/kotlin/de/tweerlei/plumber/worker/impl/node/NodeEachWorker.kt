@@ -20,6 +20,7 @@ import com.fasterxml.jackson.databind.JsonNode
 import de.tweerlei.plumber.worker.*
 import de.tweerlei.plumber.worker.impl.GeneratingWorker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
+import mu.KLogging
 
 class NodeEachWorker(
     private val ptr: JsonPointer,
@@ -27,22 +28,27 @@ class NodeEachWorker(
     worker: Worker
 ): GeneratingWorker(limit, worker) {
 
+    companion object: KLogging()
+
     override fun generateItems(item: WorkItem, fn: (WorkItem) -> Boolean) {
         item.getAs<JsonNode>(WellKnownKeys.NODE)
-            .also { json ->
-                json.at(ptr).toIterable().all { fn(WorkItem.of(it)) }
+            .at(ptr).toMap().all { (key, value) ->
+                fn(WorkItem.of(value,
+                    WellKnownKeys.NAME to key
+                ))
             }
     }
 
-    private fun JsonNode.toIterable(): Iterable<Any?> =
+    private fun JsonNode.toMap(): Map<String, Any?> =
         when {
-            isBoolean -> listOf(booleanValue())
-            isNumber -> listOf(numberValue())
-            isTextual -> listOf(textValue())
-            isBinary -> listOf(binaryValue())
-            isArray -> this
-            isNull -> listOf(null)
-            isEmpty -> emptyList()
-            else -> listOf(this)
+            isBoolean -> mapOf("0" to booleanValue())
+            isNumber -> mapOf("0" to numberValue())
+            isTextual -> mapOf("0" to textValue())
+            isBinary -> mapOf("0" to binaryValue())
+            isArray -> withIndex().associate { v -> v.index.toString() to v.value }
+            isObject -> fields().asSequence().associate { v -> v.key to v.value }
+            isNull -> mapOf("0" to null)
+            isEmpty -> emptyMap()
+            else -> mapOf("0" to this)
         }
 }

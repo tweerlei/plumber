@@ -21,7 +21,6 @@ import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.impl.file.LineReadWorker
 import org.springframework.stereotype.Service
-import java.io.File
 
 @Service("lines-readWorker")
 class LineReadStep: ProcessingStep {
@@ -44,7 +43,7 @@ class LineReadStep: ProcessingStep {
         parallelDegree: Int
     ) =
         LineReadWorker(
-            File(arg.ifEmpty { "/dev/stdin" }),
+            arg.toInputFile(),
             params.maxFilesPerThread,
             w
         )

@@ -50,7 +50,7 @@ class JdbcRangeStep(
             .let { client ->
                 JdbcRangeWorker(
                     arg,
-                    params.primaryKey.ifEmpty { "id" },
+                    params.primaryKey.toJdbcPrimaryKey(),
                     client,
                     w
                 )

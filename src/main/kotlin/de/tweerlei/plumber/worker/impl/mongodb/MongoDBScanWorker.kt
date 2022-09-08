@@ -71,7 +71,10 @@ class MongoDBScanWorker(
 
     private fun listDocuments(startAfter: Any?, endWith: Any?) =
         filterFor(startAfter, endWith).let { filter ->
-            mongoClient.getDatabase(databaseName).getCollection(collectionName).find(filter).projection(fieldsToSelect())
+            mongoClient.getDatabase(databaseName).getCollection(collectionName)
+                .find(filter)
+                .batchSize(numberOfFilesPerRequest)
+                .projection(fieldsToSelect())
         }
 
     private fun filterFor(startAfter: Any?, endWith: Any?) =

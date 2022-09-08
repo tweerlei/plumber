@@ -53,7 +53,7 @@ class MongoDBDeleteStep(
                 MongoDBDeleteWorker(
                     mongoClientFactory.getDefaultDatabase(),
                     arg,
-                    params.primaryKey.ifEmpty { "_id" },
+                    params.primaryKey.toMongoDBPrimaryKey(),
                     client,
                     objectMapper,
                     w

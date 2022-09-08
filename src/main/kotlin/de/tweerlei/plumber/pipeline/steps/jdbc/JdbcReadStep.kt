@@ -52,7 +52,7 @@ class JdbcReadStep(
             .let { client ->
                 JdbcSelectOneWorker(
                     arg,
-                    params.primaryKey.ifEmpty { "id" },
+                    params.primaryKey.toJdbcPrimaryKey(),
                     client,
                     w
                 )

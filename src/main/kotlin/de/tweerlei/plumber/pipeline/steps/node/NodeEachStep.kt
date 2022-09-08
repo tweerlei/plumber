@@ -16,21 +16,18 @@
 package de.tweerlei.plumber.pipeline.steps.node
 
 import com.fasterxml.jackson.core.JsonPointer
-import com.fasterxml.jackson.databind.ObjectMapper
 import de.tweerlei.plumber.pipeline.PipelineParams
 import de.tweerlei.plumber.pipeline.steps.ProcessingStep
-import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.Worker
+import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.impl.node.NodeEachWorker
 import org.springframework.stereotype.Service
 
 @Service("node-eachWorker")
-class NodeEachStep(
-    private val objectMapper: ObjectMapper
-): ProcessingStep {
+class NodeEachStep: ProcessingStep {
 
     override val group = "Nodes"
-    override val name = "Extract array elements"
+    override val name = "Extract JSON elements"
     override val description = "Extract elements from a subtree of a JSON object using the given JSONPath"
 
     override fun requiredAttributesFor(arg: String) = setOf(
@@ -45,5 +42,5 @@ class NodeEachStep(
         params: PipelineParams,
         parallelDegree: Int
     ) =
-        NodeEachWorker(JsonPointer.compile("/$arg"), params.maxFilesPerThread, w)
+        NodeEachWorker(arg.toJsonPointer(), params.maxFilesPerThread, w)
 }

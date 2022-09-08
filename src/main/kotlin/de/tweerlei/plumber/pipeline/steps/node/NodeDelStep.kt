@@ -16,18 +16,15 @@
 package de.tweerlei.plumber.pipeline.steps.node
 
 import com.fasterxml.jackson.core.JsonPointer
-import com.fasterxml.jackson.databind.ObjectMapper
-import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
-import de.tweerlei.plumber.worker.impl.WellKnownKeys
+import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.worker.Worker
+import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.impl.node.NodeUnsetWorker
 import org.springframework.stereotype.Service
 
 @Service("node-delWorker")
-class NodeDelStep(
-    private val objectMapper: ObjectMapper
-): ProcessingStep {
+class NodeDelStep: ProcessingStep {
 
     override val group = "Nodes"
     override val name = "Remove JSON path"
@@ -46,5 +43,5 @@ class NodeDelStep(
         params: PipelineParams,
         parallelDegree: Int
     ) =
-        NodeUnsetWorker(JsonPointer.compile("/$arg"), objectMapper, w)
+        NodeUnsetWorker(arg.toJsonPointer(), w)
 }

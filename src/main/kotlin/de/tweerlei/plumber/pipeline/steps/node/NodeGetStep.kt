@@ -16,18 +16,15 @@
 package de.tweerlei.plumber.pipeline.steps.node
 
 import com.fasterxml.jackson.core.JsonPointer
-import com.fasterxml.jackson.databind.ObjectMapper
-import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
-import de.tweerlei.plumber.worker.impl.WellKnownKeys
+import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.worker.Worker
+import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.impl.node.NodeGetWorker
 import org.springframework.stereotype.Service
 
 @Service("node-getWorker")
-class NodeGetStep(
-    private val objectMapper: ObjectMapper
-): ProcessingStep {
+class NodeGetStep: ProcessingStep {
 
     override val group = "Nodes"
     override val name = "Extract JSON path"
@@ -45,5 +42,5 @@ class NodeGetStep(
         params: PipelineParams,
         parallelDegree: Int
     ) =
-        NodeGetWorker(JsonPointer.compile("/$arg"), w)
+        NodeGetWorker(arg.toJsonPointer(), w)
 }

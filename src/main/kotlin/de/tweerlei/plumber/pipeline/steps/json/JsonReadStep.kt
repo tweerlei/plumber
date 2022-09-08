@@ -18,11 +18,11 @@ package de.tweerlei.plumber.pipeline.steps.json
 import com.fasterxml.jackson.databind.ObjectMapper
 import de.tweerlei.plumber.pipeline.PipelineParams
 import de.tweerlei.plumber.pipeline.steps.ProcessingStep
+import de.tweerlei.plumber.pipeline.steps.file.toInputFile
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.impl.json.JsonReadWorker
 import org.springframework.stereotype.Service
-import java.io.File
 
 @Service("json-readWorker")
 class JsonReadStep(
@@ -48,7 +48,7 @@ class JsonReadStep(
         parallelDegree: Int
     ) =
         JsonReadWorker(
-            File(arg.ifEmpty { "/dev/stdin" }),
+            arg.toInputFile(),
             expectedOutput,
             objectMapper,
             params.maxFilesPerThread,

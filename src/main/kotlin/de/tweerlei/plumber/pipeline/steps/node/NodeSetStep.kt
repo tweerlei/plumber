@@ -46,5 +46,5 @@ class NodeSetStep(
         params: PipelineParams,
         parallelDegree: Int
     ) =
-        NodeModifyWorker(JsonPointer.compile("/$arg"), objectMapper, w)
+        NodeModifyWorker(arg.toJsonPointer(), objectMapper, w)
 }

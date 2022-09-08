@@ -50,7 +50,7 @@ class JdbcListStep(
             .let { client ->
                 JdbcSelectWorker(
                     arg,
-                    params.primaryKey,
+                    params.primaryKey.toJdbcPrimaryKey(),
                     params.selectFields,
                     client,
                     params.maxFilesPerThread,

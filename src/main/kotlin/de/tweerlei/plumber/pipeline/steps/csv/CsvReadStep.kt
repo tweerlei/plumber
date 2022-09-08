@@ -18,11 +18,11 @@ package de.tweerlei.plumber.pipeline.steps.csv
 import com.fasterxml.jackson.dataformat.csv.CsvMapper
 import de.tweerlei.plumber.pipeline.PipelineParams
 import de.tweerlei.plumber.pipeline.steps.ProcessingStep
+import de.tweerlei.plumber.pipeline.steps.file.toInputFile
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.impl.csv.CsvReadWorker
 import org.springframework.stereotype.Service
-import java.io.File
 
 @Service("csv-readWorker")
 class CsvReadStep(
@@ -48,7 +48,7 @@ class CsvReadStep(
         parallelDegree: Int
     ) =
         CsvReadWorker(
-            File(arg.ifEmpty { "/dev/stdin" }),
+            arg.toInputFile(),
             csvMapper,
             params.maxFilesPerThread,
             w
