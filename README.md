@@ -204,6 +204,80 @@ A simpler alternative would be to just restore a single attribute value using `g
 
 For debugging purposes, you can also use `dump` instead of `log` to dump all the contents of the item received by that step.
 
+## I/O
+
+The main purpose of a data pipeline is to actually transfer data.
+Each supported integration provides one or more of the following steps:
+
+| step       | purpose                                                         |
+|------------|-----------------------------------------------------------------|
+| `*-list`   | List available objects. Usually, this excludes object contents. |
+| `*-read`   | Fetch object contents by key/name.                              |
+| `*-write`  | Store an object.                                                |
+| `*-delete` | Delete object by key/name.                                      |
+
+Send all text files from /data to an S3 bucket:
+```bash
+./plumber \
+    file-list:/data \
+    find:'\.txt$' filter \
+    file-read \
+    s3-write:mybucket
+```
+
+Since the main focus is to transfer large amounts of items, reading a single item is a bit more complicated:
+```bash
+./plumber \
+    value:"filename.txt" set:name \
+    file-read:"/path/to/files" \
+    s3-write:mybucket
+```
+
+Feel free to sprinkle your pipeline with statistics steps to count the items passing through:
+```bash
+./plumber \
+    file-list:/data \
+    count:100 find:'\.txt$' filter \
+    count:100 file-read \
+    time:100 s3-write:mybucket
+```
+
+The `count` step doesn't modify items but keeps track of how many items have passed and prints that number every 100 items (in this case). The `time` step will measure the average time it takes to process the next and following steps.
+
+## Bulk operations
+
+Some I/O operations are faster when multiple items can be processed at once.
+Input operations like `s3-list` will use bulk mode by default with a limit of 1000 (adjustable via `--bulk-size`). Received items will then be processed individually.
+Currently, output operations usually work on single items. There are special steps that support bulk mode like `s3-bulkdelete`. To make use of them, items have to be bulked:
+```bash
+./plumber \
+    s3-list:mybucket \
+    bulk:100 \
+    s3-bulkdelete
+```
+If you want to chain "normal" steps to bulk steps, you will have to `unbulk` the items again.
+
+## Parallel processing
+
+Every step can be parallelized using a number of threads. This is quite useful for slow backends like S3 where you can employ 100 threads to fetch contents:
+```bash
+./plumber \
+    s3-list:mybucket \
+    parallel:100 s3-read \
+    file-write:/backup
+```
+
+In the last example, all the files in the bucket are listed sequentially.
+If you know the key space, you can also instruct the `*-list` steps to work on partitions of keys:
+```bash
+./plumber \
+    partitions:20 --start-after=200 --stop-after=400 --key-chars=0123456789abcdef \
+    parallel:4 s3-list:mybucket \
+    lines-write:filenames.txt
+```
+This will generate 20 partitions for the key space between 200 (exclusive) and 400 (inclusive) that will be sent to 4 parallel threads that will list the files in each partition, continuing with the next partition when done.
+Notice that the last step `line-write` will be forced to run in a single thread to prevent overlapping writes to filenames.txt
+
 ## Values
 
 Values given on the command line (e.g. via `value:`) are automatically converted to an appropriate internal type:
@@ -364,77 +438,3 @@ JSON arrays can be extracted into separate items:
     node-each:array \
     log
 ```
-
-## I/O
-
-The main purpose of a data pipeline is to actually transfer data.
-Each supported integration provides one or more of the following steps:
-
-| step       | purpose                                                         |
-|------------|-----------------------------------------------------------------|
-| `*-list`   | List available objects. Usually, this excludes object contents. |
-| `*-read`   | Fetch object contents by key/name.                              |
-| `*-write`  | Store an object.                                                |
-| `*-delete` | Delete object by key/name.                                      |
-
-Send all text files from /data to an S3 bucket:
-```bash
-./plumber \
-    file-list:/data \
-    find:'\.txt$' filter \
-    file-read \
-    s3-write:mybucket
-```
-
-Since the main focus is to transfer large amounts of items, reading a single item is a bit more complicated:
-```bash
-./plumber \
-    value:"filename.txt" set:name \
-    file-read:"/path/to/files" \
-    s3-write:mybucket
-```
-
-Feel free to sprinkle your pipeline with statistics steps to count the items passing through:
-```bash
-./plumber \
-    file-list:/data \
-    count:100 find:'\.txt$' filter \
-    count:100 file-read \
-    time:100 s3-write:mybucket
-```
-
-The `count` step doesn't modify items but keeps track of how many items have passed and prints that number every 100 items (in this case). The `time` step will measure the average time it takes to process the next and following steps.
-
-## Bulk operations
-
-Some I/O operations are faster when multiple items can be processed at once.
-Input operations like `s3-list` will use bulk mode by default with a limit of 1000 (adjustable via `--bulk-size`). Received items will then be processed individually.
-Currently, output operations usually work on single items. There are special steps that support bulk mode like `s3-bulkdelete`. To make use of them, items have to be bulked:
-```bash
-./plumber \
-    s3-list:mybucket \
-    bulk:100 \
-    s3-bulkdelete
-```
-If you want to chain "normal" steps to bulk steps, you will have to `unbulk` the items again. 
-
-## Parallel processing
-
-Every step can be parallelized using a number of threads. This is quite useful for slow backends like S3 where you can employ 100 threads to fetch contents:
-```bash
-./plumber \
-    s3-list:mybucket \
-    parallel:100 s3-read \
-    file-write:/backup
-```
-
-In the last example, all the files in the bucket are listed sequentially.
-If you know the key space, you can also instruct the `*-list` steps to work on partitions of keys:
-```bash
-./plumber \
-    partitions:20 --start-after=200 --stop-after=400 --key-chars=0123456789abcdef \
-    parallel:4 s3-list:mybucket \
-    lines-write:filenames.txt
-```
-This will generate 20 partitions for the key space between 200 (exclusive) and 400 (inclusive) that will be sent to 4 parallel threads that will list the files in each partition, continuing with the next partition when done.
-Notice that the last step `line-write` will be forced to run in a single thread to prevent overlapping writes to filenames.txt

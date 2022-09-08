@@ -63,6 +63,18 @@ class PipelineBuilder(
             factory.processingStepFor(step.action)
                 .let { processingStep ->
                     val newParallelDegree = processingStep.parallelDegreeFor(step.arg) ?: parallelDegree
+                    if ((newParallelDegree > parallelDegree) && workerDefinitions.isEmpty()) {
+                        // Trigger all parallel workers by multiplying the initial WorkItem
+                        workerDefinitions.add(
+                            WorkerDefinition(
+                                "parallel",
+                                newParallelDegree.toString(),
+                                factory.processingStepFor("repeat"),
+                                producedAttributes,
+                                1
+                            )
+                        )
+                    }
                     if (newParallelDegree < parallelDegree) {
                         // Automatically add a parallel step to serialize processing
                         workerDefinitions.add(
