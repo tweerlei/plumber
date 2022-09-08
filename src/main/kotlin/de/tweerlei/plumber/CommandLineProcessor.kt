@@ -69,6 +69,7 @@ class CommandLineProcessor(
                 --primary-key=<name>          Use the given JDBC column as primary key
                 --partition-key=<name>        Use the given DynamoDB attribute as partition key
                 --range-key=<name>            Use the given DynamoDB attribute as range key
+                --select=<fields>             Database fields to fetch, separated by commas
                 --element-name=<name>         Set XML element name to read/write
                 --root-element-name=<name>    Set XML root element name to wrap output in
                 --pretty-print                Pretty print JSON and XML output
@@ -81,16 +82,19 @@ class CommandLineProcessor(
 
                 Credentials can be passed via environment variables:
 
-                AWS_*                                 Set AWS credentials                                 
-                PLUMBER_JDBC_DATASOURCE_URL           Set JDBC url
-                PLUMBER_JDBC_DATASOURCE_USERNAME      Set JDBC user name
-                PLUMBER_JDBC_DATASOURCE_PASSWORD      Set JDBC password
-                PLUMBER_MONGODB_CLIENT_URI            Set MongoDB uri
-                PLUMBER_MONGODB_CLIENT_USERNAME       Set MongoDB user name
-                PLUMBER_MONGODB_CLIENT_PASSWORD       Set MongoDB password
-                PLUMBER_MONGODB_CLIENT_SSLROOTCERT    Set MongoDB SSL CA certificate
-                PLUMBER_KAFKA_CONSUMER_*              Set Kafka consumer config
-                PLUMBER_KAFKA_PRODUCER_*              Set Kafka producer config
+                AWS_*                                          Set AWS credentials
+                PLUMBER_JDBC_DATASOURCE_DRIVERCLASSNAME        Set JDBC driver class name
+                PLUMBER_JDBC_DATASOURCE_URL                    Set JDBC url
+                PLUMBER_JDBC_DATASOURCE_USERNAME               Set JDBC user name
+                PLUMBER_JDBC_DATASOURCE_PASSWORD               Set JDBC password
+                PLUMBER_MONGODB_CLIENT_URI                     Set MongoDB uri
+                PLUMBER_MONGODB_CLIENT_USERNAME                Set MongoDB user name
+                PLUMBER_MONGODB_CLIENT_PASSWORD                Set MongoDB password
+                PLUMBER_MONGODB_CLIENT_DATABASE                Set MongoDB database
+                PLUMBER_MONGODB_CLIENT_AUTHENTICATIONDATABASE  Set MongoDB authentication database
+                PLUMBER_MONGODB_CLIENT_SSLROOTCERT             Set MongoDB SSL CA certificate
+                PLUMBER_KAFKA_CONSUMER_*                       Set Kafka consumer config
+                PLUMBER_KAFKA_PRODUCER_*                       Set Kafka producer config
 
             """.trimIndent())
             .toString()
@@ -113,6 +117,7 @@ class CommandLineProcessor(
                 primaryKey = args.getOptionValue("primary-key") ?: "",
                 partitionKey = args.getOptionValue("partition-key") ?: "",
                 rangeKey = args.getOptionValue("range-key"),
+                selectFields = args.getOptionValue("select")?.split(',')?.toSet() ?: emptySet(),
                 numberOfFilesPerRequest = args.getOptionValue("bulk-size")?.toInt() ?: 1000,
                 queueSizePerThread = args.getOptionValue("queue-size")?.toInt() ?: 10,
                 maxFilesPerThread = args.getOptionValue("limit")?.toLong() ?: Long.MAX_VALUE,

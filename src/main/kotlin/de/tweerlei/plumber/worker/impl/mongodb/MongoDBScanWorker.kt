@@ -33,6 +33,7 @@ class MongoDBScanWorker(
     private val databaseName: String,
     private val collectionName: String,
     private val primaryKey: String,
+    private val selectFields: Set<String>,
     private val numberOfFilesPerRequest: Int,
     private val mongoClient: MongoClient,
     private val objectMapper: ObjectMapper,
@@ -44,25 +45,21 @@ class MongoDBScanWorker(
 
     override fun generateItems(item: WorkItem, fn: (WorkItem) -> Boolean) {
         val range = item.getOptionalAs<Range>(WellKnownKeys.RANGE)
-        val startAfter = range?.startAfter.toKey()
-        val endWith = range?.endWith.toKey()
+        val startAfter = range?.startAfter
+        val endWith = range?.endWith
         logger.info { "fetching elements from $startAfter to $endWith" }
 
         var firstKey: Any? = null
         var lastKey: Any? = null
         var itemCount = 0
-        listDocuments(startAfter?.toMongoDB(objectMapper))
+        listDocuments(startAfter, endWith)
             .all { resultItem ->
                 resultItem.fromMongoDB(objectMapper).let { row ->
-                    if (row.isNotAfter(endWith)) {
-                        if (fn(row.toWorkItem())) {
-                            itemCount++
-                            if (firstKey == null) firstKey = row[primaryKey]
-                            lastKey = row[primaryKey]
-                            true
-                        } else {
-                            false
-                        }
+                    if (fn(row.toWorkItem())) {
+                        itemCount++
+                        if (firstKey == null) firstKey = row[primaryKey]
+                        lastKey = row[primaryKey]
+                        true
                     } else {
                         false
                     }
@@ -72,35 +69,35 @@ class MongoDBScanWorker(
         logger.info { "fetched $itemCount documents from $startAfter to $endWith, first key: $firstKey, last key: $lastKey" }
     }
 
-    private fun listDocuments(startAfter: Document?) =
-        when (startAfter) {
-            null -> mongoClient.getDatabase(databaseName).getCollection(collectionName).find()
-            else -> mongoClient.getDatabase(databaseName).getCollection(collectionName).find(startAfter)
+    private fun listDocuments(startAfter: Any?, endWith: Any?) =
+        filterFor(startAfter, endWith).let { filter ->
+            mongoClient.getDatabase(databaseName).getCollection(collectionName).find(filter).projection(fieldsToSelect())
         }
 
-    private fun Comparable<*>?.toKey() =
-        if (this != null)
-            JsonNodeFactory.instance.objectNode()
-                .apply {
-                    set<ObjectNode>(primaryKey, this.coerceToJsonNode())
-                }
-        else
-            null
+    private fun filterFor(startAfter: Any?, endWith: Any?) =
+        when {
+            startAfter != null && endWith != null -> JsonNodeFactory.instance.objectNode().apply {
+                set<ObjectNode>(primaryKey, JsonNodeFactory.instance.objectNode().apply {
+                    set<ObjectNode>("\$gt", startAfter.coerceToJsonNode())
+                    set<ObjectNode>("\$lte", endWith.coerceToJsonNode())
+                })
+            }
+            startAfter != null -> JsonNodeFactory.instance.objectNode().apply {
+                set<ObjectNode>(primaryKey, JsonNodeFactory.instance.objectNode().apply {
+                    set<ObjectNode>("\$gt", startAfter.coerceToJsonNode())
+                })
+            }
+            endWith != null -> JsonNodeFactory.instance.objectNode().apply {
+                set<ObjectNode>(primaryKey, JsonNodeFactory.instance.objectNode().apply {
+                    set<ObjectNode>("\$lte", endWith.coerceToJsonNode())
+                })
+            }
+            else -> JsonNodeFactory.instance.objectNode()
+        }.toMongoDB(objectMapper)
 
-    private fun JsonNode.isNotAfter(maxKey: JsonNode?) =
-        when (maxKey) {
-            null -> true
-            else -> equals({ a, b ->
-                when {
-                    a.isBoolean -> if (a.booleanValue() == b.booleanValue()) 0 else 1
-                    a.isNumber -> if (a.doubleValue() <= b.doubleValue()) 0 else 1
-                    a.isTextual -> if (a.textValue() <= b.textValue()) 0 else 1
-                    a.isBinary -> if (Arrays.compare(a.binaryValue(), b.binaryValue()) <= 0) 0 else 1
-                    a.isNull -> if (b.isNull) 0 else 1
-                    a.isEmpty -> if (b.isEmpty) 0 else 1
-                    else -> 1
-                }
-            }, maxKey)
+    private fun fieldsToSelect() =
+        selectFields.ifEmpty { null }?.fold(Document()) { doc, field ->
+            doc.apply { this[field] = 1 }
         }
 
     private fun JsonNode.toWorkItem() =

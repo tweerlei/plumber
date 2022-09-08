@@ -51,6 +51,7 @@ class JdbcListStep(
                 JdbcSelectWorker(
                     arg,
                     params.primaryKey,
+                    params.selectFields,
                     client,
                     params.maxFilesPerThread,
                     w

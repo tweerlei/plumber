@@ -31,6 +31,7 @@ class DynamoDBScanWorker(
     private val tableName: String,
     private val partitionKey: String,
     private val rangeKey: String?,
+    private val selectFields: Set<String>,
     private val startAfterRange: String?,
     private val endWithRange: String?,
     private val numberOfFilesPerRequest: Int,
@@ -79,6 +80,7 @@ class DynamoDBScanWorker(
             .withTableName(tableName)
             .withLimit(numberOfFilesPerRequest)
             .withExclusiveStartKey(continueAfter ?: startAfter)
+            .withProjectionExpression(selectFields.ifEmpty { null }?.joinToString(","))
             .let { request -> amazonDynamoDBClient.scan(request) }
 
     private fun Comparable<*>?.toKey(rangeKeyValue: String?) =

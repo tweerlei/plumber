@@ -28,6 +28,7 @@ import java.sql.ResultSet
 class JdbcSelectWorker(
     private val tableName: String,
     private val primaryKey: String,
+    private val selectFields: Set<String>,
     private val jdbcTemplate: JdbcTemplate,
     limit: Long,
     worker: Worker
@@ -62,31 +63,34 @@ class JdbcSelectWorker(
 
     private fun selectAll(table: String, rse: ResultSetExtractor<Int>) =
         jdbcTemplate.query(
-            "SELECT * FROM $table",
+            "SELECT ${fieldsToSelect()} FROM $table",
             rse
         )
 
     private fun selectFrom(table: String, startAfter: Any, rse: ResultSetExtractor<Int>) =
         jdbcTemplate.query(
-            "SELECT * FROM $table WHERE $primaryKey > ?",
+            "SELECT ${fieldsToSelect()} FROM $table WHERE $primaryKey > ?",
             rse,
             startAfter
         )
 
     private fun selectTo(table: String, endWith: Any, rse: ResultSetExtractor<Int>) =
         jdbcTemplate.query(
-            "SELECT * FROM $table WHERE $primaryKey <= ?",
+            "SELECT ${fieldsToSelect()} FROM $table WHERE $primaryKey <= ?",
             rse,
             endWith
         )
 
     private fun selectRange(table: String, startAfter: Any, endWith: Any, rse: ResultSetExtractor<Int>) =
         jdbcTemplate.query(
-            "SELECT * FROM $table WHERE $primaryKey > ? AND $primaryKey <= ?",
+            "SELECT ${fieldsToSelect()} FROM $table WHERE $primaryKey > ? AND $primaryKey <= ?",
             rse,
             startAfter,
             endWith
         )
+
+    private fun fieldsToSelect() =
+        selectFields.ifEmpty { setOf("*") }.joinToString(", ")
 
     private fun ResultSet.toWorkItem() =
         Record()

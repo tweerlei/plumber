@@ -48,7 +48,7 @@ class MultithreadedWorker(
                         break
                     }
                     if (!runContext.isInterrupted()) {
-                        nextItem.set(workerIndex, WellKnownKeys.WORKER_INDEX)
+                        nextItem.set(workerIndex.toLong(), WellKnownKeys.WORKER_INDEX)
                         try {
                             passOn(nextItem)
                         } catch (e: Throwable) {

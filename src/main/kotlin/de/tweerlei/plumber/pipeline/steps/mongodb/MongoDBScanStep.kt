@@ -54,7 +54,8 @@ class MongoDBScanStep(
                 MongoDBScanWorker(
                     mongoClientFactory.getDefaultDatabase(),
                     arg,
-                    params.primaryKey,
+                    params.primaryKey.ifEmpty { "_id" },
+                    params.selectFields,
                     params.numberOfFilesPerRequest,
                     client,
                     objectMapper,
