@@ -102,7 +102,7 @@ Ranges
 Records
   rec-clear:<arg>             Clear the curent record
   rec-del:<arg>               Remove the given field from the current record
-  rec-each:<arg>              Convert record elements to individual items
+  rec-each:<arg>              Extract record elements to individual items
   rec-get:<arg>               Set the given record field as current value
   rec-set:<arg>               Set the given record field to the current value
 Text
@@ -120,31 +120,33 @@ XML
   xml-read:<arg>              Read XML objects from the given file
   xml-write:<arg>             Write current value as XML object to the given file
 
-Supported global options are:
+Supported global options and their defaults (if any) are:
 
 --help                        Show this help
+--log-level=INFO              Set the log level
+--profile=default             Use 'quiet' to disable start-up banner and log only warnings and errors
+
 --explain                     Explain resulting plan, don't execute
 --fail-fast                   Fail on first processing error
---log-level=<level>           Set the log level
---profile=quiet               Set log level to WARN and disable start-up banner
 --requester-pays              Requester pays access to S3 buckets
---assume-role=<arn>           Assume the given IAM role for all S3 operations
+--assume-role=<arn>           Assume the given IAM role for all AWS operations
 --start-after=<key>           Start after the given key
 --stop-after=<key>            Stop after the given key
 --start-range=<key>           Start after the given range key
 --stop-range=<key>            Stop after the given range key
---key-chars=<list>            Use the given list of characters to generate S3 partition keys
---primary-key=<name>          Use the given JDBC column as primary key
---partition-key=<name>        Use the given DynamoDB attribute as partition key
---range-key=<name>            Use the given DynamoDB attribute as range key
+--key-chars=<list>            Use the given characters to generate keys (defaults to safe S3 chars)
+--primary-key=id              Use the given attribute as primary key (defaults to '_id' for MongoDB)
+--partition-key=<name>        Use the given attribute as DynamoDB partition key
+--range-key=<name>            Use the given attribute as DynamoDB range key
 --select=<fields>             Database fields to fetch, separated by commas
---element-name=<name>         Set XML element name to read/write
---root-element-name=<name>    Set XML root element name to wrap output in
+--element-name=<name>         XML element name to read/write
+--root-element-name=<name>    XML root element name to wrap output in
 --pretty-print                Pretty print JSON and XML output
---limit=<n>                   Stop after reading n objects (per thread)
---queue-size=<n>              Queue size for items passed between threads
---bulk-size=<n>               Bulk size for steps that process multiple items at once
---wait=<n>                    Wait at most this number of seconds for a new message
+--limit=<n>                   Stop after reading n objects (per thread, default is unlimited)
+--retry-delay=0               Wait this number of seconds before retrying failed messages
+--queue-size=10               Queue size for items passed between threads
+--bulk-size=1000              Bulk size for steps that process multiple items at once
+--wait=1                      Wait at most this number of seconds for a new message
 --follow                      Keep polling for new messages
 --reread                      Re-read all messages
 
@@ -379,7 +381,7 @@ Ranges are used for example to specify bounds when querying input sources:
     log
 ```
 
-Here, the `jdbc-range` step creates a range from the minimum and maximum values of the `id` column and passes that to the `jdbc-select` step, which then will use it to create its SELECT query.
+Here, the `jdbc-range` step creates a range from the minimum and maximum values of the `id` column and passes that to the `jdbc-read` step, which then will use it to create its SELECT query.
 You can build a range manually as well:
 
 ```bash

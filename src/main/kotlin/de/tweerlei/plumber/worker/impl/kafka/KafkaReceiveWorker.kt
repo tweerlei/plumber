@@ -46,8 +46,7 @@ class KafkaReceiveWorker(
         var itemCount = 0
         while (keepGenerating) {
             keepGenerating = follow
-            // poll() with a zero timeout won't return any records
-            consumer.poll(Duration.ofSeconds(waitSeconds.coerceAtLeast(1).toLong()))
+            consumer.poll(Duration.ofSeconds(waitSeconds.toLong()))
                 .also { records -> logger.debug { "fetched ${records.count()} items" } }
                 .forEach { record ->
                     record.toWorkItem()

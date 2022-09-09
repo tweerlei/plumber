@@ -35,7 +35,12 @@ class SQSReceiveWorker(
     worker: Worker
 ): GeneratingWorker(limit, worker) {
 
-    companion object: KLogging()
+    companion object: KLogging() {
+        // AWS limit for waitTimeSeconds is 20
+        const val MAX_WAIT_SECONDS = 20
+        // AWS limit for maxNumberOfMessages is 10
+        const val MAX_NUMBER_OF_MESSAGES = 10
+    }
 
     override fun generateItems(item: WorkItem, fn: (WorkItem) -> Boolean) {
         logger.info { "waiting $waitSeconds seconds for next message in $queueUrl" }
@@ -58,8 +63,8 @@ class SQSReceiveWorker(
 
     private fun receiveFile() =
         ReceiveMessageRequest(queueUrl)
-            .withWaitTimeSeconds(min(waitSeconds, 20)) // AWS limit is 20
-            .withMaxNumberOfMessages(min(numberOfFilesPerRequest, 10)) // AWS limit is 10
+            .withWaitTimeSeconds(waitSeconds.coerceAtMost(MAX_WAIT_SECONDS))
+            .withMaxNumberOfMessages(numberOfFilesPerRequest.coerceAtMost(MAX_NUMBER_OF_MESSAGES))
             .let { request -> amazonSQSClient.receiveMessage(request) }
             .messages
 

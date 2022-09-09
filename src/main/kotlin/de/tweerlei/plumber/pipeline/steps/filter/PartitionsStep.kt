@@ -19,7 +19,7 @@ import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.Worker
-import de.tweerlei.plumber.worker.impl.filter.KeyRangeWorker
+import de.tweerlei.plumber.worker.impl.range.KeyRangeWorker
 import org.springframework.stereotype.Service
 
 @Service("partitionsWorker")

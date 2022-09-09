@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.tweerlei.plumber.worker.impl.filter
+package de.tweerlei.plumber.worker.impl.range
 
 import de.tweerlei.plumber.util.KeyRange
 import de.tweerlei.plumber.util.KeyRangeGenerator

@@ -35,7 +35,10 @@ class S3ListObjectsWorker(
     worker: Worker
 ): GeneratingWorker(limit, worker) {
 
-    companion object : KLogging()
+    companion object : KLogging() {
+        // AWS limit for maxKeys is 1000
+        const val MAX_NUMBER_OF_KEYS = 1000
+    }
 
     override fun generateItems(item: WorkItem, fn: (WorkItem) -> Boolean) {
         val range = item.getOptionalAs<Range>(WellKnownKeys.RANGE)
@@ -74,7 +77,7 @@ class S3ListObjectsWorker(
     private fun listFilenames(startWith: String?, continueWith: String?) =
         ListObjectsV2Request()
             .withBucketName(bucketName)
-            .withMaxKeys(numberOfFilesPerRequest)
+            .withMaxKeys(numberOfFilesPerRequest.coerceAtMost(MAX_NUMBER_OF_KEYS))
             .withRequesterPays(requesterPays)
             .apply {
                 if (continueWith != null)
