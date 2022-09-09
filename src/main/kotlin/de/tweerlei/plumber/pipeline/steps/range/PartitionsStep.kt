@@ -25,7 +25,7 @@ import org.springframework.stereotype.Service
 @Service("partitionsWorker")
 class PartitionsStep: ProcessingStep {
 
-    override val group = "Flow control"
+    override val group = "Ranges"
     override val name = "Generate partitions"
     override val description = "Generate key ranges for n partitions, use with parallel:<n>"
 

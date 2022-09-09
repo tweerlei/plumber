@@ -57,7 +57,6 @@ Flow control
   delay:<arg>                 Delay following steps by the given number of milliseconds
   filter:<arg>                Keep only items that evaluate to the given boolean
   parallel:<arg>              Execute following steps using the given number of threads
-  partitions:<arg>            Generate key ranges for n partitions, use with parallel:<n>
   repeat:<arg>                Repeat the following steps a given number of times
   retry:<arg>                 Retry the following steps a given number of times on error
   unbulk:<arg>                Split bulks into separate items again
@@ -96,6 +95,7 @@ Nodes
   node-sub:<arg>              Replace the current node with one of its sub nodes
 Ranges
   is-inrange:<arg>            Compare the current value to the current range resulting in a boolean
+  partitions:<arg>            Generate key ranges for n partitions, use with parallel:<n>
   range-each:<arg>            Generate items with the values of the input item's range using the given increment
   range-get:<arg>             Get a range field, one of (start, end)
   range-set:<arg>             Set a range field, e.g. for usage with each:, one of (start, end)
