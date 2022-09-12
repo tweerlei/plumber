@@ -128,6 +128,10 @@ Supported global options and their defaults (if any) are:
 
 --explain                     Explain resulting plan, don't execute
 --fail-fast                   Fail on first processing error
+--limit=<n>                   Stop after reading n objects (per thread, default is unlimited)
+--bulk-size=1000              Bulk size for steps that process multiple items at once
+--queue-size=10               Queue size for items passed between threads
+--retry-delay=0               Wait this number of seconds before retrying failed messages
 --requester-pays              Requester pays access to S3 buckets
 --assume-role=<arn>           Assume the given IAM role for all AWS operations
 --start-after=<key>           Start after the given key
@@ -141,11 +145,9 @@ Supported global options and their defaults (if any) are:
 --select=<fields>             Database fields to fetch, separated by commas
 --element-name=<name>         XML element name to read/write
 --root-element-name=<name>    XML root element name to wrap output in
+--separator=,                 CSV separator character
+--header                      Read/write CSV header
 --pretty-print                Pretty print JSON and XML output
---limit=<n>                   Stop after reading n objects (per thread, default is unlimited)
---retry-delay=0               Wait this number of seconds before retrying failed messages
---queue-size=10               Queue size for items passed between threads
---bulk-size=1000              Bulk size for steps that process multiple items at once
 --wait=1                      Wait at most this number of seconds for a new message
 --follow                      Keep polling for new messages
 --reread                      Re-read all messages

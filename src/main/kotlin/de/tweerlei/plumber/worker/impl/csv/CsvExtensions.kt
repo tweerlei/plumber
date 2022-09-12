@@ -13,21 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.tweerlei.plumber.worker.types
+package de.tweerlei.plumber.worker.impl.csv
 
-class Record: LinkedHashMap<String, Any?>() {
-
-    companion object {
-        fun of(vararg items: Pair<String, Any?>) =
-            Record().apply {
-                items.forEach { (k, v) -> this[k] = v }
-            }
-
-        fun from(items: Array<String>) =
-            Record().apply {
-                items.forEachIndexed { index, value ->
-                    this[index.toString()] = value.toComparable()
-                }
-            }
-    }
-}
+fun <T> Iterable<T?>.mapNullTo(nvl: T): Iterable<T> =
+    asSequence().map { v -> v ?: nvl }.asIterable()

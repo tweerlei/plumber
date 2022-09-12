@@ -85,7 +85,7 @@ class DynamoDBScanWorker(
 
     private fun Comparable<*>?.toKey(rangeKeyValue: String?) =
         if (this != null)
-            Record(
+            Record.of(
                 partitionKey to this
             ).also { map ->
                 if (rangeKey != null && rangeKeyValue != null)

@@ -47,6 +47,8 @@ class CsvWriteStep(
         CsvWriteWorker(
             File(arg),
             csvMapper,
+            params.separator,
+            params.header,
             w
         )
 }

@@ -39,13 +39,6 @@ class Range(
             else -> true
         }
 
-    fun iterate(step: Long): Iterable<Long> =
-        LongProgression.fromClosedRange(
-            startAfter.coerceToLong(),
-            endWith.coerceToLong(),
-            step
-        )
-
     override fun equals(other: Any?) =
         other is Range &&
                 other.startAfter == startAfter &&

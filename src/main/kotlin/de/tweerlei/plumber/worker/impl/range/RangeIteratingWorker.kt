@@ -15,13 +15,16 @@
  */
 package de.tweerlei.plumber.worker.impl.range
 
+import de.tweerlei.plumber.util.KeySequenceGenerator
 import de.tweerlei.plumber.worker.*
 import de.tweerlei.plumber.worker.impl.GeneratingWorker
 import de.tweerlei.plumber.worker.types.Range
+import de.tweerlei.plumber.worker.types.coerceToLong
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import mu.KLogging
 
 class RangeIteratingWorker(
+    private val keyChars: String?,
     private val step: Long,
     limit: Long,
     worker: Worker
@@ -30,7 +33,22 @@ class RangeIteratingWorker(
     companion object: KLogging()
 
     override fun generateItems(item: WorkItem, fn: (WorkItem) -> Boolean) {
-        item.getAs<Range>(WellKnownKeys.RANGE).iterate(step)
-            .forEachIndexed { index, value -> if (index != 0) fn(WorkItem.of(value)) }
+        item.getAs<Range>(WellKnownKeys.RANGE).let { range ->
+            val startAfter = range.startAfter
+            val endWith = range.endWith
+            when {
+                startAfter is Long && endWith is Long -> iterate(startAfter, endWith, step)
+                else -> KeySequenceGenerator(keyChars).generateSequence(range.startAfter?.toString(), range.endWith?.toString(), step)
+            }
+        }.all {
+            fn(WorkItem.of(it))
+        }
     }
+    
+    private fun iterate(startAfter: Long, endWith: Long, step: Long) =
+        LongProgression.fromClosedRange(
+            startAfter.coerceToLong(),
+            endWith.coerceToLong(),
+            step
+        ).asSequence().drop(1)
 }

@@ -41,5 +41,5 @@ class RangeEachStep: ProcessingStep {
         params: PipelineParams,
         parallelDegree: Int
     ) =
-        RangeIteratingWorker(arg.toLongOrNull() ?: 1, params.maxFilesPerThread, w)
+        RangeIteratingWorker(params.keyChars, arg.toLongOrNull() ?: 1, params.maxFilesPerThread, w)
 }

@@ -26,6 +26,8 @@ class WellKnownKeys {
         const val SIZE = "size"
         /** file modification time (Instant) */
         const val LAST_MODIFIED = "lastModified"
+        /** data content type */
+        const val CONTENT_TYPE = "contentType"
 
         /** content digest (String) */
         const val DIGEST = "digest"

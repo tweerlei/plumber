@@ -65,15 +65,4 @@ class RangeTest {
         Range("a", "z").contains("z").shouldBeTrue()
         Range("a", "z").contains("zz").shouldBeFalse()
     }
-
-    @Test
-    fun testIterate() {
-
-        Range(null, null).iterate(1).toList().shouldBe(listOf(0L))
-        Range(-10, 10).iterate(1).toList().shouldBe(listOf(-10L, -9L, -8L, -7L, -6L, -5L, -4L, -3L, -2L, -1L, 0L, 1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L, 9L, 10L))
-        Range(10, -10).iterate(-1).toList().shouldBe(listOf(10L, 9L, 8L, 7L, 6L, 5L, 4L, 3L, 2L, 1L, 0L, -1L, -2L, -3L, -4L, -5L, -6L, -7L, -8L, -9L, -10L))
-        Range(-10, 10).iterate(-1).toList().shouldBe(emptyList())
-        Range(10, -10).iterate(1).toList().shouldBe(emptyList())
-        Range("a", "z").iterate(1).toList().shouldBe(listOf(0L))
-    }
 }

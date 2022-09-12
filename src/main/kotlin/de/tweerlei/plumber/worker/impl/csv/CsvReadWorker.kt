@@ -15,7 +15,9 @@
  */
 package de.tweerlei.plumber.worker.impl.csv
 
+import com.fasterxml.jackson.databind.MappingIterator
 import com.fasterxml.jackson.dataformat.csv.CsvMapper
+import com.fasterxml.jackson.dataformat.csv.CsvParser
 import com.fasterxml.jackson.dataformat.csv.CsvSchema
 import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.Worker
@@ -23,6 +25,7 @@ import de.tweerlei.plumber.worker.impl.GeneratingWorker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.types.Record
 import mu.KLogging
+import java.io.Closeable
 import java.io.File
 import java.io.FileInputStream
 import java.io.InputStream
@@ -30,6 +33,8 @@ import java.io.InputStream
 class CsvReadWorker(
     private val file: File,
     private val csvMapper: CsvMapper,
+    private val separator: Char,
+    private val header: Boolean,
     limit: Long,
     worker: Worker
 ): GeneratingWorker(limit, worker) {
@@ -43,23 +48,34 @@ class CsvReadWorker(
     }
 
     override fun generateItems(item: WorkItem, fn: (WorkItem) -> Boolean) {
-        csvMapper.readerFor(Record::class.java)
-            .with(CsvSchema.emptySchema().withHeader())
-            .readValues<Record>(stream)
-            .let { reader ->
-                try {
-                    var keepGenerating = true
-                    while (keepGenerating && reader.hasNext()) {
-                        keepGenerating = reader.next()
-                            ?.let { obj ->
-                                fn(obj.toWorkItem())
-                            } ?: false
-                    }
-                } finally {
-                    reader.close()
+        when (header) {
+            true -> generateItemsWithHeader()
+            false -> generateItemsWithoutHeader()
+        }
+            .use { reader ->
+                reader.all {
+                    fn(it.toWorkItem())
                 }
             }
     }
+
+    private fun generateItemsWithHeader() =
+        RecordIterator(csvMapper
+                .readerFor(Record::class.java)
+                .with(CsvParser.Feature.INSERT_NULLS_FOR_MISSING_COLUMNS)
+                .with(CsvSchema.emptySchema().withColumnSeparator(separator).withHeader())
+                .readValues<Record>(stream)) {
+            it
+        }
+
+    private fun generateItemsWithoutHeader() =
+        RecordIterator(csvMapper
+                .readerFor(Array<String>::class.java)
+                .with(CsvParser.Feature.WRAP_AS_ARRAY)
+                .with(CsvSchema.emptySchema().withColumnSeparator(separator))
+                .readValues<Array<String>>(stream)) {
+            Record.from(it)
+        }
 
     private fun Record.toWorkItem() =
         WorkItem.of(
@@ -72,5 +88,18 @@ class CsvReadWorker(
 
     override fun onClose() {
         stream.close()
+    }
+
+    private class RecordIterator<T, U>(
+        val iterator: MappingIterator<T>,
+        val mapper: (T) -> U
+    ): Iterable<U>, Closeable {
+
+        override fun iterator() =
+            iterator.asSequence().map(mapper).iterator()
+
+        override fun close() {
+            iterator.close()
+        }
     }
 }

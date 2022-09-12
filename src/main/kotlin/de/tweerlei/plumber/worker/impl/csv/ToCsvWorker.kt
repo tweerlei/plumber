@@ -16,22 +16,36 @@
 package de.tweerlei.plumber.worker.impl.csv
 
 import com.fasterxml.jackson.dataformat.csv.CsvMapper
-import de.tweerlei.plumber.worker.*
+import com.fasterxml.jackson.dataformat.csv.CsvSchema
+import de.tweerlei.plumber.worker.WorkItem
+import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.DelegatingWorker
-import de.tweerlei.plumber.worker.types.Record
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
+import de.tweerlei.plumber.worker.types.Record
 
 class ToCsvWorker(
-    private val csvMapper: CsvMapper,
+    csvMapper: CsvMapper,
+    separator: Char,
     worker: Worker
 ): DelegatingWorker(worker) {
+
+    companion object {
+        const val CONTENT_TYPE_CSV = "text/csv"
+    }
+
+    private val writer = csvMapper
+        .writerFor(Iterable::class.java)
+        // See https://github.com/FasterXML/jackson-dataformats-text/issues/10
+        // withNullValue() does not apply to arrays and collections
+        .with(CsvSchema.emptySchema().withColumnSeparator(separator))
 
     override fun doProcess(item: WorkItem) =
         item.getFirstAs<Record>(WellKnownKeys.RECORD)
             .let { obj ->
-                csvMapper.writeValueAsString(obj.values)
+                writer.writeValueAsString(obj.values.mapNullTo("null"))
                     .also { str ->
                         item.set(str)
+                        item.set(WellKnownKeys.CONTENT_TYPE, CONTENT_TYPE_CSV)
                     }
             }.let { true }
 }

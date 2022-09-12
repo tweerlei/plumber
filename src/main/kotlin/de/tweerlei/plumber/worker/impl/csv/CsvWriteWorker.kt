@@ -15,24 +15,29 @@
  */
 package de.tweerlei.plumber.worker.impl.csv
 
-import com.fasterxml.jackson.core.JsonGenerator
-import com.fasterxml.jackson.databind.ObjectWriter
+import com.fasterxml.jackson.databind.SequenceWriter
 import com.fasterxml.jackson.dataformat.csv.CsvMapper
 import com.fasterxml.jackson.dataformat.csv.CsvSchema
-import de.tweerlei.plumber.worker.*
+import de.tweerlei.plumber.worker.WorkItem
+import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.DelegatingWorker
-import de.tweerlei.plumber.worker.types.Record
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
-import java.io.*
+import de.tweerlei.plumber.worker.types.Record
+import java.io.Closeable
+import java.io.File
+import java.io.FileOutputStream
+import java.io.OutputStream
 
 class CsvWriteWorker(
     private val file: File,
     private val csvMapper: CsvMapper,
+    private val separator: Char,
+    private val header: Boolean,
     worker: Worker
 ): DelegatingWorker(worker) {
 
     private lateinit var stream: OutputStream
-    private var writer: Writer? = null
+    private var writer: RecordWriter<Record, out Any>? = null
 
     override fun onOpen() {
         stream = FileOutputStream(file)
@@ -41,47 +46,61 @@ class CsvWriteWorker(
     override fun doProcess(item: WorkItem): Boolean =
         item.getFirstAs<Record>(WellKnownKeys.RECORD)
             .let { obj ->
-                writerFor(obj).writeValue(obj)
+                writerFor(obj).write(obj)
             }.let { true }
 
     private fun writerFor(rec: Record) =
         when (val w = writer) {
-            null -> Writer.from(stream, rec, csvMapper)
+            null -> createWriter(rec).also { writer = it }
             else -> w
+        }
+
+    private fun createWriter(rec: Record) =
+        when (header) {
+            true -> writerWithHeader(rec)
+            false -> writerWithoutHeader(rec)
         }
 
     override fun onClose() {
         writer?.close()
     }
 
-    private class Writer(
-        private val writer: ObjectWriter,
-        private val generator: JsonGenerator
-    ) {
-
-        companion object {
-            fun from(stream: OutputStream, rec: Record, csvMapper: CsvMapper) =
-                csvMapper.writerFor(Record::class.java)
-                    .with(rec.toFormatSchema())
-                    .let { writer ->
-                        Writer(
-                            writer,
-                            writer.createGenerator(stream)
-                        )
-                    }
-
-            private fun Record.toFormatSchema() =
-                CsvSchema.Builder().also { builder ->
-                    forEach { k, _ -> builder.addColumn(k) }
-                }.build()
+    private fun writerWithHeader(rec: Record) =
+        RecordWriter<Record, Record>(csvMapper
+                .writerFor(Record::class.java)
+                // See https://github.com/FasterXML/jackson-dataformats-text/issues/10
+                // withNullValue() does not apply to arrays and collections
+                .with(rec.toFormatSchema().withColumnSeparator(separator).withHeader())
+                .writeValues(stream)) {
+            it
         }
 
-        fun writeValue(rec: Record) {
-            writer.writeValue(generator, rec)
+    private fun writerWithoutHeader(rec: Record) =
+        RecordWriter<Record, Iterable<Any>>(csvMapper
+                .writerFor(Iterable::class.java)
+                // See https://github.com/FasterXML/jackson-dataformats-text/issues/10
+                // withNullValue() does not apply to arrays and collections
+                .with(rec.toFormatSchema().withColumnSeparator(separator))
+                .writeValues(stream)) {
+            it.values.mapNullTo("null")
         }
 
-        fun close() {
-            generator.close()
+    private fun Record.toFormatSchema() =
+        CsvSchema.Builder().also { builder ->
+            forEach { k, _ -> builder.addColumn(k) }
+        }.build()
+
+    private class RecordWriter<T, U>(
+        val writer: SequenceWriter,
+        val mapper: (T) -> U
+    ) : Closeable {
+
+        fun write(value: T) {
+            writer.write(mapper(value))
+        }
+
+        override fun close() {
+            writer.close()
         }
     }
 }

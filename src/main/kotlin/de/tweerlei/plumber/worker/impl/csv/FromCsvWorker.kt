@@ -16,26 +16,29 @@
 package de.tweerlei.plumber.worker.impl.csv
 
 import com.fasterxml.jackson.dataformat.csv.CsvMapper
+import com.fasterxml.jackson.dataformat.csv.CsvSchema
 import de.tweerlei.plumber.worker.*
 import de.tweerlei.plumber.worker.impl.DelegatingWorker
-import de.tweerlei.plumber.worker.types.Record
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
+import de.tweerlei.plumber.worker.types.Record
 import de.tweerlei.plumber.worker.types.coerceToString
 
 class FromCsvWorker(
-    private val csvMapper: CsvMapper,
+    csvMapper: CsvMapper,
+    separator: Char,
     worker: Worker
 ): DelegatingWorker(worker) {
+
+    private val reader = csvMapper
+        .readerFor(Array<String>::class.java)
+        .with(CsvSchema.emptySchema().withColumnSeparator(separator))
 
     override fun doProcess(item: WorkItem) =
         item.getOptional().coerceToString()
             .let { value ->
-                csvMapper.readValue(value, Array<String>::class.java)
+                reader.readValue<Array<String>>(value)
                     ?.let { arr ->
-                        arr.foldIndexed(Record()) { index, acc, value ->
-                            acc[index.toString()] = value
-                            acc
-                        }
+                        Record.from(arr)
                     }?.also { obj ->
                         item.set(obj)
                         item.set(obj, WellKnownKeys.RECORD)

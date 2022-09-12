@@ -13,21 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.tweerlei.plumber.worker.types
+package de.tweerlei.plumber.util
 
-class Record: LinkedHashMap<String, Any?>() {
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
 
-    companion object {
-        fun of(vararg items: Pair<String, Any?>) =
-            Record().apply {
-                items.forEach { (k, v) -> this[k] = v }
-            }
+class NumericStringPackerTest {
 
-        fun from(items: Array<String>) =
-            Record().apply {
-                items.forEachIndexed { index, value ->
-                    this[index.toString()] = value.toComparable()
-                }
-            }
+    @Test
+    fun testPackNumeric() {
+        val packer = NumericStringPacker("0123456789abcdef")
+
+        assertEquals(0xaffe, packer.pack("affe"))
+    }
+
+    @Test
+    fun testUnpackNumeric() {
+        val packer = NumericStringPacker("0123456789abcdef")
+
+        assertEquals("affe", packer.unpack(0xaffe))
     }
 }

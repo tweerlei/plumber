@@ -42,5 +42,5 @@ class CsvEncodeStep(
         params: PipelineParams,
         parallelDegree: Int
     ) =
-        ToCsvWorker(csvMapper, w)
+        ToCsvWorker(csvMapper, params.separator, w)
 }

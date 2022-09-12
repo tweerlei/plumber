@@ -35,14 +35,14 @@ class DynamoDBKeyWorker(
                 when (rangeKey) {
                     null -> item.apply {
                         set(key.toComparable(), DynamoDBKeys.PARTITION_KEY)
-                        Record(
+                        Record.of(
                             partitionKey to get(DynamoDBKeys.PARTITION_KEY)
                         )
                     }
                     else -> item.apply {
                         set(key.toComparable(), DynamoDBKeys.PARTITION_KEY)
                         set(rangeKeyValue, DynamoDBKeys.RANGE_KEY)
-                        Record(
+                        Record.of(
                             partitionKey to get(DynamoDBKeys.PARTITION_KEY),
                             rangeKey to get(DynamoDBKeys.RANGE_KEY)
                         )

@@ -19,6 +19,7 @@ import com.fasterxml.jackson.dataformat.xml.XmlMapper
 import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.impl.DelegatingWorker
 import de.tweerlei.plumber.worker.Worker
+import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import java.io.StringWriter
 
 class ToXmlWorker(
@@ -28,12 +29,19 @@ class ToXmlWorker(
     worker: Worker
 ): DelegatingWorker(worker) {
 
+    companion object {
+        const val CONTENT_TYPE_XML = "application/xml"
+    }
+
     private val writer = xmlMapper.writer().withRootName(elementName)
 
     override fun doProcess(item: WorkItem) =
         item.getOptional()
             .let { obj -> writeValue(obj) }
-            .also { str -> item.set(str) }
+            .also { str ->
+                item.set(str)
+                item.set(WellKnownKeys.CONTENT_TYPE, CONTENT_TYPE_XML)
+            }
             .let { true }
 
     private fun writeValue(obj: Any?) =

@@ -19,6 +19,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.impl.DelegatingWorker
 import de.tweerlei.plumber.worker.Worker
+import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import java.io.StringWriter
 
 class ToJsonWorker(
@@ -27,10 +28,17 @@ class ToJsonWorker(
     worker: Worker
 ): DelegatingWorker(worker) {
 
+    companion object {
+        const val CONTENT_TYPE_JSON = "application/json"
+    }
+
     override fun doProcess(item: WorkItem) =
         item.getOptional()
             .let { obj -> writeValue(obj) }
-            .also { str -> item.set(str) }
+            .also { str ->
+                item.set(str)
+                item.set(WellKnownKeys.CONTENT_TYPE, CONTENT_TYPE_JSON)
+            }
             .let { true }
 
     private fun writeValue(obj: Any?) =

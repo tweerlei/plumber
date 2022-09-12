@@ -50,6 +50,8 @@ class CsvReadStep(
         CsvReadWorker(
             arg.toInputFile(),
             csvMapper,
+            params.separator,
+            params.header,
             params.maxFilesPerThread,
             w
         )

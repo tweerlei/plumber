@@ -60,6 +60,10 @@ class CommandLineProcessor(
 
                 --explain                     Explain resulting plan, don't execute
                 --fail-fast                   Fail on first processing error
+                --limit=<n>                   Stop after reading n objects (per thread, default is unlimited)
+                --bulk-size=1000              Bulk size for steps that process multiple items at once
+                --queue-size=10               Queue size for items passed between threads
+                --retry-delay=0               Wait this number of seconds before retrying failed messages
                 --requester-pays              Requester pays access to S3 buckets
                 --assume-role=<arn>           Assume the given IAM role for all AWS operations
                 --start-after=<key>           Start after the given key
@@ -73,11 +77,9 @@ class CommandLineProcessor(
                 --select=<fields>             Database fields to fetch, separated by commas
                 --element-name=<name>         XML element name to read/write
                 --root-element-name=<name>    XML root element name to wrap output in
+                --separator=,                 CSV separator character
+                --header                      Read/write CSV header
                 --pretty-print                Pretty print JSON and XML output
-                --limit=<n>                   Stop after reading n objects (per thread, default is unlimited)
-                --retry-delay=0               Wait this number of seconds before retrying failed messages
-                --queue-size=10               Queue size for items passed between threads
-                --bulk-size=1000              Bulk size for steps that process multiple items at once
                 --wait=1                      Wait at most this number of seconds for a new message
                 --follow                      Keep polling for new messages
                 --reread                      Re-read all messages
@@ -127,6 +129,8 @@ class CommandLineProcessor(
                 maxWaitTimeSeconds = args.getOptionValue("wait")?.toInt() ?: 1,
                 elementName = args.getOptionValue("element-name") ?: "",
                 rootElementName = args.getOptionValue("root-element-name") ?: "",
+                separator = args.getOptionValue("separator")?.first() ?: ',',
+                header = args.containsOption("header"),
                 prettyPrint = args.containsOption("pretty-print"),
                 follow = args.containsOption("follow"),
                 reread = args.containsOption("reread"),
@@ -134,21 +138,26 @@ class CommandLineProcessor(
                 assumeRoleArn = args.getOptionValue("assume-role"),
                 steps = parseSteps(args.nonOptionArgs)
             ).apply {
-                logger.info("starting after $startAfterKey up to and including $stopAfterKey")
-                logger.info("starting range after $startAfterRangeKey up to and including $stopAfterRangeKey")
-                logger.info("generating partitions using key chars $keyChars")
-                logger.info("requesting $numberOfFilesPerRequest file names at once, waiting for up to $maxWaitTimeSeconds seconds for new items")
-                logger.info("delaying retries for $retryDelaySeconds seconds")
-                logger.info("${if (reread) "will" else "won't"} re-read all existing items, ${if (follow) "will" else "won't"} keep polling for new items")
-                logger.info("stopping after $maxFilesPerThread file names")
-                logger.info("${if (failFast) "skipping over" else "failing on"} processing errors")
-                logger.info("using queue size of $queueSizePerThread items per thread")
-                logger.info("assuming role $assumeRoleArn for AWS access")
-                logger.info("${if (requesterPays) "paying" else "not paying"} for S3 requests")
-                logger.info("using JDBC primary key $primaryKey")
-                logger.info("using DynamoDB partition key $partitionKey and range key $rangeKey")
-                logger.info("${if (prettyPrint) "pretty printing" else "not pretty printing"} JSON or XML output")
-                logger.info("naming XML elements $elementName with root $rootElementName")
+                if (explain) {
+                    logger.info("requesting $numberOfFilesPerRequest items at once")
+                    logger.info("stopping after $maxFilesPerThread items")
+                    logger.info("${if (failFast) "skipping over" else "failing on"} processing errors")
+                    logger.info("delaying retries for $retryDelaySeconds seconds")
+                    logger.info("using queue size of $queueSizePerThread items per thread")
+                    logger.info("AWS: assuming role '$assumeRoleArn' for AWS access")
+                    logger.info("AWS: ${if (requesterPays) "will" else "won't"} pay for S3 requests")
+                    logger.info("JDBC: using primary key '$primaryKey'")
+                    logger.info("JDBC: selecting fields $selectFields")
+                    logger.info("Partitions: starting after '$startAfterKey' up to and including '$stopAfterKey'")
+                    logger.info("Partitions: using key chars '$keyChars'")
+                    logger.info("Kafka/SQS: waiting for up to $maxWaitTimeSeconds seconds for new items")
+                    logger.info("Kafka/SQS: ${if (reread) "will" else "won't"} re-read all existing items, ${if (follow) "will" else "won't"} keep polling for new items")
+                    logger.info("DynamoDB: using partition key '$partitionKey' and range key '$rangeKey'")
+                    logger.info("DynamoDB: starting range after '$startAfterRangeKey' up to and including '$stopAfterRangeKey'")
+                    logger.info("CSV: using separator '$separator', ${if (header) "will" else "won't"} read/write header row")
+                    logger.info("JSON/XML: ${if (prettyPrint) "pretty printing" else "not pretty printing"} output")
+                    logger.info("XML: naming elements <$elementName> with root <$rootElementName>")
+                }
             }
         }
 
