@@ -27,7 +27,7 @@ jobs:
       with:
         build-args: PACKAGE_VERSION=${{ github.ref_name }}
         push: true
-        tags: ghcr.io/${{ github.repository }}:${{ github.ref_name }}
+        tags: ghcr.io/${{ github.repository }}:latest,ghcr.io/${{ github.repository }}:${{ github.ref_name }}
 
     - name: Extract files from the image
       id: build-tar
