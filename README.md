@@ -285,19 +285,24 @@ Notice that the last step `line-write` will be forced to run in a single thread 
 
 ## Values
 
-Values given on the command line (e.g. via `value:`) are automatically converted to an appropriate internal type:
+Values given on the command line (e.g. via `value:`) are automatically converted to an appropriate internal type.
+This applies to all steps that accept a `<value>`.
 
-| Input                | Type    | Output               |
-|----------------------|---------|----------------------|
-| null                 | null    |                      |
-| true                 | Boolean | true                 |
-| false                | Boolean | false                |
-| 042                  | Long    | 42                   |
-| 3.14                 | Double  | 3.14                 |
-| 3e2                  | Double  | 300                  |
-| 2022-03-14T15:30:00Z | Instant | 2022-03-14T15:30:00Z |
+| Input                | Type     | Output               |
+|----------------------|----------|----------------------|
+| null                 | null     |                      |
+| true                 | Boolean  | true                 |
+| false                | Boolean  | false                |
+| 042                  | Long     | 42                   |
+| 3.14                 | Double   | 3.14                 |
+| 3e2                  | Double   | 300                  |
+| 2022-03-14T15:30:00Z | Instant  | 2022-03-14T15:30:00Z |
+| P7DT15H30M           | Duration | P7DT15H30M           |
+| :042                 | String   | 042                  |
+| @other               | misc.    | Value of "other"     |
+| anything else        | String   | anything else        |
 
-If you don't want that, use two colons:
+If you don't want interpretation but plain text, use two colons:
 
 ```bash
 ./plumber \
@@ -306,6 +311,20 @@ If you don't want that, use two colons:
     value::0123 \
     log
 ```
+
+Values can be stored as named attributes and retrieved later:
+
+```bash
+./plumber \
+    value:John set:firstname \
+    value:Doe set:lastname \
+    format:'Full name: @{firstname} @{lastname}' \
+    log \
+    get:firstname \
+    log
+```
+
+where `get:firstname` is actually equivalent to `value:@firstname`.
 
 ## Find and replace
 
@@ -334,11 +353,10 @@ Values can be compared and results can be combined (also with other boolean attr
 
 ```bash
 ./plumber \
-    value:true set:yes \
     value:false set:no \
     value:true \
-    and:no \
-    or:yes \
+    and:@no \
+    or:true \
     not \
     log
 ```
@@ -347,16 +365,14 @@ This is the verbose equivalent of `not ((true and false) or true)`.
 
 ```bash
 ./plumber \
-    value:Hello set:abc \
-    value:World set:def \
     value:42 set:limit \
-    value:10 is-greater:limit \
+    value:10 is-greater:@limit \
     not \
-    then:abc else:def \
+    then:less-or-equal else:greater \
     log
 ```
 
-This is the verbose equivalent of `if not (10 > 42) then 'Hello' else 'World'`.
+This is the verbose equivalent of `if not (10 > 42) then 'less-or-equal' else 'greater'`.
 
 Items can then be filtered to keep only those that evaluate to true (default) or false.
 This evaluation also applies to string values, so an empty string, as well as '0' and 'false' will evaluate to false.
@@ -367,7 +383,7 @@ If you want to evaluate 'false' to false, use an explicit `is-equal:`.
     value:2 set:two \
     value:0,1,2,3,4 csv-parse record-each \
     set:value \
-    is-equal:two \
+    is-equal:@two \
     filter:false \
     get:value \
     log
