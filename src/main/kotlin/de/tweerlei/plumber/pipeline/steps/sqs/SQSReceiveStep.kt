@@ -32,6 +32,7 @@ class SQSReceiveStep(
     override val group = "AWS SQS"
     override val name = "Receive SQS messages"
     override val description = "Receive messages from the given SQS queue"
+    override fun argDescription() = "<queue>"
 
     override fun producedAttributesFor(arg: String) = setOf(
         WellKnownKeys.NAME,

@@ -31,6 +31,7 @@ class S3BulkDeleteStep(
     override val group = "AWS S3"
     override val name = "Delete S3 objects"
     override val description = "Deletes multiple objects from the given S3 bucket, use with bulk:<n>"
+    override fun argDescription() = "<bucket>"
 
     override fun isValuePassThrough() = true
     override fun requiredAttributesFor(arg: String) = setOf(

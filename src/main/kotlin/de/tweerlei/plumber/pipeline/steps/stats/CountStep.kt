@@ -28,6 +28,7 @@ class CountStep: ProcessingStep {
     override val group = "Logging"
     override val name = "Count items"
     override val description = "Log item counts at every given number of items"
+    override fun argDescription() = intervalFor("").toString()
 
     override fun isValuePassThrough() = true
 
@@ -45,7 +46,10 @@ class CountStep: ProcessingStep {
     ) =
         CountingWorker(
             predecessorName,
-            arg.toLongOrNull() ?: Long.MAX_VALUE,
+            intervalFor(arg),
             w
         )
+
+    private fun intervalFor(arg: String) =
+        arg.toLongOrNull() ?: Long.MAX_VALUE
 }

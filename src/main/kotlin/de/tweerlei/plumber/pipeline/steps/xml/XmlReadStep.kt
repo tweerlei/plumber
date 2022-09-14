@@ -32,6 +32,7 @@ class XmlReadStep(
     override val group = "XML"
     override val name = "Read XML objects from file"
     override val description = "Read XML objects from the given file"
+    override fun argDescription() = "<path>"
 
     override fun producedAttributesFor(arg: String) = setOf(
         WellKnownKeys.PATH,

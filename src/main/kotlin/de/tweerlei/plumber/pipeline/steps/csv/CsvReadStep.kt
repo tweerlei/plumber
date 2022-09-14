@@ -32,6 +32,7 @@ class CsvReadStep(
     override val group = "CSV"
     override val name = "Read CSV lines from file"
     override val description = "Read CSV lines from the given file"
+    override fun argDescription() = "<path>"
 
     override fun producedAttributesFor(arg: String) = setOf(
         WellKnownKeys.PATH,

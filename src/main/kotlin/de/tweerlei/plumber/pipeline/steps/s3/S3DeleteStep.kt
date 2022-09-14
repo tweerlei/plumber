@@ -31,6 +31,7 @@ class S3DeleteStep(
     override val group = "AWS S3"
     override val name = "Delete S3 object"
     override val description = "Delete an object from the given S3 bucket"
+    override fun argDescription() = "<bucket>"
 
     override fun isValuePassThrough() = true
     override fun requiredAttributesFor(arg: String) = setOf(

@@ -32,6 +32,7 @@ class KafkaReadStep(
     override val group = "Apache Kafka"
     override val name = "Receive Kafka messages"
     override val description = "Receive messages from the given Kafka topic"
+    override fun argDescription() = "<topic>"
 
     override fun producedAttributesFor(arg: String) = setOf(
 //        WellKnownKeys.NAME,

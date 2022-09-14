@@ -28,10 +28,7 @@ class RangeGetWorker(
     override fun doProcess(item: WorkItem) =
         item.getOptionalAs<Range>(WellKnownKeys.RANGE)
             ?.let { range ->
-                when (field) {
-                    RangeKey.START_AFTER -> item.set(range.startAfter)
-                    RangeKey.END_WITH -> item.set(range.endWith)
-                }
+                item.set(field.get(range))
             }?.let { true }
             ?: false
 }

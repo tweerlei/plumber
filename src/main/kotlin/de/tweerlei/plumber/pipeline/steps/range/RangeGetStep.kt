@@ -22,6 +22,7 @@ import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.range.RangeGetWorker
 import de.tweerlei.plumber.worker.impl.range.RangeKey
 import org.springframework.stereotype.Service
+import java.lang.IllegalArgumentException
 
 @Service("range-getWorker")
 class RangeGetStep: ProcessingStep {
@@ -29,6 +30,7 @@ class RangeGetStep: ProcessingStep {
     override val group = "Ranges"
     override val name = "Get range field"
     override val description = "Get a range field, one of (start, end)"
+    override fun argDescription() = rangeKeyFor("").toString()
 
     override fun requiredAttributesFor(arg: String) = setOf(
         WellKnownKeys.RANGE
@@ -42,5 +44,12 @@ class RangeGetStep: ProcessingStep {
         params: PipelineParams,
         parallelDegree: Int
     ) =
-        RangeGetWorker(if (arg == "end") RangeKey.END_WITH else RangeKey.START_AFTER, w)
+        RangeGetWorker(rangeKeyFor(arg), w)
+
+    private fun rangeKeyFor(arg: String) =
+        try {
+            RangeKey.valueOf(arg)
+        } catch (e: IllegalArgumentException) {
+            RangeKey.start
+        }
 }

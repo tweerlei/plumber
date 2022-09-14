@@ -32,6 +32,7 @@ class JsonReadStep(
     override val group = "JSON"
     override val name = "Read JSON objects from file"
     override val description = "Read JSON objects from the given file"
+    override fun argDescription() = "<path>"
 
     override fun producedAttributesFor(arg: String) = setOf(
         WellKnownKeys.PATH,

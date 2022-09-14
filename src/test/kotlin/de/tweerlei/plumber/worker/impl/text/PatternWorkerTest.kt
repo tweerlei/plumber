@@ -53,7 +53,7 @@ class PatternWorkerTest {
 
         val item = TestWorkerRunner()
             .append { w -> MatchingWorker(Regex("(\\S+)-(\\S+)"), w) }
-            .append { w -> ReplacingWorker("$2_$1", w) }
+            .append { w -> ReplacingWorker({ "$2_$1" }, w) }
             .run(WorkItem.of("foo x-1 yz-23 bar"))
             .singleOrNull()
 
@@ -69,7 +69,7 @@ class PatternWorkerTest {
 
         val item = TestWorkerRunner()
             .append { w -> MatchingWorker(Regex("(\\S+)-(\\S+)"), w) }
-            .append { w -> ReplacingWorker("$2_$1", w) }
+            .append { w -> ReplacingWorker({ "$2_$1" }, w) }
             .run(WorkItem.of("foo x_1 yz_23 bar"))
             .singleOrNull()
 

@@ -28,6 +28,7 @@ class GroupStep: ProcessingStep {
     override val group = "Logging"
     override val name = "Group items"
     override val description = "Log item counts per value at every given number of items"
+    override fun argDescription() = intervalFor("").toString()
 
     override fun isValuePassThrough() = true
     override fun producedAttributesFor(arg: String) = setOf(
@@ -44,7 +45,10 @@ class GroupStep: ProcessingStep {
     ) =
         GroupingWorker(
             predecessorName,
-            arg.toLongOrNull() ?: Long.MAX_VALUE,
+            intervalFor(arg),
             w
         )
+
+    private fun intervalFor(arg: String) =
+        arg.toLongOrNull() ?: Long.MAX_VALUE
 }

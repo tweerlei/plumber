@@ -29,6 +29,7 @@ class NodeDelStep: ProcessingStep {
     override val group = "Nodes"
     override val name = "Remove JSON path"
     override val description = "Remove a subtree of a JSON object using the given JSONPath"
+    override fun argDescription() = "<path>"
 
     override fun isValuePassThrough() = true
     override fun producedAttributesFor(arg: String) = setOf(

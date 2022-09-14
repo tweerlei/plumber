@@ -16,16 +16,17 @@
 package de.tweerlei.plumber.worker.impl.attribute
 
 import de.tweerlei.plumber.worker.WorkItem
+import de.tweerlei.plumber.worker.WorkItemAccessor
 import de.tweerlei.plumber.worker.impl.DelegatingWorker
 import de.tweerlei.plumber.worker.Worker
 
 class SettingWorker(
-    private val values: Map<String, Any?>,
+    private val key: String,
+    private val value: WorkItemAccessor<Any?>,
     worker: Worker
 ): DelegatingWorker(worker) {
 
     override fun doProcess(item: WorkItem) =
-        values.forEach { (key, value) ->
-            item.set(value, key)
-        }.let { true }
+        item.set(value(item), key)
+        .let { true }
 }

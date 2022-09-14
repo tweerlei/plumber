@@ -13,23 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.tweerlei.plumber.worker.impl.expr
+package de.tweerlei.plumber.worker
 
-import de.tweerlei.plumber.worker.WorkItem
-import de.tweerlei.plumber.worker.WorkItemAccessor
-import de.tweerlei.plumber.worker.impl.DelegatingWorker
-import de.tweerlei.plumber.worker.Worker
-import de.tweerlei.plumber.worker.types.coerceToBoolean
-
-class AndWorker(
-    private val value: WorkItemAccessor<Any?>,
-    worker: Worker
-): DelegatingWorker(worker) {
-
-    override fun doProcess(item: WorkItem) =
-        item.getAs<Boolean>().let {
-            it.and(value(item).coerceToBoolean())
-        }.also {
-            item.set(it)
-        }.let { true }
-}
+typealias WorkItemAccessor<T> = (WorkItem) -> T

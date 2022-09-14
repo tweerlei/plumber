@@ -32,6 +32,7 @@ class DynamoDBScanStep(
     override val group = "AWS DynamoDB"
     override val name = "Scan DynamoDB items"
     override val description = "List elements from the given DynamoDB table"
+    override fun argDescription() = "<table>"
 
     override fun producedAttributesFor(arg: String) = setOf(
         WellKnownKeys.RECORD,

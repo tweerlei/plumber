@@ -32,6 +32,7 @@ class S3ListStep(
     override val group = "AWS S3"
     override val name = "List S3 object keys"
     override val description = "List objects from the given S3 bucket"
+    override fun argDescription() = "<bucket>"
 
     override fun producedAttributesFor(arg: String) = setOf(
         WellKnownKeys.NAME,

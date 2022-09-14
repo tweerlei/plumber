@@ -28,6 +28,7 @@ class RecordDelStep: ProcessingStep {
     override val group = "Records"
     override val name = "Remove record field"
     override val description = "Remove the given field from the current record"
+    override fun argDescription() = "<name>"
 
     override fun isValuePassThrough() = true
     override fun requiredAttributesFor(arg: String) = setOf(

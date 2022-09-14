@@ -31,6 +31,7 @@ class SQSDeleteStep(
     override val group = "AWS SQS"
     override val name = "Delete SQS message"
     override val description = "Delete a message from the given SQS queue"
+    override fun argDescription() = "<queue>"
 
     override fun isValuePassThrough() = true
     override fun requiredAttributesFor(arg: String) = setOf(

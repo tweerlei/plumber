@@ -27,6 +27,7 @@ class ErrorStep: ProcessingStep {
     override val group = "Logging"
     override val name = "Throw error"
     override val description = "Throw an error every given number of items"
+    override fun argDescription() = intervalFor("").toString()
 
     override fun isValuePassThrough() = true
 
@@ -40,7 +41,10 @@ class ErrorStep: ProcessingStep {
     ) =
         ErrorWorker(
             predecessorName,
-            arg.toLongOrNull() ?: 1,
+            intervalFor(arg),
             w
         )
+
+    private fun intervalFor(arg: String) =
+        arg.toLongOrNull() ?: 1
 }

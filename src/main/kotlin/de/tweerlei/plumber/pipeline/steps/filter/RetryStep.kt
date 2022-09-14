@@ -27,6 +27,7 @@ class RetryStep: ProcessingStep {
     override val group = "Flow control"
     override val name = "Retry"
     override val description = "Retry the following steps a given number of times on error"
+    override fun argDescription() = retryCountFor("").toString()
 
     override fun isValuePassThrough() = true
 
@@ -40,8 +41,11 @@ class RetryStep: ProcessingStep {
     ) =
         RetryingWorker(
             predecessorName,
-            arg.toIntOrNull() ?: Int.MAX_VALUE,
+            retryCountFor(arg),
             params.retryDelaySeconds,
             w
         )
+
+    private fun retryCountFor(arg: String) =
+        arg.toLongOrNull() ?: Long.MAX_VALUE
 }

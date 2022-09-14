@@ -28,6 +28,7 @@ class ParallelStep: ProcessingStep {
     override val group = "Flow control"
     override val name = "Parallel execution"
     override val description = "Execute following steps using the given number of threads"
+    override fun argDescription() = parallelDegreeFor("").toString()
 
     override fun isValuePassThrough() = true
     override fun producedAttributesFor(arg: String) = setOf(

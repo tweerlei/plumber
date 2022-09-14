@@ -25,7 +25,7 @@ import de.tweerlei.plumber.worker.types.toComparable
 class DynamoDBKeyWorker(
     private val partitionKey: String,
     private val rangeKey: String?,
-    private val rangeKeyValue: Any?,
+    private val rangeKeyValue: WorkItemAccessor<Any?>,
     worker: Worker
 ): DelegatingWorker(worker) {
 
@@ -41,7 +41,7 @@ class DynamoDBKeyWorker(
                     }
                     else -> item.apply {
                         set(key.toComparable(), DynamoDBKeys.PARTITION_KEY)
-                        set(rangeKeyValue, DynamoDBKeys.RANGE_KEY)
+                        set(rangeKeyValue(item), DynamoDBKeys.RANGE_KEY)
                         Record.of(
                             partitionKey to get(DynamoDBKeys.PARTITION_KEY),
                             rangeKey to get(DynamoDBKeys.RANGE_KEY)

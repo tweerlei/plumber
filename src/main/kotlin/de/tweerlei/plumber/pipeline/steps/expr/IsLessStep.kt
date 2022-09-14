@@ -17,6 +17,7 @@ package de.tweerlei.plumber.pipeline.steps.expr
 
 import de.tweerlei.plumber.pipeline.PipelineParams
 import de.tweerlei.plumber.pipeline.steps.ProcessingStep
+import de.tweerlei.plumber.pipeline.steps.toWorkItemAccessor
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.expr.LessThanWorker
 import org.springframework.stereotype.Service
@@ -27,6 +28,7 @@ class IsLessStep: ProcessingStep {
     override val group = "Attributes"
     override val name = "Compare"
     override val description = "Compare the current value to the given attribute's value resulting in a boolean"
+    override fun argDescription() = "<value>"
 
     override fun requiredAttributesFor(arg: String) = setOf(
         arg
@@ -40,5 +42,5 @@ class IsLessStep: ProcessingStep {
         params: PipelineParams,
         parallelDegree: Int
     ) =
-        LessThanWorker(arg, w)
+        LessThanWorker(arg.toWorkItemAccessor(), w)
 }

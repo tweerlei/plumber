@@ -39,5 +39,5 @@ class RecordClearStep: ProcessingStep {
         params: PipelineParams,
         parallelDegree: Int
     ) =
-        SettingWorker(mapOf(WellKnownKeys.RECORD to null), w)
+        SettingWorker(WellKnownKeys.RECORD, { null }, w)
 }

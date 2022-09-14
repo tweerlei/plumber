@@ -28,6 +28,7 @@ class SumStep: ProcessingStep {
     override val group = "Logging"
     override val name = "Calculate size sum"
     override val description = "Log item sum of item sizes every given number of bytes"
+    override fun argDescription() = intervalFor("").toString()
 
     override fun isValuePassThrough() = true
 
@@ -49,7 +50,10 @@ class SumStep: ProcessingStep {
     ) =
         SummingWorker(
             predecessorName,
-            arg.toLongOrNull() ?: Long.MAX_VALUE,
+            intervalFor(arg),
             w
         )
+
+    private fun intervalFor(arg: String) =
+        arg.toLongOrNull() ?: Long.MAX_VALUE
 }

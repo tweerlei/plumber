@@ -32,6 +32,7 @@ class JdbcListStep(
     override val group = "JDBC"
     override val name = "Fetch JDBC rows"
     override val description = "Retrieve rows from the given JDBC table"
+    override fun argDescription() = "<table>"
 
     override fun producedAttributesFor(arg: String) = setOf(
         WellKnownKeys.RECORD,

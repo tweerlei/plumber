@@ -16,7 +16,6 @@
 package de.tweerlei.plumber.pipeline
 
 data class PipelineParams(
-    val steps: List<Step>,
     val explain: Boolean,
     val requesterPays: Boolean,
     val startAfterKey: String?,
@@ -42,9 +41,4 @@ data class PipelineParams(
     val reread: Boolean,
     val failFast: Boolean,
     val assumeRoleArn: String?
-) {
-    data class Step(
-        val action: String,
-        val arg: String
-    )
-}
+)

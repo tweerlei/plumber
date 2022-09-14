@@ -15,11 +15,11 @@
  */
 package de.tweerlei.plumber.pipeline.steps.dynamodb
 
-import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
-import de.tweerlei.plumber.pipeline.steps.toWorkItemValue
-import de.tweerlei.plumber.worker.impl.WellKnownKeys
+import de.tweerlei.plumber.pipeline.steps.ProcessingStep
+import de.tweerlei.plumber.pipeline.steps.toWorkItemAccessor
 import de.tweerlei.plumber.worker.Worker
+import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.impl.dynamodb.DynamoDBKeyWorker
 import de.tweerlei.plumber.worker.impl.dynamodb.DynamoDBKeys
 import org.springframework.stereotype.Service
@@ -30,6 +30,7 @@ class DynamoDBKeyStep: ProcessingStep {
     override val group = "AWS DynamoDB"
     override val name = "Build DynamoDB key"
     override val description = "Convert item to a DynamoDB key with the specified range key"
+    override fun argDescription() = "<value>"
 
     override fun producedAttributesFor(arg: String) = setOf(
         WellKnownKeys.RECORD,
@@ -48,7 +49,7 @@ class DynamoDBKeyStep: ProcessingStep {
         DynamoDBKeyWorker(
             params.partitionKey.ifEmpty { throw IllegalArgumentException("No partition key specified") },
             params.rangeKey,
-            arg.toWorkItemValue(),
+            arg.toWorkItemAccessor(),
             w
         )
 }

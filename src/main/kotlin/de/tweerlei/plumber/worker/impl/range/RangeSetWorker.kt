@@ -30,9 +30,8 @@ class RangeSetWorker(
         item.getOrSetAs(WellKnownKeys.RANGE) {
             Range()
         }.let { range ->
-            when (field) {
-                RangeKey.START_AFTER -> range.startAfter = item.getOptional()?.coerceToComparable()
-                RangeKey.END_WITH -> range.endWith = item.getOptional()?.coerceToComparable()
+            item.getOptional()?.coerceToComparable().let { value ->
+                field.set(range, value)
             }
         }.let { true }
 }

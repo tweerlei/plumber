@@ -20,6 +20,7 @@ import de.tweerlei.plumber.worker.impl.ifEmptyGetFrom
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
+import java.time.Duration
 import java.time.Instant
 
 class StringExtensionsTest {
@@ -39,6 +40,7 @@ class StringExtensionsTest {
         "2e".toComparable().shouldBe("2e")
         "2e7".toComparable().shouldBe(20000000.0)
         "2022-02-27T00:00:00Z".toComparable().shouldBe(Instant.ofEpochSecond(1645920000))
+        "P5DT10H23M46S".toComparable().shouldBe(Duration.ofSeconds(469426))
     }
 
     @Test

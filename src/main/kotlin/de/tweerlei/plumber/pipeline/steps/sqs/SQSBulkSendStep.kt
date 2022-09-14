@@ -31,6 +31,7 @@ class SQSBulkSendStep(
     override val group = "AWS SQS"
     override val name = "Send SQS messages"
     override val description = "Send multiple messages to the given SQS queue, use with bulk:<n>"
+    override fun argDescription() = "<queue>"
 
     override fun isValuePassThrough() = true
     override fun requiredAttributesFor(arg: String) = setOf(

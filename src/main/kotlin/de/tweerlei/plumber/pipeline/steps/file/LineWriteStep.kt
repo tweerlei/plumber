@@ -29,6 +29,7 @@ class LineWriteStep: ProcessingStep {
     override val group = "Files"
     override val name = "Write lines to file"
     override val description = "Write lines to the given file"
+    override fun argDescription() = "<path>"
 
     override fun isValuePassThrough() = true
     override fun parallelDegreeFor(arg: String) = 1

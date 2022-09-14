@@ -39,35 +39,35 @@ class FormattingWorkerTest {
     fun testReplacement() {
 
         val item = TestWorkerRunner()
-            .append { w -> FormattingWorker("My $\${name} is {value}", w) }
+            .append { w -> FormattingWorker("My @@{name} is {value}", w) }
             .run(WorkItem.of("foo", "name" to "variable"))
             .singleOrNull()
 
         item.shouldNotBeNull()
-        item.get().shouldBe("My \$variable is {value}")
+        item.get().shouldBe("My @variable is {value}")
     }
 
     @Test
     fun testNoReplacement() {
 
         val item = TestWorkerRunner()
-            .append { w -> FormattingWorker("My $\${name} is {value}", w) }
+            .append { w -> FormattingWorker("My @@{name} is {value}", w) }
             .run(WorkItem.of("foo"))
             .singleOrNull()
 
         item.shouldNotBeNull()
-        item.get().shouldBe("My \$ is {value}")
+        item.get().shouldBe("My @ is {value}")
     }
 
     @Test
     fun testSpecialCharacters() {
 
         val item = TestWorkerRunner()
-            .append { w -> FormattingWorker("My $\${name} is {value}", w) }
-            .run(WorkItem.of("foo", "name" to "foo\$1bar"))
+            .append { w -> FormattingWorker("My @@{name} is {value}", w) }
+            .run(WorkItem.of("foo", "name" to "foo@1bar"))
             .singleOrNull()
 
         item.shouldNotBeNull()
-        item.get().shouldBe("My \$foo\$1bar is {value}")
+        item.get().shouldBe("My @foo@1bar is {value}")
     }
 }

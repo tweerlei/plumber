@@ -35,6 +35,7 @@ class MongoDBGetStep(
     override val group = "MongoDB"
     override val name = "Fetch MongoDB document"
     override val description = "Read a document from the given MongoDB collection"
+    override fun argDescription() = "<collection>"
 
     override fun expectedInputFor(arg: String) = JsonNode::class.java
     override fun producedAttributesFor(arg: String) = setOf(

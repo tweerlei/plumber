@@ -33,6 +33,7 @@ class JdbcReadStep(
     override val group = "JDBC"
     override val name = "Fetch JDBC row"
     override val description = "Retrieve a row from the given JDBC table"
+    override fun argDescription() = "<table>"
 
     override fun expectedInputFor(arg: String) = Record::class.java
     override fun producedAttributesFor(arg: String) = setOf(

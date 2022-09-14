@@ -27,6 +27,7 @@ class DelayStep: ProcessingStep {
     override val group = "Flow control"
     override val name = "Delay processing"
     override val description = "Delay following steps by the given number of milliseconds"
+    override fun argDescription() = delayFor("").toString()
 
     override fun isValuePassThrough() = true
 
@@ -39,7 +40,10 @@ class DelayStep: ProcessingStep {
         parallelDegree: Int
     ) =
         DelayWorker(
-            arg.toLongOrNull() ?: 0,
+            delayFor(arg),
             w
         )
+
+    private fun delayFor(arg: String) =
+        arg.toLongOrNull() ?: 0
 }

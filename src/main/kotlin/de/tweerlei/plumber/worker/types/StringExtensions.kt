@@ -15,6 +15,7 @@
  */
 package de.tweerlei.plumber.worker.types
 
+import java.time.Duration
 import java.time.Instant
 import java.time.format.DateTimeParseException
 
@@ -22,13 +23,21 @@ fun String?.toComparable(): Comparable<*>? =
     if (this == null || this == "null") null
     else toBooleanStrictOrNull()
         ?: toInstantOrNull()
+        ?: toDurationOrNull()
         ?: toLongOrNull()
         ?: toDoubleOrNull()
         ?: this
 
-private fun String.toInstantOrNull(): Instant? =
+private fun String.toInstantOrNull() =
     try {
         Instant.parse(this)
+    } catch (e: DateTimeParseException) {
+        null
+    }
+
+private fun String.toDurationOrNull() =
+    try {
+        Duration.parse(this)
     } catch (e: DateTimeParseException) {
         null
     }

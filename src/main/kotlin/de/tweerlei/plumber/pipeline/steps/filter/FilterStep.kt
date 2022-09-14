@@ -28,6 +28,7 @@ class FilterStep: ProcessingStep {
     override val group = "Flow control"
     override val name = "Filter items"
     override val description = "Keep only items that evaluate to the given boolean"
+    override fun argDescription() = compareWithFor("").toString()
 
     override fun createWorker(
         arg: String,
@@ -37,9 +38,12 @@ class FilterStep: ProcessingStep {
         params: PipelineParams,
         parallelDegree: Int
     ) =
-        (arg.toBooleanStrictOrNull() ?: true).let { compareWith ->
+        compareWithFor(arg).let { compareWith ->
             FilteringWorker({ item ->
                 item.getOptional().coerceToBoolean() == compareWith
             }, w)
         }
+
+    private fun compareWithFor(arg: String) =
+        arg.toBooleanStrictOrNull() ?: true
 }

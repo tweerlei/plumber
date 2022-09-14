@@ -18,11 +18,12 @@ package de.tweerlei.plumber.worker.impl.attribute
 import de.tweerlei.plumber.worker.impl.DelegatingWorker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.WorkItem
+import de.tweerlei.plumber.worker.WorkItemAccessor
 import de.tweerlei.plumber.worker.Worker
 
 class ConditionalWorker(
-    private val predicate: (WorkItem) -> Boolean,
-    private val key: String,
+    private val predicate: WorkItemAccessor<Boolean>,
+    private val value: WorkItemAccessor<Any?>,
     worker: Worker
 ): DelegatingWorker(worker) {
 
@@ -30,7 +31,7 @@ class ConditionalWorker(
         predicate(item).let { condition ->
             item.set(condition, WellKnownKeys.TEST_RESULT)
             if (condition) {
-                item.set(item.getOptional(key))
+                item.set(value(item))
             }
         }.let { true }
 }

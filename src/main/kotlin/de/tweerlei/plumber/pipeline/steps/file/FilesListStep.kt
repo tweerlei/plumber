@@ -28,6 +28,7 @@ class FilesListStep: ProcessingStep {
     override val group = "Files"
     override val name = "List files"
     override val description = "Read file names from the given directory"
+    override fun argDescription() = "<path>"
 
     override fun producedAttributesFor(arg: String) = setOf(
         WellKnownKeys.PATH,

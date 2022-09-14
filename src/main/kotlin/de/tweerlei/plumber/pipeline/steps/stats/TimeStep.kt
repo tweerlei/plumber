@@ -27,6 +27,7 @@ class TimeStep: ProcessingStep {
     override val group = "Logging"
     override val name = "Time item throughput"
     override val description = "Log item throughput every given number of items"
+    override fun argDescription() = intervalFor("").toString()
 
     override fun isValuePassThrough() = true
 
@@ -40,7 +41,10 @@ class TimeStep: ProcessingStep {
     ) =
         TimingWorker(
             predecessorName,
-            arg.toLongOrNull() ?: Long.MAX_VALUE,
+            intervalFor(arg),
             w
         )
+
+    private fun intervalFor(arg: String) =
+        arg.toLongOrNull() ?: Long.MAX_VALUE
 }

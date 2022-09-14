@@ -28,6 +28,7 @@ class FilesDeleteStep: ProcessingStep {
     override val group = "Files"
     override val name = "Delete files"
     override val description = "Delete files from the given directory"
+    override fun argDescription() = "<path>"
 
     override fun isValuePassThrough() = true
     override fun requiredAttributesFor(arg: String) = setOf(

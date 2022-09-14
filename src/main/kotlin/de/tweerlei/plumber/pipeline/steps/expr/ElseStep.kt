@@ -17,6 +17,7 @@ package de.tweerlei.plumber.pipeline.steps.expr
 
 import de.tweerlei.plumber.pipeline.PipelineParams
 import de.tweerlei.plumber.pipeline.steps.ProcessingStep
+import de.tweerlei.plumber.pipeline.steps.toWorkItemAccessor
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.Worker
 import org.springframework.stereotype.Service
@@ -27,6 +28,7 @@ class ElseStep: ProcessingStep {
     override val group = "Attributes"
     override val name = "Conditionally set value"
     override val description = "Sets the current value to the given attribute's value if a previous then: did not match"
+    override fun argDescription() = "<value>"
 
     override fun requiredAttributesFor(arg: String) = setOf(
         WellKnownKeys.TEST_RESULT,
@@ -43,7 +45,7 @@ class ElseStep: ProcessingStep {
     ) =
         de.tweerlei.plumber.worker.impl.attribute.ConditionalWorker(
             { item -> item.getAs<Boolean>(WellKnownKeys.TEST_RESULT).not() },
-            arg,
+            arg.toWorkItemAccessor(),
             w
         )
 }

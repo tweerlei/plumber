@@ -28,6 +28,7 @@ class PartitionsStep: ProcessingStep {
     override val group = "Ranges"
     override val name = "Generate partitions"
     override val description = "Generate key ranges for n partitions, use with parallel:<n>"
+    override fun argDescription() = partitionCountFor("").toString()
 
     override fun producedAttributesFor(arg: String) = setOf(
         WellKnownKeys.RANGE
@@ -42,11 +43,14 @@ class PartitionsStep: ProcessingStep {
         parallelDegree: Int
     ) =
         KeyRangeWorker(
-            arg.toInt(),
+            partitionCountFor(arg),
             params.keyChars,
             params.startAfterKey,
             params.stopAfterKey,
             params.maxFilesPerThread,
             w
         )
+
+    private fun partitionCountFor(arg: String) =
+        arg.toIntOrNull() ?: 8
 }

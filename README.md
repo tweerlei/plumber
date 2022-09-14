@@ -4,121 +4,122 @@
 Multithreaded data processor.
 A processing pipeline is built from command line arguments.
 
-Supported steps are:
+Supported steps and default arguments (if any) are:
 
 AWS DynamoDB
-  dynamodb-delete:<arg>       Delete an element from the given DynamoDB table
-  dynamodb-key:<arg>          Convert item to a DynamoDB key with the specified range key
-  dynamodb-list:<arg>         List elements from the given DynamoDB table
-  dynamodb-read:<arg>         Read an element from the given DynamoDB table
-  dynamodb-write:<arg>        Write an element to the given DynamoDB table
+  dynamodb-delete:<table>     Delete an element from the given DynamoDB table
+  dynamodb-key:<value>        Convert item to a DynamoDB key with the specified range key
+  dynamodb-list:<table>       List elements from the given DynamoDB table
+  dynamodb-read:<table>       Read an element from the given DynamoDB table
+  dynamodb-write:<table>      Write an element to the given DynamoDB table
 AWS S3
-  s3-bulkdelete:<arg>         Deletes multiple objects from the given S3 bucket, use with bulk:<n>
-  s3-delete:<arg>             Delete an object from the given S3 bucket
-  s3-list:<arg>               List objects from the given S3 bucket
-  s3-read:<arg>               Get an object from the given S3 bucket
-  s3-write:<arg>              Put an object into the given S3 bucket
+  s3-bulkdelete:<bucket>      Deletes multiple objects from the given S3 bucket, use with bulk:<n>
+  s3-delete:<bucket>          Delete an object from the given S3 bucket
+  s3-list:<bucket>            List objects from the given S3 bucket
+  s3-read:<bucket>            Get an object from the given S3 bucket
+  s3-write:<bucket>           Put an object into the given S3 bucket
 AWS SQS
-  sqs-bulkdelete:<arg>        Delete multiple messages from the given SQS queue, use with bulk:<n>
-  sqs-bulkwrite:<arg>         Send multiple messages to the given SQS queue, use with bulk:<n>
-  sqs-delete:<arg>            Delete a message from the given SQS queue
-  sqs-read:<arg>              Receive messages from the given SQS queue
-  sqs-write:<arg>             Send a message to the given SQS queue
+  sqs-bulkdelete:<queue>      Delete multiple messages from the given SQS queue, use with bulk:<n>
+  sqs-bulkwrite:<queue>       Send multiple messages to the given SQS queue, use with bulk:<n>
+  sqs-delete:<queue>          Delete a message from the given SQS queue
+  sqs-read:<queue>            Receive messages from the given SQS queue
+  sqs-write:<queue>           Send a message to the given SQS queue
 Apache Kafka
-  kafka-read:<arg>            Receive messages from the given Kafka topic
-  kafka-write:<arg>           Send a message to the given Kafka topic
+  kafka-read:<topic>          Receive messages from the given Kafka topic
+  kafka-write:<topic>         Send a message to the given Kafka topic
 Attributes
-  and:<arg>                   Logically AND the current value with the given attribute's value
-  else:<arg>                  Sets the current value to the given attribute's value if a previous then: did not match
-  get:<arg>                   Set the current value to the given attribute
-  is-equal:<arg>              Compare the current value to the given attribute's value resulting in a boolean
-  is-greater:<arg>            Compare the current value to the given attribute's value resulting in a boolean
-  is-less:<arg>               Compare the current value to the given attribute's value resulting in a boolean
-  not:<arg>                   Logically negate the current value
-  or:<arg>                    Logically OR the current value with the given attribute's value
-  set:<arg>                   Set the given attribute to the current value
-  then:<arg>                  Sets the current value to the given attribute's value if current value is truthy
-  value:<arg>                 Sets the current value to the given value
-  xor:<arg>                   Logically XOR the current value with the given attribute's value
+  and:<value>                 Logically AND the current value with the given attribute's value
+  else:<value>                Sets the current value to the given attribute's value if a previous then: did not match
+  get:<name>                  Set the current value to the given attribute
+  is-equal:<value>            Compare the current value to the given attribute's value resulting in a boolean
+  is-greater:<value>          Compare the current value to the given attribute's value resulting in a boolean
+  is-less:<value>             Compare the current value to the given attribute's value resulting in a boolean
+  not                         Logically negate the current value
+  or:<value>                  Logically OR the current value with the given attribute's value
+  set:<name>                  Set the given attribute to the current value
+  then:<value>                Sets the current value to the given attribute's value if current value is truthy
+  value:<value>               Sets the current value to the given value
+  xor:<value>                 Logically XOR the current value with the given attribute's value
 CSV
-  csv-parse:<arg>             Deserialize objects from CSV text
-  csv-print:<arg>             Serialize objects to CSV text
-  csv-read:<arg>              Read CSV lines from the given file
-  csv-write:<arg>             Write current value as CSV object to the given file
+  csv-parse                   Deserialize objects from CSV text
+  csv-print                   Serialize objects to CSV text
+  csv-read:<path>             Read CSV lines from the given file
+  csv-write:<path>            Write current value as CSV object to the given file
 Files
-  files-delete:<arg>          Delete files from the given directory
-  files-list:<arg>            Read file names from the given directory
-  files-read:<arg>            Read files from the given base directory
-  files-write:<arg>           Write items as files in the given directory
-  lines-read:<arg>            Read lines from the given file
-  lines-write:<arg>           Write lines to the given file
+  files-delete:<path>         Delete files from the given directory
+  files-list:<path>           Read file names from the given directory
+  files-read:<path>           Read files from the given base directory
+  files-write:<path>          Write items as files in the given directory
+  lines-read:<path>           Read lines from the given file
+  lines-write:<path>          Write lines to the given file
 Flow control
-  bulk:<arg>                  Execute following steps using chunks of items
-  delay:<arg>                 Delay following steps by the given number of milliseconds
-  filter:<arg>                Keep only items that evaluate to the given boolean
-  parallel:<arg>              Execute following steps using the given number of threads
-  repeat:<arg>                Repeat the following steps a given number of times
-  retry:<arg>                 Retry the following steps a given number of times on error
-  unbulk:<arg>                Split bulks into separate items again
+  bulk:<number>               Execute following steps using chunks of items
+  delay:0                     Delay following steps by the given number of milliseconds
+  filter:true                 Keep only items that evaluate to the given boolean
+  parallel:8                  Execute following steps using the given number of threads
+  repeat:9223372036854775807  Repeat the following steps a given number of times
+  retry:9223372036854775807   Retry the following steps a given number of times on error
+  unbulk                      Split bulks into separate items again
 JDBC
-  jdbc-delete:<arg>           Delete a row from the given JDBC table
-  jdbc-list:<arg>             Retrieve rows from the given JDBC table
-  jdbc-range:<arg>            Determine the actual range of values for the JDBC primaryKey, use with partition:n
-  jdbc-read:<arg>             Retrieve a row from the given JDBC table
-  jdbc-write:<arg>            Insert rows into the given JDBC table
+  jdbc-delete:<table>         Delete a row from the given JDBC table
+  jdbc-list:<table>           Retrieve rows from the given JDBC table
+  jdbc-range:<table>          Determine the actual range of values for the JDBC primaryKey, use with partition:n
+  jdbc-read:<table>           Retrieve a row from the given JDBC table
+  jdbc-write:<table>          Insert rows into the given JDBC table
 JSON
-  json-parse:<arg>            Deserialize objects from JSON text
-  json-print:<arg>            Serialize objects to JSON text
-  json-read:<arg>             Read JSON objects from the given file
-  json-write:<arg>            Write current value as JSON object to the given file
+  json-parse                  Deserialize objects from JSON text
+  json-print                  Serialize objects to JSON text
+  json-read:<path>            Read JSON objects from the given file
+  json-write:<path>           Write current value as JSON object to the given file
 Logging
-  bounds:<arg>                Log smallest and largest value
-  count:<arg>                 Log item counts at every given number of items
-  dump:<arg>                  Dump raw item contents
-  error:<arg>                 Throw an error every given number of items
-  group:<arg>                 Log item counts per value at every given number of items
-  histogram:<arg>             Build a histogram with the given number of buckets
-  log:<arg>                   Log the current value
-  sum:<arg>                   Log item sum of item sizes every given number of bytes
-  time:<arg>                  Log item throughput every given number of items
+  bounds                      Log smallest and largest value
+  count:9223372036854775807   Log item counts at every given number of items
+  dump                        Dump raw item contents
+  error:1                     Throw an error every given number of items
+  group:9223372036854775807   Log item counts per value at every given number of items
+  histogram:10                Build a histogram with the given number of buckets
+  log                         Log the current value
+  sum:9223372036854775807     Log item sum of item sizes every given number of bytes
+  time:9223372036854775807    Log item throughput every given number of items
 MongoDB
-  mongodb-delete:<arg>        Delete a document from the given MongoDB collection
-  mongodb-list:<arg>          List documents from the given MongoDB table
-  mongodb-read:<arg>          Read a document from the given MongoDB collection
-  mongodb-write:<arg>         Insert a document into the given MongoDB collection
+  mongodb-delete:<collection> Delete a document from the given MongoDB collection
+  mongodb-list:<collection>   List documents from the given MongoDB table
+  mongodb-read:<collection>   Read a document from the given MongoDB collection
+  mongodb-write:<collection>  Insert a document into the given MongoDB collection
 Nodes
-  node-clear:<arg>            Clear the curent JSON object
-  node-del:<arg>              Remove a subtree of a JSON object using the given JSONPath
-  node-each:<arg>             Extract elements from a subtree of a JSON object using the given JSONPath
-  node-get:<arg>              Extract a subtree of a JSON object using the given JSONPath
-  node-set:<arg>              Replace a subtree of a JSON object using the given JSONPath
-  node-sub:<arg>              Replace the current node with one of its sub nodes
+  node-clear                  Clear the curent JSON object
+  node-del:<path>             Remove a subtree of a JSON object using the given JSONPath
+  node-each:<path>            Extract elements from a subtree of a JSON object using the given JSONPath
+  node-get:<path>             Extract a subtree of a JSON object using the given JSONPath
+  node-set:<path>             Replace a subtree of a JSON object using the given JSONPath
+  node-sub:<path>             Replace the current node with one of its sub nodes
 Ranges
-  is-inrange:<arg>            Compare the current value to the current range resulting in a boolean
-  partitions:<arg>            Generate key ranges for n partitions, use with parallel:<n>
-  range-each:<arg>            Generate items with the values of the input item's range using the given increment
-  range-get:<arg>             Get a range field, one of (start, end)
-  range-set:<arg>             Set a range field, e.g. for usage with each:, one of (start, end)
+  is-inrange                  Compare the current value to the current range resulting in a boolean
+  partitions:8                Generate key ranges for n partitions, use with parallel:<n>
+  range-clear                 Clear the curent range object
+  range-each:1                Generate items with the values of the input item's range using the given increment
+  range-get:start             Get a range field, one of (start, end)
+  range-set:start             Set a range field, e.g. for usage with each:, one of (start, end)
 Records
-  rec-clear:<arg>             Clear the curent record
-  rec-del:<arg>               Remove the given field from the current record
-  rec-each:<arg>              Extract record elements to individual items
-  rec-get:<arg>               Set the given record field as current value
-  rec-set:<arg>               Set the given record field to the current value
+  rec-clear                   Clear the curent record
+  rec-del:<name>              Remove the given field from the current record
+  rec-each                    Extract record elements to individual items
+  rec-get:<name>              Set the given record field as current value
+  rec-set:<name>              Set the given record field to the current value
 Text
-  digest:<arg>                Calculate a message digest using the given algorithm
-  find:<arg>                  Find matches of the given regular expression, use with notnull: or replace:
-  format:<arg>                Produces the argument with all occurrences of ${name} replaced by their value
-  length:<arg>                Calculate the length of the current value
-  replace:<arg>               Replace all matches of a previous find: with the given replacement
-  text-read:<arg>             Decode binary data from a string using the given algorithm
-  text-write:<arg>            Encode binary data as text using the given algorithm
-  uuid:<arg>                  Generate random UUIDs
+  digest:sha1                 Calculate a message digest using the given algorithm
+  find:<regex>                Find matches of the given regular expression, use with notnull: or replace:
+  format:<format>             Produces the argument with all occurrences of ${name} replaced by their value
+  length                      Calculate the length of the current value
+  replace:<value>             Replace all matches of a previous find: with the given replacement
+  text-read:hex               Decode binary data from a string using the given algorithm
+  text-write:hex              Encode binary data as text using the given algorithm
+  uuid                        Generate random UUIDs
 XML
-  xml-parse:<arg>             Deserialize objects from XML text
-  xml-print:<arg>             Serialize objects to XML text
-  xml-read:<arg>              Read XML objects from the given file
-  xml-write:<arg>             Write current value as XML object to the given file
+  xml-parse                   Deserialize objects from XML text
+  xml-print                   Serialize objects to XML text
+  xml-read:<path>             Read XML objects from the given file
+  xml-write:<path>            Write current value as XML object to the given file
 
 Supported global options and their defaults (if any) are:
 
@@ -127,30 +128,30 @@ Supported global options and their defaults (if any) are:
 --profile=default             Use 'quiet' to disable start-up banner and log only warnings and errors
 
 --explain                     Explain resulting plan, don't execute
---fail-fast                   Fail on first processing error
---limit=<n>                   Stop after reading n objects (per thread, default is unlimited)
 --bulk-size=1000              Bulk size for steps that process multiple items at once
---queue-size=10               Queue size for items passed between threads
+--limit=9223372036854775807   Stop after reading n objects (per thread, default is unlimited)
+--fail-fast                   Fail on first processing error
 --retry-delay=0               Wait this number of seconds before retrying failed messages
---requester-pays              Requester pays access to S3 buckets
---assume-role=<arn>           Assume the given IAM role for all AWS operations
---start-after=<key>           Start after the given key
---stop-after=<key>            Stop after the given key
---start-range=<key>           Start after the given range key
---stop-range=<key>            Stop after the given range key
---key-chars=<list>            Use the given characters to generate keys (defaults to safe S3 chars)
---primary-key=id              Use the given attribute as primary key (defaults to '_id' for MongoDB)
---partition-key=<name>        Use the given attribute as DynamoDB partition key
---range-key=<name>            Use the given attribute as DynamoDB range key
---select=<fields>             Database fields to fetch, separated by commas
---element-name=<name>         XML element name to read/write
---root-element-name=<name>    XML root element name to wrap output in
---separator=,                 CSV separator character
---header                      Read/write CSV header
+--queue-size=10               Queue size for items passed between threads
+--primary-key=<arg>           Use the given attribute as primary key (defaults to 'id' for JDBC and '_id' for MongoDB)
+--select=[]                   Database fields to fetch, separated by commas
+--start-after=<arg>           Start after the given key
+--stop-after=<arg>            Stop after the given key
+--key-chars=<arg>             Use the given characters to generate keys (defaults to safe S3 chars)
+--assume-role=<arg>           AWS; Assume the given IAM role for all AWS operations
+--requester-pays              AWS: Requester pays access to S3 buckets
+--wait=1                      Kafka/SQS: Wait at most this number of seconds for a new message
+--follow                      Kafka/SQS: Keep polling for new messages
+--reread                      Kafka/SQS: Re-read all messages
+--partition-key=<arg>         DynamoDB: Use the given attribute as partition key
+--range-key=<arg>             DynamoDB: Use the given attribute as range key
+--start-range=<arg>           DynamoDB: Start after the given range key
+--stop-range=<arg>            DynamoDB: Stop after the given range key
+--separator=,                 CSV: Separator character
+--header                      CSV: Read/write header
 --pretty-print                Pretty print JSON and XML output
---wait=1                      Wait at most this number of seconds for a new message
---follow                      Keep polling for new messages
---reread                      Re-read all messages
+--element-name=<arg>          XML: Element name to read/write
+--root-element-name=<arg>     XML: Root element name to wrap output in
 
 Credentials can be passed via environment variables:
 

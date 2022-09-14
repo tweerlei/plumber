@@ -32,6 +32,7 @@ class NodeSetStep(
     override val group = "Nodes"
     override val name = "Set JSON path"
     override val description = "Replace a subtree of a JSON object using the given JSONPath"
+    override fun argDescription() = "<path>"
 
     override fun isValuePassThrough() = true
     override fun producedAttributesFor(arg: String) = setOf(

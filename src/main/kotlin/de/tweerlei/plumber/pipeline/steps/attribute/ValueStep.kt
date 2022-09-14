@@ -15,9 +15,9 @@
  */
 package de.tweerlei.plumber.pipeline.steps.attribute
 
-import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
-import de.tweerlei.plumber.pipeline.steps.toWorkItemValue
+import de.tweerlei.plumber.pipeline.steps.ProcessingStep
+import de.tweerlei.plumber.pipeline.steps.toWorkItemAccessor
 import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.attribute.SettingWorker
@@ -29,6 +29,7 @@ class ValueStep: ProcessingStep {
     override val group = "Attributes"
     override val name = "Set value"
     override val description = "Sets the current value to the given value"
+    override fun argDescription() = "<value>"
 
     override fun createWorker(
         arg: String,
@@ -38,5 +39,5 @@ class ValueStep: ProcessingStep {
         params: PipelineParams,
         parallelDegree: Int
     ) =
-        SettingWorker(mapOf(WorkItem.DEFAULT_KEY to arg.toWorkItemValue()), w)
+        SettingWorker(WorkItem.DEFAULT_KEY, arg.toWorkItemAccessor(), w)
 }

@@ -32,6 +32,7 @@ class CsvWriteStep(
     override val group = "CSV"
     override val name = "Write value as CSV"
     override val description = "Write current value as CSV object to the given file"
+    override fun argDescription() = "<path>"
 
     override fun expectedInputFor(arg: String) = Record::class.java
     override fun parallelDegreeFor(arg: String) = 1

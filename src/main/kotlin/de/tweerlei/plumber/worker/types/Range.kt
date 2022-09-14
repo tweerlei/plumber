@@ -15,6 +15,7 @@
  */
 package de.tweerlei.plumber.worker.types
 
+import java.time.Duration
 import java.time.Instant
 
 class Range(
@@ -26,6 +27,7 @@ class Range(
             null -> false
             is Boolean -> contains(value, startAfter?.coerceToBoolean(), endWith?.coerceToBoolean())
             is Instant -> contains(value, startAfter?.coerceToInstant(), endWith?.coerceToInstant())
+            is Duration -> contains(value, startAfter?.coerceToDuration(), endWith?.coerceToDuration())
             is Long -> contains(value, startAfter?.coerceToLong(), endWith?.coerceToLong())
             is Number -> contains(value.toDouble(), startAfter?.coerceToNumber()?.toDouble(), endWith?.coerceToNumber()?.toDouble())
             else -> contains(value.coerceToString(), startAfter?.coerceToString(), endWith?.coerceToString())

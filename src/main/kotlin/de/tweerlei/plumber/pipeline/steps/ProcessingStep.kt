@@ -23,6 +23,8 @@ interface ProcessingStep {
     val group: String
     val name: String
     val description: String
+    fun argDescription(): String =
+        ""
 
     fun isValuePassThrough(): Boolean =
         false

@@ -28,6 +28,7 @@ class DigestStep: ProcessingStep {
     override val group = "Text"
     override val name = "Calculate digest"
     override val description = "Calculate a message digest using the given algorithm"
+    override fun argDescription() = algorithmFor("")
 
     override fun producedAttributesFor(arg: String) = setOf(
         WellKnownKeys.DIGEST,
@@ -43,7 +44,10 @@ class DigestStep: ProcessingStep {
         parallelDegree: Int
     ) =
         DigestWorker(
-            arg.ifEmpty { "sha1" },
+            algorithmFor(arg),
             w
         )
+
+    private fun algorithmFor(arg: String) =
+        arg.ifEmpty { "sha1" }
 }

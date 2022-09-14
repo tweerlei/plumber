@@ -33,6 +33,7 @@ class MongoDBPutStep(
     override val group = "MongoDB"
     override val name = "Put MongoDB document"
     override val description = "Insert a document into the given MongoDB collection"
+    override fun argDescription() = "<collection>"
 
     override fun expectedInputFor(arg: String) = JsonNode::class.java
 

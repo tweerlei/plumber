@@ -15,11 +15,12 @@
  */
 package de.tweerlei.plumber.pipeline.steps.attribute
 
-import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
+import de.tweerlei.plumber.pipeline.steps.ProcessingStep
+import de.tweerlei.plumber.pipeline.steps.toWorkItemAccessor
 import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.Worker
-import de.tweerlei.plumber.worker.impl.attribute.ModifyingWorker
+import de.tweerlei.plumber.worker.impl.attribute.SettingWorker
 import org.springframework.stereotype.Service
 
 @Service("setWorker")
@@ -28,6 +29,7 @@ class SetAttributeStep: ProcessingStep {
     override val group = "Attributes"
     override val name = "Set attribute"
     override val description = "Set the given attribute to the current value"
+    override fun argDescription() = "<name>"
 
     override fun isValuePassThrough() = true
     override fun producedAttributesFor(arg: String) = setOf(
@@ -42,5 +44,5 @@ class SetAttributeStep: ProcessingStep {
         params: PipelineParams,
         parallelDegree: Int
     ) =
-        ModifyingWorker(WorkItem.DEFAULT_KEY, arg, w)
+        SettingWorker(arg, { item -> item.getOptional(WorkItem.DEFAULT_KEY) }, w)
 }

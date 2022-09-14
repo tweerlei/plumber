@@ -21,9 +21,9 @@ import de.tweerlei.plumber.worker.Worker
 import mu.KLogging
 
 class RepeatingWorker(
-    private val number: Int,
+    private val number: Long,
     worker: Worker
-): GeneratingWorker(Long.MAX_VALUE, worker) {
+): GeneratingWorker(number, worker) {
 
     companion object: KLogging()
 

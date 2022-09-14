@@ -28,6 +28,7 @@ class RangeEachStep: ProcessingStep {
     override val group = "Ranges"
     override val name = "Iterate range"
     override val description = "Generate items with the values of the input item's range using the given increment"
+    override fun argDescription() = stepCountFor("").toString()
 
     override fun requiredAttributesFor(arg: String) = setOf(
         WellKnownKeys.RANGE
@@ -41,5 +42,8 @@ class RangeEachStep: ProcessingStep {
         params: PipelineParams,
         parallelDegree: Int
     ) =
-        RangeIteratingWorker(params.keyChars, arg.toLongOrNull() ?: 1, params.maxFilesPerThread, w)
+        RangeIteratingWorker(params.keyChars, stepCountFor(arg), params.maxFilesPerThread, w)
+
+    private fun stepCountFor(arg: String) =
+        arg.toLongOrNull() ?: 1
 }

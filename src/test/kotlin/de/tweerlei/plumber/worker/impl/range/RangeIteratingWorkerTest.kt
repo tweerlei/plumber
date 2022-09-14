@@ -28,9 +28,11 @@ class RangeIteratingWorkerTest {
     @Test
     fun `When increment is 1 then items are created`() {
         val items = TestWorkerRunner()
-            .append { w -> SettingWorker(mapOf(
-                WellKnownKeys.RANGE to Range(0L, 10L)
-            ), w) }
+            .append { w -> SettingWorker(
+                WellKnownKeys.RANGE,
+                { Range(0L, 10L) },
+                w
+            ) }
             .append { w -> RangeIteratingWorker("0123456789", 1, Long.MAX_VALUE, w) }
             .run(WorkItem.of(""))
             .toList()
@@ -51,9 +53,11 @@ class RangeIteratingWorkerTest {
     @Test
     fun `When increment is 2 then items are created`() {
         val items = TestWorkerRunner()
-            .append { w -> SettingWorker(mapOf(
-                WellKnownKeys.RANGE to Range(0L, 10L)
-            ), w) }
+            .append { w -> SettingWorker(
+                WellKnownKeys.RANGE,
+                { Range(0L, 10L) },
+                w
+            ) }
             .append { w -> RangeIteratingWorker("0123456789", 2, Long.MAX_VALUE, w) }
             .run(WorkItem.of(""))
             .toList()
@@ -69,9 +73,11 @@ class RangeIteratingWorkerTest {
     @Test
     fun `When increment is -2 then items are created`() {
         val items = TestWorkerRunner()
-            .append { w -> SettingWorker(mapOf(
-                WellKnownKeys.RANGE to Range(10L, 0L)
-            ), w) }
+            .append { w -> SettingWorker(
+                WellKnownKeys.RANGE,
+                { Range(10L, 0L) },
+                w
+            ) }
             .append { w -> RangeIteratingWorker("0123456789", -2, Long.MAX_VALUE, w) }
             .run(WorkItem.of(""))
             .toList()
@@ -87,9 +93,11 @@ class RangeIteratingWorkerTest {
     @Test
     fun `When increment is 2 but range is decreasing then no items are created`() {
         val items = TestWorkerRunner()
-            .append { w -> SettingWorker(mapOf(
-                WellKnownKeys.RANGE to Range(10L, 0L)
-            ), w) }
+            .append { w -> SettingWorker(
+                WellKnownKeys.RANGE,
+                { Range(10L, 0L) },
+                w
+            ) }
             .append { w -> RangeIteratingWorker("0123456789", 2, Long.MAX_VALUE, w) }
             .run(WorkItem.of(""))
             .toList()
@@ -100,9 +108,11 @@ class RangeIteratingWorkerTest {
     @Test
     fun `When increment is -2 but range is increasing then no items are created`() {
         val items = TestWorkerRunner()
-            .append { w -> SettingWorker(mapOf(
-                WellKnownKeys.RANGE to Range(0L, 10L)
-            ), w) }
+            .append { w -> SettingWorker(
+                WellKnownKeys.RANGE,
+                { Range(0L, 10L) },
+                w
+            ) }
             .append { w -> RangeIteratingWorker("0123456789", -2, Long.MAX_VALUE, w) }
             .run(WorkItem.of(""))
             .toList()
@@ -113,9 +123,11 @@ class RangeIteratingWorkerTest {
     @Test
     fun `When increment is 1 then strings are created`() {
         val items = TestWorkerRunner()
-            .append { w -> SettingWorker(mapOf(
-                WellKnownKeys.RANGE to Range("0", "10")
-            ), w) }
+            .append { w -> SettingWorker(
+                WellKnownKeys.RANGE,
+                { Range("0", "10") },
+                w
+            ) }
             .append { w -> RangeIteratingWorker("0123456789abcdef", 1, Long.MAX_VALUE, w) }
             .run(WorkItem.of(""))
             .toList()
@@ -142,9 +154,11 @@ class RangeIteratingWorkerTest {
     @Test
     fun `When increment is 2 then strings are created`() {
         val items = TestWorkerRunner()
-            .append { w -> SettingWorker(mapOf(
-                WellKnownKeys.RANGE to Range("0", "10")
-            ), w) }
+            .append { w -> SettingWorker(
+                WellKnownKeys.RANGE,
+                { Range("0", "10") },
+                w
+            ) }
             .append { w -> RangeIteratingWorker("0123456789abcdef", 2, Long.MAX_VALUE, w) }
             .run(WorkItem.of(""))
             .toList()
@@ -163,9 +177,11 @@ class RangeIteratingWorkerTest {
     @Test
     fun `When increment is -2 then strings are created`() {
         val items = TestWorkerRunner()
-            .append { w -> SettingWorker(mapOf(
-                WellKnownKeys.RANGE to Range("10", "0")
-            ), w) }
+            .append { w -> SettingWorker(
+                WellKnownKeys.RANGE,
+                { Range("10", "0") },
+                w
+            ) }
             .append { w -> RangeIteratingWorker("0123456789abcdef", -2, Long.MAX_VALUE, w) }
             .run(WorkItem.of(""))
             .toList()
@@ -184,9 +200,11 @@ class RangeIteratingWorkerTest {
     @Test
     fun `When increment is 2 but range is decreasing then no strings are created`() {
         val items = TestWorkerRunner()
-            .append { w -> SettingWorker(mapOf(
-                WellKnownKeys.RANGE to Range("10", "0")
-            ), w) }
+            .append { w -> SettingWorker(
+                WellKnownKeys.RANGE,
+                { Range("10", "0") },
+                w
+            ) }
             .append { w -> RangeIteratingWorker("0123456789abcdef", 2, Long.MAX_VALUE, w) }
             .run(WorkItem.of(""))
             .toList()
@@ -197,9 +215,11 @@ class RangeIteratingWorkerTest {
     @Test
     fun `When increment is -2 but range is increasing then no strings are created`() {
         val items = TestWorkerRunner()
-            .append { w -> SettingWorker(mapOf(
-                WellKnownKeys.RANGE to Range("0", "10")
-            ), w) }
+            .append { w -> SettingWorker(
+                WellKnownKeys.RANGE,
+                { Range("0", "10") },
+                w
+            ) }
             .append { w -> RangeIteratingWorker("0123456789abcdef", -2, Long.MAX_VALUE, w) }
             .run(WorkItem.of(""))
             .toList()

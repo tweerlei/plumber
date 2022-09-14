@@ -50,16 +50,16 @@ class PipelineBuilder(
         )
     }
 
-    fun build(params: PipelineParams) =
-        createWorkerDefinitions(params)
-            .let { definitions -> createWorkers(definitions, params) }
-            .let { worker -> if (params.explain) null else worker }
+    fun build(definition: PipelineDefinition) =
+        createWorkerDefinitions(definition.steps)
+            .let { definitions -> createWorkers(definitions, definition.params) }
+            .let { worker -> if (definition.params.explain) null else worker }
 
-    private fun createWorkerDefinitions(params: PipelineParams): List<WorkerDefinition> {
+    private fun createWorkerDefinitions(steps: List<PipelineDefinition.Step>): List<WorkerDefinition> {
         var parallelDegree = 1
         var producedAttributes = emptySet<String>()
         val workerDefinitions = mutableListOf<WorkerDefinition>()
-        params.steps.forEach { step ->
+        steps.forEach { step ->
             factory.processingStepFor(step.action)
                 .let { processingStep ->
                     val newParallelDegree = processingStep.parallelDegreeFor(step.arg) ?: parallelDegree

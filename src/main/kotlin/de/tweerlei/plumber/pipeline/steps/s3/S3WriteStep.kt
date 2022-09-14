@@ -31,6 +31,7 @@ class S3WriteStep(
     override val group = "AWS S3"
     override val name = "Write S3 object"
     override val description = "Put an object into the given S3 bucket"
+    override fun argDescription() = "<bucket>"
 
     override fun isValuePassThrough() = true
     override fun requiredAttributesFor(arg: String) = setOf(

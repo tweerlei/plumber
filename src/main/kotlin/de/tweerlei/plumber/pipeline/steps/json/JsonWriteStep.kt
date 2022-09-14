@@ -31,6 +31,7 @@ class JsonWriteStep(
     override val group = "JSON"
     override val name = "Write value as JSON"
     override val description = "Write current value as JSON object to the given file"
+    override fun argDescription() = "<path>"
 
     override fun isValuePassThrough() = true
     override fun parallelDegreeFor(arg: String) = 1

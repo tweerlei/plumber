@@ -27,6 +27,7 @@ class EncodeStep: ProcessingStep {
     override val group = "Text"
     override val name = "Encode binary data"
     override val description = "Encode binary data as text using the given algorithm"
+    override fun argDescription() = encodingFor("")
 
     override fun createWorker(
         arg: String,
@@ -37,7 +38,10 @@ class EncodeStep: ProcessingStep {
         parallelDegree: Int
     ) =
         EncodingWorker(
-            arg.ifEmpty { "hex" },
+            encodingFor(arg),
             w
         )
+
+    private fun encodingFor(arg: String) =
+        arg.ifEmpty { "hex" }
 }

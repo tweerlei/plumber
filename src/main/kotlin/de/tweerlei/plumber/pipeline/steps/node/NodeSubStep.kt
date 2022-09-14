@@ -29,6 +29,7 @@ class NodeSubStep: ProcessingStep {
     override val group = "Nodes"
     override val name = "Extract JSON node"
     override val description = "Replace the current node with one of its sub nodes"
+    override fun argDescription() = "<path>"
 
     override fun requiredAttributesFor(arg: String) = setOf(
         WellKnownKeys.NODE

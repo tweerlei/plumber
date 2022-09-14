@@ -34,6 +34,7 @@ class MongoDBDeleteStep(
     override val group = "MongoDB"
     override val name = "Delete MongoDB document"
     override val description = "Delete a document from the given MongoDB collection"
+    override fun argDescription() = "<collection>"
 
     override fun expectedInputFor(arg: String) = JsonNode::class.java
     override fun producedAttributesFor(arg: String) = setOf(

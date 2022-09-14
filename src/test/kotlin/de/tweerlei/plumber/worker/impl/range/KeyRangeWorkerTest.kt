@@ -28,9 +28,11 @@ class KeyRangeWorkerTest {
     @Test
     fun `When range is numeric then partitions are created`() {
         val items = TestWorkerRunner()
-            .append { w -> SettingWorker(mapOf(
-                WellKnownKeys.RANGE to Range(100L, 200L)
-            ), w) }
+            .append { w -> SettingWorker(
+                WellKnownKeys.RANGE,
+                { Range(100L, 200L) },
+                w
+            ) }
             .append { w -> KeyRangeWorker(10, null, null, null, Long.MAX_VALUE, w) }
             .run(WorkItem.of(""))
             .toList()
@@ -51,9 +53,11 @@ class KeyRangeWorkerTest {
     @Test
     fun `When range is small then partitions are created`() {
         val items = TestWorkerRunner()
-            .append { w -> SettingWorker(mapOf(
-                WellKnownKeys.RANGE to Range(100, 105)
-            ), w) }
+            .append { w -> SettingWorker(
+                WellKnownKeys.RANGE,
+                { Range(100, 105) },
+                w
+            ) }
             .append { w -> KeyRangeWorker(10, null, null, null, Long.MAX_VALUE, w) }
             .run(WorkItem.of(""))
             .toList()

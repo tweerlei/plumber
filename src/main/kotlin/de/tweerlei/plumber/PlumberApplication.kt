@@ -50,14 +50,14 @@ class PlumberApplication(
 
     override fun run(args: ApplicationArguments) {
         try {
-            logger.info("_______________________________________________________Configuration__")
+            logger.info("_________________________________________________________Configuring__")
             cmdLineProcessor.parseArguments(args)
-                ?.let { params ->
+                ?.let { definition ->
                     logger.info("___________________________________________________Building pipeline__")
-                    pipelineBuilder.build(params)
+                    pipelineBuilder.build(definition)
                         ?.let { worker ->
                             logger.info("____________________________________________________Running pipeline__")
-                            workerRunner.runWorker(worker, params)
+                            workerRunner.runWorker(worker, definition.params)
                             logger.info("_______________________________________________Finished_successfully__")
                         }
                 }

@@ -28,6 +28,7 @@ class RecordGetStep: ProcessingStep {
     override val group = "Records"
     override val name = "Get record field"
     override val description = "Set the given record field as current value"
+    override fun argDescription() = "<name>"
 
     override fun requiredAttributesFor(arg: String) = setOf(
         WellKnownKeys.RECORD

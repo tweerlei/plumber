@@ -67,7 +67,7 @@ class FindReplaceWorkerTest {
 
         val item = TestWorkerRunner()
             .append { w -> MatchingWorker(Regex("foo.*bar"), w) }
-            .append { w -> ReplacingWorker("bar", w) }
+            .append { w -> ReplacingWorker({ "bar" }, w) }
             .run(WorkItem.of("foobazbar"))
             .singleOrNull()
 
@@ -80,7 +80,7 @@ class FindReplaceWorkerTest {
 
         val item = TestWorkerRunner()
             .append { w -> MatchingWorker(Regex("foo(.*)bar"), w) }
-            .append { w -> ReplacingWorker("doo$1", w) }
+            .append { w -> ReplacingWorker({ "doo$1" }, w) }
             .run(WorkItem.of("0foobazbar1"))
             .singleOrNull()
 
@@ -93,7 +93,7 @@ class FindReplaceWorkerTest {
 
         val item = TestWorkerRunner()
             .append { w -> MatchingWorker(Regex("^foo(.*)bar$"), w) }
-            .append { w -> ReplacingWorker("doo$1", w) }
+            .append { w -> ReplacingWorker({ "doo$1" }, w) }
             .run(WorkItem.of("foobazbar"))
             .singleOrNull()
 
@@ -106,7 +106,7 @@ class FindReplaceWorkerTest {
 
         val item = TestWorkerRunner()
             .append { w -> MatchingWorker(Regex("^foo(.*)bar$"), w) }
-            .append { w -> ReplacingWorker("doo$1", w) }
+            .append { w -> ReplacingWorker({ "doo$1" }, w) }
             .run(WorkItem.of("0foobazbar1"))
             .singleOrNull()
 

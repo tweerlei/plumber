@@ -1,9 +1,11 @@
 package de.tweerlei.plumber.pipeline.steps
 
+import de.tweerlei.plumber.worker.WorkItemAccessor
 import de.tweerlei.plumber.worker.types.toComparable
 
-fun String.toWorkItemValue() =
+fun String.toWorkItemAccessor(): WorkItemAccessor<Any?> =
     when {
-        startsWith(":") -> substring(1)
-        else -> toComparable()
+        startsWith(":") -> { _ -> substring(1) }
+        startsWith("@") -> { item -> item.getOptional(substring(1)) }
+        else -> { _ -> toComparable() }
     }

@@ -39,5 +39,5 @@ class NodeClearStep: ProcessingStep {
         params: PipelineParams,
         parallelDegree: Int
     ) =
-        SettingWorker(mapOf(WellKnownKeys.NODE to null), w)
+        SettingWorker(WellKnownKeys.NODE, { null }, w)
 }

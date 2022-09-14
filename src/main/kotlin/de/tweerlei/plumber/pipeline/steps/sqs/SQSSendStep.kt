@@ -30,6 +30,7 @@ class SQSSendStep(
     override val group = "AWS SQS"
     override val name = "Send SQS message"
     override val description = "Send a message to the given SQS queue"
+    override fun argDescription() = "<queue>"
 
     override fun isValuePassThrough() = true
 

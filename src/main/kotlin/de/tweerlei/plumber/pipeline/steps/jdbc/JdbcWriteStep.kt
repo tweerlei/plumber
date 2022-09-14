@@ -31,6 +31,7 @@ class JdbcWriteStep(
     override val group = "JDBC"
     override val name = "Insert JDBC rows"
     override val description = "Insert rows into the given JDBC table"
+    override fun argDescription() = "<table>"
 
     override fun expectedInputFor(arg: String) = Record::class.java
 

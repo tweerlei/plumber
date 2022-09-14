@@ -27,6 +27,7 @@ class RepeatStep: ProcessingStep {
     override val group = "Flow control"
     override val name = "Repeat"
     override val description = "Repeat the following steps a given number of times"
+    override fun argDescription() = repeatCountFor("").toString()
 
     override fun isValuePassThrough() = true
 
@@ -39,7 +40,10 @@ class RepeatStep: ProcessingStep {
         parallelDegree: Int
     ) =
         RepeatingWorker(
-            arg.toIntOrNull() ?: Int.MAX_VALUE,
+            repeatCountFor(arg),
             w
         )
+
+    private fun repeatCountFor(arg: String) =
+        arg.toLongOrNull() ?: Long.MAX_VALUE
 }

@@ -28,6 +28,7 @@ class LineReadStep: ProcessingStep {
     override val group = "Files"
     override val name = "Read lines from file"
     override val description = "Read lines from the given file"
+    override fun argDescription() = "<path>"
 
     override fun producedAttributesFor(arg: String) = setOf(
         WellKnownKeys.PATH,

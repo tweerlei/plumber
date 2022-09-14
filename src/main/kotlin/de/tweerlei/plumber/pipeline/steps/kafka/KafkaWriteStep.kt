@@ -31,6 +31,7 @@ class KafkaWriteStep(
     override val group = "Apache Kafka"
     override val name = "Send Kafka message"
     override val description = "Send a message to the given Kafka topic"
+    override fun argDescription() = "<topic>"
 
     override fun isValuePassThrough() = true
     override fun producedAttributesFor(arg: String) = setOf(

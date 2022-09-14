@@ -28,6 +28,7 @@ class FilesWriteStep: ProcessingStep {
     override val group = "Files"
     override val name = "Write files"
     override val description = "Write items as files in the given directory"
+    override fun argDescription() = "<path>"
 
     override fun isValuePassThrough() = true
     override fun requiredAttributesFor(arg: String) = setOf(

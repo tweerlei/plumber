@@ -31,6 +31,7 @@ class JdbcDeleteStep(
     override val group = "JDBC"
     override val name = "Delete JDBC row"
     override val description = "Delete a row from the given JDBC table"
+    override fun argDescription() = "<table>"
 
     override fun expectedInputFor(arg: String) = Record::class.java
 

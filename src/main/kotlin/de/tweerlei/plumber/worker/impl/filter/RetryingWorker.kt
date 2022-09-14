@@ -23,7 +23,7 @@ import mu.KLogging
 
 class RetryingWorker(
     private val name: String,
-    private val numberOfRetries: Int,
+    private val numberOfRetries: Long,
     private val retryDelaySeconds: Int,
     worker: Worker
 ): WrappingWorker(worker) {

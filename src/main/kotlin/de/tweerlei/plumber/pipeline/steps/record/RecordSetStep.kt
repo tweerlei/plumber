@@ -28,6 +28,7 @@ class RecordSetStep: ProcessingStep {
     override val group = "Records"
     override val name = "Set record field"
     override val description = "Set the given record field to the current value"
+    override fun argDescription() = "<name>"
 
     override fun isValuePassThrough() = true
     override fun producedAttributesFor(arg: String) = setOf(

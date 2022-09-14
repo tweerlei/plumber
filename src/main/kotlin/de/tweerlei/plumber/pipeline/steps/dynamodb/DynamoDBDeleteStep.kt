@@ -32,6 +32,7 @@ class DynamoDBDeleteStep(
     override val group = "AWS DynamoDB"
     override val name = "Delete DynamoDB item"
     override val description = "Delete an element from the given DynamoDB table"
+    override fun argDescription() = "<table>"
 
     override fun expectedInputFor(arg: String) = Record::class.java
     override fun producedAttributesFor(arg: String) = setOf(

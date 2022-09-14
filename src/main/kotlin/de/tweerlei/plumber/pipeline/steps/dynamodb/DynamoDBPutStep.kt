@@ -31,6 +31,7 @@ class DynamoDBPutStep(
     override val group = "AWS DynamoDB"
     override val name = "Put DynamoDB item"
     override val description = "Write an element to the given DynamoDB table"
+    override fun argDescription() = "<table>"
 
     override fun expectedInputFor(arg: String) = Record::class.java
 

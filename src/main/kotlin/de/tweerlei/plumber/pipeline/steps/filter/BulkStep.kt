@@ -28,6 +28,7 @@ class BulkStep: ProcessingStep {
     override val group = "Flow control"
     override val name = "Bulk execution"
     override val description = "Execute following steps using chunks of items"
+    override fun argDescription() = "<number>"
 
     override fun producedAttributesFor(arg: String) = setOf(
         WellKnownKeys.WORK_ITEMS,

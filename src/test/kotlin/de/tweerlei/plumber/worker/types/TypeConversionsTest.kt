@@ -18,6 +18,7 @@ package de.tweerlei.plumber.worker.types
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
 import java.nio.charset.StandardCharsets
+import java.time.Duration
 import java.time.Instant
 
 class TypeConversionsTest {
@@ -29,6 +30,7 @@ class TypeConversionsTest {
         42.coerceToLong().shouldBe(42L)
         3.1415.coerceToLong().shouldBe(3L)
         Instant.ofEpochMilli(123456789012L).coerceToLong().shouldBe(123456789012L)
+        Duration.ofMillis(123456789012L).coerceToLong().shouldBe(123456789012L)
         "Hallo".toByteArray(StandardCharsets.UTF_8).coerceToLong().shouldBe(1819042120L)
         true.coerceToLong().shouldBe(1L)
         false.coerceToLong().shouldBe(0L)
@@ -42,6 +44,7 @@ class TypeConversionsTest {
         42.coerceToNumber().shouldBe(42L)
         3.1415.coerceToNumber().shouldBe(3.1415)
         Instant.ofEpochMilli(123456789012L).coerceToNumber().shouldBe(123456789012L)
+        Duration.ofMillis(123456789012L).coerceToNumber().shouldBe(123456789012L)
         "Hallo".toByteArray(StandardCharsets.UTF_8).coerceToNumber().shouldBe(1819042120L)
         true.coerceToNumber().shouldBe(1L)
         false.coerceToNumber().shouldBe(0L)
@@ -58,10 +61,28 @@ class TypeConversionsTest {
         1645920000000L.coerceToInstant().shouldBe(Instant.ofEpochMilli(1645920000000L))
         3.1415.coerceToInstant().shouldBe(Instant.ofEpochSecond(3L))
         Instant.ofEpochMilli(123456789012L).coerceToInstant().shouldBe(Instant.ofEpochMilli(123456789012L))
+        Duration.ofMillis(123456789012L).coerceToInstant().shouldBe(Instant.ofEpochMilli(123456789012L))
         "Hallo".toByteArray(StandardCharsets.UTF_8).coerceToInstant().shouldBe(Instant.ofEpochMilli(1819042120000L))
         true.coerceToInstant().shouldBe(Instant.ofEpochSecond(1L))
         false.coerceToInstant().shouldBe(Instant.ofEpochSecond(0L))
         listOf<Instant>().coerceToInstant().shouldBe(Instant.ofEpochMilli(0L))
+    }
+
+    @Test
+    fun testCoerceToDuration() {
+        null.coerceToDuration().shouldBe(Duration.ofMillis(0L))
+        "Hallo".coerceToDuration().shouldBe(Duration.ofMillis(0L))
+        "P5DT10H23M46S".coerceToDuration().shouldBe(Duration.ofSeconds(469426))
+        42.coerceToDuration().shouldBe(Duration.ofSeconds(42L))
+        1645920000L.coerceToDuration().shouldBe(Duration.ofSeconds(1645920000L))
+        1645920000000L.coerceToDuration().shouldBe(Duration.ofMillis(1645920000000L))
+        3.1415.coerceToDuration().shouldBe(Duration.ofSeconds(3L))
+        Instant.ofEpochMilli(123456789012L).coerceToDuration().shouldBe(Duration.ofMillis(123456789012L))
+        Duration.ofMillis(123456789012L).coerceToDuration().shouldBe(Duration.ofMillis(123456789012L))
+        "Hallo".toByteArray(StandardCharsets.UTF_8).coerceToDuration().shouldBe(Duration.ofMillis(1819042120000L))
+        true.coerceToDuration().shouldBe(Duration.ofSeconds(1L))
+        false.coerceToDuration().shouldBe(Duration.ofSeconds(0L))
+        listOf<Instant>().coerceToDuration().shouldBe(Duration.ofMillis(0L))
     }
 
     @Test
@@ -76,6 +97,7 @@ class TypeConversionsTest {
         42.coerceToBoolean().shouldBe(true)
         3.1415.coerceToBoolean().shouldBe(true)
         Instant.ofEpochMilli(123456789012L).coerceToBoolean().shouldBe(true)
+        Duration.ofMillis(123456789012L).coerceToBoolean().shouldBe(true)
         "Hallo".toByteArray(StandardCharsets.UTF_8).coerceToBoolean().shouldBe(true)
         true.coerceToBoolean().shouldBe(true)
         false.coerceToBoolean().shouldBe(false)
@@ -89,6 +111,7 @@ class TypeConversionsTest {
         42.coerceToComparable().shouldBe(42)
         3.1415.coerceToComparable().shouldBe(3.1415)
         Instant.ofEpochMilli(123456789012L).coerceToComparable().shouldBe(Instant.ofEpochMilli(123456789012L))
+        Duration.ofMillis(123456789012L).coerceToComparable().shouldBe(Duration.ofMillis(123456789012L))
         "Hallo".toByteArray(StandardCharsets.UTF_8).coerceToComparable().shouldBe("Hallo")
         true.coerceToComparable().shouldBe(true)
         false.coerceToComparable().shouldBe(false)
@@ -102,6 +125,7 @@ class TypeConversionsTest {
         42L.coerceToJsonNode().toString().shouldBe("42")
         3.1415.coerceToJsonNode().toString().shouldBe("3.1415")
         Instant.ofEpochMilli(123456789012L).coerceToJsonNode().toString().shouldBe("123456789012")
+        Duration.ofMillis(123456789012L).coerceToJsonNode().toString().shouldBe("123456789012")
         "Hallo".toByteArray(StandardCharsets.UTF_8).coerceToJsonNode().toString().shouldBe("\"SGFsbG8=\"")
         true.coerceToJsonNode().toString().shouldBe("true")
         false.coerceToJsonNode().toString().shouldBe("false")
@@ -116,6 +140,7 @@ class TypeConversionsTest {
         42.coerceToByteArray().shouldBe(byteArrayOf(42, 0, 0, 0, 0, 0, 0, 0))
         3.1415.coerceToByteArray().shouldBe(byteArrayOf(3, 0, 0, 0, 0, 0, 0, 0))
         Instant.ofEpochMilli(123456789012L).coerceToByteArray().shouldBe(byteArrayOf(20, 26, -103, -66, 28, 0, 0, 0))
+        Duration.ofMillis(123456789012L).coerceToByteArray().shouldBe(byteArrayOf(20, 26, -103, -66, 28, 0, 0, 0))
         "Hallo".toByteArray(StandardCharsets.UTF_8).coerceToByteArray().shouldBe(byteArrayOf(72, 97, 108, 108, 111))
         true.coerceToByteArray().shouldBe(byteArrayOf(1))
         false.coerceToByteArray().shouldBe(byteArrayOf(0))
@@ -129,6 +154,7 @@ class TypeConversionsTest {
         42.coerceToString().shouldBe("42")
         3.1415.coerceToString().shouldBe("3.1415")
         Instant.ofEpochMilli(123456789012L).coerceToString().shouldBe("1973-11-29T21:33:09.012Z")
+        Duration.ofMillis(123456789012L).coerceToString().shouldBe("PT34293H33M9.012S")
         "Hallo".toByteArray(StandardCharsets.UTF_8).coerceToString().shouldBe("Hallo")
         true.coerceToString().shouldBe("true")
         false.coerceToString().shouldBe("false")

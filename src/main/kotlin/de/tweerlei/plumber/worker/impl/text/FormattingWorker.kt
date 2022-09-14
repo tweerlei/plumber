@@ -25,7 +25,7 @@ class FormattingWorker(
 ): DelegatingWorker(worker) {
 
     companion object {
-        private val REGEX = Regex("\\$\\{([^}]*)\\}")
+        private val REGEX = Regex("@\\{([^}]*)\\}")
     }
 
     override fun doProcess(item: WorkItem) =

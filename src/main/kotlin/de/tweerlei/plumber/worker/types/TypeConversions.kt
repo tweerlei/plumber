@@ -18,6 +18,7 @@ package de.tweerlei.plumber.worker.types
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.node.JsonNodeFactory
 import java.nio.charset.StandardCharsets
+import java.time.Duration
 import java.time.Instant
 import java.time.format.DateTimeParseException
 
@@ -34,6 +35,7 @@ fun Any?.coerceToLong() =
         is Number -> toLong()
         is String -> toLongOrNull() ?: 0L
         is Instant -> toEpochMilli()
+        is Duration -> toMillis()
         is ByteArray -> toLenientNumber().toLong()
         is Boolean -> if (this) 1L else 0L
         else -> toString().toLongOrNull() ?: 0L
@@ -45,6 +47,7 @@ fun Any?.coerceToNumber() =
         is Number -> this
         is String -> toLenientNumber()
         is Instant -> toEpochMilli()
+        is Duration -> toMillis()
         is ByteArray -> toLenientNumber()
         is Boolean -> if (this) 1 else 0
         else -> toString().toLenientNumber()
@@ -56,6 +59,7 @@ fun Any?.coerceToBoolean() =
         is Number -> toLong() != 0L
         is String -> toLenientBoolean()
         is Instant -> toEpochMilli() != 0L
+        is Duration -> toMillis() != 0L
         is ByteArray -> toLenientNumber() != 0
         is Boolean -> this
         else -> toString().toLenientBoolean()
@@ -67,9 +71,22 @@ fun Any?.coerceToInstant(): Instant =
         is Number -> toLong().toInstant()
         is String -> toLenientInstant()
         is Instant -> this
+        is Duration -> Instant.ofEpochMilli(toMillis())
         is ByteArray -> toLenientNumber().toLong().toInstant()
         is Boolean -> if (this) 1L.toInstant() else 0L.toInstant()
         else -> toString().toLenientInstant()
+    }
+
+fun Any?.coerceToDuration(): Duration =
+    when (this) {
+        null -> 0L.toDuration()
+        is Number -> toLong().toDuration()
+        is String -> toLenientDuration()
+        is Instant -> Duration.ofMillis(toEpochMilli())
+        is Duration -> this
+        is ByteArray -> toLenientNumber().toLong().toDuration()
+        is Boolean -> if (this) 1L.toDuration() else 0L.toDuration()
+        else -> toString().toLenientDuration()
     }
 
 fun Any?.coerceToComparable() =
@@ -88,6 +105,7 @@ fun Any?.coerceToJsonNode(): JsonNode =
         is Double -> JsonNodeFactory.instance.numberNode(this)
         is ByteArray -> JsonNodeFactory.instance.binaryNode(this)
         is Instant -> JsonNodeFactory.instance.numberNode(this.coerceToLong())
+        is Duration -> JsonNodeFactory.instance.numberNode(this.coerceToLong())
         is Map<*, *> -> JsonNodeFactory.instance.objectNode().also { node ->
             forEach { key, value -> node.set<JsonNode>(key.coerceToString(), value.coerceToJsonNode()) }
         }
@@ -103,6 +121,7 @@ fun Any?.coerceToByteArray() =
         is Number -> toLong().toByteArray()
         is String -> toByteArray(StandardCharsets.UTF_8)
         is Instant -> toEpochMilli().toByteArray()
+        is Duration -> toMillis().toByteArray()
         is ByteArray -> this
         is Boolean -> if (this) byteArrayOf(1) else byteArrayOf(0)
         else -> toString().toByteArray(StandardCharsets.UTF_8)
@@ -153,8 +172,21 @@ private fun String.toLenientInstant() =
         toLenientNumber().toLong().toInstant()
     }
 
+private fun String.toLenientDuration() =
+    try {
+        Duration.parse(this)
+    } catch (e: DateTimeParseException) {
+        toLenientNumber().toLong().toDuration()
+    }
+
 private fun Long.toInstant() =
     when {
         this < 10000000000 -> Instant.ofEpochSecond(this)
         else -> Instant.ofEpochMilli(this)
+    }
+
+private fun Long.toDuration() =
+    when {
+        this < 10000000000 -> Duration.ofSeconds(this)
+        else -> Duration.ofMillis(this)
     }

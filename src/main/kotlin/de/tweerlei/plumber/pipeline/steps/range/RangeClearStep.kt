@@ -13,28 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.tweerlei.plumber.pipeline.steps.xml
+package de.tweerlei.plumber.pipeline.steps.range
 
-import com.fasterxml.jackson.dataformat.xml.XmlMapper
 import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
+import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.Worker
-import de.tweerlei.plumber.worker.impl.xml.XmlWriteWorker
+import de.tweerlei.plumber.worker.impl.attribute.SettingWorker
 import org.springframework.stereotype.Service
-import java.io.File
 
-@Service("xml-writeWorker")
-class XmlWriteStep(
-    private val xmlMapper: XmlMapper
-): ProcessingStep {
+@Service("range-clearWorker")
+class RangeClearStep: ProcessingStep {
 
-    override val group = "XML"
-    override val name = "Write value as XML"
-    override val description = "Write current value as XML object to the given file"
-    override fun argDescription() = "<path>"
+    override val group = "Ranges"
+    override val name = "Clear range"
+    override val description = "Clear the curent range object"
 
     override fun isValuePassThrough() = true
-    override fun parallelDegreeFor(arg: String) = 1
 
     override fun createWorker(
         arg: String,
@@ -44,12 +39,5 @@ class XmlWriteStep(
         params: PipelineParams,
         parallelDegree: Int
     ) =
-        XmlWriteWorker(
-            File(arg),
-            params.elementName,
-            params.rootElementName,
-            xmlMapper,
-            params.prettyPrint,
-            w
-        )
+        SettingWorker(WellKnownKeys.RANGE, { null }, w)
 }

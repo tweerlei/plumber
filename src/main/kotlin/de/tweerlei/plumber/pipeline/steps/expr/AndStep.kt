@@ -17,6 +17,7 @@ package de.tweerlei.plumber.pipeline.steps.expr
 
 import de.tweerlei.plumber.pipeline.PipelineParams
 import de.tweerlei.plumber.pipeline.steps.ProcessingStep
+import de.tweerlei.plumber.pipeline.steps.toWorkItemAccessor
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.expr.AndWorker
 import org.springframework.stereotype.Service
@@ -27,6 +28,7 @@ class AndStep: ProcessingStep {
     override val group = "Attributes"
     override val name = "Compare"
     override val description = "Logically AND the current value with the given attribute's value"
+    override fun argDescription() = "<value>"
 
     override fun requiredAttributesFor(arg: String) = setOf(
         arg
@@ -40,5 +42,5 @@ class AndStep: ProcessingStep {
         params: PipelineParams,
         parallelDegree: Int
     ) =
-        AndWorker(arg, w)
+        AndWorker(arg.toWorkItemAccessor(), w)
 }

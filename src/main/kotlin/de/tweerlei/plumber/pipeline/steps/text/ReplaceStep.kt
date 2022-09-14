@@ -17,6 +17,7 @@ package de.tweerlei.plumber.pipeline.steps.text
 
 import de.tweerlei.plumber.pipeline.PipelineParams
 import de.tweerlei.plumber.pipeline.steps.ProcessingStep
+import de.tweerlei.plumber.pipeline.steps.toWorkItemAccessor
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.text.ReplacingWorker
 import de.tweerlei.plumber.worker.impl.text.TextKeys
@@ -28,6 +29,7 @@ class ReplaceStep: ProcessingStep {
     override val group = "Text"
     override val name = "Replace text"
     override val description = "Replace all matches of a previous find: with the given replacement"
+    override fun argDescription() = "<value>"
 
     override fun requiredAttributesFor(arg: String) = setOf(
         TextKeys.MATCH_EXPRESSION,
@@ -42,5 +44,5 @@ class ReplaceStep: ProcessingStep {
         params: PipelineParams,
         parallelDegree: Int
     ) =
-        ReplacingWorker(arg, w)
+        ReplacingWorker(arg.toWorkItemAccessor(), w)
 }

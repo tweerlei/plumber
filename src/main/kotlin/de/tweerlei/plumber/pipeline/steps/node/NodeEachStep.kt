@@ -29,6 +29,7 @@ class NodeEachStep: ProcessingStep {
     override val group = "Nodes"
     override val name = "Extract JSON elements"
     override val description = "Extract elements from a subtree of a JSON object using the given JSONPath"
+    override fun argDescription() = "<path>"
 
     override fun requiredAttributesFor(arg: String) = setOf(
         WellKnownKeys.NODE

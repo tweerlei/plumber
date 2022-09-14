@@ -32,6 +32,7 @@ class S3ReadStep(
     override val group = "AWS S3"
     override val name = "Fetch S3 object"
     override val description = "Get an object from the given S3 bucket"
+    override fun argDescription() = "<bucket>"
 
     override fun requiredAttributesFor(arg: String) = setOf(
         WellKnownKeys.NAME
