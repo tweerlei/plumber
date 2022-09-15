@@ -26,15 +26,16 @@ dependencies {
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-csv")
     implementation("io.github.microutils:kotlin-logging:1.6.26")
 
-    implementation("com.amazonaws:aws-java-sdk-sts:1.11.951")
-    implementation("com.amazonaws:aws-java-sdk-s3:1.11.951")
-    implementation("com.amazonaws:aws-java-sdk-sqs:1.11.951")
-    implementation("com.amazonaws:aws-java-sdk-dynamodb:1.11.951")
+    implementation("com.amazonaws:aws-java-sdk-sts:1.12.302")
+    implementation("com.amazonaws:aws-java-sdk-s3:1.12.302")
+    implementation("com.amazonaws:aws-java-sdk-sqs:1.12.302")
+    implementation("com.amazonaws:aws-java-sdk-dynamodb:1.12.302")
 
     implementation("org.apache.kafka:kafka-clients:3.0.0")
     implementation("org.mongodb:mongodb-driver-sync:4.2.3")
-    implementation("org.springframework:spring-jdbc")
+
     runtimeOnly("org.postgresql:postgresql")
+    runtimeOnly("mysql:mysql-connector-java")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("io.kotest:kotest-assertions-core:4.4.0")
