@@ -15,6 +15,7 @@
  */
 package de.tweerlei.plumber
 
+import de.tweerlei.plumber.cmdline.CommandLineProcessor
 import de.tweerlei.plumber.pipeline.PipelineBuilder
 import de.tweerlei.plumber.pipeline.WorkerRunner
 import de.tweerlei.plumber.util.printStackTraceUpTo

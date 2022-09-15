@@ -6,6 +6,8 @@ A processing pipeline is built from command line arguments.
 
 Supported steps and default arguments (if any) are:
 
+Meta
+  include:<path>              Read step definitions and options from the given file
 AWS DynamoDB
   dynamodb-delete:<table>     Delete an element from the given DynamoDB table
   dynamodb-key:<value>        Convert item to a DynamoDB key with the specified range key
@@ -459,3 +461,28 @@ JSON arrays can be extracted into separate items:
     node-each:array \
     log
 ```
+
+# Inclusion
+
+You can put your whole pipeline or parts of it into a file. Such files are expected to contain each step or option on a separate line. Empty lines and lines starting with `#` will be ignored.
+
+While the included steps are inserted in place of the `include:` step, options specified on higher levels (topmost being the command line) override options in included files. This also applies to options specified *after* the `include:` step.
+```
+# This is an example pipeline defined in my.pipeline
+
+csv-parse
+record-foreach
+--separator=:
+
+# Include some other pipeline with a path relative to this file
+include:subdir/some-other.pipeline
+```
+
+```bash
+./plumber
+    include:path/to/my.pipeline \
+    --separator=/ \
+    log \
+    --explain
+```
+Here, the separator used by the included `csv-parse` will be the `/` given on the command line rather than `:`.

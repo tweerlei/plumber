@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.tweerlei.plumber
+package de.tweerlei.plumber.cmdline
 
 import de.tweerlei.plumber.pipeline.PipelineDefinition
 import de.tweerlei.plumber.pipeline.PipelineParams
@@ -31,16 +31,20 @@ class CommandLineProcessor(
     companion object : KLogging()
 
     fun parseArguments(args: ApplicationArguments) =
-        if (args.isInvalid()) {
-            showHelp()
-            null
-        } else {
-            args.toPipelineDefinition()
-                .apply {
-                    if (params.explain) {
-                        params.showConfig()
+        CommandLine.from(args).let { cmdline ->
+            InclusionResolver().resolve(cmdline)
+        }.let { cmdline ->
+            if (cmdline.isInvalid()) {
+                showHelp()
+                null
+            } else {
+                cmdline.toPipelineDefinition()
+                    .apply {
+                        if (params.explain) {
+                            params.showConfig()
+                        }
                     }
-                }
+            }
         }
 
     private fun showHelp() {
@@ -53,6 +57,8 @@ class CommandLineProcessor(
 
                 Supported steps and default arguments (if any) are:
 
+                Meta
+                  include:<path>              Read step definitions and options from the given file
 
             """.trimIndent())
             .apply {
@@ -76,9 +82,9 @@ class CommandLineProcessor(
 
             """.trimIndent())
             .apply {
-                AllPipelineOptions.INSTANCE.optionDescriptions().forEach { (k, v) ->
-                    append("--$k".padEnd(30))
-                    append(v)
+                AllPipelineOptions.INSTANCE.optionDescriptions().forEach { (keyword, name) ->
+                    append("--$keyword".padEnd(30))
+                    append(name)
                     append("\n")
                 }
             }
@@ -126,33 +132,22 @@ class CommandLineProcessor(
         logger.info("XML: naming elements <$elementName> with root <$rootElementName>")
     }
 
-    private fun ApplicationArguments.isInvalid() =
-        containsOption("help") || nonOptionArgs.isEmpty()
+    private fun CommandLine.isInvalid() =
+        options.containsKey("help") || steps.isEmpty()
 
-    private fun ApplicationArguments.toPipelineDefinition() =
+    private fun CommandLine.toPipelineDefinition() =
         PipelineDefinition(
-            steps = parseSteps(),
-            params = parseParams()
+            steps = mapSteps(),
+            params = mapParams()
         )
 
-    private fun ApplicationArguments.parseSteps() =
-        nonOptionArgs.map { step ->
-            step.split(":", ignoreCase = false, limit = 2)
-                .let { parts ->
-                    when (parts.size) {
-                        1 -> PipelineDefinition.Step(parts[0], "")
-                        else -> PipelineDefinition.Step(parts[0], parts[1])
-                    }
-                }
+    private fun CommandLine.mapSteps() =
+        steps.map { step ->
+            PipelineDefinition.Step(step.first, step.second)
         }
 
-    private fun ApplicationArguments.parseParams() =
+    private fun CommandLine.mapParams() =
         AllPipelineOptions.INSTANCE.parse { name ->
-            getOptionValues(name)
-                ?.firstOrNull()
-                ?: when (containsOption(name)) {
-                    true -> "true"
-                    else -> null
-                }
+            options[name]
         }
 }
