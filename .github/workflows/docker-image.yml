@@ -21,9 +21,13 @@ jobs:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
 
+    - name: Trim the commit hash for usage as version string
+      id: get-version
+      run: echo "::set-output name=version::${{ github.sha }}" | cut -c 1-34
+
     - name: Build and push the Docker image
       uses: docker/build-push-action@v2
       with:
-        build-args: PACKAGE_VERSION=${{ github.sha }}
+        build-args: PACKAGE_VERSION=${{ steps.get-version.outputs.version }}
         push: true
         tags: ghcr.io/${{ github.repository }}:latest
