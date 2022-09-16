@@ -17,32 +17,42 @@ package de.tweerlei.plumber.worker.impl.range
 
 import de.tweerlei.plumber.util.KeyRange
 import de.tweerlei.plumber.util.KeyRangeGenerator
-import de.tweerlei.plumber.worker.*
+import de.tweerlei.plumber.worker.WorkItem
+import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.GeneratingWorker
-import de.tweerlei.plumber.worker.types.Range
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
-import de.tweerlei.plumber.worker.types.coerceToLong
+import de.tweerlei.plumber.worker.types.Range
 
 class KeyRangeWorker(
     private val partitions: Int,
     private val keyChars: String,
-    private val startAfterKey: String?,
-    private val stopAfterKey: String?,
     limit: Long,
     worker: Worker
 ): GeneratingWorker(limit, worker) {
 
     override fun generateItems(item: WorkItem, fn: (WorkItem) -> Boolean) {
-        if (item.has(WellKnownKeys.RANGE))
-            generateNumberRanges(item, fn)
-        else
-            generateStringRanges(fn)
+        item.getOptionalAs<Range>(WellKnownKeys.RANGE)
+            ?.let { range ->
+                generateRanges(range.startAfter, range.endWith, fn)
+            }
     }
 
-    private fun generateNumberRanges(item: WorkItem, fn: (WorkItem) -> Boolean) {
-        val range = item.getAs<Range>(WellKnownKeys.RANGE)
-        val minValue = range.startAfter.coerceToLong()
-        val maxValue = range.endWith.coerceToLong()
+    private fun generateRanges(startAfter: Comparable<*>?, endWith: Comparable<*>?, fn: (WorkItem) -> Boolean) {
+        when {
+            startAfter is Long && endWith is Long -> generateNumberRanges(
+                startAfter,
+                endWith,
+                fn
+            )
+            else -> generateStringRanges(
+                startAfter?.toString(),
+                endWith?.toString(),
+                fn
+            )
+        }
+    }
+
+    private fun generateNumberRanges(minValue: Long, maxValue: Long, fn: (WorkItem) -> Boolean) {
         val n = maxValue - minValue
         if (n <= partitions) {
             for (i in minValue until maxValue) {
@@ -61,7 +71,7 @@ class KeyRangeWorker(
             WellKnownKeys.RANGE to Range(startAfter, endWith)
         )
 
-    private fun generateStringRanges(fn: (WorkItem) -> Boolean) {
+    private fun generateStringRanges(startAfterKey: String?, stopAfterKey: String?, fn: (WorkItem) -> Boolean) {
         KeyRangeGenerator(keyChars)
             .generateRanges(partitions, startAfterKey, stopAfterKey)
             .all { range ->

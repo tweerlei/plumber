@@ -17,6 +17,8 @@ package de.tweerlei.plumber.pipeline
 
 import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.Worker
+import de.tweerlei.plumber.worker.impl.WellKnownKeys
+import de.tweerlei.plumber.worker.types.Range
 import mu.KLogging
 import org.springframework.stereotype.Service
 import javax.annotation.PreDestroy
@@ -54,13 +56,24 @@ class WorkerRunner {
         currentContext = runContext
         try {
             worker.open(runContext).use {
-                worker.process(WorkItem.of(null))
+                worker.process(WorkItem.of(null,
+                    WellKnownKeys.RANGE to params.toRange()
+                ))
             }
         } finally {
             currentContext = null
             currentThread = null
         }
     }
+
+    private fun PipelineParams.toRange() =
+        when {
+            startAfterKey == null && stopAfterKey == null -> null
+            else -> Range(
+                startAfterKey,
+                stopAfterKey
+            )
+        }
 
     /** called by Spring upon JVM termination */
     @PreDestroy

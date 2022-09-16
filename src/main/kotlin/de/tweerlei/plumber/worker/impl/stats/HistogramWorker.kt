@@ -29,15 +29,15 @@ class HistogramWorker(
     private val name: String,
     size: Int,
     keyChars: String,
-    startAfterKey: String?,
-    stopAfterKey: String?,
+    startAfterKey: Comparable<*>?,
+    stopAfterKey: Comparable<*>?,
     worker: Worker
 ): DelegatingWorker(worker) {
 
     private val stringHistogram = when {
             startAfterKey == null -> ""
             stopAfterKey == null -> ""
-            else -> extractCommonPrefix(startAfterKey, stopAfterKey)
+            else -> extractCommonPrefix(startAfterKey.toString(), stopAfterKey.toString())
         }.let { prefix ->
             StringHistogram(size, StringPacker(keyChars), prefix)
         }

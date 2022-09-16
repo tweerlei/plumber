@@ -32,8 +32,8 @@ class DynamoDBScanWorker(
     private val partitionKey: String,
     private val rangeKey: String?,
     private val selectFields: Set<String>,
-    private val startAfterRange: String?,
-    private val endWithRange: String?,
+    private val startAfterRange: Comparable<*>?,
+    private val endWithRange: Comparable<*>?,
     private val numberOfFilesPerRequest: Int,
     private val amazonDynamoDBClient: AmazonDynamoDB,
     limit: Long,
@@ -83,13 +83,13 @@ class DynamoDBScanWorker(
             .withProjectionExpression(selectFields.ifEmpty { null }?.joinToString(","))
             .let { request -> amazonDynamoDBClient.scan(request) }
 
-    private fun Comparable<*>?.toKey(rangeKeyValue: String?) =
+    private fun Comparable<*>?.toKey(rangeKeyValue: Comparable<*>?) =
         if (this != null)
             Record.of(
                 partitionKey to this
             ).also { map ->
                 if (rangeKey != null && rangeKeyValue != null)
-                    map[rangeKey] = rangeKeyValue.toComparable()
+                    map[rangeKey] = rangeKeyValue
             }
         else
             null

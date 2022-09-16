@@ -41,7 +41,9 @@ class S3GetObjectWorker(
                 item.set(bucketName, S3Keys.BUCKET_NAME)
                 item.set(file.key, S3Keys.OBJECT_KEY)
                 item.set(file.objectMetadata.contentLength, WellKnownKeys.SIZE)
-                item.set(file.objectMetadata.lastModified.toInstant(), WellKnownKeys.LAST_MODIFIED)
+                file.objectMetadata.lastModified?.also { lastModified ->
+                    item.set(lastModified.toInstant(), WellKnownKeys.LAST_MODIFIED)
+                }
                 file.objectContent.use { stream ->
                     stream.readAllBytes()
                 }.also { bytes ->

@@ -16,6 +16,7 @@
 package de.tweerlei.plumber.pipeline.options
 
 import de.tweerlei.plumber.pipeline.PipelineParams
+import de.tweerlei.plumber.pipeline.steps.toOptionValue
 
 data class AllPipelineOptions(
     val explain: PipelineOption<Boolean>,
@@ -26,8 +27,8 @@ data class AllPipelineOptions(
     val queueSizePerThread: PipelineOption<Int>,
     val primaryKey: PipelineOption<String>,
     val selectFields: PipelineOption<Set<String>>,
-    val startAfterKey: PipelineOption<String?>,
-    val stopAfterKey: PipelineOption<String?>,
+    val startAfterKey: PipelineOption<Comparable<*>?>,
+    val stopAfterKey: PipelineOption<Comparable<*>?>,
     val keyChars: PipelineOption<String>,
     val assumeRoleArn: PipelineOption<String?>,
     val requesterPays: PipelineOption<Boolean>,
@@ -36,8 +37,8 @@ data class AllPipelineOptions(
     val reread: PipelineOption<Boolean>,
     val partitionKey: PipelineOption<String>,
     val rangeKey: PipelineOption<String?>,
-    val startAfterRangeKey: PipelineOption<String?>,
-    val stopAfterRangeKey: PipelineOption<String?>,
+    val startAfterRangeKey: PipelineOption<Comparable<*>?>,
+    val stopAfterRangeKey: PipelineOption<Comparable<*>?>,
     val separator: PipelineOption<Char>,
     val header: PipelineOption<Boolean>,
     val prettyPrint: PipelineOption<Boolean>,
@@ -86,22 +87,26 @@ data class AllPipelineOptions(
                 "assume-role",
                 "AWS: Assume the given IAM role for all AWS operations"
             ),
-            startAfterKey = DefaultPipelineOption(
+            startAfterKey = CustomPipelineOption(
                 "start-after",
-                "Start after the given key"
-            ),
-            stopAfterKey = DefaultPipelineOption(
+                "Start after the given key",
+                "<value>"
+            ) { value -> value.toOptionValue() },
+            stopAfterKey = CustomPipelineOption(
                 "stop-after",
-                "Stop after the given key"
-            ),
-            startAfterRangeKey = DefaultPipelineOption(
+                "Stop after the given key",
+                "<value>"
+            ) { value -> value.toOptionValue() },
+            startAfterRangeKey = CustomPipelineOption(
                 "start-range",
-                "DynamoDB: Start after the given range key"
-            ),
-            stopAfterRangeKey = DefaultPipelineOption(
+                "DynamoDB: Start after the given range key",
+                "<value>"
+            ) { value -> value.toOptionValue() },
+            stopAfterRangeKey = CustomPipelineOption(
                 "stop-range",
-                "DynamoDB: Stop after the given range key"
-            ),
+                "DynamoDB: Stop after the given range key",
+                "<value>"
+            ) { value -> value.toOptionValue() },
             keyChars = CustomPipelineOption(
                 "key-chars",
                 "Use the given characters to generate keys (defaults to safe S3 chars)",

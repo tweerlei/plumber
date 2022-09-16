@@ -9,3 +9,10 @@ fun String.toWorkItemAccessor(): WorkItemAccessor<Any?> =
         startsWith("@") -> { item -> item.getOptional(substring(1)) }
         else -> { _ -> toComparable() }
     }
+
+fun String?.toOptionValue() =
+    when {
+        this == null -> null
+        startsWith(":") -> substring(1)
+        else -> toComparable()
+    }

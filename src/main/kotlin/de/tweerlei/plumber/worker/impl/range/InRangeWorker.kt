@@ -15,23 +15,21 @@
  */
 package de.tweerlei.plumber.worker.impl.range
 
-import de.tweerlei.plumber.worker.*
+import de.tweerlei.plumber.worker.WorkItem
+import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.DelegatingWorker
-import de.tweerlei.plumber.worker.types.Range
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
-import de.tweerlei.plumber.worker.types.toComparable
+import de.tweerlei.plumber.worker.types.Range
 
 class InRangeWorker(
-    private val startAfterKey: String?,
-    private val stopAfterKey: String?,
     worker: Worker
 ): DelegatingWorker(worker) {
 
     override fun doProcess(item: WorkItem) =
         item.getOptionalAs<Comparable<*>>().let { value ->
-            (item.getOptionalAs(WellKnownKeys.RANGE)
-                ?: Range(startAfterKey.toComparable(), stopAfterKey.toComparable()))
-                .contains(value)
+            item.getOptionalAs<Range>(WellKnownKeys.RANGE)
+                ?.contains(value)
+                ?: false
         }.also {
             item.set(it)
         }.let { true }

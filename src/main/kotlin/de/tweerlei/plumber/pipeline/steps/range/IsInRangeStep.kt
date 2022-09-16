@@ -36,5 +36,5 @@ class IsInRangeStep: ProcessingStep {
         params: PipelineParams,
         parallelDegree: Int
     ) =
-        InRangeWorker(params.startAfterKey, params.stopAfterKey, w)
+        InRangeWorker(w)
 }

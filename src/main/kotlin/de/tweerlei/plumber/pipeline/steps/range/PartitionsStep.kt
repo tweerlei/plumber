@@ -45,8 +45,6 @@ class PartitionsStep: ProcessingStep {
         KeyRangeWorker(
             partitionCountFor(arg),
             params.keyChars,
-            params.startAfterKey,
-            params.stopAfterKey,
             params.maxFilesPerThread,
             w
         )

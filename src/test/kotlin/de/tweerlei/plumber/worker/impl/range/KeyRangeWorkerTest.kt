@@ -33,7 +33,7 @@ class KeyRangeWorkerTest {
                 { Range(100L, 200L) },
                 w
             ) }
-            .append { w -> KeyRangeWorker(10, "0123456789", null, null, Long.MAX_VALUE, w) }
+            .append { w -> KeyRangeWorker(10, "0123456789", Long.MAX_VALUE, w) }
             .run(WorkItem.of(""))
             .toList()
 
@@ -55,10 +55,10 @@ class KeyRangeWorkerTest {
         val items = TestWorkerRunner()
             .append { w -> SettingWorker(
                 WellKnownKeys.RANGE,
-                { Range(100, 105) },
+                { Range(100L, 105L) },
                 w
             ) }
-            .append { w -> KeyRangeWorker(10, "0123456789", null, null, Long.MAX_VALUE, w) }
+            .append { w -> KeyRangeWorker(10, "0123456789", Long.MAX_VALUE, w) }
             .run(WorkItem.of(""))
             .toList()
 
@@ -73,7 +73,12 @@ class KeyRangeWorkerTest {
     @Test
     fun `When range is keyed then partitions are created`() {
         val items = TestWorkerRunner()
-            .append { w -> KeyRangeWorker(10, "0123456789abcdef", "abc", null, Long.MAX_VALUE, w) }
+            .append { w -> SettingWorker(
+                WellKnownKeys.RANGE,
+                { Range("abc", null) },
+                w
+            ) }
+            .append { w -> KeyRangeWorker(10, "0123456789abcdef", Long.MAX_VALUE, w) }
             .run(WorkItem.of(""))
             .toList()
 
