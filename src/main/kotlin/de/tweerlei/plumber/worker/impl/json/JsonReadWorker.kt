@@ -16,6 +16,7 @@
 package de.tweerlei.plumber.worker.impl.json
 
 import com.fasterxml.jackson.core.JsonFactory
+import com.fasterxml.jackson.core.JsonToken
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import de.tweerlei.plumber.worker.WorkItem
@@ -50,14 +51,21 @@ class JsonReadWorker<T>(
     override fun generateItems(item: WorkItem, fn: (WorkItem) -> Boolean) {
         JsonFactory().createParser(stream)
             .also { logger.info { "Reading JSON objects as ${valueType.simpleName}" } }
-            .let { parser -> objectMapper.readValues(parser, valueType) }
-            .use {
+            .use { parser ->
                 var keepGenerating = true
-                while (keepGenerating && it.hasNextValue()) {
-                    keepGenerating = it.nextValue()
-                        ?.let { obj ->
-                            fn(obj.toWorkItem())
-                        } ?: false
+                var inArray = false
+                while (keepGenerating) {
+                    when (parser.nextToken()) {
+                        null -> break
+                        JsonToken.START_ARRAY -> inArray = true
+                        JsonToken.END_ARRAY -> inArray = false
+                        else -> if (inArray) {
+                            keepGenerating = objectMapper.readValue(parser, valueType)
+                                ?.let { obj ->
+                                    fn(obj.toWorkItem())
+                                } ?: false
+                        }
+                    }
                 }
             }
     }

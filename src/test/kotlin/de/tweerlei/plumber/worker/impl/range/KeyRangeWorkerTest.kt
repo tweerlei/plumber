@@ -33,7 +33,7 @@ class KeyRangeWorkerTest {
                 { Range(100L, 200L) },
                 w
             ) }
-            .append { w -> KeyRangeWorker(10, null, null, null, Long.MAX_VALUE, w) }
+            .append { w -> KeyRangeWorker(10, "0123456789", null, null, Long.MAX_VALUE, w) }
             .run(WorkItem.of(""))
             .toList()
 
@@ -58,7 +58,7 @@ class KeyRangeWorkerTest {
                 { Range(100, 105) },
                 w
             ) }
-            .append { w -> KeyRangeWorker(10, null, null, null, Long.MAX_VALUE, w) }
+            .append { w -> KeyRangeWorker(10, "0123456789", null, null, Long.MAX_VALUE, w) }
             .run(WorkItem.of(""))
             .toList()
 

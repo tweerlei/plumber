@@ -25,7 +25,7 @@ import de.tweerlei.plumber.worker.types.coerceToLong
 
 class KeyRangeWorker(
     private val partitions: Int,
-    private val keyChars: String?,
+    private val keyChars: String,
     private val startAfterKey: String?,
     private val stopAfterKey: String?,
     limit: Long,

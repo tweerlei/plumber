@@ -24,7 +24,7 @@ import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import mu.KLogging
 
 class RangeIteratingWorker(
-    private val keyChars: String?,
+    private val keyChars: String,
     private val step: Long,
     limit: Long,
     worker: Worker

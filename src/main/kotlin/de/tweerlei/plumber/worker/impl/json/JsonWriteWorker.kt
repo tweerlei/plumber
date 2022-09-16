@@ -31,9 +31,13 @@ class JsonWriteWorker(
 ): DelegatingWorker(worker) {
 
     private lateinit var generator: JsonGenerator
+    private lateinit var stream: OutputStream
+    private var firstItem: Boolean = true
 
     override fun onOpen() {
-        generator = objectMapper.createGenerator(FileOutputStream(file))
+        stream = FileOutputStream(file)
+        stream.write('['.code)
+        generator = objectMapper.createGenerator(stream)
         if (prettyPrint)
             generator.prettyPrinter = objectMapper.serializationConfig.constructDefaultPrettyPrinter()
     }
@@ -41,10 +45,15 @@ class JsonWriteWorker(
     override fun doProcess(item: WorkItem): Boolean =
         item.getFirst(WellKnownKeys.NODE)
             .let { obj ->
+                if (firstItem)
+                    firstItem = false
+                else
+                    stream.write(','.code)
                 objectMapper.writeValue(generator, obj)
             }.let { true }
 
     override fun onClose() {
+        stream.write(']'.code)
         generator.close()
     }
 }

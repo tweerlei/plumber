@@ -22,7 +22,7 @@ data class PipelineParams(
     val stopAfterKey: String?,
     val startAfterRangeKey: String?,
     val stopAfterRangeKey: String?,
-    val keyChars: String?,
+    val keyChars: String,
     val primaryKey: String,
     val partitionKey: String,
     val rangeKey: String?,

@@ -1,14 +1,14 @@
 package de.tweerlei.plumber.pipeline.options
 
-class StringPipelineOption(
+class IntPipelineOption(
     override val name: String,
     override val description: String,
-    private val defaultValue: String
-): PipelineOption<String> {
+    private val defaultValue: Int
+): PipelineOption<Int> {
 
     override fun argDescription() =
-        defaultValue.ifEmpty { "<arg>" }
+        defaultValue.toString()
 
     override fun parse(value: String?) =
-        value ?: defaultValue
+        value?.toInt() ?: defaultValue
 }

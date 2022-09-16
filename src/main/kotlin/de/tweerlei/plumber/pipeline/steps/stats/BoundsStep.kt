@@ -26,7 +26,8 @@ class BoundsStep: ProcessingStep {
 
     override val group = "Logging"
     override val name = "Calculate bounds"
-    override val description = "Log smallest and largest value"
+    override val description = "Log smallest and largest value at every given number of items"
+    override fun argDescription() = intervalFor("").toString()
 
     override fun isValuePassThrough() = true
 
@@ -41,6 +42,10 @@ class BoundsStep: ProcessingStep {
     ) =
         MinMaxWorker(
             predecessorName,
+            intervalFor(arg),
             w
         )
+
+    private fun intervalFor(arg: String) =
+        arg.toLongOrNull() ?: Long.MAX_VALUE
 }

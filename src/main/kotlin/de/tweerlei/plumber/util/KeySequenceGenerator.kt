@@ -16,31 +16,33 @@
 package de.tweerlei.plumber.util
 
 class KeySequenceGenerator(
-    charactersToUse: String? = null
+    charactersToUse: String
 ) {
 
-    companion object {
-        // Safe characters, see https://docs.aws.amazon.com/AmazonS3/latest/userguide/object-keys.html
-        const val SAFE_CHARS = "!'()*-./0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz"
-    }
-
-    val packer = NumericStringPacker(charactersToUse ?: SAFE_CHARS)
+    val packer = NumericStringPacker(charactersToUse)
 
     fun generateSequence(startAfter: String?, endWith: String?, increment: Long) =
-        generateSequence(
-            startAfter?.let { packer.pack(it) },
-            endWith?.let { packer.pack(it) },
-            increment
-        )
+        when {
+            startAfter == null -> generateSequence("", null, endWith?.let { packer.pack(it) }, increment)
+            endWith == null -> generateSequence("", startAfter.let { packer.pack(it) }, null, increment)
+            else -> extractCommonPrefix(startAfter, endWith).let { commonPrefix ->
+                generateSequence(
+                    commonPrefix,
+                    startAfter.substring(commonPrefix.length).let { packer.pack(it) },
+                    endWith.substring(commonPrefix.length).let { packer.pack(it) },
+                    increment
+                )
+            }
+        }
 
-    fun generateSequence(startAfter: Long?, endWith: Long?, increment: Long) =
+    private fun generateSequence(prefix: String, startAfter: Long?, endWith: Long?, increment: Long) =
         when {
             startAfter == null -> emptySequence()
             endWith == null -> {
                 var lastValue = startAfter
                 generateSequence {
                     lastValue += increment
-                    packer.unpack(lastValue)
+                    prefix + packer.unpack(lastValue)
                 }
             }
             else -> {
@@ -50,7 +52,7 @@ class KeySequenceGenerator(
                     when {
                         increment > 0 && lastValue > endWith -> null
                         increment < 0 && lastValue < endWith -> null
-                        else -> packer.unpack(lastValue)
+                        else -> prefix + packer.unpack(lastValue)
                     }
                 }
             }

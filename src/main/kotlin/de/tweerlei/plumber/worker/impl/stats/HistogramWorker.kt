@@ -18,6 +18,7 @@ package de.tweerlei.plumber.worker.impl.stats
 import de.tweerlei.plumber.util.Histogram
 import de.tweerlei.plumber.util.StringHistogram
 import de.tweerlei.plumber.util.StringPacker
+import de.tweerlei.plumber.util.extractCommonPrefix
 import de.tweerlei.plumber.worker.*
 import de.tweerlei.plumber.worker.impl.DelegatingWorker
 import de.tweerlei.plumber.worker.types.coerceToLong
@@ -27,12 +28,19 @@ import mu.KLogging
 class HistogramWorker(
     private val name: String,
     size: Int,
-    packer: StringPacker,
-    prefix: String,
+    keyChars: String,
+    startAfterKey: String?,
+    stopAfterKey: String?,
     worker: Worker
 ): DelegatingWorker(worker) {
 
-    private val stringHistogram = StringHistogram(size, packer, prefix)
+    private val stringHistogram = when {
+            startAfterKey == null -> ""
+            stopAfterKey == null -> ""
+            else -> extractCommonPrefix(startAfterKey, stopAfterKey)
+        }.let { prefix ->
+            StringHistogram(size, StringPacker(keyChars), prefix)
+        }
     private val numberHistogram = Histogram(size)
 
     companion object: KLogging()

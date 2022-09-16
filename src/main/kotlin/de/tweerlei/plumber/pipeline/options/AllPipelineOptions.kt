@@ -28,7 +28,7 @@ data class AllPipelineOptions(
     val selectFields: PipelineOption<Set<String>>,
     val startAfterKey: PipelineOption<String?>,
     val stopAfterKey: PipelineOption<String?>,
-    val keyChars: PipelineOption<String?>,
+    val keyChars: PipelineOption<String>,
     val assumeRoleArn: PipelineOption<String?>,
     val requesterPays: PipelineOption<Boolean>,
     val maxWaitTimeSeconds: PipelineOption<Int>,
@@ -45,6 +45,9 @@ data class AllPipelineOptions(
     val rootElementName: PipelineOption<String>
 ) {
     companion object {
+        // Safe characters, see https://docs.aws.amazon.com/AmazonS3/latest/userguide/object-keys.html
+        const val SAFE_KEY_CHARS = "!'()*-./0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz"
+
         val INSTANCE = AllPipelineOptions(
             explain = BooleanPipelineOption(
                 "explain",
@@ -54,86 +57,93 @@ data class AllPipelineOptions(
                 "fail-fast",
                 "Fail on first processing error"
             ),
-            maxFilesPerThread = ValuedPipelineOption(
+            maxFilesPerThread = CustomPipelineOption(
                 "limit",
                 "Stop after reading n objects (per thread, default is unlimited)"
             ) { value ->
                 value?.toLong() ?: Long.MAX_VALUE
             },
-            numberOfFilesPerRequest = ValuedPipelineOption(
+            numberOfFilesPerRequest = IntPipelineOption(
                 "bulk-size",
-                "Bulk size for steps that process multiple items at once"
-            ) { value ->
-                value?.toInt() ?: 1000
-            },
-            queueSizePerThread = ValuedPipelineOption(
+                "Bulk size for steps that process multiple items at once",
+                1000
+            ),
+            queueSizePerThread = IntPipelineOption(
                 "queue-size",
-                "Queue size for items passed between threads"
-            ) { value ->
-                value?.toInt() ?: 10
-            },
-            retryDelaySeconds = ValuedPipelineOption(
+                "Queue size for items passed between threads",
+                10
+            ),
+            retryDelaySeconds = IntPipelineOption(
                 "retry-delay",
-                "Wait this number of seconds before retrying failed messages"
-            ) { value ->
-                value?.toInt() ?: 0
-            },
+                "Wait this number of seconds before retrying failed messages",
+                0
+            ),
             requesterPays = BooleanPipelineOption(
                 "requester-pays",
                 "AWS: Requester pays access to S3 buckets"
             ),
-            assumeRoleArn = StringPipelineOption(
+            assumeRoleArn = DefaultPipelineOption(
                 "assume-role",
-                "AWS; Assume the given IAM role for all AWS operations"
+                "AWS: Assume the given IAM role for all AWS operations"
             ),
-            startAfterKey = StringPipelineOption(
+            startAfterKey = DefaultPipelineOption(
                 "start-after",
                 "Start after the given key"
             ),
-            stopAfterKey = StringPipelineOption(
+            stopAfterKey = DefaultPipelineOption(
                 "stop-after",
                 "Stop after the given key"
             ),
-            startAfterRangeKey = StringPipelineOption(
+            startAfterRangeKey = DefaultPipelineOption(
                 "start-range",
                 "DynamoDB: Start after the given range key"
             ),
-            stopAfterRangeKey = StringPipelineOption(
+            stopAfterRangeKey = DefaultPipelineOption(
                 "stop-range",
                 "DynamoDB: Stop after the given range key"
             ),
-            keyChars = StringPipelineOption(
+            keyChars = CustomPipelineOption(
                 "key-chars",
-                "Use the given characters to generate keys (defaults to safe S3 chars)"
-            ),
-            primaryKey = ValuedPipelineOption(
+                "Use the given characters to generate keys (defaults to safe S3 chars)",
+                "<arg>"
+            ) { value -> value ?: SAFE_KEY_CHARS },
+            primaryKey = StringPipelineOption(
                 "primary-key",
-                "Use the given attribute as primary key (defaults to 'id' for JDBC and '_id' for MongoDB)"
-            ) { value -> value ?: "" },
-            partitionKey = ValuedPipelineOption(
+                "Use the given attribute as primary key (defaults to 'id' for JDBC and '_id' for MongoDB)",
+                ""
+            ),
+            partitionKey = StringPipelineOption(
                 "partition-key",
-                "DynamoDB: Use the given attribute as partition key"
-            ) { value -> value ?: "" },
-            rangeKey = StringPipelineOption(
+                "DynamoDB: Use the given attribute as partition key",
+                ""
+            ),
+            rangeKey = DefaultPipelineOption(
                 "range-key",
                 "DynamoDB: Use the given attribute as range key"
             ),
-            selectFields = ValuedPipelineOption<Set<String>>(
+            selectFields = CustomPipelineOption(
                 "select",
-                "Database fields to fetch, separated by commas"
-            ) { value -> value?.split(',')?.toSet() ?: emptySet() },
-            elementName = ValuedPipelineOption(
+                "Database fields to fetch, separated by commas (defaults to selecting all fields)",
+                "<arg>"
+            ) { value ->
+                value?.split(',')?.toSet() ?: emptySet()
+            },
+            elementName = StringPipelineOption(
                 "element-name",
-                "XML: Element name to read/write"
-            ) { value -> value ?: "" },
-            rootElementName = ValuedPipelineOption(
+                "XML: Element name to read/write",
+                "item"
+            ),
+            rootElementName = StringPipelineOption(
                 "root-element-name",
-                "XML: Root element name to wrap output in"
-            ) { value -> value ?: "" },
-            separator = ValuedPipelineOption(
+                "XML: Root element name to wrap output in",
+                "items"
+            ),
+            separator = CustomPipelineOption(
                 "separator",
                 "CSV: Separator character"
-            ) { value -> value?.first() ?: ',' },
+            ) { value ->
+                value?.first() ?: ','
+            },
             header = BooleanPipelineOption(
                 "header",
                 "CSV: Read/write header"
@@ -142,10 +152,11 @@ data class AllPipelineOptions(
                 "pretty-print",
                 "Pretty print JSON and XML output"
             ),
-            maxWaitTimeSeconds = ValuedPipelineOption(
+            maxWaitTimeSeconds = IntPipelineOption(
                 "wait",
-                "Kafka/SQS: Wait at most this number of seconds for a new message"
-            ) { value -> value?.toInt() ?: 1 },
+                "Kafka/SQS: Wait at most this number of seconds for a new message",
+                1
+            ),
             follow = BooleanPipelineOption(
                 "follow",
                 "Kafka/SQS: Keep polling for new messages"
@@ -201,5 +212,11 @@ data class AllPipelineOptions(
         )
 
     private fun <T> PipelineOption<T>.readFrom(accessor: (String) -> String?) =
-        parse(accessor(name))
+        accessor(name).let { value ->
+            try {
+                parse(value)
+            } catch (e: RuntimeException) {
+                throw IllegalArgumentException("Invalid value '$value' for option --$name")
+            }
+        }
 }

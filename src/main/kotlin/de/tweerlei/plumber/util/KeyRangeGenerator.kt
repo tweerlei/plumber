@@ -16,44 +16,25 @@
 package de.tweerlei.plumber.util
 
 class KeyRangeGenerator(
-    charactersToUse: String? = null
+    charactersToUse: String
 ) {
 
-    companion object {
-        // Safe characters, see https://docs.aws.amazon.com/AmazonS3/latest/userguide/object-keys.html
-        const val SAFE_CHARS = "!'()*-./0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz"
-    }
-
-    val packer = StringPacker(charactersToUse ?: SAFE_CHARS)
+    val packer = StringPacker(charactersToUse)
 
     fun generateRanges(numberOfPartitions: Int, startAfter: String?, endWith: String?) =
         when {
             startAfter == null -> createRange(numberOfPartitions, "", "", endWith)
             endWith == null -> createRange(numberOfPartitions, "", startAfter, null)
             startAfter >= endWith -> emptyList()
-            else -> extractCommonPrefix(startAfter, endWith)
-                .let { commonPrefix ->
-                    createRange(numberOfPartitions, commonPrefix, startAfter.substring(commonPrefix.length), endWith.substring(commonPrefix.length))
-                }
-        }
-
-    fun extractPrefix(startAfter: String?, endWith: String?) =
-        when {
-            startAfter == null -> ""
-            endWith == null -> ""
-            else -> extractCommonPrefix(startAfter, endWith)
-        }
-
-    private fun extractCommonPrefix(startAfter: String, endWith: String) =
-        StringBuilder().also { commonPrefix ->
-            val startLength = startAfter.length
-            val endLength = endWith.length
-            var index = 0
-            while (index < startLength && index < endLength && startAfter[index] == endWith[index]) {
-                commonPrefix.append(startAfter[index])
-                index++
+            else -> extractCommonPrefix(startAfter, endWith).let { commonPrefix ->
+                createRange(
+                    numberOfPartitions,
+                    commonPrefix,
+                    startAfter.substring(commonPrefix.length),
+                    endWith.substring(commonPrefix.length)
+                )
             }
-        }.toString()
+        }
 
     private fun createRange(numberOfPartitions: Int, commonPrefix: String, startAfter: String, endWith: String?) =
         encodeInterval(numberOfPartitions, startAfter, endWith).let { range ->

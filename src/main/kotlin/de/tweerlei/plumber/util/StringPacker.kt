@@ -25,7 +25,7 @@ class StringPacker(
     maxCharsToPack: Int = Int.MAX_VALUE
 ) {
     companion object {
-        const val NO_CHAR = Character.MIN_VALUE
+        private const val NO_CHAR = Character.MIN_VALUE
     }
 
     private val codeToChar: CharArray

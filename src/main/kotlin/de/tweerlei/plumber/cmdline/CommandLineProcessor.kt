@@ -76,8 +76,9 @@ class CommandLineProcessor(
                 Supported global options and their defaults (if any) are:
 
                 --help                        Show this help
-                --log-level=INFO              Set the log level
                 --profile=default             Use 'quiet' to disable start-up banner and log only warnings and errors
+                                              Use 'verbose' to increase log output
+                                              Use 'debug' for full debug logging
 
 
             """.trimIndent())

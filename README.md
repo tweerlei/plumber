@@ -74,7 +74,7 @@ JSON
   json-read:<path>            Read JSON objects from the given file
   json-write:<path>           Write current value as JSON object to the given file
 Logging
-  bounds                      Log smallest and largest value
+  bounds:9223372036854775807  Log smallest and largest value at every given number of items
   count:9223372036854775807   Log item counts at every given number of items
   dump                        Dump raw item contents
   error:1                     Throw an error every given number of items
@@ -126,8 +126,9 @@ XML
 Supported global options and their defaults (if any) are:
 
 --help                        Show this help
---log-level=INFO              Set the log level
 --profile=default             Use 'quiet' to disable start-up banner and log only warnings and errors
+                              Use 'verbose' to increase log output
+                              Use 'debug' for full debug logging
 
 --explain                     Explain resulting plan, don't execute
 --bulk-size=1000              Bulk size for steps that process multiple items at once
@@ -136,11 +137,11 @@ Supported global options and their defaults (if any) are:
 --retry-delay=0               Wait this number of seconds before retrying failed messages
 --queue-size=10               Queue size for items passed between threads
 --primary-key=<arg>           Use the given attribute as primary key (defaults to 'id' for JDBC and '_id' for MongoDB)
---select=[]                   Database fields to fetch, separated by commas
+--select=<arg>                Database fields to fetch, separated by commas (defaults to selecting all fields)
 --start-after=<arg>           Start after the given key
 --stop-after=<arg>            Stop after the given key
 --key-chars=<arg>             Use the given characters to generate keys (defaults to safe S3 chars)
---assume-role=<arg>           AWS; Assume the given IAM role for all AWS operations
+--assume-role=<arg>           AWS: Assume the given IAM role for all AWS operations
 --requester-pays              AWS: Requester pays access to S3 buckets
 --wait=1                      Kafka/SQS: Wait at most this number of seconds for a new message
 --follow                      Kafka/SQS: Keep polling for new messages
@@ -152,8 +153,8 @@ Supported global options and their defaults (if any) are:
 --separator=,                 CSV: Separator character
 --header                      CSV: Read/write header
 --pretty-print                Pretty print JSON and XML output
---element-name=<arg>          XML: Element name to read/write
---root-element-name=<arg>     XML: Root element name to wrap output in
+--element-name=item           XML: Element name to read/write
+--root-element-name=items     XML: Root element name to wrap output in
 
 Credentials can be passed via environment variables:
 

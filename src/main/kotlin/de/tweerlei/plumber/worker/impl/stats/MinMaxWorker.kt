@@ -16,26 +16,35 @@
 package de.tweerlei.plumber.worker.impl.stats
 
 import de.tweerlei.plumber.worker.WorkItem
-import de.tweerlei.plumber.worker.impl.DelegatingWorker
 import de.tweerlei.plumber.worker.Worker
+import de.tweerlei.plumber.worker.impl.DelegatingWorker
 import mu.KLogging
+import java.util.concurrent.atomic.AtomicLong
 import java.util.concurrent.atomic.AtomicReference
 
 class MinMaxWorker(
     private val name: String,
+    private val interval: Long,
     worker: Worker
 ): DelegatingWorker(worker) {
 
     companion object: KLogging()
 
+    private val sentFiles = AtomicLong()
     private val minValue = AtomicReference<Comparable<Any>>()
     private val maxValue = AtomicReference<Comparable<Any>>()
 
     override fun doProcess(item: WorkItem) =
         item.getOptionalAs<Comparable<Any>>()
             ?.let { value ->
-                minValue.accumulateAndGet(value) { a, b -> minOf(a ?: b, b) }
-                maxValue.accumulateAndGet(value) { a, b -> maxOf(a ?: b, b) }
+                val curMin = minValue.accumulateAndGet(value) { a, b -> minOf(a ?: b, b) }
+                val curMax = maxValue.accumulateAndGet(value) { a, b -> maxOf(a ?: b, b) }
+                sentFiles.incrementAndGet()
+                    .also { counter ->
+                        if (counter % interval == 0L) {
+                            logger.info { "$name: Items processed: $counter, Min. item: $curMin, max. item: $curMax" }
+                        }
+                    }
             }.let { true }
 
     override fun onClose() {

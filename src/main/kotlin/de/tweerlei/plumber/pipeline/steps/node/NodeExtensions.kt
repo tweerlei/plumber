@@ -17,6 +17,6 @@ package de.tweerlei.plumber.pipeline.steps.node
 
 import com.fasterxml.jackson.core.JsonPointer
 
-fun String.toJsonPointer() =
+fun String.toJsonPointer(): JsonPointer =
     if (isEmpty()) JsonPointer.empty()
     else JsonPointer.compile("/$this")

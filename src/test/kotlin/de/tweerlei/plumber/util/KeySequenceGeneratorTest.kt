@@ -15,6 +15,7 @@
  */
 package de.tweerlei.plumber.util
 
+import de.tweerlei.plumber.pipeline.options.AllPipelineOptions
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Test
@@ -23,12 +24,12 @@ class KeySequenceGeneratorTest {
 
     @Test
     fun `When start is not given, create an empty sequence`() {
-        assertFalse(KeySequenceGenerator().generateSequence(null, "42", 1).iterator().hasNext())
+        assertFalse(KeySequenceGenerator(AllPipelineOptions.SAFE_KEY_CHARS).generateSequence(null, "42", 1).iterator().hasNext())
     }
 
     @Test
     fun `When start equal to end, create an empty sequence`() {
-        assertFalse(KeySequenceGenerator().generateSequence("42", "42", 1).iterator().hasNext())
+        assertFalse(KeySequenceGenerator(AllPipelineOptions.SAFE_KEY_CHARS).generateSequence("42", "42", 1).iterator().hasNext())
     }
 
     @Test
@@ -44,6 +45,23 @@ class KeySequenceGeneratorTest {
         assertEquals(
             listOf("44", "46", "48", "4a", "4c", "4e", "50", "52"),
             KeySequenceGenerator("0123456789abcdef").generateSequence("42", "52", 2).toList()
+        )
+    }
+
+    @Test
+    fun `When step is greater than one, create a limited sequence with common prefix`() {
+        assertEquals(
+            listOf(
+                "limited sequence with common prefix44",
+                "limited sequence with common prefix46",
+                "limited sequence with common prefix48",
+                "limited sequence with common prefix4a",
+                "limited sequence with common prefix4c",
+                "limited sequence with common prefix4e",
+                "limited sequence with common prefix50",
+                "limited sequence with common prefix52"
+            ),
+            KeySequenceGenerator("0123456789abcdef").generateSequence("limited sequence with common prefix42", "limited sequence with common prefix52", 2).toList()
         )
     }
 

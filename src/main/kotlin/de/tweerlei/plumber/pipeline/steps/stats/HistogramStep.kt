@@ -15,11 +15,10 @@
  */
 package de.tweerlei.plumber.pipeline.steps.stats
 
-import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
-import de.tweerlei.plumber.worker.impl.stats.HistogramWorker
-import de.tweerlei.plumber.util.KeyRangeGenerator
+import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.worker.Worker
+import de.tweerlei.plumber.worker.impl.stats.HistogramWorker
 import org.springframework.stereotype.Service
 
 @Service("histogramWorker")
@@ -41,16 +40,14 @@ class HistogramStep: ProcessingStep {
         params: PipelineParams,
         parallelDegree: Int
     ) =
-        KeyRangeGenerator(params.keyChars)
-            .let { gen ->
-                HistogramWorker(
-                    predecessorName,
-                    bucketCountFor(arg),
-                    gen.packer,
-                    gen.extractPrefix(params.startAfterKey, params.stopAfterKey),
-                    w
-                )
-            }
+        HistogramWorker(
+            predecessorName,
+            bucketCountFor(arg),
+            params.keyChars,
+            params.startAfterKey,
+            params.stopAfterKey,
+            w
+        )
 
     private fun bucketCountFor(arg: String) =
         arg.toIntOrNull() ?: 10

@@ -15,15 +15,15 @@
  */
 package de.tweerlei.plumber.util
 
+import de.tweerlei.plumber.pipeline.options.AllPipelineOptions
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Test
 
 class KeyRangeGeneratorTest {
 
     @Test
     fun `When neither start or end are given, create a single range`() {
-        val result = KeyRangeGenerator().generateRanges(1,null, null)
+        val result = KeyRangeGenerator(AllPipelineOptions.SAFE_KEY_CHARS).generateRanges(1,null, null)
 
         assertEquals(1, result.size)
         assertEquals(KeyRange(null, null), result[0])
@@ -31,7 +31,7 @@ class KeyRangeGeneratorTest {
 
     @Test
     fun `When neither start or end are given, create multiple ranges`() {
-        val result = KeyRangeGenerator().generateRanges(16,null, null)
+        val result = KeyRangeGenerator(AllPipelineOptions.SAFE_KEY_CHARS).generateRanges(16,null, null)
 
         assertEquals(16, result.size)
         assertEquals(KeyRange(null, ")"), result[0])
@@ -77,7 +77,7 @@ class KeyRangeGeneratorTest {
 
     @Test
     fun `When only start given, create a single range`() {
-        val result = KeyRangeGenerator().generateRanges(1,"abc", null)
+        val result = KeyRangeGenerator(AllPipelineOptions.SAFE_KEY_CHARS).generateRanges(1,"abc", null)
 
         assertEquals(1, result.size)
         assertEquals(KeyRange("abc", null), result[0])
@@ -85,7 +85,7 @@ class KeyRangeGeneratorTest {
 
     @Test
     fun `When only start given, create multiple ranges`() {
-        val result = KeyRangeGenerator().generateRanges(16,"abc", null)
+        val result = KeyRangeGenerator(AllPipelineOptions.SAFE_KEY_CHARS).generateRanges(16,"abc", null)
 
         assertEquals(16, result.size)
         assertEquals(KeyRange("abc", "c8"), result[0])
@@ -108,7 +108,7 @@ class KeyRangeGeneratorTest {
 
     @Test
     fun `When only end given, create a single range`() {
-        val result = KeyRangeGenerator().generateRanges(1,null, "ABC")
+        val result = KeyRangeGenerator(AllPipelineOptions.SAFE_KEY_CHARS).generateRanges(1,null, "ABC")
 
         assertEquals(1, result.size)
         assertEquals(KeyRange(null, "ABC"), result[0])
@@ -116,7 +116,7 @@ class KeyRangeGeneratorTest {
 
     @Test
     fun `When only end given, create multiple ranges`() {
-        val result = KeyRangeGenerator().generateRanges(16,null, "ABC")
+        val result = KeyRangeGenerator(AllPipelineOptions.SAFE_KEY_CHARS).generateRanges(16,null, "ABC")
 
         assertEquals(16, result.size)
         assertEquals(KeyRange(null, "!5"), result[0])
@@ -139,7 +139,7 @@ class KeyRangeGeneratorTest {
 
     @Test
     fun `When start and end given, create a single range`() {
-        val result = KeyRangeGenerator().generateRanges(1,"012", "abc")
+        val result = KeyRangeGenerator(AllPipelineOptions.SAFE_KEY_CHARS).generateRanges(1,"012", "abc")
 
         assertEquals(1, result.size)
         assertEquals(KeyRange("012", "abc"), result[0])
@@ -147,7 +147,7 @@ class KeyRangeGeneratorTest {
 
     @Test
     fun `When start and end given, create multiple ranges`() {
-        val result = KeyRangeGenerator().generateRanges(16,"012", "abc")
+        val result = KeyRangeGenerator(AllPipelineOptions.SAFE_KEY_CHARS).generateRanges(16,"012", "abc")
 
         assertEquals(16, result.size)
         assertEquals(KeyRange("012", "2P"), result[0])
@@ -170,7 +170,7 @@ class KeyRangeGeneratorTest {
 
     @Test
     fun `When start and end given, create multiple ranges with common prefix`() {
-        val result = KeyRangeGenerator().generateRanges(16,"Test012", "Testabc")
+        val result = KeyRangeGenerator(AllPipelineOptions.SAFE_KEY_CHARS).generateRanges(16,"Test012", "Testabc")
 
         assertEquals(16, result.size)
         assertEquals(KeyRange("Test012", "Test2P"), result[0])
@@ -193,7 +193,7 @@ class KeyRangeGeneratorTest {
 
     @Test
     fun `When start and end given, create exact ranges`() {
-        val result = KeyRangeGenerator().generateRanges(16,"0", "G")
+        val result = KeyRangeGenerator(AllPipelineOptions.SAFE_KEY_CHARS).generateRanges(16,"0", "G")
 
         assertEquals(16, result.size)
         assertEquals(KeyRange("0", "1"), result[0])
@@ -216,7 +216,7 @@ class KeyRangeGeneratorTest {
 
     @Test
     fun `When start and end given with unknown characters, create valid ranges`() {
-        val result = KeyRangeGenerator().generateRanges(16,"$", "}")
+        val result = KeyRangeGenerator(AllPipelineOptions.SAFE_KEY_CHARS).generateRanges(16,"$", "}")
 
         assertEquals(16, result.size)
         assertEquals(KeyRange("$", "*"), result[0])
