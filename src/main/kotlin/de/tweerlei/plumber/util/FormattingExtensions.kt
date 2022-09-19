@@ -16,6 +16,7 @@
 package de.tweerlei.plumber.util
 
 import java.time.Duration
+import java.util.*
 import kotlin.reflect.KClass
 import kotlin.reflect.jvm.jvmName
 
@@ -28,8 +29,8 @@ private val MAGNITUDES = mapOf(
 fun Number.humanReadable() =
     toDouble().let { value ->
         MAGNITUDES.firstNotNullOfOrNull { (scale, fmt) ->
-            if (value >= scale) fmt.format(value / scale) else null
-        } ?: "%.2f".format(value)
+            if (value >= scale) fmt.format(Locale.US, value / scale) else null
+        } ?: "%.2f".format(Locale.US, value)
     }
 
 fun Duration.humanReadable() =
