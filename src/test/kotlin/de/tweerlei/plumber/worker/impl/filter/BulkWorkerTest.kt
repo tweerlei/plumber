@@ -19,6 +19,7 @@ import de.tweerlei.plumber.worker.impl.TestWorkerRunner
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.impl.text.UUIDWorker
+import de.tweerlei.plumber.worker.types.WorkItemList
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
 
@@ -29,11 +30,11 @@ class BulkWorkerTest {
         val items = TestWorkerRunner()
             .append { w -> UUIDWorker(19, w) }
             .append { w -> BulkWorker(10, w) }
-            .run(WorkItem.of(""))
+            .run(WorkItem.from(""))
 
         items.size.shouldBe(2)
         items.fold(0) { acc, item ->
-            acc + item.getAs<List<*>>(WellKnownKeys.WORK_ITEMS).size
+            acc + item.getAs<WorkItemList>(WellKnownKeys.WORK_ITEMS).size
         }.shouldBe(19)
     }
 }

@@ -29,6 +29,6 @@ class RecordSetWorker(
         item.getOrSetAs(WellKnownKeys.RECORD) {
             Record()
         }.let { map ->
-            map.put(field, item.getOptional())
+            map.put(field, item.get())
         }.let { true }
 }

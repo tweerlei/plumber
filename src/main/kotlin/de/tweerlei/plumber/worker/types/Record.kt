@@ -15,10 +15,13 @@
  */
 package de.tweerlei.plumber.worker.types
 
-class Record: LinkedHashMap<String, Any?>() {
+import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.node.JsonNodeFactory
+
+class Record: LinkedHashMap<String, Value>(), Value {
 
     companion object {
-        fun of(vararg items: Pair<String, Any?>) =
+        fun of(vararg items: Pair<String, Value>) =
             Record().apply {
                 items.forEach { (k, v) -> this[k] = v }
             }
@@ -26,8 +29,28 @@ class Record: LinkedHashMap<String, Any?>() {
         fun from(items: Array<String>) =
             Record().apply {
                 items.forEachIndexed { index, value ->
-                    this[index.toString()] = value.toComparable()
+                    this[index.toString()] = value.toComparableValue()
                 }
             }
     }
+
+    override val name = "record"
+
+    override fun toAny() =
+        this
+    override fun toBoolean() =
+        isNotEmpty()
+    override fun toNumber() =
+        size.toLong()
+    override fun toByteArray() =
+        toString().toByteArray()
+    override fun toJsonNode(): JsonNode =
+        JsonNodeFactory.instance.objectNode().also { node ->
+            forEach { key, value -> node.set<JsonNode>(key, value.toJsonNode()) }
+        }
+    override fun size() =
+        size.toLong()
+
+    override fun dump() =
+        mapValues { (_, value) -> value.dump() }.toString()
 }

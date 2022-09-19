@@ -15,12 +15,15 @@
  */
 package de.tweerlei.plumber.worker.impl.range
 
-import de.tweerlei.plumber.util.KeyRange
-import de.tweerlei.plumber.util.KeyRangeGenerator
+import de.tweerlei.plumber.util.range.KeyRange
+import de.tweerlei.plumber.util.range.KeyRangeGenerator
 import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.GeneratingWorker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
+import de.tweerlei.plumber.worker.types.ComparableValue
+import de.tweerlei.plumber.worker.types.LongValue
+import de.tweerlei.plumber.worker.types.NullValue
 import de.tweerlei.plumber.worker.types.Range
 
 class KeyRangeWorker(
@@ -37,16 +40,16 @@ class KeyRangeWorker(
             }
     }
 
-    private fun generateRanges(startAfter: Comparable<*>?, endWith: Comparable<*>?, fn: (WorkItem) -> Boolean) {
+    private fun generateRanges(startAfter: ComparableValue, endWith: ComparableValue, fn: (WorkItem) -> Boolean) {
         when {
-            startAfter is Long && endWith is Long -> generateNumberRanges(
-                startAfter,
-                endWith,
+            startAfter is LongValue && endWith is LongValue -> generateNumberRanges(
+                startAfter.value,
+                endWith.value,
                 fn
             )
             else -> generateStringRanges(
-                startAfter?.toString(),
-                endWith?.toString(),
+                startAfter.toStringOrNull(),
+                endWith.toStringOrNull(),
                 fn
             )
         }
@@ -67,8 +70,8 @@ class KeyRangeWorker(
 
     private fun toWorkItem(startAfter: Long, endWith: Long) =
         WorkItem.of(
-            null,
-            WellKnownKeys.RANGE to Range(startAfter, endWith)
+            NullValue.INSTANCE,
+            WellKnownKeys.RANGE to Range.from(startAfter, endWith)
         )
 
     private fun generateStringRanges(startAfterKey: String?, stopAfterKey: String?, fn: (WorkItem) -> Boolean) {
@@ -80,7 +83,7 @@ class KeyRangeWorker(
     }
 
     private fun KeyRange.toWorkItem() =
-        WorkItem.of(null,
-            WellKnownKeys.RANGE to Range(startAfterKey, endWithKey)
+        WorkItem.of(NullValue.INSTANCE,
+            WellKnownKeys.RANGE to Range.from(startAfterKey, endWithKey)
         )
 }

@@ -16,6 +16,8 @@
 package de.tweerlei.plumber.util
 
 import de.tweerlei.plumber.pipeline.options.AllPipelineOptions
+import de.tweerlei.plumber.util.range.KeyRange
+import de.tweerlei.plumber.util.range.KeyRangeGenerator
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 

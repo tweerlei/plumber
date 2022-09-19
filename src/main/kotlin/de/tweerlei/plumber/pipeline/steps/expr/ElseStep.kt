@@ -17,9 +17,11 @@ package de.tweerlei.plumber.pipeline.steps.expr
 
 import de.tweerlei.plumber.pipeline.PipelineParams
 import de.tweerlei.plumber.pipeline.steps.ProcessingStep
+import de.tweerlei.plumber.pipeline.steps.toRequiredAttributes
 import de.tweerlei.plumber.pipeline.steps.toWorkItemAccessor
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.Worker
+import de.tweerlei.plumber.worker.types.BooleanValue
 import org.springframework.stereotype.Service
 
 @Service("elseWorker")
@@ -32,8 +34,7 @@ class ElseStep: ProcessingStep {
 
     override fun requiredAttributesFor(arg: String) = setOf(
         WellKnownKeys.TEST_RESULT,
-        arg
-    )
+    ).plus(arg.toRequiredAttributes())
 
     override fun createWorker(
         arg: String,
@@ -44,7 +45,7 @@ class ElseStep: ProcessingStep {
         parallelDegree: Int
     ) =
         de.tweerlei.plumber.worker.impl.attribute.ConditionalWorker(
-            { item -> item.getAs<Boolean>(WellKnownKeys.TEST_RESULT).not() },
+            { item -> item.getAs<BooleanValue>(WellKnownKeys.TEST_RESULT).toBoolean().not() },
             arg.toWorkItemAccessor(),
             w
         )

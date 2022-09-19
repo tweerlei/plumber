@@ -15,21 +15,22 @@
  */
 package de.tweerlei.plumber.worker.impl.text
 
-import de.tweerlei.plumber.worker.impl.DelegatingWorker
 import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.WorkItemAccessor
 import de.tweerlei.plumber.worker.Worker
-import de.tweerlei.plumber.worker.types.coerceToString
+import de.tweerlei.plumber.worker.impl.DelegatingWorker
+import de.tweerlei.plumber.worker.types.OtherValue
+import de.tweerlei.plumber.worker.types.Value
 
 class ReplacingWorker(
-    private val replacement: WorkItemAccessor<Any?>,
+    private val replacement: WorkItemAccessor<Value>,
     worker: Worker
 ): DelegatingWorker(worker) {
 
     override fun doProcess(item: WorkItem) =
-        item.getAs<Regex>(TextKeys.MATCH_EXPRESSION)
-            .let { regex ->
-                regex.replace(item.getOptional(TextKeys.MATCH_INPUT).coerceToString(), replacement(item).coerceToString())
+        item.getAs<OtherValue>(TextKeys.MATCH_EXPRESSION)
+            .to<Regex>().let { regex ->
+                regex.replace(item.get(TextKeys.MATCH_INPUT).toString(), replacement(item).toString())
             }.also { result ->
                 item.set(result)
             }.let { true }

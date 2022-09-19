@@ -33,11 +33,11 @@ class ToJsonWorker(
     }
 
     override fun doProcess(item: WorkItem) =
-        item.getOptional()
+        item.get().toAny()
             .let { obj -> writeValue(obj) }
             .also { str ->
                 item.set(str)
-                item.set(WellKnownKeys.CONTENT_TYPE, CONTENT_TYPE_JSON)
+                item.set(CONTENT_TYPE_JSON, WellKnownKeys.CONTENT_TYPE)
             }
             .let { true }
 

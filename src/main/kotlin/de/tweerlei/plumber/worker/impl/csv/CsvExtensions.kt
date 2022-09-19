@@ -15,5 +15,7 @@
  */
 package de.tweerlei.plumber.worker.impl.csv
 
-fun <T> Iterable<T?>.mapNullTo(nvl: T): Iterable<T> =
-    asSequence().map { v -> v ?: nvl }.asIterable()
+import de.tweerlei.plumber.worker.types.Value
+
+fun Iterable<Value>.mapNullTo(nvl: Any): Iterable<Any> =
+    asSequence().map { v -> v.toAny() ?: nvl }.asIterable()

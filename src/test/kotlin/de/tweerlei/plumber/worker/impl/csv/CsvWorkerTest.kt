@@ -19,6 +19,7 @@ import com.fasterxml.jackson.dataformat.csv.CsvMapper
 import de.tweerlei.plumber.worker.impl.TestWorkerRunner
 import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.impl.record.RecordGetWorker
+import de.tweerlei.plumber.worker.types.StringValue
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
@@ -37,10 +38,10 @@ class CsvWorkerTest {
             .append { w -> RecordGetWorker("4", w) }
             .append { w -> FromCsvWorker(objectMapper, ',', w) }
             .append { w -> ToCsvWorker(objectMapper, ',', w) }
-            .run(WorkItem.of(csv.toByteArray(StandardCharsets.UTF_8)))
+            .run(WorkItem.from(csv.toByteArray(StandardCharsets.UTF_8)))
             .singleOrNull()
 
         item.shouldNotBeNull()
-        item.getAs<String>().shouldBe("Hello,42,false,null\n", )
+        item.getAs<StringValue>().value.shouldBe("Hello,42,false,null\n", )
     }
 }

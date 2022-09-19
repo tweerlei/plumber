@@ -64,7 +64,7 @@ class KafkaReceiveWorker(
 
     private fun ConsumerRecord<String, String>.toWorkItem() =
         value()?.let { value ->
-            WorkItem.of(value,
+            WorkItem.from(value,
                 KafkaKeys.TOPIC_NAME to topicName,
                 KafkaKeys.PARTITION to partition(),
                 KafkaKeys.OFFSET to offset(),

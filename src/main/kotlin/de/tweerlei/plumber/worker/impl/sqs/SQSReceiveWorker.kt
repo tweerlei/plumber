@@ -23,7 +23,6 @@ import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.impl.GeneratingWorker
 import de.tweerlei.plumber.worker.Worker
 import mu.KLogging
-import kotlin.math.min
 
 class SQSReceiveWorker(
     private val queueUrl: String,
@@ -69,7 +68,7 @@ class SQSReceiveWorker(
             .messages
 
     private fun Message.toWorkItem() =
-        WorkItem.of(
+        WorkItem.from(
             body,
             WellKnownKeys.NAME to messageId,
             SQSKeys.QUEUE_URL to queueUrl,

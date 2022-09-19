@@ -40,7 +40,7 @@ class JdbcRangeWorker(
 
             if (minValue is Number && maxValue is Number) {
                 logger.info { "Key range for $primaryKey is $minValue .. $maxValue" }
-                item.set(Range(minValue.toLong() - 1, maxValue.toLong()), WellKnownKeys.RANGE)
+                item.set(Range.from(minValue.toLong() - 1, maxValue.toLong()), WellKnownKeys.RANGE)
                 item.set(tableName, JdbcKeys.TABLE_NAME)
                 item.set(primaryKey, JdbcKeys.PRIMARY_KEY)
                 true

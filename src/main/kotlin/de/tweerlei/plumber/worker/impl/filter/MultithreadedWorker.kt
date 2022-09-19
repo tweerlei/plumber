@@ -20,6 +20,7 @@ import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.WrappingWorker
+import de.tweerlei.plumber.worker.types.NullValue
 import mu.KLogging
 import java.util.concurrent.LinkedBlockingQueue
 
@@ -31,7 +32,7 @@ class MultithreadedWorker(
 ): WrappingWorker(worker) {
 
     companion object : KLogging() {
-        val endMarker = WorkItem.of(null)
+        val endMarker = WorkItem.of(NullValue.INSTANCE)
     }
 
     private val blockingQueue = LinkedBlockingQueue<WorkItem>(numberOfThreads * queueSizePerThread)

@@ -15,17 +15,27 @@
  */
 package de.tweerlei.plumber.worker
 
+import de.tweerlei.plumber.worker.types.NullValue
+import de.tweerlei.plumber.worker.types.Value
+import de.tweerlei.plumber.worker.types.toValue
+
 class WorkItem private constructor(
-    private val map: MutableMap<String, Any>
+    private val map: MutableMap<String, Value>
 ) {
 
     companion object {
         const val DEFAULT_KEY = ""
 
-        fun of(value: Any?, vararg entries: Pair<String, Any?>) =
+        fun of(value: Value, vararg entries: Pair<String, Value>) =
             WorkItem(HashMap()).also { item ->
                 entries.forEach { (k, v) -> item.set(v, k) }
                 item.set(value)
+            }
+
+        fun from(value: Any?, vararg entries: Pair<String, Any?>) =
+            WorkItem(HashMap()).also { item ->
+                entries.forEach { (k, v) -> item.set(v.toValue(), k) }
+                item.set(value.toValue())
             }
     }
 
@@ -34,19 +44,16 @@ class WorkItem private constructor(
             .apply { putAll(item.map) }
             .let { map -> WorkItem(map) }
 
-    fun has(key: String = DEFAULT_KEY) =
-        map.containsKey(key)
-
     fun get(key: String = DEFAULT_KEY) =
-        map.getValue(key)
+        map[key] ?: NullValue.INSTANCE
 
-    inline fun <reified T: Any> getAs(key: String = DEFAULT_KEY): T =
+    inline fun <reified T: Value> getAs(key: String = DEFAULT_KEY): T =
         get(key) as T
 
     fun getOptional(key: String = DEFAULT_KEY) =
         map[key]
 
-    inline fun <reified T: Any> getOptionalAs(key: String = DEFAULT_KEY): T? =
+    inline fun <reified T: Value> getOptionalAs(key: String = DEFAULT_KEY): T? =
         getOptional(key) as T?
 
     fun getFirst(vararg keys: String) =
@@ -54,25 +61,29 @@ class WorkItem private constructor(
             .first { key -> map.containsKey(key) }
             .let { key -> map.getValue(key) }
 
-    inline fun <reified T: Any> getFirstAs(vararg keys: String): T =
+    inline fun <reified T: Value> getFirstAs(vararg keys: String): T =
         getFirst(*keys) as T
 
-    fun getOrSet(key: String, fn: () -> Any) =
+    fun getOrSet(key: String, fn: () -> Value) =
         if (map.containsKey(key))
             map.getValue(key)
         else
-            fn().also { map[key] = it }
+            fn().also { set(it, key) }
 
-    inline fun <reified T: Any> getOrSetAs(key: String, noinline fn: () -> T): T =
+    inline fun <reified T: Value> getOrSetAs(key: String, noinline fn: () -> T): T =
         getOrSet(key, fn) as T
 
-    fun set(value: Any?, key: String = DEFAULT_KEY) {
-        if (value == null)
+    fun set(value: Value, key: String = DEFAULT_KEY) {
+        if (value is NullValue)
             map.remove(key)
         else
             map[key] = value
     }
 
-    override fun toString() =
-        map.toString()
+    fun set(value: Any?, key: String = DEFAULT_KEY) {
+        set(value.toValue(), key)
+    }
+
+    fun dump() =
+        map.mapValues { (_, value) -> value.dump() }.toString()
 }

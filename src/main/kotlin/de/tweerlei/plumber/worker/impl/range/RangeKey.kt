@@ -15,26 +15,27 @@
  */
 package de.tweerlei.plumber.worker.impl.range
 
+import de.tweerlei.plumber.worker.types.ComparableValue
 import de.tweerlei.plumber.worker.types.Range
 
 enum class RangeKey {
     start {
-        override fun get(range: Range): Comparable<*>? =
+        override fun get(range: Range): ComparableValue =
             range.startAfter
 
-        override fun set(range: Range, value: Comparable<*>?) {
+        override fun set(range: Range, value: ComparableValue) {
             range.startAfter = value
         }
     },
     end {
-        override fun get(range: Range): Comparable<*>? =
+        override fun get(range: Range): ComparableValue =
             range.endWith
 
-        override fun set(range: Range, value: Comparable<*>?) {
+        override fun set(range: Range, value: ComparableValue) {
             range.endWith = value
         }
     };
 
-    abstract fun get(range: Range): Comparable<*>?
-    abstract fun set(range: Range, value: Comparable<*>?)
+    abstract fun get(range: Range): ComparableValue
+    abstract fun set(range: Range, value: ComparableValue)
 }

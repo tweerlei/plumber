@@ -28,6 +28,6 @@ class DumpingWorker(
     companion object : KLogging()
 
     override fun doProcess(item: WorkItem) =
-        logger.info { "$name: $item" }
+        logger.info { "$name: ${item.dump()}" }
             .let { true }
 }

@@ -15,6 +15,7 @@
  */
 package de.tweerlei.plumber.worker
 
+import de.tweerlei.plumber.worker.types.*
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.shouldBe
@@ -24,32 +25,37 @@ class WorkItemTest {
 
     @Test
     fun testGetSetMain() {
-        val item = WorkItem.of("Test")
-        item.get().shouldBe("Test")
+        val item = WorkItem.from("Test")
+        item.get().shouldBe(StringValue("Test"))
 
-        item.getAs<Any>().shouldBe("Test")
-        item.getAs<String>().shouldBe("Test")
+        item.getAs<Value>().shouldBe(StringValue("Test"))
+        item.getAs<ComparableValue>().shouldBe(StringValue("Test"))
+        item.getAs<StringValue>().shouldBe(StringValue("Test"))
         item.set(42)
-        item.getAs<Int>().shouldBe(42)
+        item.getAs<Value>().shouldBe(LongValue(42L))
+        item.getAs<ComparableValue>().shouldBe(LongValue(42L))
+        item.getAs<NumberValue>().shouldBe(LongValue(42L))
+        item.getAs<LongValue>().shouldBe(LongValue(42L))
 
-        shouldThrow<ClassCastException> { item.getAs<Long>() }
+        shouldThrow<ClassCastException> { item.getAs<StringValue>() }
 
-        item.getOptional().shouldBe(42)
-        item.getOptionalAs<Int>().shouldBe(42)
+        item.getOptional().shouldBe(LongValue(42L))
+        item.getOptionalAs<LongValue>().shouldBe(LongValue(42L))
         item.set(null)
         item.getOptional().shouldBeNull()
+        item.getOptionalAs<LongValue>().shouldBeNull()
     }
 
     @Test
     fun testGetSetAlternate() {
-        val item = WorkItem.of("")
+        val item = WorkItem.from("")
         item.set("Test 1", "value1")
         item.set("Test 2", "value2")
 
-        item.getAs<String>().shouldBe("")
-        item.getAs<String>("value1").shouldBe("Test 1")
-        item.getAs<String>("value2").shouldBe("Test 2")
+        item.getAs<StringValue>().shouldBe(StringValue(""))
+        item.getAs<StringValue>("value1").shouldBe(StringValue("Test 1"))
+        item.getAs<StringValue>("value2").shouldBe(StringValue("Test 2"))
 
-        shouldThrow<NoSuchElementException> { item.getAs<String>("value3") }
+        item.getAs<NullValue>("value3").shouldBe(NullValue.INSTANCE)
     }
 }

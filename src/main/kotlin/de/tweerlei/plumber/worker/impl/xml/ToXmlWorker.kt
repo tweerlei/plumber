@@ -36,11 +36,11 @@ class ToXmlWorker(
     private val writer = xmlMapper.writer().withRootName(elementName)
 
     override fun doProcess(item: WorkItem) =
-        item.getOptional()
+        item.get().toAny()
             .let { obj -> writeValue(obj) }
             .also { str ->
                 item.set(str)
-                item.set(WellKnownKeys.CONTENT_TYPE, CONTENT_TYPE_XML)
+                item.set(CONTENT_TYPE_XML, WellKnownKeys.CONTENT_TYPE)
             }
             .let { true }
 

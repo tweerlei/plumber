@@ -16,13 +16,13 @@
 package de.tweerlei.plumber.worker.impl.node
 
 import com.fasterxml.jackson.core.JsonPointer
-import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.ObjectNode
 import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.DelegatingWorker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
+import de.tweerlei.plumber.worker.types.JsonNodeValue
 
 class NodeUnsetWorker(
     private val p: JsonPointer,
@@ -34,8 +34,8 @@ class NodeUnsetWorker(
     private val index = p.last().matchingIndex
 
     override fun doProcess(item: WorkItem) =
-        item.getAs<JsonNode>(WellKnownKeys.NODE)
-            .at(ptr)
+        item.getAs<JsonNodeValue>(WellKnownKeys.NODE)
+            .value.at(ptr)
             .let { node ->
                 when {
                     node.isObject -> (node as ObjectNode).remove(key)

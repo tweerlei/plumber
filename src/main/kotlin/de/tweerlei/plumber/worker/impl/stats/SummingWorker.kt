@@ -16,10 +16,10 @@
 package de.tweerlei.plumber.worker.impl.stats
 
 import de.tweerlei.plumber.util.humanReadable
-import de.tweerlei.plumber.worker.*
+import de.tweerlei.plumber.worker.WorkItem
+import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.DelegatingWorker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
-import de.tweerlei.plumber.worker.types.coerceToLong
 import mu.KLogging
 import java.util.concurrent.atomic.AtomicLong
 
@@ -39,7 +39,7 @@ class SummingWorker(
     }
 
     override fun doProcess(item: WorkItem) =
-        item.getOptional(WellKnownKeys.SIZE).coerceToLong()
+        item.get(WellKnownKeys.SIZE).toNumber().toLong()
             .let { size ->
                 sum.addAndGet(size)
                     .also { counter ->

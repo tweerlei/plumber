@@ -28,7 +28,7 @@ class UUIDWorker(
     override fun generateItems(item: WorkItem, fn: (WorkItem) -> Boolean) {
         generateSequence { UUID.randomUUID().toString() }
             .all { uuid ->
-                fn(WorkItem.of(uuid))
+                fn(WorkItem.from(uuid))
             }
     }
 }

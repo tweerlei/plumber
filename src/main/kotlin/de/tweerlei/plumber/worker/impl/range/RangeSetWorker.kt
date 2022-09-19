@@ -15,11 +15,12 @@
  */
 package de.tweerlei.plumber.worker.impl.range
 
-import de.tweerlei.plumber.worker.*
+import de.tweerlei.plumber.worker.WorkItem
+import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.DelegatingWorker
-import de.tweerlei.plumber.worker.types.Range
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
-import de.tweerlei.plumber.worker.types.coerceToComparable
+import de.tweerlei.plumber.worker.types.Range
+import de.tweerlei.plumber.worker.types.toComparableValue
 
 class RangeSetWorker(
     private val field: RangeKey,
@@ -30,7 +31,7 @@ class RangeSetWorker(
         item.getOrSetAs(WellKnownKeys.RANGE) {
             Range()
         }.let { range ->
-            item.getOptional()?.coerceToComparable().let { value ->
+            item.get().toComparableValue().let { value ->
                 field.set(range, value)
             }
         }.let { true }

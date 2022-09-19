@@ -15,29 +15,22 @@
  */
 package de.tweerlei.plumber.worker.types
 
-import java.time.Duration
-import java.time.Instant
-import java.time.format.DateTimeParseException
+interface NumberValue: ComparableValue {
 
-fun String?.toComparable(): Comparable<*>? =
-    if (this == null || this == "null") null
-    else toBooleanStrictOrNull()
-        ?: toInstantOrNull()
-        ?: toDurationOrNull()
-        ?: toLongOrNull()
-        ?: toDoubleOrNull()
-        ?: this
-
-private fun String.toInstantOrNull() =
-    try {
-        Instant.parse(this)
-    } catch (e: DateTimeParseException) {
-        null
-    }
-
-private fun String.toDurationOrNull() =
-    try {
-        Duration.parse(this)
-    } catch (e: DateTimeParseException) {
-        null
-    }
+    override fun toByteArray() =
+        toNumber().toLong().let { value ->
+            // TODO: Big endian only
+            byteArrayOf(
+                (value and 0xff).toByte(),
+                (value shr 8 and 0xff).toByte(),
+                (value shr 16 and 0xff).toByte(),
+                (value shr 24 and 0xff).toByte(),
+                (value shr 32 and 0xff).toByte(),
+                (value shr 40 and 0xff).toByte(),
+                (value shr 48 and 0xff).toByte(),
+                (value shr 56 and 0xff).toByte(),
+            )
+        }
+    override fun size() =
+        toString().length.toLong()
+}

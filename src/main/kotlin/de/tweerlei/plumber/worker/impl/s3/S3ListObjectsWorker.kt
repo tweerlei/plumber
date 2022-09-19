@@ -19,11 +19,11 @@ import com.amazonaws.services.s3.AmazonS3
 import com.amazonaws.services.s3.model.ListObjectsV2Request
 import com.amazonaws.services.s3.model.ListObjectsV2Result
 import com.amazonaws.services.s3.model.S3ObjectSummary
-import de.tweerlei.plumber.worker.*
+import de.tweerlei.plumber.worker.WorkItem
+import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.GeneratingWorker
-import de.tweerlei.plumber.worker.types.Range
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
-import de.tweerlei.plumber.worker.types.coerceToString
+import de.tweerlei.plumber.worker.types.Range
 import mu.KLogging
 
 class S3ListObjectsWorker(
@@ -42,8 +42,8 @@ class S3ListObjectsWorker(
 
     override fun generateItems(item: WorkItem, fn: (WorkItem) -> Boolean) {
         val range = item.getOptionalAs<Range>(WellKnownKeys.RANGE)
-        val startAfter = range?.startAfter?.coerceToString()
-        val endWith = range?.endWith?.coerceToString()
+        val startAfter = range?.startAfter?.toStringOrNull()
+        val endWith = range?.endWith?.toStringOrNull()
         logger.info { "fetching filenames from $startAfter to $endWith" }
 
         var result: ListObjectsV2Result? = null
@@ -87,7 +87,7 @@ class S3ListObjectsWorker(
             }.let { request -> amazonS3Client.listObjectsV2(request) }
 
     private fun S3ObjectSummary.toWorkItem() =
-        WorkItem.of(
+        WorkItem.from(
             key,
             S3Keys.BUCKET_NAME to bucketName,
             S3Keys.OBJECT_KEY to key,

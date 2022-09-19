@@ -17,11 +17,12 @@ package de.tweerlei.plumber.worker.impl.s3
 
 import com.amazonaws.services.s3.AmazonS3
 import com.amazonaws.services.s3.model.DeleteObjectsRequest
-import de.tweerlei.plumber.worker.*
+import de.tweerlei.plumber.worker.WorkItem
+import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.DelegatingWorker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
-import de.tweerlei.plumber.worker.types.coerceToString
 import de.tweerlei.plumber.worker.impl.ifEmptyGetFrom
+import de.tweerlei.plumber.worker.types.WorkItemList
 
 class S3DeleteObjectsWorker(
     private val bucketName: String,
@@ -31,11 +32,11 @@ class S3DeleteObjectsWorker(
 ): DelegatingWorker(worker) {
 
     override fun doProcess(item: WorkItem) =
-        item.getAs<List<WorkItem>>(WellKnownKeys.WORK_ITEMS)
+        item.getAs<WorkItemList>(WellKnownKeys.WORK_ITEMS)
             .let { items ->
                 deleteFiles(
                     bucketName.ifEmptyGetFrom(items.first(), S3Keys.BUCKET_NAME),
-                    items.map { DeleteObjectsRequest.KeyVersion(it.getFirst(WellKnownKeys.NAME).coerceToString()) }
+                    items.map { DeleteObjectsRequest.KeyVersion(it.getFirst(WellKnownKeys.NAME).toString()) }
                 )
             }.let { true }
 

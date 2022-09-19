@@ -15,10 +15,9 @@
  */
 package de.tweerlei.plumber.worker.impl.text
 
-import de.tweerlei.plumber.worker.impl.DelegatingWorker
 import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.Worker
-import de.tweerlei.plumber.worker.types.coerceToString
+import de.tweerlei.plumber.worker.impl.DelegatingWorker
 
 class MatchingWorker(
     private val regex: Regex,
@@ -26,7 +25,7 @@ class MatchingWorker(
 ): DelegatingWorker(worker) {
 
     override fun doProcess(item: WorkItem) =
-        item.getOptional().coerceToString()
+        item.get().toString()
             .let { value ->
                 item.set(value, TextKeys.MATCH_INPUT)
                 item.set(regex, TextKeys.MATCH_EXPRESSION)
@@ -35,7 +34,8 @@ class MatchingWorker(
                 result.groupValues.forEachIndexed { index, value ->
                     item.set(value, "${TextKeys.MATCHED_GROUP}${index}")
                 }
-                result.value
+                if (result.groupValues.size > 1) result.groupValues[1]
+                else result.value
             }.let { matchedText ->
                 item.set(matchedText)
             }.let { true }

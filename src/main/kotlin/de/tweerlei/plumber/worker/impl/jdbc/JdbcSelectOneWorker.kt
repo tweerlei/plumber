@@ -20,6 +20,8 @@ import de.tweerlei.plumber.worker.impl.DelegatingWorker
 import de.tweerlei.plumber.worker.types.Record
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.impl.ifEmptyGetFrom
+import de.tweerlei.plumber.worker.types.Value
+import de.tweerlei.plumber.worker.types.toValue
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.RowMapper
 import java.sql.ResultSet
@@ -34,7 +36,7 @@ class JdbcSelectOneWorker(
     override fun doProcess(item: WorkItem) =
         selectRow(
             tableName.ifEmptyGetFrom(item, JdbcKeys.TABLE_NAME),
-            item.getOptional()
+            item.get()
         ) { rs, _ ->
             rs.toRecord()
         }?.also { map ->
@@ -45,17 +47,17 @@ class JdbcSelectOneWorker(
         }?.let { true }
         ?: false
 
-    private fun selectRow(table: String, id: Any?, rse: RowMapper<Record>) =
+    private fun selectRow(table: String, id: Value, rse: RowMapper<Record>) =
         jdbcTemplate.queryForObject(
             "SELECT * FROM $table WHERE $primaryKey = ?",
             rse,
-            id
+            id.toAny()
         )
 
     private fun ResultSet.toRecord() =
         Record().also { map ->
             for (i in 1..metaData.columnCount) {
-                map[metaData.getColumnName(i)] = getObject(i)
+                map[metaData.getColumnName(i)] = getObject(i).toValue()
             }
         }
 }

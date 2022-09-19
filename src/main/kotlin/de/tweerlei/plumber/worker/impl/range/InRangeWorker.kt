@@ -19,6 +19,7 @@ import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.DelegatingWorker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
+import de.tweerlei.plumber.worker.types.ComparableValue
 import de.tweerlei.plumber.worker.types.Range
 
 class InRangeWorker(
@@ -26,7 +27,7 @@ class InRangeWorker(
 ): DelegatingWorker(worker) {
 
     override fun doProcess(item: WorkItem) =
-        item.getOptionalAs<Comparable<*>>().let { value ->
+        item.getAs<ComparableValue>().let { value ->
             item.getOptionalAs<Range>(WellKnownKeys.RANGE)
                 ?.contains(value)
                 ?: false

@@ -16,25 +16,26 @@
 package de.tweerlei.plumber.worker.impl.dynamodb
 
 import com.amazonaws.services.dynamodbv2.model.AttributeValue
-import de.tweerlei.plumber.worker.types.Record
+import de.tweerlei.plumber.worker.types.*
 
 fun Map<String, AttributeValue>.fromDynamoDB() =
     mapValuesTo(Record()) { (_, v) ->
         when {
-            v.isNULL == true -> null
-            v.isBOOL != null -> v.bool
-            v.n != null -> v.n.toLongOrNull() ?: v.n.toDouble()
+            v.isNULL == true -> NullValue.INSTANCE
+            v.isBOOL != null -> BooleanValue.of(v.bool)
+            v.n != null -> v.n.toLongOrNull()?.let { LongValue(it) } ?: DoubleValue(v.n.toDouble())
             // FIXME: there are more cases
-            else -> v.s
+            else -> StringValue(v.s)
         }
     }
 
 fun Record.toDynamoDB() =
     mapValues { (_, v) ->
         when (v) {
-            null -> AttributeValue().apply { `null` = true }
-            is Boolean -> AttributeValue().apply { bool = v }
-            is Number -> AttributeValue().apply { n = v.toString() }
+            is NullValue -> AttributeValue().apply { `null` = true }
+            is BooleanValue -> AttributeValue().apply { bool = v.toBoolean() }
+            is LongValue -> AttributeValue().apply { n = v.toString() }
+            is DoubleValue -> AttributeValue().apply { n = v.toString() }
             // FIXME: there are more cases
             else -> AttributeValue(v.toString())
         }

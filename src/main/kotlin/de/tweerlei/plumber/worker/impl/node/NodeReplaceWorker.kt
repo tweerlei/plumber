@@ -16,11 +16,11 @@
 package de.tweerlei.plumber.worker.impl.node
 
 import com.fasterxml.jackson.core.JsonPointer
-import com.fasterxml.jackson.databind.JsonNode
 import de.tweerlei.plumber.worker.WorkItem
+import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.DelegatingWorker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
-import de.tweerlei.plumber.worker.Worker
+import de.tweerlei.plumber.worker.types.JsonNodeValue
 
 class NodeReplaceWorker(
     private val ptr: JsonPointer,
@@ -28,8 +28,8 @@ class NodeReplaceWorker(
 ): DelegatingWorker(worker) {
 
     override fun doProcess(item: WorkItem) =
-        item.getAs<JsonNode>(WellKnownKeys.NODE)
-            .let { json ->
+        item.getAs<JsonNodeValue>(WellKnownKeys.NODE)
+            .value.let { json ->
                 json.at(ptr)
                     .also { value ->
                         item.set(value, WellKnownKeys.NODE)

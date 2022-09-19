@@ -18,7 +18,6 @@ package de.tweerlei.plumber.pipeline.steps.filter
 import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
 import de.tweerlei.plumber.worker.Worker
-import de.tweerlei.plumber.worker.types.coerceToBoolean
 import de.tweerlei.plumber.worker.impl.filter.FilteringWorker
 import org.springframework.stereotype.Service
 
@@ -40,7 +39,7 @@ class FilterStep: ProcessingStep {
     ) =
         compareWithFor(arg).let { compareWith ->
             FilteringWorker({ item ->
-                item.getOptional().coerceToBoolean() == compareWith
+                item.get().toBoolean() == compareWith
             }, w)
         }
 

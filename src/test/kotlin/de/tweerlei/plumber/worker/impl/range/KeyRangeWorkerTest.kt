@@ -30,24 +30,24 @@ class KeyRangeWorkerTest {
         val items = TestWorkerRunner()
             .append { w -> SettingWorker(
                 WellKnownKeys.RANGE,
-                { Range(100L, 200L) },
+                { Range.from(100L, 200L) },
                 w
             ) }
             .append { w -> KeyRangeWorker(10, "0123456789", Long.MAX_VALUE, w) }
-            .run(WorkItem.of(""))
+            .run(WorkItem.from(""))
             .toList()
 
         items.size.shouldBe(10)
-        items[0].getOptional(WellKnownKeys.RANGE).shouldBe(Range(100L, 110L))
-        items[1].getOptional(WellKnownKeys.RANGE).shouldBe(Range(110L, 120L))
-        items[2].getOptional(WellKnownKeys.RANGE).shouldBe(Range(120L, 130L))
-        items[3].getOptional(WellKnownKeys.RANGE).shouldBe(Range(130L, 140L))
-        items[4].getOptional(WellKnownKeys.RANGE).shouldBe(Range(140L, 150L))
-        items[5].getOptional(WellKnownKeys.RANGE).shouldBe(Range(150L, 160L))
-        items[6].getOptional(WellKnownKeys.RANGE).shouldBe(Range(160L, 170L))
-        items[7].getOptional(WellKnownKeys.RANGE).shouldBe(Range(170L, 180L))
-        items[8].getOptional(WellKnownKeys.RANGE).shouldBe(Range(180L, 190L))
-        items[9].getOptional(WellKnownKeys.RANGE).shouldBe(Range(190L, 200L))
+        items[0].getAs<Range>(WellKnownKeys.RANGE).shouldBe(Range.from(100L, 110L))
+        items[1].getAs<Range>(WellKnownKeys.RANGE).shouldBe(Range.from(110L, 120L))
+        items[2].getAs<Range>(WellKnownKeys.RANGE).shouldBe(Range.from(120L, 130L))
+        items[3].getAs<Range>(WellKnownKeys.RANGE).shouldBe(Range.from(130L, 140L))
+        items[4].getAs<Range>(WellKnownKeys.RANGE).shouldBe(Range.from(140L, 150L))
+        items[5].getAs<Range>(WellKnownKeys.RANGE).shouldBe(Range.from(150L, 160L))
+        items[6].getAs<Range>(WellKnownKeys.RANGE).shouldBe(Range.from(160L, 170L))
+        items[7].getAs<Range>(WellKnownKeys.RANGE).shouldBe(Range.from(170L, 180L))
+        items[8].getAs<Range>(WellKnownKeys.RANGE).shouldBe(Range.from(180L, 190L))
+        items[9].getAs<Range>(WellKnownKeys.RANGE).shouldBe(Range.from(190L, 200L))
     }
 
     @Test
@@ -55,19 +55,19 @@ class KeyRangeWorkerTest {
         val items = TestWorkerRunner()
             .append { w -> SettingWorker(
                 WellKnownKeys.RANGE,
-                { Range(100L, 105L) },
+                { Range.from(100L, 105L) },
                 w
             ) }
             .append { w -> KeyRangeWorker(10, "0123456789", Long.MAX_VALUE, w) }
-            .run(WorkItem.of(""))
+            .run(WorkItem.from(""))
             .toList()
 
         items.size.shouldBe(5)
-        items[0].getOptional(WellKnownKeys.RANGE).shouldBe(Range(100L, 101L))
-        items[1].getOptional(WellKnownKeys.RANGE).shouldBe(Range(101L, 102L))
-        items[2].getOptional(WellKnownKeys.RANGE).shouldBe(Range(102L, 103L))
-        items[3].getOptional(WellKnownKeys.RANGE).shouldBe(Range(103L, 104L))
-        items[4].getOptional(WellKnownKeys.RANGE).shouldBe(Range(104L, 105L))
+        items[0].getAs<Range>(WellKnownKeys.RANGE).shouldBe(Range.from(100L, 101L))
+        items[1].getAs<Range>(WellKnownKeys.RANGE).shouldBe(Range.from(101L, 102L))
+        items[2].getAs<Range>(WellKnownKeys.RANGE).shouldBe(Range.from(102L, 103L))
+        items[3].getAs<Range>(WellKnownKeys.RANGE).shouldBe(Range.from(103L, 104L))
+        items[4].getAs<Range>(WellKnownKeys.RANGE).shouldBe(Range.from(104L, 105L))
     }
 
     @Test
@@ -75,23 +75,23 @@ class KeyRangeWorkerTest {
         val items = TestWorkerRunner()
             .append { w -> SettingWorker(
                 WellKnownKeys.RANGE,
-                { Range("abc", null) },
+                { Range.from("abc", null) },
                 w
             ) }
             .append { w -> KeyRangeWorker(10, "0123456789abcdef", Long.MAX_VALUE, w) }
-            .run(WorkItem.of(""))
+            .run(WorkItem.from(""))
             .toList()
 
         items.size.shouldBe(10)
-        items[0].getOptional(WellKnownKeys.RANGE).shouldBe(Range("abc", "b3"))
-        items[1].getOptional(WellKnownKeys.RANGE).shouldBe(Range("b3", "bc"))
-        items[2].getOptional(WellKnownKeys.RANGE).shouldBe(Range("bc", "c4"))
-        items[3].getOptional(WellKnownKeys.RANGE).shouldBe(Range("c4", "cd"))
-        items[4].getOptional(WellKnownKeys.RANGE).shouldBe(Range("cd", "d5"))
-        items[5].getOptional(WellKnownKeys.RANGE).shouldBe(Range("d5", "de"))
-        items[6].getOptional(WellKnownKeys.RANGE).shouldBe(Range("de", "e6"))
-        items[7].getOptional(WellKnownKeys.RANGE).shouldBe(Range("e6", "ef"))
-        items[8].getOptional(WellKnownKeys.RANGE).shouldBe(Range("ef", "f7"))
-        items[9].getOptional(WellKnownKeys.RANGE).shouldBe(Range("f7", null))
+        items[0].getAs<Range>(WellKnownKeys.RANGE).shouldBe(Range.from("abc", "b3"))
+        items[1].getAs<Range>(WellKnownKeys.RANGE).shouldBe(Range.from("b3", "bc"))
+        items[2].getAs<Range>(WellKnownKeys.RANGE).shouldBe(Range.from("bc", "c4"))
+        items[3].getAs<Range>(WellKnownKeys.RANGE).shouldBe(Range.from("c4", "cd"))
+        items[4].getAs<Range>(WellKnownKeys.RANGE).shouldBe(Range.from("cd", "d5"))
+        items[5].getAs<Range>(WellKnownKeys.RANGE).shouldBe(Range.from("d5", "de"))
+        items[6].getAs<Range>(WellKnownKeys.RANGE).shouldBe(Range.from("de", "e6"))
+        items[7].getAs<Range>(WellKnownKeys.RANGE).shouldBe(Range.from("e6", "ef"))
+        items[8].getAs<Range>(WellKnownKeys.RANGE).shouldBe(Range.from("ef", "f7"))
+        items[9].getAs<Range>(WellKnownKeys.RANGE).shouldBe(Range.from("f7", null))
     }
 }

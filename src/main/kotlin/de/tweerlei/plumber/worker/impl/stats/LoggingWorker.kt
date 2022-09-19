@@ -16,9 +16,8 @@
 package de.tweerlei.plumber.worker.impl.stats
 
 import de.tweerlei.plumber.worker.WorkItem
-import de.tweerlei.plumber.worker.impl.DelegatingWorker
 import de.tweerlei.plumber.worker.Worker
-import de.tweerlei.plumber.worker.types.coerceToString
+import de.tweerlei.plumber.worker.impl.DelegatingWorker
 import mu.KLogging
 
 class LoggingWorker(
@@ -28,6 +27,6 @@ class LoggingWorker(
     companion object : KLogging()
 
     override fun doProcess(item: WorkItem) =
-        logger.info { item.getOptional().coerceToString() }
+        logger.info { item.get().toString() }
             .let { true }
 }

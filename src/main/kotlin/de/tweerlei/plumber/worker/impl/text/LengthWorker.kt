@@ -25,21 +25,10 @@ class LengthWorker(
 ): DelegatingWorker(worker) {
 
     override fun doProcess(item: WorkItem) =
-        item.getOptional()
+        item.get()
             .size()
             .also { size ->
                 item.set(size, WellKnownKeys.SIZE)
                 item.set(size)
             }.let { true }
-
-    private fun Any?.size() =
-        when (this) {
-            null -> 0
-            is String -> length
-            is ByteArray -> size
-            is Map<*, *> -> size
-            is Collection<*> -> size
-//            is Number -> toInt()
-            else -> toString().length
-        }
 }

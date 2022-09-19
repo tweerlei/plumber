@@ -16,7 +16,6 @@
 package de.tweerlei.plumber.worker.impl
 
 import de.tweerlei.plumber.worker.WorkItem
-import de.tweerlei.plumber.worker.types.coerceToString
 
 fun String.ifEmptyGetFrom(item: WorkItem, key: String = WorkItem.DEFAULT_KEY) =
-    ifEmpty { item.getOptional(key).coerceToString() }
+    ifEmpty { item.get(key).toString() }

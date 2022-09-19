@@ -21,7 +21,6 @@ import de.tweerlei.plumber.worker.*
 import de.tweerlei.plumber.worker.impl.DelegatingWorker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.types.Record
-import de.tweerlei.plumber.worker.types.coerceToString
 
 class FromCsvWorker(
     csvMapper: CsvMapper,
@@ -34,7 +33,7 @@ class FromCsvWorker(
         .with(CsvSchema.emptySchema().withColumnSeparator(separator))
 
     override fun doProcess(item: WorkItem) =
-        item.getOptional().coerceToString()
+        item.get().toString()
             .let { value ->
                 reader.readValue<Array<String>>(value)
                     ?.let { arr ->

@@ -18,11 +18,10 @@ package de.tweerlei.plumber.worker.impl.s3
 import com.amazonaws.services.s3.AmazonS3
 import com.amazonaws.services.s3.model.ObjectMetadata
 import com.amazonaws.services.s3.model.PutObjectRequest
-import de.tweerlei.plumber.worker.*
+import de.tweerlei.plumber.worker.WorkItem
+import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.DelegatingWorker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
-import de.tweerlei.plumber.worker.types.coerceToByteArray
-import de.tweerlei.plumber.worker.types.coerceToString
 import de.tweerlei.plumber.worker.impl.ifEmptyGetFrom
 import java.io.ByteArrayInputStream
 
@@ -34,12 +33,12 @@ class S3PutObjectWorker(
 ): DelegatingWorker(worker) {
 
     override fun doProcess(item: WorkItem) =
-        item.getOptional(WellKnownKeys.NAME).coerceToString()
+        item.get(WellKnownKeys.NAME).toString()
             .let { name ->
                 putFile(
                     bucketName.ifEmptyGetFrom(item, S3Keys.BUCKET_NAME),
                     name,
-                    item.getOptional().coerceToByteArray()
+                    item.get().toByteArray()
                 )
             }.let { true }
 

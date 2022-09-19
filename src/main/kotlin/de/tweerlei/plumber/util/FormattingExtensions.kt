@@ -22,16 +22,14 @@ import kotlin.reflect.jvm.jvmName
 private val MAGNITUDES = mapOf(
     1000.0 * 1000.0 * 1000.0 to "%.2fG",
     1000.0 * 1000.0 to "%.2fM",
-    1000.0 to "%.2fk",
-    1.0 to "%.2f",
-    Double.NEGATIVE_INFINITY to "%.2f"
+    1000.0 to "%.2fk"
 )
 
 fun Number.humanReadable() =
     toDouble().let { value ->
-        MAGNITUDES.firstNotNullOf { (scale, fmt) ->
-            if (value > scale) fmt.format(value / scale) else null
-        }
+        MAGNITUDES.firstNotNullOfOrNull { (scale, fmt) ->
+            if (value >= scale) fmt.format(value / scale) else null
+        } ?: "%.2f".format(value)
     }
 
 fun Duration.humanReadable() =

@@ -17,6 +17,7 @@ package de.tweerlei.plumber.pipeline.steps.dynamodb
 
 import de.tweerlei.plumber.pipeline.PipelineParams
 import de.tweerlei.plumber.pipeline.steps.ProcessingStep
+import de.tweerlei.plumber.pipeline.steps.toRequiredAttributes
 import de.tweerlei.plumber.pipeline.steps.toWorkItemAccessor
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
@@ -36,7 +37,7 @@ class DynamoDBKeyStep: ProcessingStep {
         WellKnownKeys.RECORD,
         DynamoDBKeys.PARTITION_KEY,
 //        DynamoDBKeys.RANGE_KEY
-    )
+    ).plus(arg.toRequiredAttributes())
 
     override fun createWorker(
         arg: String,

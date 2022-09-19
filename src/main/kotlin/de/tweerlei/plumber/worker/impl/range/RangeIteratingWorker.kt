@@ -15,12 +15,13 @@
  */
 package de.tweerlei.plumber.worker.impl.range
 
-import de.tweerlei.plumber.util.KeySequenceGenerator
-import de.tweerlei.plumber.worker.*
+import de.tweerlei.plumber.util.range.KeySequenceGenerator
+import de.tweerlei.plumber.worker.WorkItem
+import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.GeneratingWorker
-import de.tweerlei.plumber.worker.types.Range
-import de.tweerlei.plumber.worker.types.coerceToLong
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
+import de.tweerlei.plumber.worker.types.LongValue
+import de.tweerlei.plumber.worker.types.Range
 import mu.KLogging
 
 class RangeIteratingWorker(
@@ -33,22 +34,23 @@ class RangeIteratingWorker(
     companion object: KLogging()
 
     override fun generateItems(item: WorkItem, fn: (WorkItem) -> Boolean) {
-        item.getAs<Range>(WellKnownKeys.RANGE).let { range ->
-            val startAfter = range.startAfter
-            val endWith = range.endWith
-            when {
-                startAfter is Long && endWith is Long -> iterate(startAfter, endWith, step)
-                else -> KeySequenceGenerator(keyChars).generateSequence(range.startAfter?.toString(), range.endWith?.toString(), step)
+        item.getOptionalAs<Range>(WellKnownKeys.RANGE)
+            ?.let { range ->
+                val startAfter = range.startAfter
+                val endWith = range.endWith
+                when {
+                    startAfter is LongValue && endWith is LongValue -> iterate(startAfter.value, endWith.value, step)
+                    else -> KeySequenceGenerator(keyChars).generateSequence(range.startAfter.toStringOrNull(), range.endWith.toStringOrNull(), step)
+                }
+            }?.all {
+                fn(WorkItem.from(it))
             }
-        }.all {
-            fn(WorkItem.of(it))
-        }
     }
     
     private fun iterate(startAfter: Long, endWith: Long, step: Long) =
         LongProgression.fromClosedRange(
-            startAfter.coerceToLong(),
-            endWith.coerceToLong(),
+            startAfter,
+            endWith,
             step
         ).asSequence().drop(1)
 }

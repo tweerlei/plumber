@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.tweerlei.plumber.util
+package de.tweerlei.plumber.util.range
 
 import java.util.TreeMap
 import kotlin.math.min

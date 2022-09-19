@@ -45,7 +45,7 @@ class ToCsvWorker(
                 writer.writeValueAsString(obj.values.mapNullTo("null"))
                     .also { str ->
                         item.set(str)
-                        item.set(WellKnownKeys.CONTENT_TYPE, CONTENT_TYPE_CSV)
+                        item.set(CONTENT_TYPE_CSV, WellKnownKeys.CONTENT_TYPE)
                     }
             }.let { true }
 }

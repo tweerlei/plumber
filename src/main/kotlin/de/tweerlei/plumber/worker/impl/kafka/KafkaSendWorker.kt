@@ -15,10 +15,10 @@
  */
 package de.tweerlei.plumber.worker.impl.kafka
 
-import de.tweerlei.plumber.worker.*
+import de.tweerlei.plumber.worker.WorkItem
+import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.DelegatingWorker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
-import de.tweerlei.plumber.worker.types.coerceToString
 import org.apache.kafka.clients.producer.KafkaProducer
 import org.apache.kafka.clients.producer.ProducerRecord
 
@@ -38,8 +38,8 @@ class KafkaSendWorker(
             }.let { true }
 
     private fun WorkItem.toProducerRecord() =
-        if (has(WellKnownKeys.NAME))
-            ProducerRecord<String, String>(topicName, getOptional(WellKnownKeys.NAME).coerceToString(), getOptional().coerceToString())
-        else
-            ProducerRecord<String, String>(topicName, getOptional().coerceToString())
+        when (val name = getOptional(WellKnownKeys.NAME)) {
+            null -> ProducerRecord<String, String>(topicName, get().toString())
+            else -> ProducerRecord<String, String>(topicName, name.toString(), get().toString())
+        }
 }

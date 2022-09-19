@@ -42,7 +42,7 @@ class FileListWorker(
     }
 
     private fun File.toWorkItem(directory: File) =
-        WorkItem.of(
+        WorkItem.from(
             name,
             WellKnownKeys.PATH to directory.absolutePath,
             WellKnownKeys.NAME to name,

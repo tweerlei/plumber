@@ -49,7 +49,7 @@ class XmlWriteWorker(
     }
 
     override fun doProcess(item: WorkItem): Boolean =
-        item.getFirst(WellKnownKeys.NODE)
+        item.getFirst(WellKnownKeys.NODE).toAny()
             .let { obj ->
                 writer.writeValue(generator, obj)
             }.let { true }

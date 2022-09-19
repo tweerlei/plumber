@@ -17,6 +17,7 @@ package de.tweerlei.plumber.pipeline.steps.expr
 
 import de.tweerlei.plumber.pipeline.PipelineParams
 import de.tweerlei.plumber.pipeline.steps.ProcessingStep
+import de.tweerlei.plumber.pipeline.steps.toRequiredAttributes
 import de.tweerlei.plumber.pipeline.steps.toWorkItemAccessor
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.expr.LessThanWorker
@@ -30,9 +31,8 @@ class IsLessStep: ProcessingStep {
     override val description = "Compare the current value to the given attribute's value resulting in a boolean"
     override fun argDescription() = "<value>"
 
-    override fun requiredAttributesFor(arg: String) = setOf(
-        arg
-    )
+    override fun requiredAttributesFor(arg: String) =
+        arg.toRequiredAttributes()
 
     override fun createWorker(
         arg: String,

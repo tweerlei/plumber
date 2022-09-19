@@ -19,14 +19,15 @@ import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.WorkItemAccessor
 import de.tweerlei.plumber.worker.impl.DelegatingWorker
 import de.tweerlei.plumber.worker.Worker
+import de.tweerlei.plumber.worker.types.Value
 
 class EqualsWorker(
-    private val value: WorkItemAccessor<Any?>,
+    private val value: WorkItemAccessor<Value>,
     worker: Worker
 ): DelegatingWorker(worker) {
 
     override fun doProcess(item: WorkItem) =
-        item.getOptional().let { value ->
+        item.get().let { value ->
             value == value(item)
         }.also {
             item.set(it)

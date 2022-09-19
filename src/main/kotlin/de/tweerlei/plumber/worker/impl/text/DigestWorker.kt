@@ -15,34 +15,25 @@
  */
 package de.tweerlei.plumber.worker.impl.text
 
-import de.tweerlei.plumber.worker.*
+import de.tweerlei.plumber.util.transform.Transformer
+import de.tweerlei.plumber.worker.WorkItem
+import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.DelegatingWorker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
-import de.tweerlei.plumber.worker.types.coerceToByteArray
-import java.io.OutputStream
-import java.security.DigestOutputStream
-import java.security.MessageDigest
 
 class DigestWorker(
-    private val alg: String,
+    private val transformer: Transformer,
     worker: Worker
 ): DelegatingWorker(worker) {
 
     override fun doProcess(item: WorkItem) =
-        item.getOptional()
-            .coerceToByteArray()
-            .digest(alg)
-            .also { digest ->
-                item.set(alg, WellKnownKeys.DIGEST_ALGORITHM)
+        item.get()
+            .toByteArray()
+            .let { bytes ->
+                transformer.transform(bytes)
+            }.also { digest ->
+                item.set(transformer.name, WellKnownKeys.DIGEST_ALGORITHM)
                 item.set(digest, WellKnownKeys.DIGEST)
                 item.set(digest)
             }.let { true }
-
-    private fun ByteArray.digest(alg: String): ByteArray =
-        MessageDigest.getInstance(alg)
-            .also { digest ->
-                DigestOutputStream(OutputStream.nullOutputStream(), digest).use { stream ->
-                    stream.write(this)
-                }
-            }.digest()
 }

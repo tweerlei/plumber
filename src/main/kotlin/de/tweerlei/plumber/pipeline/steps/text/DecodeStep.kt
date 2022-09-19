@@ -15,14 +15,17 @@
  */
 package de.tweerlei.plumber.pipeline.steps.text
 
-import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
+import de.tweerlei.plumber.pipeline.steps.ProcessingStep
+import de.tweerlei.plumber.util.codec.CodecFactory
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.text.DecodingWorker
 import org.springframework.stereotype.Service
 
 @Service("text-readWorker")
-class DecodeStep: ProcessingStep {
+class DecodeStep(
+    private val factory: CodecFactory
+): ProcessingStep {
 
     override val group = "Text"
     override val name = "Decode binary data"
@@ -38,7 +41,7 @@ class DecodeStep: ProcessingStep {
         parallelDegree: Int
     ) =
         DecodingWorker(
-            encodingFor(arg),
+            factory.getCodec(arg),
             w
         )
 

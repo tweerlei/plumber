@@ -17,10 +17,10 @@ package de.tweerlei.plumber.worker.impl.json
 
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
-import de.tweerlei.plumber.worker.*
+import de.tweerlei.plumber.worker.WorkItem
+import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.DelegatingWorker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
-import de.tweerlei.plumber.worker.types.coerceToString
 
 class FromJsonWorker<T>(
     private val itemType: Class<T>,
@@ -34,7 +34,7 @@ class FromJsonWorker<T>(
     }
 
     override fun doProcess(item: WorkItem) =
-        item.getOptional().coerceToString()
+        item.get().toString()
             .let { value ->
                 objectMapper.readValue(value, valueType)
                     ?.also { obj ->

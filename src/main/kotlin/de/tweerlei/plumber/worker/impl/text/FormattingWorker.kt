@@ -32,7 +32,7 @@ class FormattingWorker(
         REGEX.replace(formatString) { match ->
             match.groups[1]?.value
                 ?.let { varName ->
-                    item.getOptional(varName)?.toString()
+                    item.get(varName).toStringOrNull()
                 }.orEmpty()
         }.also { result ->
             item.set(result)

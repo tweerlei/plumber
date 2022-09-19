@@ -49,7 +49,7 @@ class LineReadWorker(
     private fun BufferedReader.nextWorkItem() =
         readLine()
             ?.let { line ->
-                WorkItem.of(
+                WorkItem.from(
                     line,
                     WellKnownKeys.NAME to file.name
                 )

@@ -1,18 +1,24 @@
 package de.tweerlei.plumber.pipeline.steps
 
 import de.tweerlei.plumber.worker.WorkItemAccessor
-import de.tweerlei.plumber.worker.types.toComparable
+import de.tweerlei.plumber.worker.types.*
 
-fun String.toWorkItemAccessor(): WorkItemAccessor<Any?> =
+fun String.toWorkItemAccessor(): WorkItemAccessor<Value> =
     when {
-        startsWith(":") -> { _ -> substring(1) }
-        startsWith("@") -> { item -> item.getOptional(substring(1)) }
-        else -> { _ -> toComparable() }
+        startsWith(":") -> { _ -> StringValue(substring(1)) }
+        startsWith("@") -> { item -> item.get(substring(1)) }
+        else -> { _ -> toComparableValue() }
+    }
+
+fun String.toRequiredAttributes(): Set<String> =
+    when {
+        startsWith("@") -> setOf(substring(1))
+        else -> emptySet()
     }
 
 fun String?.toOptionValue() =
     when {
-        this == null -> null
-        startsWith(":") -> substring(1)
-        else -> toComparable()
+        this == null -> NullValue.INSTANCE
+        startsWith(":") -> StringValue(substring(1))
+        else -> toComparableValue()
     }

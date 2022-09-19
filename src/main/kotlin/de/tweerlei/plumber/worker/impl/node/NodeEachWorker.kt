@@ -20,6 +20,7 @@ import com.fasterxml.jackson.databind.JsonNode
 import de.tweerlei.plumber.worker.*
 import de.tweerlei.plumber.worker.impl.GeneratingWorker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
+import de.tweerlei.plumber.worker.types.JsonNodeValue
 import mu.KLogging
 
 class NodeEachWorker(
@@ -31,9 +32,9 @@ class NodeEachWorker(
     companion object: KLogging()
 
     override fun generateItems(item: WorkItem, fn: (WorkItem) -> Boolean) {
-        item.getAs<JsonNode>(WellKnownKeys.NODE)
-            .at(ptr).toMap().all { (key, value) ->
-                fn(WorkItem.of(value,
+        item.getAs<JsonNodeValue>(WellKnownKeys.NODE)
+            .value.at(ptr).toMap().all { (key, value) ->
+                fn(WorkItem.from(value,
                     WellKnownKeys.NAME to key
                 ))
             }

@@ -18,6 +18,7 @@ package de.tweerlei.plumber.pipeline
 import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
+import de.tweerlei.plumber.worker.types.NullValue
 import de.tweerlei.plumber.worker.types.Range
 import mu.KLogging
 import org.springframework.stereotype.Service
@@ -56,7 +57,7 @@ class WorkerRunner {
         currentContext = runContext
         try {
             worker.open(runContext).use {
-                worker.process(WorkItem.of(null,
+                worker.process(WorkItem.of(NullValue.INSTANCE,
                     WellKnownKeys.RANGE to params.toRange()
                 ))
             }
@@ -68,7 +69,7 @@ class WorkerRunner {
 
     private fun PipelineParams.toRange() =
         when {
-            startAfterKey == null && stopAfterKey == null -> null
+            startAfterKey is NullValue && stopAfterKey is NullValue -> NullValue.INSTANCE
             else -> Range(
                 startAfterKey,
                 stopAfterKey

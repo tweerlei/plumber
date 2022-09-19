@@ -13,7 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.tweerlei.plumber.util
+package de.tweerlei.plumber.util.range
+
+import de.tweerlei.plumber.util.extractCommonPrefix
 
 class KeyRangeGenerator(
     charactersToUse: String

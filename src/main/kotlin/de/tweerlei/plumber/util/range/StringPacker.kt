@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.tweerlei.plumber.util
+package de.tweerlei.plumber.util.range
 
 import kotlin.math.ceil
 import kotlin.math.log2

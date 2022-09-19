@@ -21,6 +21,7 @@ import com.fasterxml.jackson.dataformat.xml.XmlMapper
 import de.tweerlei.plumber.worker.impl.TestWorkerRunner
 import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.impl.node.NodeGetWorker
+import de.tweerlei.plumber.worker.types.StringValue
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
@@ -53,10 +54,12 @@ class XmlWorkerTest {
             .append { w -> FromXmlWorker(JsonNode::class.java, objectMapper, w) }
             .append { w -> NodeGetWorker(JsonPointer.compile("/obj"), w) }
             .append { w -> ToXmlWorker("ROOT", objectMapper, false, w) }
-            .run(WorkItem.of(xml.toByteArray(StandardCharsets.UTF_8)))
+            .run(WorkItem.from(xml.toByteArray(StandardCharsets.UTF_8)))
             .singleOrNull()
 
         item.shouldNotBeNull()
-        item.getAs<String>().shouldBe("""<ROOT><string>Hello</string><number>42</number><boolean>true</boolean><null>null</null><array><item>1</item><item>2</item><item>3</item></array></ROOT>""")
+        item.getAs<StringValue>().value.shouldBe(
+            """<ROOT><string>Hello</string><number>42</number><boolean>true</boolean><null>null</null><array><item>1</item><item>2</item><item>3</item></array></ROOT>"""
+        )
     }
 }

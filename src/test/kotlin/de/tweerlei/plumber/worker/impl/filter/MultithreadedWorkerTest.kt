@@ -30,7 +30,7 @@ class MultithreadedWorkerTest {
             .append { w -> UUIDWorker(100, w) }
             .append { w -> MultithreadedWorker("parallel", 4, 4, w) }
             .append { w -> CountingWorker("test", 100, w) }
-            .run(WorkItem.of(""))
+            .run(WorkItem.from(""))
 
         items.size.shouldBe(100)
     }

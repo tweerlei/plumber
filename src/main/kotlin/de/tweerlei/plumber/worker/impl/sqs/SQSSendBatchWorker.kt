@@ -18,11 +18,12 @@ package de.tweerlei.plumber.worker.impl.sqs
 import com.amazonaws.services.sqs.AmazonSQS
 import com.amazonaws.services.sqs.model.SendMessageBatchRequest
 import com.amazonaws.services.sqs.model.SendMessageBatchRequestEntry
-import de.tweerlei.plumber.worker.*
+import de.tweerlei.plumber.worker.WorkItem
+import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.DelegatingWorker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
-import de.tweerlei.plumber.worker.types.coerceToString
 import de.tweerlei.plumber.worker.impl.ifEmptyGetFrom
+import de.tweerlei.plumber.worker.types.WorkItemList
 
 class SQSSendBatchWorker(
     private val queueUrl: String,
@@ -31,14 +32,14 @@ class SQSSendBatchWorker(
 ): DelegatingWorker(worker) {
 
     override fun doProcess(item: WorkItem) =
-        item.getAs<List<WorkItem>>(WellKnownKeys.WORK_ITEMS)
+        item.getAs<WorkItemList>(WellKnownKeys.WORK_ITEMS)
             .let { items ->
                 sendFiles(
                     queueUrl.ifEmptyGetFrom(items.first(), SQSKeys.QUEUE_URL),
                     items.mapIndexed { index, it ->
                         SendMessageBatchRequestEntry(
                             "${index}_of_${items.size}",
-                            it.getOptional().coerceToString()
+                            it.get().toString()
                         )
                     }
                 )

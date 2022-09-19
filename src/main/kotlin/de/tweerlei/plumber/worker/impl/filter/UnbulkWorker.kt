@@ -19,13 +19,14 @@ import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.impl.GeneratingWorker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.Worker
+import de.tweerlei.plumber.worker.types.WorkItemList
 
 class UnbulkWorker(
     worker: Worker
 ): GeneratingWorker(Long.MAX_VALUE, worker) {
 
     override fun generateItems(item: WorkItem, fn: (WorkItem) -> Boolean) {
-        item.getAs<List<WorkItem>>(WellKnownKeys.WORK_ITEMS)
+        item.getAs<WorkItemList>(WellKnownKeys.WORK_ITEMS)
             .all(fn)
     }
 }

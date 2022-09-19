@@ -15,13 +15,12 @@
  */
 package de.tweerlei.plumber.worker.impl.stats
 
-import de.tweerlei.plumber.worker.*
+import de.tweerlei.plumber.worker.WorkItem
+import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.DelegatingWorker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
-import de.tweerlei.plumber.worker.types.coerceToString
 import mu.KLogging
 import java.util.concurrent.ConcurrentHashMap
-import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.atomic.AtomicLong
 
 class GroupingWorker(
@@ -35,7 +34,7 @@ class GroupingWorker(
     private val counters = ConcurrentHashMap<String, AtomicLong>()
 
     override fun doProcess(item: WorkItem) =
-        item.getOptional().coerceToString()
+        item.get().toString()
             .let { value ->
                 counterFor(value)
                     .incrementAndGet()

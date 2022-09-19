@@ -17,6 +17,7 @@ package de.tweerlei.plumber.pipeline.steps.expr
 
 import de.tweerlei.plumber.pipeline.PipelineParams
 import de.tweerlei.plumber.pipeline.steps.ProcessingStep
+import de.tweerlei.plumber.pipeline.steps.toRequiredAttributes
 import de.tweerlei.plumber.pipeline.steps.toWorkItemAccessor
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.expr.AndWorker
@@ -30,9 +31,8 @@ class AndStep: ProcessingStep {
     override val description = "Logically AND the current value with the given attribute's value"
     override fun argDescription() = "<value>"
 
-    override fun requiredAttributesFor(arg: String) = setOf(
-        arg
-    )
+    override fun requiredAttributesFor(arg: String) =
+        arg.toRequiredAttributes()
 
     override fun createWorker(
         arg: String,

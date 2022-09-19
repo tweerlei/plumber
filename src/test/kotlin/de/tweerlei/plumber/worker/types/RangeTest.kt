@@ -18,7 +18,6 @@ package de.tweerlei.plumber.worker.types
 import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.booleans.shouldBeTrue
 import io.kotest.matchers.shouldBe
-import io.kotest.matchers.shouldNotBe
 import org.junit.jupiter.api.Test
 
 class RangeTest {
@@ -26,43 +25,43 @@ class RangeTest {
     @Test
     fun testEquals() {
 
-        Range(null, null).shouldBe(Range(null, null))
-        Range(1, null).shouldBe(Range(1, null))
-        Range(null, 2).shouldBe(Range(null, 2))
-        Range(1, 2).shouldBe(Range(1, 2))
-        Range(1, 2).shouldNotBe(Range(1L, 2L))
-        Range("1", "2").shouldBe(Range("1", "2"))
+        Range.from(null, null).shouldBe(Range(NullValue.INSTANCE, NullValue.INSTANCE))
+        Range.from(1, null).shouldBe(Range(LongValue(1L), NullValue.INSTANCE))
+        Range.from(null, 2).shouldBe(Range(NullValue.INSTANCE, LongValue(2L)))
+        Range.from(1, 2).shouldBe(Range(LongValue(1L), LongValue(2L)))
+        Range.from(1L, 2L).shouldBe(Range(LongValue(1L), LongValue(2L)))
+        Range.from("1", "2").shouldBe(Range(StringValue("1"), StringValue("2")))
     }
 
     @Test
     fun testContains() {
 
-        Range(null, null).contains(null).shouldBeFalse()
-        Range(null, null).contains(42).shouldBeTrue()
-        Range(null, null).contains("42").shouldBeTrue()
+        Range.from(null, null).contains(NullValue.INSTANCE).shouldBeFalse()
+        Range.from(null, null).contains(LongValue(42L)).shouldBeTrue()
+        Range.from(null, null).contains(StringValue("42")).shouldBeTrue()
 
-        Range(-10, 10).contains(null).shouldBeFalse()
-        Range(-10, 10).contains(-10).shouldBeFalse()
-        Range(-10, 10).contains(-9).shouldBeTrue()
-        Range(-10, 10).contains(10).shouldBeTrue()
-        Range(-10, 10).contains(11).shouldBeFalse()
-        Range(-10, 10).contains("05").shouldBeTrue()
-        Range(-10, 10).contains("xyz").shouldBeFalse()
+        Range.from(-10, 10).contains(NullValue.INSTANCE).shouldBeFalse()
+        Range.from(-10, 10).contains(LongValue(-10L)).shouldBeFalse()
+        Range.from(-10, 10).contains(LongValue(-9L)).shouldBeTrue()
+        Range.from(-10, 10).contains(LongValue(10L)).shouldBeTrue()
+        Range.from(-10, 10).contains(LongValue(11L)).shouldBeFalse()
+        Range.from(-10, 10).contains(StringValue("05")).shouldBeTrue()
+        Range.from(-10, 10).contains(StringValue("xyz")).shouldBeFalse()
 
-        Range(10, -10).contains(null).shouldBeFalse()
-        Range(10, -10).contains(10).shouldBeFalse()
-        Range(10, -10).contains(9).shouldBeTrue()
-        Range(10, -10).contains(-10).shouldBeTrue()
-        Range(10, -10).contains(-11).shouldBeFalse()
-        Range(10, -10).contains("05").shouldBeTrue()
-        Range(10, -10).contains("xyz").shouldBeFalse()
+        Range.from(10, -10).contains(NullValue.INSTANCE).shouldBeFalse()
+        Range.from(10, -10).contains(LongValue(10L)).shouldBeFalse()
+        Range.from(10, -10).contains(LongValue(9L)).shouldBeTrue()
+        Range.from(10, -10).contains(LongValue(-10L)).shouldBeTrue()
+        Range.from(10, -10).contains(LongValue(-11L)).shouldBeFalse()
+        Range.from(10, -10).contains(StringValue("05")).shouldBeTrue()
+        Range.from(10, -10).contains(StringValue("xyz")).shouldBeFalse()
 
-        Range("a", "z").contains(null).shouldBeFalse()
-        Range("a", "z").contains("a").shouldBeFalse()
-        Range("a", "z").contains("aa").shouldBeTrue()
-        Range("a", "z").contains("b").shouldBeTrue()
-        Range("a", "z").contains("bb").shouldBeTrue()
-        Range("a", "z").contains("z").shouldBeTrue()
-        Range("a", "z").contains("zz").shouldBeFalse()
+        Range.from("a", "z").contains(NullValue.INSTANCE).shouldBeFalse()
+        Range.from("a", "z").contains(StringValue("a")).shouldBeFalse()
+        Range.from("a", "z").contains(StringValue("aa")).shouldBeTrue()
+        Range.from("a", "z").contains(StringValue("b")).shouldBeTrue()
+        Range.from("a", "z").contains(StringValue("bb")).shouldBeTrue()
+        Range.from("a", "z").contains(StringValue("z")).shouldBeTrue()
+        Range.from("a", "z").contains(StringValue("zz")).shouldBeFalse()
     }
 }

@@ -20,8 +20,7 @@ import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.DelegatingWorker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.impl.ifEmptyGetFrom
-import de.tweerlei.plumber.worker.types.coerceToByteArray
-import de.tweerlei.plumber.worker.types.coerceToString
+import de.tweerlei.plumber.worker.types.InstantValue
 import java.io.File
 import java.io.FileOutputStream
 import java.time.Instant
@@ -32,7 +31,7 @@ class FileWriteWorker(
 ): DelegatingWorker(worker) {
 
     override fun doProcess(item: WorkItem) =
-        item.getOptional(WellKnownKeys.NAME).coerceToString()
+        item.getOptional(WellKnownKeys.NAME).toString()
             .let { name ->
                 File(dir.ifEmptyGetFrom(item, WellKnownKeys.PATH).ifEmpty { "." })
                     .let { directory ->
@@ -40,11 +39,11 @@ class FileWriteWorker(
                         File(directory, name)
                             .let { file ->
                                 FileOutputStream(file).use { stream ->
-                                    stream.write(item.getOptional().coerceToByteArray()
+                                    stream.write(item.get().toByteArray()
                                     )
                                 }
-                                item.getOptionalAs<Instant>(WellKnownKeys.LAST_MODIFIED)?.let { lastMod ->
-                                    file.setLastModified(lastMod.toEpochMilli())
+                                item.getOptionalAs<InstantValue>(WellKnownKeys.LAST_MODIFIED)?.let { lastMod ->
+                                    file.setLastModified(lastMod.value.toEpochMilli())
                                 }
                            }
                     }

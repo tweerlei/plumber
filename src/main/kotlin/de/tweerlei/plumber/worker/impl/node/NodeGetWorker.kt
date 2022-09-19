@@ -21,6 +21,7 @@ import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.impl.DelegatingWorker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.Worker
+import de.tweerlei.plumber.worker.types.JsonNodeValue
 
 class NodeGetWorker(
     private val ptr: JsonPointer,
@@ -28,8 +29,8 @@ class NodeGetWorker(
 ): DelegatingWorker(worker) {
 
     override fun doProcess(item: WorkItem) =
-        item.getAs<JsonNode>(WellKnownKeys.NODE)
-            .let { json ->
+        item.getAs<JsonNodeValue>(WellKnownKeys.NODE)
+            .value.let { json ->
                 json.at(ptr).toSimpleType()
                     .also { value ->
                         item.set(value)

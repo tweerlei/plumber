@@ -15,14 +15,17 @@
  */
 package de.tweerlei.plumber.pipeline.steps.text
 
-import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
+import de.tweerlei.plumber.pipeline.steps.ProcessingStep
+import de.tweerlei.plumber.util.codec.CodecFactory
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.text.EncodingWorker
 import org.springframework.stereotype.Service
 
 @Service("text-writeWorker")
-class EncodeStep: ProcessingStep {
+class EncodeStep(
+    private val factory: CodecFactory
+): ProcessingStep {
 
     override val group = "Text"
     override val name = "Encode binary data"
@@ -38,7 +41,7 @@ class EncodeStep: ProcessingStep {
         parallelDegree: Int
     ) =
         EncodingWorker(
-            encodingFor(arg),
+            factory.getCodec(arg),
             w
         )
 

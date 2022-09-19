@@ -24,7 +24,7 @@ class NegatingWorker(
 ): DelegatingWorker(worker) {
 
     override fun doProcess(item: WorkItem) =
-        item.getAs<Boolean>().let {
+        item.get().toBoolean().let {
             it.not()
         }.also {
             item.set(it)

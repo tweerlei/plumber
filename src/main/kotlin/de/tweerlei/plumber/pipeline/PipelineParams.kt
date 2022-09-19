@@ -15,17 +15,19 @@
  */
 package de.tweerlei.plumber.pipeline
 
+import de.tweerlei.plumber.worker.types.ComparableValue
+
 data class PipelineParams(
     val explain: Boolean,
     val requesterPays: Boolean,
-    val startAfterKey: Comparable<*>?,
-    val stopAfterKey: Comparable<*>?,
-    val startAfterRangeKey: Comparable<*>?,
-    val stopAfterRangeKey: Comparable<*>?,
+    val startAfterKey: ComparableValue,
+    val stopAfterKey: ComparableValue,
+    val startAfterRangeKey: ComparableValue,
+    val stopAfterRangeKey: ComparableValue,
     val keyChars: String,
     val primaryKey: String,
     val partitionKey: String,
-    val rangeKey: String?,
+    val rangeKey: String,
     val selectFields: Set<String>,
     val numberOfFilesPerRequest: Int,
     val maxFilesPerThread: Long,

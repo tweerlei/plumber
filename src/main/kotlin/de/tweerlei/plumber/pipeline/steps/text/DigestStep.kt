@@ -15,15 +15,18 @@
  */
 package de.tweerlei.plumber.pipeline.steps.text
 
-import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
-import de.tweerlei.plumber.worker.impl.WellKnownKeys
+import de.tweerlei.plumber.pipeline.steps.ProcessingStep
+import de.tweerlei.plumber.util.transform.TransformerFactory
 import de.tweerlei.plumber.worker.Worker
+import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.impl.text.DigestWorker
 import org.springframework.stereotype.Service
 
 @Service("digestWorker")
-class DigestStep: ProcessingStep {
+class DigestStep(
+    private val factory: TransformerFactory
+): ProcessingStep {
 
     override val group = "Text"
     override val name = "Calculate digest"
@@ -44,7 +47,7 @@ class DigestStep: ProcessingStep {
         parallelDegree: Int
     ) =
         DigestWorker(
-            algorithmFor(arg),
+            factory.getTransformer(arg),
             w
         )
 

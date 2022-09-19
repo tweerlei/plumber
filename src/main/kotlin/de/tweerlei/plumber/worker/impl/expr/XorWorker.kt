@@ -19,16 +19,16 @@ import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.WorkItemAccessor
 import de.tweerlei.plumber.worker.impl.DelegatingWorker
 import de.tweerlei.plumber.worker.Worker
-import de.tweerlei.plumber.worker.types.coerceToBoolean
+import de.tweerlei.plumber.worker.types.Value
 
 class XorWorker(
-    private val value: WorkItemAccessor<Any?>,
+    private val value: WorkItemAccessor<Value>,
     worker: Worker
 ): DelegatingWorker(worker) {
 
     override fun doProcess(item: WorkItem) =
-        item.getAs<Boolean>().let {
-            it.xor(value(item).coerceToBoolean())
+        item.get().toBoolean().let {
+            it.xor(value(item).toBoolean())
         }.also {
             item.set(it)
         }.let { true }

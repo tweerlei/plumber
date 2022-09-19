@@ -19,24 +19,22 @@ import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.WorkItemAccessor
 import de.tweerlei.plumber.worker.impl.DelegatingWorker
 import de.tweerlei.plumber.worker.Worker
+import de.tweerlei.plumber.worker.types.ComparableValue
+import de.tweerlei.plumber.worker.types.Value
+import de.tweerlei.plumber.worker.types.toComparableValue
 
 class GreaterThanWorker(
-    private val value: WorkItemAccessor<Any?>,
+    private val value: WorkItemAccessor<Value>,
     worker: Worker
 ): DelegatingWorker(worker) {
 
     override fun doProcess(item: WorkItem) =
-        item.getOptionalAs<Comparable<Any>>().let { value ->
-            value.nullableCompareTo(value(item))
+        item.get().let { value ->
+            when (value) {
+                is ComparableValue -> value > value(item).toComparableValue()
+                else -> false
+            }
         }.also {
             item.set(it)
         }.let { true }
-
-    private fun <T> Comparable<T>?.nullableCompareTo(b: T?) =
-        when {
-            this == null && b == null -> false
-            this == null -> false
-            b == null -> true
-            else -> this > b
-        }
 }

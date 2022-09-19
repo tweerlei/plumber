@@ -20,14 +20,15 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.JsonNodeFactory
 import com.fasterxml.jackson.databind.node.ObjectNode
 import com.mongodb.client.MongoClient
-import de.tweerlei.plumber.worker.*
+import de.tweerlei.plumber.worker.WorkItem
+import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.GeneratingWorker
-import de.tweerlei.plumber.worker.types.Range
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
-import de.tweerlei.plumber.worker.types.coerceToJsonNode
+import de.tweerlei.plumber.worker.types.ComparableValue
+import de.tweerlei.plumber.worker.types.NullValue
+import de.tweerlei.plumber.worker.types.Range
 import mu.KLogging
 import org.bson.Document
-import java.util.*
 
 class MongoDBScanWorker(
     private val databaseName: String,
@@ -45,8 +46,8 @@ class MongoDBScanWorker(
 
     override fun generateItems(item: WorkItem, fn: (WorkItem) -> Boolean) {
         val range = item.getOptionalAs<Range>(WellKnownKeys.RANGE)
-        val startAfter = range?.startAfter
-        val endWith = range?.endWith
+        val startAfter = range?.startAfter ?: NullValue.INSTANCE
+        val endWith = range?.endWith ?: NullValue.INSTANCE
         logger.info { "fetching elements from $startAfter to $endWith" }
 
         var firstKey: Any? = null
@@ -69,7 +70,7 @@ class MongoDBScanWorker(
         logger.info { "fetched $itemCount documents from $startAfter to $endWith, first key: $firstKey, last key: $lastKey" }
     }
 
-    private fun listDocuments(startAfter: Any?, endWith: Any?) =
+    private fun listDocuments(startAfter: ComparableValue, endWith: ComparableValue) =
         filterFor(startAfter, endWith).let { filter ->
             mongoClient.getDatabase(databaseName).getCollection(collectionName)
                 .find(filter)
@@ -77,22 +78,22 @@ class MongoDBScanWorker(
                 .projection(fieldsToSelect())
         }
 
-    private fun filterFor(startAfter: Any?, endWith: Any?) =
+    private fun filterFor(startAfter: ComparableValue, endWith: ComparableValue) =
         when {
-            startAfter != null && endWith != null -> JsonNodeFactory.instance.objectNode().apply {
+            startAfter !is NullValue && endWith !is NullValue -> JsonNodeFactory.instance.objectNode().apply {
                 set<ObjectNode>(primaryKey, JsonNodeFactory.instance.objectNode().apply {
-                    set<ObjectNode>("\$gt", startAfter.coerceToJsonNode())
-                    set<ObjectNode>("\$lte", endWith.coerceToJsonNode())
+                    set<ObjectNode>("\$gt", startAfter.toJsonNode())
+                    set<ObjectNode>("\$lte", endWith.toJsonNode())
                 })
             }
-            startAfter != null -> JsonNodeFactory.instance.objectNode().apply {
+            startAfter !is NullValue -> JsonNodeFactory.instance.objectNode().apply {
                 set<ObjectNode>(primaryKey, JsonNodeFactory.instance.objectNode().apply {
-                    set<ObjectNode>("\$gt", startAfter.coerceToJsonNode())
+                    set<ObjectNode>("\$gt", startAfter.toJsonNode())
                 })
             }
-            endWith != null -> JsonNodeFactory.instance.objectNode().apply {
+            endWith !is NullValue -> JsonNodeFactory.instance.objectNode().apply {
                 set<ObjectNode>(primaryKey, JsonNodeFactory.instance.objectNode().apply {
-                    set<ObjectNode>("\$lte", endWith.coerceToJsonNode())
+                    set<ObjectNode>("\$lte", endWith.toJsonNode())
                 })
             }
             else -> JsonNodeFactory.instance.objectNode()
@@ -104,7 +105,7 @@ class MongoDBScanWorker(
         }
 
     private fun JsonNode.toWorkItem() =
-        WorkItem.of(
+        WorkItem.from(
             this,
             WellKnownKeys.NODE to this,
             MongoDBKeys.DATABASE_NAME to databaseName,

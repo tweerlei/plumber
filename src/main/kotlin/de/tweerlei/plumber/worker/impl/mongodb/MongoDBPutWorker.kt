@@ -15,13 +15,14 @@
  */
 package de.tweerlei.plumber.worker.impl.mongodb
 
-import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.mongodb.client.MongoClient
-import de.tweerlei.plumber.worker.*
+import de.tweerlei.plumber.worker.WorkItem
+import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.DelegatingWorker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.impl.ifEmptyGetFrom
+import de.tweerlei.plumber.worker.types.JsonNodeValue
 import org.bson.Document
 
 class MongoDBPutWorker(
@@ -33,8 +34,8 @@ class MongoDBPutWorker(
 ): DelegatingWorker(worker) {
 
     override fun doProcess(item: WorkItem) =
-        item.getFirstAs<JsonNode>(WellKnownKeys.NODE)
-            .toMongoDB(objectMapper)
+        item.getFirstAs<JsonNodeValue>(WellKnownKeys.NODE)
+            .value.toMongoDB(objectMapper)
             .also { attributes ->
                 putItem(
                     databaseName.ifEmptyGetFrom(item, MongoDBKeys.DATABASE_NAME),

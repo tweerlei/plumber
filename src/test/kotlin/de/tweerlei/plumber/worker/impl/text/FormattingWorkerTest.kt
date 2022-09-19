@@ -17,6 +17,7 @@ package de.tweerlei.plumber.worker.impl.text
 
 import de.tweerlei.plumber.worker.impl.TestWorkerRunner
 import de.tweerlei.plumber.worker.WorkItem
+import de.tweerlei.plumber.worker.types.StringValue
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
@@ -28,11 +29,11 @@ class FormattingWorkerTest {
 
         val item = TestWorkerRunner()
             .append { w -> FormattingWorker("Hello", w) }
-            .run(WorkItem.of("foo"))
+            .run(WorkItem.from("foo"))
             .singleOrNull()
 
         item.shouldNotBeNull()
-        item.get().shouldBe("Hello")
+        item.getAs<StringValue>().value.shouldBe("Hello")
     }
 
     @Test
@@ -40,11 +41,11 @@ class FormattingWorkerTest {
 
         val item = TestWorkerRunner()
             .append { w -> FormattingWorker("My @@{name} is {value}", w) }
-            .run(WorkItem.of("foo", "name" to "variable"))
+            .run(WorkItem.from("foo", "name" to "variable"))
             .singleOrNull()
 
         item.shouldNotBeNull()
-        item.get().shouldBe("My @variable is {value}")
+        item.getAs<StringValue>().value.shouldBe("My @variable is {value}")
     }
 
     @Test
@@ -52,11 +53,11 @@ class FormattingWorkerTest {
 
         val item = TestWorkerRunner()
             .append { w -> FormattingWorker("My @@{name} is {value}", w) }
-            .run(WorkItem.of("foo"))
+            .run(WorkItem.from("foo"))
             .singleOrNull()
 
         item.shouldNotBeNull()
-        item.get().shouldBe("My @ is {value}")
+        item.getAs<StringValue>().value.shouldBe("My @ is {value}")
     }
 
     @Test
@@ -64,10 +65,10 @@ class FormattingWorkerTest {
 
         val item = TestWorkerRunner()
             .append { w -> FormattingWorker("My @@{name} is {value}", w) }
-            .run(WorkItem.of("foo", "name" to "foo@1bar"))
+            .run(WorkItem.from("foo", "name" to "foo@1bar"))
             .singleOrNull()
 
         item.shouldNotBeNull()
-        item.get().shouldBe("My @foo@1bar is {value}")
+        item.getAs<StringValue>().value.shouldBe("My @foo@1bar is {value}")
     }
 }

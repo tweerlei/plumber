@@ -21,6 +21,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import de.tweerlei.plumber.worker.impl.TestWorkerRunner
 import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.impl.node.NodeGetWorker
+import de.tweerlei.plumber.worker.types.StringValue
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
@@ -49,10 +50,10 @@ class JsonWorkerTest {
             .append { w -> FromJsonWorker(JsonNode::class.java, objectMapper, w) }
             .append { w -> NodeGetWorker(JsonPointer.compile("/obj"), w) }
             .append { w -> ToJsonWorker(objectMapper, false, w) }
-            .run(WorkItem.of(json.toByteArray(StandardCharsets.UTF_8)))
+            .run(WorkItem.from(json.toByteArray(StandardCharsets.UTF_8)))
             .singleOrNull()
 
         item.shouldNotBeNull()
-        item.getAs<String>().shouldBe("""{"string":"Hello","number":42,"boolean":true,"null":null,"array":[1,2,3]}""")
+        item.getAs<StringValue>().value.shouldBe("""{"string":"Hello","number":42,"boolean":true,"null":null,"array":[1,2,3]}""")
     }
 }

@@ -22,6 +22,7 @@ import de.tweerlei.plumber.worker.*
 import de.tweerlei.plumber.worker.impl.DelegatingWorker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.impl.ifEmptyGetFrom
+import de.tweerlei.plumber.worker.types.JsonNodeValue
 import org.bson.Document
 
 class MongoDBGetWorker(
@@ -34,8 +35,8 @@ class MongoDBGetWorker(
 ): DelegatingWorker(worker) {
 
     override fun doProcess(item: WorkItem) =
-        item.getFirstAs<JsonNode>(WellKnownKeys.NODE)
-            .toMongoDB(objectMapper)
+        item.getFirstAs<JsonNodeValue>(WellKnownKeys.NODE)
+            .value.toMongoDB(objectMapper)
             .let { attributes ->
                 fetchDocument(
                     databaseName.ifEmptyGetFrom(item, MongoDBKeys.DATABASE_NAME),

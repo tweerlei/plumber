@@ -17,6 +17,7 @@ package de.tweerlei.plumber.worker.impl.text
 
 import de.tweerlei.plumber.worker.impl.TestWorkerRunner
 import de.tweerlei.plumber.worker.WorkItem
+import de.tweerlei.plumber.worker.types.StringValue
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
@@ -29,7 +30,7 @@ class PatternWorkerTest {
 
         val item = TestWorkerRunner()
             .append { w -> MatchingWorker(Regex("He..o"), w) }
-            .run(WorkItem.of("foo"))
+            .run(WorkItem.from("foo"))
             .singleOrNull()
 
         item.shouldNotBeNull()
@@ -41,11 +42,11 @@ class PatternWorkerTest {
 
         val item = TestWorkerRunner()
             .append { w -> MatchingWorker(Regex("He..o"), w) }
-            .run(WorkItem.of("foo Hello bar"))
+            .run(WorkItem.from("foo Hello bar"))
             .singleOrNull()
 
         item.shouldNotBeNull()
-        item.get().shouldBe("Hello")
+        item.getAs<StringValue>().value.shouldBe("Hello")
     }
 
     @Test
@@ -53,15 +54,15 @@ class PatternWorkerTest {
 
         val item = TestWorkerRunner()
             .append { w -> MatchingWorker(Regex("(\\S+)-(\\S+)"), w) }
-            .append { w -> ReplacingWorker({ "$2_$1" }, w) }
-            .run(WorkItem.of("foo x-1 yz-23 bar"))
+            .append { w -> ReplacingWorker({ StringValue("$2_$1") }, w) }
+            .run(WorkItem.from("foo x-1 yz-23 bar"))
             .singleOrNull()
 
         item.shouldNotBeNull()
-        item.get().shouldBe("foo 1_x 23_yz bar")
-        item.get("matchedGroup0").shouldBe("x-1")
-        item.get("matchedGroup1").shouldBe("x")
-        item.get("matchedGroup2").shouldBe("1")
+        item.getAs<StringValue>().value.shouldBe("foo 1_x 23_yz bar")
+        item.getAs<StringValue>("matchedGroup0").value.shouldBe("x-1")
+        item.getAs<StringValue>("matchedGroup1").value.shouldBe("x")
+        item.getAs<StringValue>("matchedGroup2").value.shouldBe("1")
     }
 
     @Test
@@ -69,11 +70,11 @@ class PatternWorkerTest {
 
         val item = TestWorkerRunner()
             .append { w -> MatchingWorker(Regex("(\\S+)-(\\S+)"), w) }
-            .append { w -> ReplacingWorker({ "$2_$1" }, w) }
-            .run(WorkItem.of("foo x_1 yz_23 bar"))
+            .append { w -> ReplacingWorker({ StringValue("$2_$1") }, w) }
+            .run(WorkItem.from("foo x_1 yz_23 bar"))
             .singleOrNull()
 
         item.shouldNotBeNull()
-        item.get().shouldBe("foo x_1 yz_23 bar")
+        item.getAs<StringValue>().value.shouldBe("foo x_1 yz_23 bar")
     }
 }

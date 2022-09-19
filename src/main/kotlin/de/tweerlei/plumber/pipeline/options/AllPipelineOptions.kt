@@ -17,6 +17,7 @@ package de.tweerlei.plumber.pipeline.options
 
 import de.tweerlei.plumber.pipeline.PipelineParams
 import de.tweerlei.plumber.pipeline.steps.toOptionValue
+import de.tweerlei.plumber.worker.types.ComparableValue
 
 data class AllPipelineOptions(
     val explain: PipelineOption<Boolean>,
@@ -27,8 +28,8 @@ data class AllPipelineOptions(
     val queueSizePerThread: PipelineOption<Int>,
     val primaryKey: PipelineOption<String>,
     val selectFields: PipelineOption<Set<String>>,
-    val startAfterKey: PipelineOption<Comparable<*>?>,
-    val stopAfterKey: PipelineOption<Comparable<*>?>,
+    val startAfterKey: PipelineOption<ComparableValue>,
+    val stopAfterKey: PipelineOption<ComparableValue>,
     val keyChars: PipelineOption<String>,
     val assumeRoleArn: PipelineOption<String?>,
     val requesterPays: PipelineOption<Boolean>,
@@ -36,9 +37,9 @@ data class AllPipelineOptions(
     val follow: PipelineOption<Boolean>,
     val reread: PipelineOption<Boolean>,
     val partitionKey: PipelineOption<String>,
-    val rangeKey: PipelineOption<String?>,
-    val startAfterRangeKey: PipelineOption<Comparable<*>?>,
-    val stopAfterRangeKey: PipelineOption<Comparable<*>?>,
+    val rangeKey: PipelineOption<String>,
+    val startAfterRangeKey: PipelineOption<ComparableValue>,
+    val stopAfterRangeKey: PipelineOption<ComparableValue>,
     val separator: PipelineOption<Char>,
     val header: PipelineOption<Boolean>,
     val prettyPrint: PipelineOption<Boolean>,
@@ -122,9 +123,10 @@ data class AllPipelineOptions(
                 "DynamoDB: Use the given attribute as partition key",
                 ""
             ),
-            rangeKey = DefaultPipelineOption(
+            rangeKey = StringPipelineOption(
                 "range-key",
-                "DynamoDB: Use the given attribute as range key"
+                "DynamoDB: Use the given attribute as range key",
+                ""
             ),
             selectFields = CustomPipelineOption(
                 "select",

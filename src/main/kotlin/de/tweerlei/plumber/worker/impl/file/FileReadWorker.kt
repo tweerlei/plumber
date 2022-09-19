@@ -20,7 +20,6 @@ import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.DelegatingWorker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.impl.ifEmptyGetFrom
-import de.tweerlei.plumber.worker.types.coerceToString
 import java.io.File
 import java.io.FileInputStream
 import java.time.Instant
@@ -31,7 +30,7 @@ class FileReadWorker(
 ): DelegatingWorker(worker) {
 
     override fun doProcess(item: WorkItem) =
-        item.getFirst(WellKnownKeys.NAME).coerceToString()
+        item.getFirst(WellKnownKeys.NAME).toString()
             .let { name ->
                 File(dir.ifEmptyGetFrom(item, WellKnownKeys.PATH).ifEmpty { "." })
                     .let { directory ->

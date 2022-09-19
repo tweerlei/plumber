@@ -15,22 +15,51 @@
  */
 package de.tweerlei.plumber.worker.types
 
-import java.time.Duration
-import java.time.Instant
+import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.node.JsonNodeFactory
 
 class Range(
-    var startAfter: Comparable<*>? = null,
-    var endWith: Comparable<*>? = null
-) {
-    fun contains(value: Any?) =
+    var startAfter: ComparableValue = NullValue.INSTANCE,
+    var endWith: ComparableValue = NullValue.INSTANCE
+): Value {
+
+    companion object {
+        fun from(startAfter: Any?, endWith: Any?) =
+            Range(
+                startAfter.toValue().toComparableValue(),
+                endWith.toValue().toComparableValue()
+            )
+    }
+
+    override val name = "range"
+
+    override fun toAny() =
+        this
+
+    override fun toBoolean() =
+        startAfter.toBoolean()
+
+    override fun toNumber() =
+        endWith.toNumber().toLong() - startAfter.toNumber().toLong()
+
+    override fun toByteArray() =
+        startAfter.toByteArray()
+
+    override fun toJsonNode(): JsonNode =
+        JsonNodeFactory.instance.arrayNode().apply {
+            add(startAfter.toJsonNode())
+            add(endWith.toJsonNode())
+        }
+
+    override fun size() =
+        2L
+
+    fun contains(value: ComparableValue) =
         when (value) {
-            null -> false
-            is Boolean -> contains(value, startAfter?.coerceToBoolean(), endWith?.coerceToBoolean())
-            is Instant -> contains(value, startAfter?.coerceToInstant(), endWith?.coerceToInstant())
-            is Duration -> contains(value, startAfter?.coerceToDuration(), endWith?.coerceToDuration())
-            is Long -> contains(value, startAfter?.coerceToLong(), endWith?.coerceToLong())
-            is Number -> contains(value.toDouble(), startAfter?.coerceToNumber()?.toDouble(), endWith?.coerceToNumber()?.toDouble())
-            else -> contains(value.coerceToString(), startAfter?.coerceToString(), endWith?.coerceToString())
+            is NullValue -> false
+            is DoubleValue -> contains(value.toNumber().toDouble(), startAfter.toNumberOrNull()?.toDouble(), endWith.toNumberOrNull()?.toDouble())
+            is NumberValue -> contains(value.toNumber().toLong(), startAfter.toNumberOrNull()?.toLong(), endWith.toNumberOrNull()?.toLong())
+            else -> contains(value.toString(), startAfter.toStringOrNull(), endWith.toStringOrNull())
         }
 
     private fun <T: Comparable<*>> contains(value: T, lower: Comparable<T>?, upper: Comparable<T>?) =
@@ -43,12 +72,15 @@ class Range(
 
     override fun equals(other: Any?) =
         other is Range &&
-                other.startAfter == startAfter &&
-                other.endWith == endWith
+                startAfter == other.startAfter &&
+                endWith == other.endWith
 
     override fun hashCode() =
-        (startAfter?.hashCode() ?: 0) xor (endWith?.hashCode() ?: 0)
+        startAfter.hashCode() xor endWith.hashCode()
 
     override fun toString() =
         "[${startAfter} .. ${endWith}]"
+
+    override fun dump() =
+        "[${startAfter.dump()} .. ${endWith.dump()}]"
 }

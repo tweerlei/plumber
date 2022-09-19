@@ -17,10 +17,10 @@ package de.tweerlei.plumber.worker.impl.s3
 
 import com.amazonaws.services.s3.AmazonS3
 import com.amazonaws.services.s3.model.DeleteObjectRequest
-import de.tweerlei.plumber.worker.*
+import de.tweerlei.plumber.worker.WorkItem
+import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.DelegatingWorker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
-import de.tweerlei.plumber.worker.types.coerceToString
 import de.tweerlei.plumber.worker.impl.ifEmptyGetFrom
 
 class S3DeleteObjectWorker(
@@ -31,7 +31,7 @@ class S3DeleteObjectWorker(
 ): DelegatingWorker(worker) {
 
     override fun doProcess(item: WorkItem) =
-        item.getFirst(WellKnownKeys.NAME).coerceToString()
+        item.getFirst(WellKnownKeys.NAME).toString()
             .let { name ->
                 deleteFile(
                     bucketName.ifEmptyGetFrom(item, S3Keys.BUCKET_NAME),

@@ -15,39 +15,22 @@
  */
 package de.tweerlei.plumber.worker.impl.text
 
+import de.tweerlei.plumber.util.codec.Codec
 import de.tweerlei.plumber.worker.WorkItem
-import de.tweerlei.plumber.worker.impl.DelegatingWorker
 import de.tweerlei.plumber.worker.Worker
-import de.tweerlei.plumber.worker.types.coerceToString
-import java.nio.charset.Charset
-import java.util.*
+import de.tweerlei.plumber.worker.impl.DelegatingWorker
 
 class DecodingWorker(
-    private val alg: String,
+    private val codec: Codec,
     worker: Worker
 ): DelegatingWorker(worker) {
 
     override fun doProcess(item: WorkItem) =
-        item.getOptional().coerceToString()
+        item.get().toString()
             .let { encoded ->
-                when (alg) {
-                    "base64" -> decodeBase64(encoded)
-                    "hex" -> decodeHex(encoded)
-                    else -> encoded.toByteArray(Charset.forName(alg))
-                }.also { bytes ->
-                    item.set(bytes)
-                }
+                codec.toByteArray(encoded)
+                    .also { bytes ->
+                        item.set(bytes)
+                    }
             }.let { true }
-
-    private fun decodeBase64(encoded: String): ByteArray =
-        Base64.getDecoder().decode(encoded)
-
-    private fun decodeHex(encoded: String) =
-        encoded.split(Regex(".."))
-            .let { bytes ->
-                ByteArray(bytes.size)
-                .also { arr ->
-                    bytes.forEachIndexed { index, s -> arr[index] = s.toByte(16) }
-                }
-            }
 }

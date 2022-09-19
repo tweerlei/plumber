@@ -15,6 +15,7 @@
  */
 package de.tweerlei.plumber.util
 
+import de.tweerlei.plumber.util.range.Histogram
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 

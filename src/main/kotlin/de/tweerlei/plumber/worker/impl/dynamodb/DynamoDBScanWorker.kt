@@ -24,16 +24,17 @@ import de.tweerlei.plumber.worker.impl.GeneratingWorker
 import de.tweerlei.plumber.worker.types.Range
 import de.tweerlei.plumber.worker.types.Record
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
-import de.tweerlei.plumber.worker.types.toComparable
+import de.tweerlei.plumber.worker.types.ComparableValue
+import de.tweerlei.plumber.worker.types.NullValue
 import mu.KLogging
 
 class DynamoDBScanWorker(
     private val tableName: String,
     private val partitionKey: String,
-    private val rangeKey: String?,
+    private val rangeKey: String,
     private val selectFields: Set<String>,
-    private val startAfterRange: Comparable<*>?,
-    private val endWithRange: Comparable<*>?,
+    private val startAfterRange: ComparableValue,
+    private val endWithRange: ComparableValue,
     private val numberOfFilesPerRequest: Int,
     private val amazonDynamoDBClient: AmazonDynamoDB,
     limit: Long,
@@ -83,33 +84,32 @@ class DynamoDBScanWorker(
             .withProjectionExpression(selectFields.ifEmpty { null }?.joinToString(","))
             .let { request -> amazonDynamoDBClient.scan(request) }
 
-    private fun Comparable<*>?.toKey(rangeKeyValue: Comparable<*>?) =
+    private fun ComparableValue?.toKey(rangeKeyValue: ComparableValue) =
         if (this != null)
             Record.of(
                 partitionKey to this
             ).also { map ->
-                if (rangeKey != null && rangeKeyValue != null)
+                if (rangeKey.isNotEmpty() && rangeKeyValue !is NullValue)
                     map[rangeKey] = rangeKeyValue
             }
         else
             null
 
-    @Suppress("UNCHECKED_CAST")
     private fun Record.isNotAfter(maxKey: Record?) =
         when {
             maxKey == null -> true
-            this[partitionKey] as Comparable<Any> > maxKey[partitionKey] as Comparable<Any> -> false
-            rangeKey == null || maxKey[rangeKey] == null -> true
-            this[rangeKey] as Comparable<Any> > maxKey[rangeKey] as Comparable<Any> -> false
+            this[partitionKey] as ComparableValue > maxKey[partitionKey] as ComparableValue -> false
+            rangeKey.isEmpty() || maxKey[rangeKey] == null -> true
+            this[rangeKey] as ComparableValue > maxKey[rangeKey] as ComparableValue -> false
             else -> true
         }
 
     private fun Record.toWorkItem() =
-        WorkItem.of(
+        WorkItem.from(
             this,
             WellKnownKeys.RECORD to this,
             DynamoDBKeys.TABLE_NAME to tableName,
             DynamoDBKeys.PARTITION_KEY to this[partitionKey],
-            DynamoDBKeys.RANGE_KEY to rangeKey?.let { this[rangeKey] }
+            DynamoDBKeys.RANGE_KEY to if (rangeKey.isNotEmpty()) this[rangeKey] else null
         )
 }

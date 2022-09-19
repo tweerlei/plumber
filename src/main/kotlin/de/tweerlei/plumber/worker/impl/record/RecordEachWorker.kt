@@ -29,7 +29,7 @@ class RecordEachWorker(
     override fun generateItems(item: WorkItem, fn: (WorkItem) -> Boolean) {
         item.getAs<Record>(WellKnownKeys.RECORD)
             .forEach { key, value ->
-                fn(WorkItem.of(
+                fn(WorkItem.from(
                     value,
                     WellKnownKeys.NAME to key
                 ))

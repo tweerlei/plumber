@@ -25,6 +25,7 @@ import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.impl.DelegatingWorker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.Worker
+import de.tweerlei.plumber.worker.types.JsonNodeValue
 
 class NodeModifyWorker(
     private val p: JsonPointer,
@@ -37,10 +38,10 @@ class NodeModifyWorker(
     private val index = p.last().matchingIndex
 
     override fun doProcess(item: WorkItem) =
-        item.getOrSetAs<JsonNode>(WellKnownKeys.NODE) {
-            JsonNodeFactory.instance.objectNode()
+        item.getOrSetAs<JsonNodeValue>(WellKnownKeys.NODE) {
+            JsonNodeValue(JsonNodeFactory.instance.objectNode())
         }
-            .at(ptr)
+            .value.at(ptr)
             .let { node ->
                 when {
                     node.isObject -> (node as ObjectNode).set<JsonNode>(key, objectMapper.valueToTree(item.getOptional()))

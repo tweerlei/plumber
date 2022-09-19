@@ -78,7 +78,7 @@ class CsvReadWorker(
         }
 
     private fun Record.toWorkItem() =
-        WorkItem.of(
+        WorkItem.from(
             this,
             WellKnownKeys.PATH to file.parentFile?.absolutePath,
             WellKnownKeys.NAME to file.name

@@ -31,13 +31,17 @@ Apache Kafka
   kafka-write:<topic>         Send a message to the given Kafka topic
 Attributes
   and:<value>                 Logically AND the current value with the given attribute's value
+  divide:<value>              Divide the current value by the given attribute's value
   else:<value>                Sets the current value to the given attribute's value if a previous then: did not match
   get:<name>                  Set the current value to the given attribute
   is-equal:<value>            Compare the current value to the given attribute's value resulting in a boolean
   is-greater:<value>          Compare the current value to the given attribute's value resulting in a boolean
   is-less:<value>             Compare the current value to the given attribute's value resulting in a boolean
+  minus:<value>               Subtract the given attribute's value to the current value
+  modulo:<value>              Calculate the remainder of dividing the current value by the given attribute's value
   not                         Logically negate the current value
   or:<value>                  Logically OR the current value with the given attribute's value
+  plus:<value>                Add the given attribute's value to the current value
   set:<name>                  Set the given attribute to the current value
   then:<value>                Sets the current value to the given attribute's value if current value is truthy
   value:<value>               Sets the current value to the given value
@@ -54,6 +58,8 @@ Files
   files-write:<path>          Write items as files in the given directory
   lines-read:<path>           Read lines from the given file
   lines-write:<path>          Write lines to the given file
+  zip-read:<path>             Read entries from the given ZIP file
+  zip-write:<path>            Write entries to the given ZIP file
 Flow control
   bulk:<number>               Execute following steps using chunks of items
   delay:0                     Delay following steps by the given number of milliseconds
@@ -138,8 +144,8 @@ Supported global options and their defaults (if any) are:
 --queue-size=10               Queue size for items passed between threads
 --primary-key=<arg>           Use the given attribute as primary key (defaults to 'id' for JDBC and '_id' for MongoDB)
 --select=<arg>                Database fields to fetch, separated by commas (defaults to selecting all fields)
---start-after=<arg>           Start after the given key
---stop-after=<arg>            Stop after the given key
+--start-after=<value>         Start after the given key
+--stop-after=<value>          Stop after the given key
 --key-chars=<arg>             Use the given characters to generate keys (defaults to safe S3 chars)
 --assume-role=<arg>           AWS: Assume the given IAM role for all AWS operations
 --requester-pays              AWS: Requester pays access to S3 buckets
@@ -148,8 +154,8 @@ Supported global options and their defaults (if any) are:
 --reread                      Kafka/SQS: Re-read all messages
 --partition-key=<arg>         DynamoDB: Use the given attribute as partition key
 --range-key=<arg>             DynamoDB: Use the given attribute as range key
---start-range=<arg>           DynamoDB: Start after the given range key
---stop-range=<arg>            DynamoDB: Stop after the given range key
+--start-range=<value>         DynamoDB: Start after the given range key
+--stop-range=<value>          DynamoDB: Stop after the given range key
 --separator=,                 CSV: Separator character
 --header                      CSV: Read/write header
 --pretty-print                Pretty print JSON and XML output

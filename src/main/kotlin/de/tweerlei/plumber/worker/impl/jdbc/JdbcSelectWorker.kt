@@ -17,10 +17,9 @@ package de.tweerlei.plumber.worker.impl.jdbc
 
 import de.tweerlei.plumber.worker.*
 import de.tweerlei.plumber.worker.impl.GeneratingWorker
-import de.tweerlei.plumber.worker.types.Range
-import de.tweerlei.plumber.worker.types.Record
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.impl.ifEmptyGetFrom
+import de.tweerlei.plumber.worker.types.*
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.ResultSetExtractor
 import java.sql.ResultSet
@@ -36,8 +35,8 @@ class JdbcSelectWorker(
 
     override fun generateItems(item: WorkItem, fn: (WorkItem) -> Boolean) {
         val range = item.getOptionalAs<Range>(WellKnownKeys.RANGE)
-        val startAfter = range?.startAfter
-        val endWith = range?.endWith
+        val startAfter = range?.startAfter ?: NullValue.INSTANCE
+        val endWith = range?.endWith ?: NullValue.INSTANCE
         val table = tableName.ifEmptyGetFrom(item, JdbcKeys.TABLE_NAME)
         val extractRows = ResultSetExtractor<Int> { rs ->
             var keepGenerating = true
@@ -52,9 +51,9 @@ class JdbcSelectWorker(
         }
 
         val itemCount = when {
-            startAfter != null && endWith != null -> selectRange(table, startAfter, endWith, extractRows)
-            startAfter != null -> selectFrom(table, startAfter, extractRows)
-            endWith != null -> selectTo(table, endWith, extractRows)
+            startAfter !is NullValue && endWith !is NullValue -> selectRange(table, startAfter, endWith, extractRows)
+            startAfter !is NullValue -> selectFrom(table, startAfter, extractRows)
+            endWith !is NullValue -> selectTo(table, endWith, extractRows)
             else -> selectAll(table, extractRows)
         }
 
@@ -67,26 +66,26 @@ class JdbcSelectWorker(
             rse
         )
 
-    private fun selectFrom(table: String, startAfter: Any, rse: ResultSetExtractor<Int>) =
+    private fun selectFrom(table: String, startAfter: ComparableValue, rse: ResultSetExtractor<Int>) =
         jdbcTemplate.query(
             "SELECT ${fieldsToSelect()} FROM $table WHERE $primaryKey > ?",
             rse,
-            startAfter
+            startAfter.toAny()
         )
 
-    private fun selectTo(table: String, endWith: Any, rse: ResultSetExtractor<Int>) =
+    private fun selectTo(table: String, endWith: ComparableValue, rse: ResultSetExtractor<Int>) =
         jdbcTemplate.query(
             "SELECT ${fieldsToSelect()} FROM $table WHERE $primaryKey <= ?",
             rse,
-            endWith
+            endWith.toAny()
         )
 
-    private fun selectRange(table: String, startAfter: Any, endWith: Any, rse: ResultSetExtractor<Int>) =
+    private fun selectRange(table: String, startAfter: ComparableValue, endWith: ComparableValue, rse: ResultSetExtractor<Int>) =
         jdbcTemplate.query(
             "SELECT ${fieldsToSelect()} FROM $table WHERE $primaryKey > ? AND $primaryKey <= ?",
             rse,
-            startAfter,
-            endWith
+            startAfter.toAny(),
+            endWith.toAny()
         )
 
     private fun fieldsToSelect() =
@@ -96,10 +95,10 @@ class JdbcSelectWorker(
         Record()
             .also { map ->
                 for (i in 1..metaData.columnCount) {
-                    map[metaData.getColumnName(i)] = getObject(i)
+                    map[metaData.getColumnName(i)] = getObject(i).toValue()
                 }
             }.let { map ->
-                WorkItem.of(
+                WorkItem.from(
                     map,
                     WellKnownKeys.RECORD to map,
                     JdbcKeys.TABLE_NAME to tableName,

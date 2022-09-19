@@ -18,6 +18,7 @@ package de.tweerlei.plumber.worker.impl.stats
 import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.DelegatingWorker
+import de.tweerlei.plumber.worker.types.ComparableValue
 import mu.KLogging
 import java.util.concurrent.atomic.AtomicLong
 import java.util.concurrent.atomic.AtomicReference
@@ -31,12 +32,12 @@ class MinMaxWorker(
     companion object: KLogging()
 
     private val sentFiles = AtomicLong()
-    private val minValue = AtomicReference<Comparable<Any>>()
-    private val maxValue = AtomicReference<Comparable<Any>>()
+    private val minValue = AtomicReference<ComparableValue>()
+    private val maxValue = AtomicReference<ComparableValue>()
 
     override fun doProcess(item: WorkItem) =
-        item.getOptionalAs<Comparable<Any>>()
-            ?.let { value ->
+        item.getAs<ComparableValue>()
+            .let { value ->
                 val curMin = minValue.accumulateAndGet(value) { a, b -> minOf(a ?: b, b) }
                 val curMax = maxValue.accumulateAndGet(value) { a, b -> maxOf(a ?: b, b) }
                 sentFiles.incrementAndGet()

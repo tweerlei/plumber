@@ -15,28 +15,30 @@
  */
 package de.tweerlei.plumber.worker.impl.stats
 
-import de.tweerlei.plumber.util.Histogram
-import de.tweerlei.plumber.util.StringHistogram
-import de.tweerlei.plumber.util.StringPacker
+import de.tweerlei.plumber.util.range.Histogram
+import de.tweerlei.plumber.util.range.StringHistogram
+import de.tweerlei.plumber.util.range.StringPacker
 import de.tweerlei.plumber.util.extractCommonPrefix
-import de.tweerlei.plumber.worker.*
+import de.tweerlei.plumber.worker.WorkItem
+import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.DelegatingWorker
-import de.tweerlei.plumber.worker.types.coerceToLong
-import de.tweerlei.plumber.worker.types.coerceToString
+import de.tweerlei.plumber.worker.types.ComparableValue
+import de.tweerlei.plumber.worker.types.NullValue
+import de.tweerlei.plumber.worker.types.NumberValue
 import mu.KLogging
 
 class HistogramWorker(
     private val name: String,
     size: Int,
     keyChars: String,
-    startAfterKey: Comparable<*>?,
-    stopAfterKey: Comparable<*>?,
+    startAfterKey: ComparableValue,
+    stopAfterKey: ComparableValue,
     worker: Worker
 ): DelegatingWorker(worker) {
 
     private val stringHistogram = when {
-            startAfterKey == null -> ""
-            stopAfterKey == null -> ""
+            startAfterKey is NullValue -> ""
+            stopAfterKey is NullValue -> ""
             else -> extractCommonPrefix(startAfterKey.toString(), stopAfterKey.toString())
         }.let { prefix ->
             StringHistogram(size, StringPacker(keyChars), prefix)
@@ -46,9 +48,11 @@ class HistogramWorker(
     companion object: KLogging()
 
     override fun doProcess(item: WorkItem) =
-        when {
-            item.getOptional() is Number -> numberHistogram.add(item.getOptional().coerceToLong())
-            else -> stringHistogram.add(item.getOptional().coerceToString())
+        item.get().let { value ->
+            when (value) {
+                is NumberValue -> numberHistogram.add(value.toNumber().toLong())
+                else -> stringHistogram.add(value.toString())
+            }
         }.let { true }
 
     override fun onClose() {

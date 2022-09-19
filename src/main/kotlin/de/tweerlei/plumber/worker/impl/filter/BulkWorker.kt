@@ -19,6 +19,7 @@ import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.WrappingWorker
+import de.tweerlei.plumber.worker.types.WorkItemList
 import mu.KLogging
 import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.atomic.AtomicReference
@@ -30,12 +31,12 @@ class BulkWorker(
 
     companion object : KLogging()
 
-    private val accumulator = ThreadLocal<AtomicReference<MutableList<WorkItem>>>()
-    private val allAccumulators = ConcurrentLinkedQueue<AtomicReference<MutableList<WorkItem>>>()
+    private val accumulator = ThreadLocal<AtomicReference<WorkItemList>>()
+    private val allAccumulators = ConcurrentLinkedQueue<AtomicReference<WorkItemList>>()
 
     private fun currentAccumulator() =
         when (val ref = accumulator.get()) {
-            null -> AtomicReference<MutableList<WorkItem>>()
+            null -> AtomicReference<WorkItemList>()
                 .also {
                     accumulator.set(it)
                     allAccumulators.add(it)
@@ -43,7 +44,7 @@ class BulkWorker(
             else -> ref
         }.let { ref ->
             when (val list = ref.get()) {
-                null -> ArrayList<WorkItem>(queueSizePerThread)
+                null -> WorkItemList(queueSizePerThread)
                     .also { ref.set(it) }
                 else -> list
             }
@@ -52,8 +53,8 @@ class BulkWorker(
     private fun resetAccumulator() =
         accumulator.get()?.set(null)
 
-    private fun passOn(items: List<WorkItem>) {
-        val nextItem = WorkItem.of(
+    private fun passOn(items: WorkItemList) {
+        val nextItem = WorkItem.from(
             items,
             WellKnownKeys.WORK_ITEMS to items,
             WellKnownKeys.SIZE to items.size

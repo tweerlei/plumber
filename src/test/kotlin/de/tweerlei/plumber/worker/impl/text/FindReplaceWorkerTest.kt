@@ -17,6 +17,7 @@ package de.tweerlei.plumber.worker.impl.text
 
 import de.tweerlei.plumber.worker.impl.TestWorkerRunner
 import de.tweerlei.plumber.worker.WorkItem
+import de.tweerlei.plumber.worker.types.StringValue
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
@@ -29,11 +30,11 @@ class FindReplaceWorkerTest {
 
         val item = TestWorkerRunner()
             .append { w -> MatchingWorker(Regex("foo.*bar"), w) }
-            .run(WorkItem.of("foobazbar"))
+            .run(WorkItem.from("foobazbar"))
             .singleOrNull()
 
         item.shouldNotBeNull()
-        item.getOptional().shouldBe("foobazbar")
+        item.getAs<StringValue>().value.shouldBe("foobazbar")
     }
 
     @Test
@@ -41,13 +42,13 @@ class FindReplaceWorkerTest {
 
         val item = TestWorkerRunner()
             .append { w -> MatchingWorker(Regex("foo(.*)bar"), w) }
-            .run(WorkItem.of("foobazbar"))
+            .run(WorkItem.from("foobazbar"))
             .singleOrNull()
 
         item.shouldNotBeNull()
-        item.getOptional().shouldBe("foobazbar")
-        item.getOptional("matchedGroup0").shouldBe("foobazbar")
-        item.getOptional("matchedGroup1").shouldBe("baz")
+        item.getAs<StringValue>().value.shouldBe("baz")
+        item.getAs<StringValue>("matchedGroup0").value.shouldBe("foobazbar")
+        item.getAs<StringValue>("matchedGroup1").value.shouldBe("baz")
     }
 
     @Test
@@ -55,7 +56,7 @@ class FindReplaceWorkerTest {
 
         val item = TestWorkerRunner()
             .append { w -> MatchingWorker(Regex("foo.*bar"), w) }
-            .run(WorkItem.of("barfoo"))
+            .run(WorkItem.from("barfoo"))
             .singleOrNull()
 
         item.shouldNotBeNull()
@@ -67,12 +68,12 @@ class FindReplaceWorkerTest {
 
         val item = TestWorkerRunner()
             .append { w -> MatchingWorker(Regex("foo.*bar"), w) }
-            .append { w -> ReplacingWorker({ "bar" }, w) }
-            .run(WorkItem.of("foobazbar"))
+            .append { w -> ReplacingWorker({ StringValue("bar") }, w) }
+            .run(WorkItem.from("foobazbar"))
             .singleOrNull()
 
         item.shouldNotBeNull()
-        item.getOptional().shouldBe("bar")
+        item.getAs<StringValue>().value.shouldBe("bar")
     }
 
     @Test
@@ -80,12 +81,12 @@ class FindReplaceWorkerTest {
 
         val item = TestWorkerRunner()
             .append { w -> MatchingWorker(Regex("foo(.*)bar"), w) }
-            .append { w -> ReplacingWorker({ "doo$1" }, w) }
-            .run(WorkItem.of("0foobazbar1"))
+            .append { w -> ReplacingWorker({ StringValue("doo$1") }, w) }
+            .run(WorkItem.from("0foobazbar1"))
             .singleOrNull()
 
         item.shouldNotBeNull()
-        item.getOptional().shouldBe("0doobaz1")
+        item.getAs<StringValue>().value.shouldBe("0doobaz1")
     }
 
     @Test
@@ -93,12 +94,12 @@ class FindReplaceWorkerTest {
 
         val item = TestWorkerRunner()
             .append { w -> MatchingWorker(Regex("^foo(.*)bar$"), w) }
-            .append { w -> ReplacingWorker({ "doo$1" }, w) }
-            .run(WorkItem.of("foobazbar"))
+            .append { w -> ReplacingWorker({ StringValue("doo$1") }, w) }
+            .run(WorkItem.from("foobazbar"))
             .singleOrNull()
 
         item.shouldNotBeNull()
-        item.getOptional().shouldBe("doobaz")
+        item.getAs<StringValue>().value.shouldBe("doobaz")
     }
 
     @Test
@@ -106,11 +107,11 @@ class FindReplaceWorkerTest {
 
         val item = TestWorkerRunner()
             .append { w -> MatchingWorker(Regex("^foo(.*)bar$"), w) }
-            .append { w -> ReplacingWorker({ "doo$1" }, w) }
-            .run(WorkItem.of("0foobazbar1"))
+            .append { w -> ReplacingWorker({ StringValue("doo$1") }, w) }
+            .run(WorkItem.from("0foobazbar1"))
             .singleOrNull()
 
         item.shouldNotBeNull()
-        item.getOptional().shouldBe("0foobazbar1")
+        item.getAs<StringValue>().value.shouldBe("0foobazbar1")
     }
 }
