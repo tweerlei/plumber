@@ -15,11 +15,12 @@
  */
 package de.tweerlei.plumber.pipeline.steps.range
 
-import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
-import de.tweerlei.plumber.worker.impl.WellKnownKeys
+import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.worker.Worker
+import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.impl.attribute.SettingWorker
+import de.tweerlei.plumber.worker.types.Range
 import org.springframework.stereotype.Service
 
 @Service("range-clearWorker")
@@ -39,5 +40,5 @@ class RangeClearStep: ProcessingStep {
         params: PipelineParams,
         parallelDegree: Int
     ) =
-        SettingWorker(WellKnownKeys.RANGE, { null }, w)
+        SettingWorker(WellKnownKeys.RANGE, { Range() }, w)
 }

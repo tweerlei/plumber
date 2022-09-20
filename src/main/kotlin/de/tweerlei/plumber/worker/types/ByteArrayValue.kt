@@ -24,7 +24,8 @@ class ByteArrayValue(
     val value: ByteArray
 ): ComparableValue {
 
-    override val name = "bytes"
+    override fun getName() =
+        "bytes"
 
     override fun toAny() =
         value

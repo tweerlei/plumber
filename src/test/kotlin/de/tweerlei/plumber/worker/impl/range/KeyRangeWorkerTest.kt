@@ -34,7 +34,7 @@ class KeyRangeWorkerTest {
                 w
             ) }
             .append { w -> KeyRangeWorker(10, "0123456789", Long.MAX_VALUE, w) }
-            .run(WorkItem.from(""))
+            .run()
             .toList()
 
         items.size.shouldBe(10)
@@ -59,7 +59,7 @@ class KeyRangeWorkerTest {
                 w
             ) }
             .append { w -> KeyRangeWorker(10, "0123456789", Long.MAX_VALUE, w) }
-            .run(WorkItem.from(""))
+            .run()
             .toList()
 
         items.size.shouldBe(5)
@@ -79,7 +79,7 @@ class KeyRangeWorkerTest {
                 w
             ) }
             .append { w -> KeyRangeWorker(10, "0123456789abcdef", Long.MAX_VALUE, w) }
-            .run(WorkItem.from(""))
+            .run()
             .toList()
 
         items.size.shouldBe(10)

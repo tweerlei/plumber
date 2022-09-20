@@ -16,11 +16,10 @@
 package de.tweerlei.plumber.worker.impl.node
 
 import com.fasterxml.jackson.core.JsonPointer
-import com.fasterxml.jackson.databind.JsonNode
 import de.tweerlei.plumber.worker.WorkItem
+import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.DelegatingWorker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
-import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.types.JsonNodeValue
 
 class NodeGetWorker(
@@ -36,15 +35,4 @@ class NodeGetWorker(
                         item.set(value)
                     }
             }.let { true }
-
-    private fun JsonNode.toSimpleType(): Any? =
-        when {
-            isBoolean -> booleanValue()
-            isNumber -> numberValue()
-            isTextual -> textValue()
-            isBinary -> binaryValue()
-            isNull -> null
-            isEmpty -> null
-            else -> this
-        }
 }

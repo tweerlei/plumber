@@ -34,7 +34,8 @@ class Record: LinkedHashMap<String, Value>(), Value {
             }
     }
 
-    override val name = "record"
+    override fun getName() =
+        "record"
 
     override fun toAny() =
         this

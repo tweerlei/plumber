@@ -59,13 +59,13 @@ class TimingWorker(
         }
         val endTime = System.currentTimeMillis()
 
-        val total = totalProcessingTime.addAndGet(endTime - startTime)
+        totalProcessingTime.addAndGet(endTime - startTime)
         if ((succ + fail) % interval == 0L) {
-            val perItem = total.toDouble() / (succ + fail)
+            val perItem = (endTime - startTime).toDouble() / (succ + fail)
             logger.info {
                 "$name: $succ / ${succ + fail} ($active active) @ ${perItem.humanReadable()} ms/item"
             }
-            }
+        }
         activeWorkers.decrementAndGet()
     }
 

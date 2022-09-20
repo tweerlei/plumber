@@ -22,7 +22,8 @@ class StringValue(
     val value: String
 ): ComparableValue {
 
-    override val name = "string"
+    override fun getName() =
+        "string"
 
     override fun toAny() =
         value

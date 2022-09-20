@@ -50,11 +50,11 @@ class XmlWorkerTest {
         """
         val objectMapper = XmlMapper()
 
-        val item = TestWorkerRunner()
+        val item = TestWorkerRunner(WorkItem.from(xml.toByteArray(StandardCharsets.UTF_8)))
             .append { w -> FromXmlWorker(JsonNode::class.java, objectMapper, w) }
             .append { w -> NodeGetWorker(JsonPointer.compile("/obj"), w) }
             .append { w -> ToXmlWorker("ROOT", objectMapper, false, w) }
-            .run(WorkItem.from(xml.toByteArray(StandardCharsets.UTF_8)))
+            .run()
             .singleOrNull()
 
         item.shouldNotBeNull()

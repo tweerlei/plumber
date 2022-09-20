@@ -44,6 +44,8 @@ class WellKnownKeys {
 
         /** default range (Range) */
         const val RANGE = "range"
+        /** secondary range (Range) */
+        const val SECONDARY_RANGE = "secondaryRange"
         /** default record (Record) */
         const val RECORD = "record"
         /** default node (JsonNode) */

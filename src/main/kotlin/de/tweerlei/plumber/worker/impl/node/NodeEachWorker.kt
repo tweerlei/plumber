@@ -42,14 +42,9 @@ class NodeEachWorker(
 
     private fun JsonNode.toMap(): Map<String, Any?> =
         when {
-            isBoolean -> mapOf("0" to booleanValue())
-            isNumber -> mapOf("0" to numberValue())
-            isTextual -> mapOf("0" to textValue())
-            isBinary -> mapOf("0" to binaryValue())
-            isArray -> withIndex().associate { v -> v.index.toString() to v.value }
-            isObject -> fields().asSequence().associate { v -> v.key to v.value }
-            isNull -> mapOf("0" to null)
+            isArray -> withIndex().associate { v -> v.index.toString() to v.value.toSimpleType() }
+            isObject -> fields().asSequence().associate { v -> v.key to v.value.toSimpleType() }
             isEmpty -> emptyMap()
-            else -> mapOf("0" to this)
+            else -> mapOf("0" to toSimpleType())
         }
 }

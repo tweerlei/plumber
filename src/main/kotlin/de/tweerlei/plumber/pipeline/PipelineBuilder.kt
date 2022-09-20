@@ -19,6 +19,8 @@ import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.pipeline.steps.ProcessingStepFactory
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.WorkerBuilder
+import de.tweerlei.plumber.worker.impl.WellKnownKeys
+import de.tweerlei.plumber.worker.types.NullValue
 import mu.KLogging
 import org.springframework.stereotype.Service
 
@@ -28,11 +30,15 @@ class PipelineBuilder(
 ) {
 
     companion object: KLogging() {
+        private const val RANGE_RESET_STEP = "range-reset"
+        private const val REPEAT_STEP = "repeat"
+        private const val PARALLEL_STEP = "parallel"
+
         private val VIRTUAL_START_WORKER = WorkerDefinition(
             "<no predecessor>",
             "",
             object : ProcessingStep {
-                override val group = "Npo group"
+                override val group = "No group"
                 override val name = "Nothing"
                 override val description = "Start of pipeline"
                 override fun createWorker(
@@ -51,15 +57,46 @@ class PipelineBuilder(
     }
 
     fun build(definition: PipelineDefinition) =
-        createWorkerDefinitions(definition.steps)
+        createWorkerDefinitions(definition)
+            .also { if (definition.params.explain) logger.warn("Pipeline that would be executed:") }
             .let { definitions -> createWorkers(definitions, definition.params) }
             .let { worker -> if (definition.params.explain) null else worker }
 
-    private fun createWorkerDefinitions(steps: List<PipelineDefinition.Step>): List<WorkerDefinition> {
+    private fun createWorkerDefinitions(definition: PipelineDefinition): List<WorkerDefinition> {
         var parallelDegree = 1
         var producedAttributes = emptySet<String>()
         val workerDefinitions = mutableListOf<WorkerDefinition>()
-        steps.forEach { step ->
+        // Set initial range
+        if (definition.params.startAfterKey !is NullValue || definition.params.stopAfterKey !is NullValue) {
+            factory.processingStepFor(RANGE_RESET_STEP).let { processingStep ->
+                producedAttributes = producedAttributes.plus(processingStep.producedAttributesFor(WellKnownKeys.RANGE))
+                workerDefinitions.add(
+                    WorkerDefinition(
+                        RANGE_RESET_STEP,
+                        WellKnownKeys.RANGE,
+                        processingStep,
+                        producedAttributes,
+                        parallelDegree
+                    )
+                )
+            }
+        }
+        // Set initial range
+        if (definition.params.startAfterRangeKey !is NullValue || definition.params.stopAfterRangeKey !is NullValue) {
+            factory.processingStepFor(RANGE_RESET_STEP).let { processingStep ->
+                producedAttributes = producedAttributes.plus(processingStep.producedAttributesFor(WellKnownKeys.SECONDARY_RANGE))
+                workerDefinitions.add(
+                    WorkerDefinition(
+                        RANGE_RESET_STEP,
+                        WellKnownKeys.SECONDARY_RANGE,
+                        processingStep,
+                        producedAttributes,
+                        parallelDegree
+                    )
+                )
+            }
+        }
+        definition.steps.forEach { step ->
             factory.processingStepFor(step.action)
                 .let { processingStep ->
                     val newParallelDegree = processingStep.parallelDegreeFor(step.arg) ?: parallelDegree
@@ -67,9 +104,9 @@ class PipelineBuilder(
                         // Trigger all parallel workers by multiplying the initial WorkItem
                         workerDefinitions.add(
                             WorkerDefinition(
-                                "parallel",
+                                REPEAT_STEP,
                                 newParallelDegree.toString(),
-                                factory.processingStepFor("repeat"),
+                                factory.processingStepFor(REPEAT_STEP),
                                 producedAttributes,
                                 1
                             )
@@ -79,9 +116,9 @@ class PipelineBuilder(
                         // Automatically add a parallel step to serialize processing
                         workerDefinitions.add(
                             WorkerDefinition(
-                                "parallel",
+                                PARALLEL_STEP,
                                 newParallelDegree.toString(),
-                                factory.processingStepFor("parallel"),
+                                factory.processingStepFor(PARALLEL_STEP),
                                 producedAttributes,
                                 newParallelDegree
                             )
@@ -109,9 +146,6 @@ class PipelineBuilder(
     ) =
         WorkerBuilder.create()
             .let { builder ->
-                if (params.explain) {
-                    logger.warn("Pipeline that would be executed:")
-                }
                 workers.foldIndexed(builder) { index, b, step ->
                     createWorker(
                         index,

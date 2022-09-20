@@ -25,6 +25,7 @@ import java.util.*
 
 private val byteCache = ValueCache<Byte, LongValue>("long") { LongValue(it.toLong()) }
 private val charCache = ValueCache<Char, StringValue>("char") { StringValue(it.toString()) }
+private val shortCache = ValueCache<Short, LongValue>("int") { LongValue(it.toLong()) }
 private val intCache = ValueCache<Int, LongValue>("int") { LongValue(it.toLong()) }
 private val longCache = ValueCache<Long, LongValue>("long") { LongValue(it) }
 private val bigIntegerCache = ValueCache<BigInteger, LongValue>("bigint") { LongValue(it.toLong()) }
@@ -43,6 +44,7 @@ fun Any?.toValue(): Value =
         is Boolean -> BooleanValue.of(this)
         is Byte -> byteCache.getOrCreateValue(this)
         is Char -> charCache.getOrCreateValue(this)
+        is Short -> shortCache.getOrCreateValue(this)
         is Int -> intCache.getOrCreateValue(this)
         is Long -> longCache.getOrCreateValue(this)
         is BigInteger -> bigIntegerCache.getOrCreateValue(this)
@@ -55,6 +57,12 @@ fun Any?.toValue(): Value =
         is Duration -> durationCache.getOrCreateValue(this)
         is Date -> dateCache.getOrCreateValue(this)
         is JsonNode -> JsonNodeValue(this)
+        is Collection<*> -> Record().also { record ->
+            forEachIndexed { index, value -> record[index.toString()] = value.toValue() }
+        }
+        is Map<*, *> -> Record().also { record ->
+            forEach { (key, value) -> record[key.toString()] = value.toValue() }
+        }
         else -> OtherValue(this)
     }
 

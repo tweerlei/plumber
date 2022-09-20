@@ -26,7 +26,7 @@ class WorkItem private constructor(
     companion object {
         const val DEFAULT_KEY = ""
 
-        fun of(value: Value, vararg entries: Pair<String, Value>) =
+        fun of(value: Value = NullValue.INSTANCE, vararg entries: Pair<String, Value>) =
             WorkItem(HashMap()).also { item ->
                 entries.forEach { (k, v) -> item.set(v, k) }
                 item.set(value)

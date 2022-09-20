@@ -23,7 +23,8 @@ class InstantValue(
     val value: Instant
 ): NumberValue {
 
-    override val name = "instant"
+    override fun getName() =
+        "instant"
 
     override fun toAny() =
         value

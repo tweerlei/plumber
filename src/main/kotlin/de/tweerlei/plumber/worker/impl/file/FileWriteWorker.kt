@@ -31,7 +31,7 @@ class FileWriteWorker(
 ): DelegatingWorker(worker) {
 
     override fun doProcess(item: WorkItem) =
-        item.getOptional(WellKnownKeys.NAME).toString()
+        item.get(WellKnownKeys.NAME).toString()
             .let { name ->
                 File(dir.ifEmptyGetFrom(item, WellKnownKeys.PATH).ifEmpty { "." })
                     .let { directory ->

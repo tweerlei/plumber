@@ -16,7 +16,6 @@
 package de.tweerlei.plumber.worker.impl.filter
 
 import de.tweerlei.plumber.worker.impl.TestWorkerRunner
-import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.impl.stats.CountingWorker
 import de.tweerlei.plumber.worker.impl.text.UUIDWorker
 import io.kotest.matchers.shouldBe
@@ -30,7 +29,7 @@ class MultithreadedWorkerTest {
             .append { w -> UUIDWorker(100, w) }
             .append { w -> MultithreadedWorker("parallel", 4, 4, w) }
             .append { w -> CountingWorker("test", 100, w) }
-            .run(WorkItem.from(""))
+            .run()
 
         items.size.shouldBe(100)
     }

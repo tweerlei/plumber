@@ -21,7 +21,8 @@ import de.tweerlei.plumber.worker.WorkItem
 
 class WorkItemList(initialCapacity: Int): ArrayList<WorkItem>(initialCapacity), Value {
 
-    override val name = "items"
+    override fun getName() =
+        "items"
 
     override fun toAny() =
         this

@@ -30,6 +30,9 @@ class PartitionsStep: ProcessingStep {
     override val description = "Generate key ranges for n partitions, use with parallel:<n>"
     override fun argDescription() = partitionCountFor("").toString()
 
+    override fun requiredAttributesFor(arg: String) = setOf(
+        WellKnownKeys.RANGE
+    )
     override fun producedAttributesFor(arg: String) = setOf(
         WellKnownKeys.RANGE
     )

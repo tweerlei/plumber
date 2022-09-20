@@ -16,12 +16,14 @@
 package de.tweerlei.plumber.worker.types
 
 import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.node.JsonNodeFactory
 
 class JsonNodeValue(
-    val value: JsonNode
+    val value: JsonNode = JsonNodeFactory.instance.objectNode()
 ): Value {
 
-    override val name = "node"
+    override fun getName() =
+        "node"
 
     override fun toAny() =
         value

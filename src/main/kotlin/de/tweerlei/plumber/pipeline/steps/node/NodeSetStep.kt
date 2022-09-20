@@ -15,19 +15,15 @@
  */
 package de.tweerlei.plumber.pipeline.steps.node
 
-import com.fasterxml.jackson.core.JsonPointer
-import com.fasterxml.jackson.databind.ObjectMapper
-import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
-import de.tweerlei.plumber.worker.impl.WellKnownKeys
+import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.worker.Worker
+import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.impl.node.NodeModifyWorker
 import org.springframework.stereotype.Service
 
 @Service("node-setWorker")
-class NodeSetStep(
-    private val objectMapper: ObjectMapper
-): ProcessingStep {
+class NodeSetStep: ProcessingStep {
 
     override val group = "Nodes"
     override val name = "Set JSON path"
@@ -47,5 +43,5 @@ class NodeSetStep(
         params: PipelineParams,
         parallelDegree: Int
     ) =
-        NodeModifyWorker(arg.toJsonPointer(), objectMapper, w)
+        NodeModifyWorker(arg.toJsonPointer(), w)
 }

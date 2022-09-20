@@ -31,7 +31,7 @@ class ModuloWorker(
         item.get().let { left ->
             value(item).let { right ->
                 when {
-                    left is DoubleValue || right is DoubleValue -> left.toNumber().toDouble() % right.toNumber().toDouble()
+                    left is DoubleValue || right is DoubleValue -> (left.toNumber().toDouble() % right.toNumber().toDouble()).safeTruncate()
                     else -> when (val divisor = right.toNumber().toLong()) {
                         0L -> left.toNumber().toDouble() % 0.0
                         else -> left.toNumber().toLong() % divisor

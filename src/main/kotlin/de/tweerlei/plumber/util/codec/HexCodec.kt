@@ -19,22 +19,17 @@ class HexCodec: Codec {
 
     companion object {
         const val NAME = "hex"
-
-        private val HEX_PATTERN = Regex("..")
     }
 
     override val name = NAME
     
     override fun toByteArray(value: String) =
-        value.split(HEX_PATTERN)
-            .let { bytes ->
-                ByteArray(bytes.size)
-                    .also { arr ->
-                        bytes.forEachIndexed { index, s ->
-                            arr[index] = s.toByte(16)
-                        }
-                    }
-            }
+        ByteArray(value.length / 2).also { bytes ->
+            value.chunkedSequence(2)
+                .forEachIndexed { index, byte ->
+                    bytes[index] = byte.toShort(16).toByte()
+                }
+        }
 
     override fun toString(value: ByteArray): String =
         value.joinToString("") { cb ->

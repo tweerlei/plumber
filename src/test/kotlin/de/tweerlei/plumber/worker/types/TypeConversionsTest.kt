@@ -32,6 +32,7 @@ class TypeConversionsTest {
         "Hallo".toValue().shouldBe(StringValue("Hallo"))
         42.toByte().toValue().shouldBe(LongValue(42L))
         42.toChar().toValue().shouldBe(StringValue("*"))
+        42.toShort().toValue().shouldBe(LongValue(42L))
         42.toValue().shouldBe(LongValue(42L))
         42L.toValue().shouldBe(LongValue(42L))
         3.1415f.toValue().shouldBe(DoubleValue(3.1415f.toDouble()))
@@ -42,7 +43,10 @@ class TypeConversionsTest {
         "Hallo".toByteArray(StandardCharsets.UTF_8).toValue().shouldBe(ByteArrayValue("Hallo".toByteArray(StandardCharsets.UTF_8)))
         true.toValue().shouldBe(BooleanValue.TRUE)
         false.toValue().shouldBe(BooleanValue.FALSE)
-        listOf<Instant>().toValue().shouldBe(OtherValue(listOf<Instant>()))
+        with(Instant.now()) {
+            listOf(this).toValue().shouldBe(Record.of("0" to InstantValue(this)))
+        }
+        mapOf("key1" to 42).toValue().shouldBe(Record.of("key1" to LongValue(42L)))
     }
 
     @Test

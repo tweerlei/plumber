@@ -18,6 +18,7 @@ package de.tweerlei.plumber.pipeline.steps.range
 import de.tweerlei.plumber.pipeline.PipelineParams
 import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.worker.Worker
+import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.impl.range.InRangeWorker
 import org.springframework.stereotype.Service
 
@@ -27,6 +28,10 @@ class IsInRangeStep: ProcessingStep {
     override val group = "Ranges"
     override val name = "Compare"
     override val description = "Compare the current value to the current range resulting in a boolean"
+
+    override fun requiredAttributesFor(arg: String) = setOf(
+        WellKnownKeys.RANGE
+    )
 
     override fun createWorker(
         arg: String,

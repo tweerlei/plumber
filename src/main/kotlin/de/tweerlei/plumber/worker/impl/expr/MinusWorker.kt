@@ -31,7 +31,7 @@ class MinusWorker(
         item.get().let { left ->
             value(item).let { right ->
                 when {
-                    left is DoubleValue || right is DoubleValue -> left.toNumber().toDouble() - right.toNumber().toDouble()
+                    left is DoubleValue || right is DoubleValue -> (left.toNumber().toDouble() - right.toNumber().toDouble()).safeTruncate()
                     else -> left.toNumber().toLong() - right.toNumber().toLong()
                 }
             }

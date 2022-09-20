@@ -31,7 +31,8 @@ class Range(
             )
     }
 
-    override val name = "range"
+    override fun getName() =
+        "range"
 
     override fun toAny() =
         this

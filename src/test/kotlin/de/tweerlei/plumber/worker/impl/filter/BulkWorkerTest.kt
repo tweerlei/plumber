@@ -17,7 +17,6 @@ package de.tweerlei.plumber.worker.impl.filter
 
 import de.tweerlei.plumber.worker.impl.TestWorkerRunner
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
-import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.impl.text.UUIDWorker
 import de.tweerlei.plumber.worker.types.WorkItemList
 import io.kotest.matchers.shouldBe
@@ -30,7 +29,7 @@ class BulkWorkerTest {
         val items = TestWorkerRunner()
             .append { w -> UUIDWorker(19, w) }
             .append { w -> BulkWorker(10, w) }
-            .run(WorkItem.from(""))
+            .run()
 
         items.size.shouldBe(2)
         items.fold(0) { acc, item ->

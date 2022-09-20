@@ -15,11 +15,12 @@
  */
 package de.tweerlei.plumber.pipeline.steps.record
 
-import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
-import de.tweerlei.plumber.worker.impl.WellKnownKeys
+import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.worker.Worker
+import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.impl.attribute.SettingWorker
+import de.tweerlei.plumber.worker.types.Record
 import org.springframework.stereotype.Service
 
 @Service("rec-clearWorker")
@@ -39,5 +40,5 @@ class RecordClearStep: ProcessingStep {
         params: PipelineParams,
         parallelDegree: Int
     ) =
-        SettingWorker(WellKnownKeys.RECORD, { null }, w)
+        SettingWorker(WellKnownKeys.RECORD, { Record() }, w)
 }

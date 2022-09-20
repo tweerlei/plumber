@@ -33,7 +33,8 @@ class BooleanValue private constructor(
             }
     }
 
-    override val name = "boolean"
+    override fun getName() =
+        "boolean"
 
     override fun toAny() =
         value

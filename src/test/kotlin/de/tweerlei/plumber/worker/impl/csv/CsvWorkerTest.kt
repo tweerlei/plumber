@@ -33,12 +33,12 @@ class CsvWorkerTest {
         val csv = """Hello,42,true,null,"Hello,42,false,null""""
         val objectMapper = CsvMapper()
 
-        val item = TestWorkerRunner()
+        val item = TestWorkerRunner(WorkItem.from(csv.toByteArray(StandardCharsets.UTF_8)))
             .append { w -> FromCsvWorker(objectMapper, ',', w) }
             .append { w -> RecordGetWorker("4", w) }
             .append { w -> FromCsvWorker(objectMapper, ',', w) }
             .append { w -> ToCsvWorker(objectMapper, ',', w) }
-            .run(WorkItem.from(csv.toByteArray(StandardCharsets.UTF_8)))
+            .run()
             .singleOrNull()
 
         item.shouldNotBeNull()

@@ -43,5 +43,5 @@ class GetAttributeStep: ProcessingStep {
         params: PipelineParams,
         parallelDegree: Int
     ) =
-        SettingWorker(WorkItem.DEFAULT_KEY, { item -> item.getOptional(arg) }, w)
+        SettingWorker(WorkItem.DEFAULT_KEY, { item -> item.get(arg) }, w)
 }

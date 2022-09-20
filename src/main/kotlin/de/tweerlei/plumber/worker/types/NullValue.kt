@@ -24,7 +24,8 @@ class NullValue private constructor(): ComparableValue {
         val INSTANCE = NullValue()
     }
 
-    override val name = "null"
+    override fun getName() =
+        "null"
 
     override fun toAny(): Any? =
         null

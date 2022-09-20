@@ -21,7 +21,9 @@ import de.tweerlei.plumber.worker.WorkerBuilder
 import de.tweerlei.plumber.worker.impl.stats.CollectingWorker
 import java.util.concurrent.ConcurrentLinkedQueue
 
-class TestWorkerRunner {
+class TestWorkerRunner(
+    private val item: WorkItem = WorkItem.of()
+) {
 
     class DummyRunContext : Worker.RunContext {
         override fun isInterrupted() = false
@@ -35,7 +37,7 @@ class TestWorkerRunner {
             wb = wb.append(builder)
         }
 
-    fun run(item: WorkItem): Collection<WorkItem> =
+    fun run(): Collection<WorkItem> =
         ConcurrentLinkedQueue<WorkItem>().also { items ->
             wb.append { w -> CollectingWorker(items, w) }
                 .build()

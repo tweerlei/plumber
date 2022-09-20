@@ -32,7 +32,7 @@ class MultithreadedWorker(
 ): WrappingWorker(worker) {
 
     companion object : KLogging() {
-        val endMarker = WorkItem.of(NullValue.INSTANCE)
+        val endMarker = WorkItem.of()
     }
 
     private val blockingQueue = LinkedBlockingQueue<WorkItem>(numberOfThreads * queueSizePerThread)
@@ -42,7 +42,7 @@ class MultithreadedWorker(
     override fun onOpen() {
         threads = (1 .. numberOfThreads).map { workerIndex ->
             Thread({
-                logger.debug("Starting thread")
+                logger.debug("Starting thread $workerIndex")
                 while (true) {
                     val nextItem = blockingQueue.take()
                     if (nextItem === endMarker) {
@@ -57,13 +57,13 @@ class MultithreadedWorker(
                                 lastError = e
                             else
                                 logger.error {
-                                    "$name: Error while processing item $nextItem\n" +
+                                    "$name: Error on thread $workerIndex while processing item $nextItem\n" +
                                             e.printStackTraceUpTo(this::class)
                                 }
                         }
                     }
                 }
-                logger.debug("Exiting thread")
+                logger.debug("Exiting thread $workerIndex")
             },
             "$name-worker-$workerIndex")
         }.toList()

@@ -19,10 +19,11 @@ import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.WorkItemAccessor
 import de.tweerlei.plumber.worker.impl.DelegatingWorker
 import de.tweerlei.plumber.worker.Worker
+import de.tweerlei.plumber.worker.types.Value
 
 class SettingWorker(
     private val key: String,
-    private val value: WorkItemAccessor<Any?>,
+    private val value: WorkItemAccessor<Value>,
     worker: Worker
 ): DelegatingWorker(worker) {
 

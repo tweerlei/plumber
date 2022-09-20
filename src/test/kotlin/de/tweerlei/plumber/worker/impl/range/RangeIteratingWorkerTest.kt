@@ -36,7 +36,7 @@ class RangeIteratingWorkerTest {
                 w
             ) }
             .append { w -> RangeIteratingWorker("0123456789", 1, Long.MAX_VALUE, w) }
-            .run(WorkItem.from(""))
+            .run()
             .toList()
 
         items.size.shouldBe(10)
@@ -61,7 +61,7 @@ class RangeIteratingWorkerTest {
                 w
             ) }
             .append { w -> RangeIteratingWorker("0123456789", 2, Long.MAX_VALUE, w) }
-            .run(WorkItem.from(""))
+            .run()
             .toList()
 
         items.size.shouldBe(5)
@@ -81,7 +81,7 @@ class RangeIteratingWorkerTest {
                 w
             ) }
             .append { w -> RangeIteratingWorker("0123456789", -2, Long.MAX_VALUE, w) }
-            .run(WorkItem.from(""))
+            .run()
             .toList()
 
         items.size.shouldBe(5)
@@ -101,7 +101,7 @@ class RangeIteratingWorkerTest {
                 w
             ) }
             .append { w -> RangeIteratingWorker("0123456789", 2, Long.MAX_VALUE, w) }
-            .run(WorkItem.from(""))
+            .run()
             .toList()
 
         items.size.shouldBe(0)
@@ -116,7 +116,7 @@ class RangeIteratingWorkerTest {
                 w
             ) }
             .append { w -> RangeIteratingWorker("0123456789", -2, Long.MAX_VALUE, w) }
-            .run(WorkItem.from(""))
+            .run()
             .toList()
 
         items.size.shouldBe(0)
@@ -131,7 +131,7 @@ class RangeIteratingWorkerTest {
                 w
             ) }
             .append { w -> RangeIteratingWorker("0123456789abcdef", 1, Long.MAX_VALUE, w) }
-            .run(WorkItem.from(""))
+            .run()
             .toList()
 
         items.size.shouldBe(16)
@@ -162,7 +162,7 @@ class RangeIteratingWorkerTest {
                 w
             ) }
             .append { w -> RangeIteratingWorker("0123456789abcdef", 2, Long.MAX_VALUE, w) }
-            .run(WorkItem.from(""))
+            .run()
             .toList()
 
         items.size.shouldBe(8)
@@ -185,7 +185,7 @@ class RangeIteratingWorkerTest {
                 w
             ) }
             .append { w -> RangeIteratingWorker("0123456789abcdef", -2, Long.MAX_VALUE, w) }
-            .run(WorkItem.from(""))
+            .run()
             .toList()
 
         items.size.shouldBe(8)
@@ -208,7 +208,7 @@ class RangeIteratingWorkerTest {
                 w
             ) }
             .append { w -> RangeIteratingWorker("0123456789abcdef", 2, Long.MAX_VALUE, w) }
-            .run(WorkItem.from(""))
+            .run()
             .toList()
 
         items.size.shouldBe(0)
@@ -223,7 +223,7 @@ class RangeIteratingWorkerTest {
                 w
             ) }
             .append { w -> RangeIteratingWorker("0123456789abcdef", -2, Long.MAX_VALUE, w) }
-            .run(WorkItem.from(""))
+            .run()
             .toList()
 
         items.size.shouldBe(0)

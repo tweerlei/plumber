@@ -26,9 +26,8 @@ class RecordGetWorker(
 ): DelegatingWorker(worker) {
 
     override fun doProcess(item: WorkItem) =
-        item.getOptionalAs<Record>(WellKnownKeys.RECORD)
-            ?.let { map ->
+        item.getAs<Record>(WellKnownKeys.RECORD)
+            .let { map ->
                 item.set(map[field])
-            }?.let { true }
-            ?: false
+            }.let { true }
 }

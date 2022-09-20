@@ -22,7 +22,8 @@ class DoubleValue(
     val value: Double
 ): NumberValue {
 
-    override val name = "double"
+    override fun getName() =
+        "double"
 
     override fun toAny() =
         value

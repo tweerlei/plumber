@@ -46,11 +46,11 @@ class JsonWorkerTest {
         """
         val objectMapper = ObjectMapper()
 
-        val item = TestWorkerRunner()
+        val item = TestWorkerRunner(WorkItem.from(json.toByteArray(StandardCharsets.UTF_8)))
             .append { w -> FromJsonWorker(JsonNode::class.java, objectMapper, w) }
             .append { w -> NodeGetWorker(JsonPointer.compile("/obj"), w) }
             .append { w -> ToJsonWorker(objectMapper, false, w) }
-            .run(WorkItem.from(json.toByteArray(StandardCharsets.UTF_8)))
+            .run()
             .singleOrNull()
 
         item.shouldNotBeNull()

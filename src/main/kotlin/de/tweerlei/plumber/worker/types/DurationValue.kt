@@ -23,7 +23,8 @@ class DurationValue(
     val value: Duration
 ): NumberValue {
 
-    override val name = "duration"
+    override fun getName() =
+        "duration"
 
     override fun toAny() =
         value

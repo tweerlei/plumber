@@ -28,9 +28,9 @@ class FindReplaceWorkerTest {
     @Test
     fun testFindMatch() {
 
-        val item = TestWorkerRunner()
+        val item = TestWorkerRunner(WorkItem.from("foobazbar"))
             .append { w -> MatchingWorker(Regex("foo.*bar"), w) }
-            .run(WorkItem.from("foobazbar"))
+            .run()
             .singleOrNull()
 
         item.shouldNotBeNull()
@@ -40,9 +40,9 @@ class FindReplaceWorkerTest {
     @Test
     fun testFindMatchWithGroups() {
 
-        val item = TestWorkerRunner()
+        val item = TestWorkerRunner(WorkItem.from("foobazbar"))
             .append { w -> MatchingWorker(Regex("foo(.*)bar"), w) }
-            .run(WorkItem.from("foobazbar"))
+            .run()
             .singleOrNull()
 
         item.shouldNotBeNull()
@@ -54,9 +54,9 @@ class FindReplaceWorkerTest {
     @Test
     fun testFindNoMatch() {
 
-        val item = TestWorkerRunner()
+        val item = TestWorkerRunner(WorkItem.from("barfoo"))
             .append { w -> MatchingWorker(Regex("foo.*bar"), w) }
-            .run(WorkItem.from("barfoo"))
+            .run()
             .singleOrNull()
 
         item.shouldNotBeNull()
@@ -66,10 +66,10 @@ class FindReplaceWorkerTest {
     @Test
     fun testReplace() {
 
-        val item = TestWorkerRunner()
+        val item = TestWorkerRunner(WorkItem.from("foobazbar"))
             .append { w -> MatchingWorker(Regex("foo.*bar"), w) }
             .append { w -> ReplacingWorker({ StringValue("bar") }, w) }
-            .run(WorkItem.from("foobazbar"))
+            .run()
             .singleOrNull()
 
         item.shouldNotBeNull()
@@ -79,10 +79,10 @@ class FindReplaceWorkerTest {
     @Test
     fun testReplaceWithGroups() {
 
-        val item = TestWorkerRunner()
+        val item = TestWorkerRunner(WorkItem.from("0foobazbar1"))
             .append { w -> MatchingWorker(Regex("foo(.*)bar"), w) }
             .append { w -> ReplacingWorker({ StringValue("doo$1") }, w) }
-            .run(WorkItem.from("0foobazbar1"))
+            .run()
             .singleOrNull()
 
         item.shouldNotBeNull()
@@ -92,10 +92,10 @@ class FindReplaceWorkerTest {
     @Test
     fun testReplaceWithAnchor() {
 
-        val item = TestWorkerRunner()
+        val item = TestWorkerRunner(WorkItem.from("foobazbar"))
             .append { w -> MatchingWorker(Regex("^foo(.*)bar$"), w) }
             .append { w -> ReplacingWorker({ StringValue("doo$1") }, w) }
-            .run(WorkItem.from("foobazbar"))
+            .run()
             .singleOrNull()
 
         item.shouldNotBeNull()
@@ -105,10 +105,10 @@ class FindReplaceWorkerTest {
     @Test
     fun testNoReplaceWithAnchor() {
 
-        val item = TestWorkerRunner()
+        val item = TestWorkerRunner(WorkItem.from("0foobazbar1"))
             .append { w -> MatchingWorker(Regex("^foo(.*)bar$"), w) }
             .append { w -> ReplacingWorker({ StringValue("doo$1") }, w) }
-            .run(WorkItem.from("0foobazbar1"))
+            .run()
             .singleOrNull()
 
         item.shouldNotBeNull()

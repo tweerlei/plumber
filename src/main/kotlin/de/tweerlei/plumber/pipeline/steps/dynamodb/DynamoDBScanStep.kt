@@ -54,8 +54,6 @@ class DynamoDBScanStep(
                     params.partitionKey,
                     params.rangeKey,
                     params.selectFields,
-                    params.startAfterRangeKey,
-                    params.stopAfterRangeKey,
                     params.numberOfFilesPerRequest,
                     client,
                     params.maxFilesPerThread,

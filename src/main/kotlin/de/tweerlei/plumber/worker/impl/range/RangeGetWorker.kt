@@ -26,9 +26,8 @@ class RangeGetWorker(
 ): DelegatingWorker(worker) {
 
     override fun doProcess(item: WorkItem) =
-        item.getOptionalAs<Range>(WellKnownKeys.RANGE)
-            ?.let { range ->
+        item.getAs<Range>(WellKnownKeys.RANGE)
+            .let { range ->
                 item.set(field.get(range))
-            }?.let { true }
-            ?: false
+            }.let { true }
 }

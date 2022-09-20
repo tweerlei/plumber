@@ -33,8 +33,6 @@ class DynamoDBScanWorker(
     private val partitionKey: String,
     private val rangeKey: String,
     private val selectFields: Set<String>,
-    private val startAfterRange: ComparableValue,
-    private val endWithRange: ComparableValue,
     private val numberOfFilesPerRequest: Int,
     private val amazonDynamoDBClient: AmazonDynamoDB,
     limit: Long,
@@ -44,9 +42,10 @@ class DynamoDBScanWorker(
     companion object : KLogging()
 
     override fun generateItems(item: WorkItem, fn: (WorkItem) -> Boolean) {
-        val range = item.getOptionalAs<Range>(WellKnownKeys.RANGE)
-        val startAfter = range?.startAfter.toKey(startAfterRange)
-        val endWith = range?.endWith.toKey(endWithRange)
+        val primaryRange = item.getOptionalAs<Range>(WellKnownKeys.RANGE)
+        val secondaryRange = item.getOptionalAs<Range>(WellKnownKeys.SECONDARY_RANGE)
+        val startAfter = keyFrom(primaryRange?.startAfter, secondaryRange?.startAfter)
+        val endWith = keyFrom(primaryRange?.endWith, secondaryRange?.endWith)
         logger.info { "fetching elements from $startAfter to $endWith" }
 
         var result: ScanResult? = null
@@ -84,16 +83,19 @@ class DynamoDBScanWorker(
             .withProjectionExpression(selectFields.ifEmpty { null }?.joinToString(","))
             .let { request -> amazonDynamoDBClient.scan(request) }
 
-    private fun ComparableValue?.toKey(rangeKeyValue: ComparableValue) =
-        if (this != null)
-            Record.of(
-                partitionKey to this
-            ).also { map ->
-                if (rangeKey.isNotEmpty() && rangeKeyValue !is NullValue)
-                    map[rangeKey] = rangeKeyValue
-            }
-        else
-            null
+    private fun keyFrom(partitionKeyValue: ComparableValue?, rangeKeyValue: ComparableValue?) =
+        when {
+            partitionKeyValue == null || partitionKeyValue is NullValue -> null
+            rangeKey.isEmpty() || rangeKeyValue == null || rangeKeyValue is NullValue ->
+                Record.of(
+                    partitionKey to partitionKeyValue
+                )
+            else ->
+                Record.of(
+                    partitionKey to partitionKeyValue,
+                    rangeKey to rangeKeyValue
+                )
+        }
 
     private fun Record.isNotAfter(maxKey: Record?) =
         when {

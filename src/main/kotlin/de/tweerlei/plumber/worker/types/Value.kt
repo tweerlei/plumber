@@ -19,7 +19,7 @@ import com.fasterxml.jackson.databind.JsonNode
 
 interface Value {
 
-    val name: String
+    fun getName(): String
 
     fun toAny(): Any?
     fun toBoolean(): Boolean
@@ -31,6 +31,6 @@ interface Value {
     fun toStringOrNull(): String? =
         toString()
     fun dump() =
-        "$name:${toString()}"
+        "${getName()}:${toString()}"
     fun size(): Long
 }

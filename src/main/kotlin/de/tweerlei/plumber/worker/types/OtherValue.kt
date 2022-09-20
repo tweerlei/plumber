@@ -25,7 +25,8 @@ class OtherValue(
     inline fun <reified T: Any> to() =
         value as T
 
-    override val name = "other"
+    override fun getName() =
+        "other"
 
     override fun toAny(): Any =
         value
@@ -52,7 +53,7 @@ class OtherValue(
     override fun toString(): String =
         value.toString()
     override fun dump() =
-        "$name:${value::class.simpleName}:${toString()}"
+        "${getName()}:${value::class.simpleName}:${toString()}"
     override fun equals(other: Any?) =
         other is Value && value == other.toAny()
     override fun hashCode(): Int =

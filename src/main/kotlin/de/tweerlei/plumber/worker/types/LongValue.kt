@@ -22,7 +22,8 @@ class LongValue(
     val value: Long
 ): NumberValue {
 
-    override val name = "long"
+    override fun getName() =
+        "long"
 
     override fun toAny() =
         value
