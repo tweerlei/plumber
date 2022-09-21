@@ -26,6 +26,8 @@ AWS SQS
   sqs-delete:<queue>          Delete a message from the given SQS queue
   sqs-read:<queue>            Receive messages from the given SQS queue
   sqs-write:<queue>           Send a message to the given SQS queue
+AWS STS
+  sts-accountid               Get the effective AWS account ID
 Apache Kafka
   kafka-read:<topic>          Receive messages from the given Kafka topic
   kafka-write:<topic>         Send a message to the given Kafka topic
@@ -42,6 +44,7 @@ Attributes
   not                         Logically negate the current value
   or:<value>                  Logically OR the current value with the given attribute's value
   plus:<value>                Add the given attribute's value to the current value
+  range-reset                 Reset range to default given by --start-after/--stop-after
   set:<name>                  Set the given attribute to the current value
   then:<value>                Sets the current value to the given attribute's value if current value is truthy
   value:<value>               Sets the current value to the given value
@@ -49,17 +52,17 @@ Attributes
 CSV
   csv-parse                   Deserialize objects from CSV text
   csv-print                   Serialize objects to CSV text
-  csv-read:<path>             Read CSV lines from the given file
-  csv-write:<path>            Write current value as CSV object to the given file
+  csv-read:/dev/stdin         Read CSV lines from the given file
+  csv-write:/dev/stdout       Write current value as CSV object to the given file
 Files
   files-delete:<path>         Delete files from the given directory
   files-list:<path>           Read file names from the given directory
   files-read:<path>           Read files from the given base directory
   files-write:<path>          Write items as files in the given directory
-  lines-read:<path>           Read lines from the given file
-  lines-write:<path>          Write lines to the given file
-  zip-read:<path>             Read entries from the given ZIP file
-  zip-write:<path>            Write entries to the given ZIP file
+  lines-read:/dev/stdin       Read lines from the given file
+  lines-write:/dev/stdout     Write lines to the given file
+  zip-read:/dev/stdin         Read entries from the given ZIP file
+  zip-write:/dev/stdout       Write entries to the given ZIP file
 Flow control
   bulk:<number>               Execute following steps using chunks of items
   delay:0                     Delay following steps by the given number of milliseconds
@@ -77,8 +80,8 @@ JDBC
 JSON
   json-parse                  Deserialize objects from JSON text
   json-print                  Serialize objects to JSON text
-  json-read:<path>            Read JSON objects from the given file
-  json-write:<path>           Write current value as JSON object to the given file
+  json-read:/dev/stdin        Read JSON objects from the given file
+  json-write:/dev/stdout      Write current value as JSON object to the given file
 Logging
   bounds:9223372036854775807  Log smallest and largest value at every given number of items
   count:9223372036854775807   Log item counts at every given number of items
@@ -126,8 +129,8 @@ Text
 XML
   xml-parse                   Deserialize objects from XML text
   xml-print                   Serialize objects to XML text
-  xml-read:<path>             Read XML objects from the given file
-  xml-write:<path>            Write current value as XML object to the given file
+  xml-read:/dev/stdin         Read XML objects from the given file
+  xml-write:/dev/stdout       Write current value as XML object to the given file
 
 Supported global options and their defaults (if any) are:
 
@@ -152,6 +155,7 @@ Supported global options and their defaults (if any) are:
 --wait=1                      Kafka/SQS: Wait at most this number of seconds for a new message
 --follow                      Kafka/SQS: Keep polling for new messages
 --reread                      Kafka/SQS: Re-read all messages
+--recursive                   Read/write files in subdirectories
 --partition-key=<arg>         DynamoDB: Use the given attribute as partition key
 --range-key=<arg>             DynamoDB: Use the given attribute as range key
 --start-range=<value>         DynamoDB: Start after the given range key
