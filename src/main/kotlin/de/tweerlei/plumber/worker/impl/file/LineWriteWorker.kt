@@ -19,27 +19,29 @@ import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.impl.DelegatingWorker
 import de.tweerlei.plumber.worker.Worker
 import java.io.*
+import java.nio.charset.Charset
 
 class LineWriteWorker(
     private val outputFile: File,
-    private val separator: ByteArray,
+    private val charset: Charset,
+    private val separator: String,
     worker: Worker
 ): DelegatingWorker(worker) {
 
-    private lateinit var stream: OutputStream
+    private lateinit var writer: Writer
 
     override fun onOpen() {
-        stream = FileOutputStream(outputFile)
+        writer = OutputStreamWriter(FileOutputStream(outputFile), charset)
     }
 
     override fun doProcess(item: WorkItem) =
         item.get()
-            .toByteArray()
-            .also { bytes -> stream.write(bytes) }
-            .also { stream.write(separator) }
+            .toString()
+            .also { bytes -> writer.write(bytes) }
+            .also { writer.write(separator) }
             .let { true }
 
     override fun onClose() {
-        stream.close()
+        writer.close()
     }
 }

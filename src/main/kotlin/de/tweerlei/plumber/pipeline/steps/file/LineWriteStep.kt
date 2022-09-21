@@ -43,7 +43,8 @@ class LineWriteStep: ProcessingStep {
     ) =
         LineWriteWorker(
             arg.toOutputFile(),
-            "\n".toByteArray(StandardCharsets.UTF_8),
+            StandardCharsets.UTF_8,
+            "\n",
             w
         )
 }

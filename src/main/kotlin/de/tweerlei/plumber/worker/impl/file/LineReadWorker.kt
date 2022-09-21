@@ -23,10 +23,12 @@ import java.io.BufferedReader
 import java.io.File
 import java.io.FileInputStream
 import java.io.InputStreamReader
+import java.nio.charset.Charset
 import java.nio.charset.StandardCharsets
 
 class LineReadWorker(
     private val file: File,
+    private val charset: Charset,
     limit: Long,
     worker: Worker
 ): GeneratingWorker(limit, worker) {
@@ -34,7 +36,7 @@ class LineReadWorker(
     private lateinit var reader: BufferedReader
 
     override fun onOpen() {
-        reader = BufferedReader(InputStreamReader(FileInputStream(file), StandardCharsets.UTF_8))
+        reader = BufferedReader(InputStreamReader(FileInputStream(file), charset))
     }
 
     override fun generateItems(item: WorkItem, fn: (WorkItem) -> Boolean) {
