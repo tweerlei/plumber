@@ -36,7 +36,10 @@ class S3DeleteObjectsWorker(
             .let { items ->
                 deleteFiles(
                     bucketName.ifEmptyGetFrom(items.first(), S3Keys.BUCKET_NAME),
-                    items.map { DeleteObjectsRequest.KeyVersion(it.getFirst(WellKnownKeys.NAME).toString()) }
+                    items.map { item ->
+                        item.getFirst(WellKnownKeys.NAME).toString()
+                            .let { DeleteObjectsRequest.KeyVersion(it) }
+                    }
                 )
             }.let { true }
 
@@ -45,6 +48,5 @@ class S3DeleteObjectsWorker(
             .apply {
                 isRequesterPays = requesterPays
                 keys = fileNames
-            }
-            .let { request -> amazonS3Client.deleteObjects(request) }
+            }.let { request -> amazonS3Client.deleteObjects(request) }
 }

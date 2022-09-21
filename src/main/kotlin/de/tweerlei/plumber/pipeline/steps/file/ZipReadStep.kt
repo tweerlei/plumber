@@ -28,7 +28,7 @@ class ZipReadStep: ProcessingStep {
     override val group = "Files"
     override val name = "Read ZIP entries"
     override val description = "Read entries from the given ZIP file"
-    override fun argDescription() = "<path>"
+    override fun argDescription() = "".toInputFile().toString()
 
     override fun producedAttributesFor(arg: String) = setOf(
         WellKnownKeys.NAME,

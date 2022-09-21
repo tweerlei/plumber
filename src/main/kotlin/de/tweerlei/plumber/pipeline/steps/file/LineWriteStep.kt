@@ -15,12 +15,11 @@
  */
 package de.tweerlei.plumber.pipeline.steps.file
 
-import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
-import de.tweerlei.plumber.worker.impl.file.LineWriteWorker
+import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.worker.Worker
+import de.tweerlei.plumber.worker.impl.file.LineWriteWorker
 import org.springframework.stereotype.Service
-import java.io.File
 import java.nio.charset.StandardCharsets
 
 @Service("lines-writeWorker")
@@ -29,7 +28,7 @@ class LineWriteStep: ProcessingStep {
     override val group = "Files"
     override val name = "Write lines to file"
     override val description = "Write lines to the given file"
-    override fun argDescription() = "<path>"
+    override fun argDescription() = "".toOutputFile().toString()
 
     override fun isValuePassThrough() = true
     override fun parallelDegreeFor(arg: String) = 1
@@ -43,7 +42,7 @@ class LineWriteStep: ProcessingStep {
         parallelDegree: Int
     ) =
         LineWriteWorker(
-            File(arg),
+            arg.toOutputFile(),
             "\n".toByteArray(StandardCharsets.UTF_8),
             w
         )

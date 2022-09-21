@@ -13,30 +13,43 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.tweerlei.plumber.configuration
+package de.tweerlei.plumber.worker.impl.sts
 
+import com.amazonaws.ClientConfiguration
 import com.amazonaws.auth.DefaultAWSCredentialsProviderChain
+import com.amazonaws.auth.STSAssumeRoleSessionCredentialsProvider
 import com.amazonaws.client.builder.AwsClientBuilder
+import com.amazonaws.services.securitytoken.AWSSecurityTokenService
 import com.amazonaws.services.securitytoken.AWSSecurityTokenServiceAsync
 import com.amazonaws.services.securitytoken.AWSSecurityTokenServiceAsyncClientBuilder
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.context.annotation.Bean
-import org.springframework.context.annotation.Configuration
+import org.springframework.stereotype.Service
 
-@Configuration
-class STSConfiguration(
-    @Value("\${aws.region}") val awsRegion: String,
-    @Value("\${aws.sts.endpoint}") val awsEndpoint: String,
+@Service
+class STSClientFactory(
+    @Value("\${aws.region}") private val awsRegion: String,
+    @Value("\${aws.sts.endpoint}") private val awsEndpoint: String,
+    private val stsService: AWSSecurityTokenService
 ) {
 
-    @Bean
-    fun createAmazonSTSClient(): AWSSecurityTokenServiceAsync =
+    fun createAmazonSTSClient(numberOfThreads: Int, roleArn: String?): AWSSecurityTokenServiceAsync =
         AWSSecurityTokenServiceAsyncClientBuilder.standard().apply {
             if (awsEndpoint.isEmpty())
                 withRegion(awsRegion)
             else
                 withEndpointConfiguration(AwsClientBuilder.EndpointConfiguration(awsEndpoint, awsRegion))
 
-            withCredentials(DefaultAWSCredentialsProviderChain.getInstance())
+            if (roleArn != null) {
+                withCredentials(
+                    STSAssumeRoleSessionCredentialsProvider.Builder(roleArn, "temp-session")
+                        .withRoleSessionDurationSeconds(1800)
+                        .withStsClient(stsService)
+                        .build()
+                )
+            } else {
+                withCredentials(DefaultAWSCredentialsProviderChain.getInstance())
+            }
+
+            withClientConfiguration(ClientConfiguration().withMaxConnections(numberOfThreads))
         }.build()
 }

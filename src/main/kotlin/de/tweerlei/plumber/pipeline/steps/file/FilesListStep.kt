@@ -47,6 +47,7 @@ class FilesListStep: ProcessingStep {
     ) =
         FileListWorker(
             arg,
+            params.recursive,
             params.maxFilesPerThread,
             w
         )

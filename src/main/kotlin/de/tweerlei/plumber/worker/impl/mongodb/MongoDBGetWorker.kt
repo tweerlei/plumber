@@ -38,17 +38,24 @@ class MongoDBGetWorker(
         item.getFirstAs<JsonNodeValue>(WellKnownKeys.NODE)
             .value.toMongoDB(objectMapper)
             .let { attributes ->
-                fetchDocument(
-                    databaseName.ifEmptyGetFrom(item, MongoDBKeys.DATABASE_NAME),
-                    collectionName.ifEmptyGetFrom(item, MongoDBKeys.COLLECTION_NAME),
-                    attributes.extractKey(primaryKey)
-                )
-            }.fromMongoDB(objectMapper)
-            .also { node ->
-                item.set(node)
-                item.set(node, WellKnownKeys.NODE)
-                item.set(databaseName, MongoDBKeys.DATABASE_NAME)
-                item.set(collectionName, MongoDBKeys.COLLECTION_NAME)
+                databaseName.ifEmptyGetFrom(item, MongoDBKeys.DATABASE_NAME)
+                    .let { actualDatabaseName ->
+                        collectionName.ifEmptyGetFrom(item, MongoDBKeys.COLLECTION_NAME)
+                            .let { actualCollectionName ->
+                                fetchDocument(
+                                    actualDatabaseName,
+                                    actualCollectionName,
+                                    attributes.extractKey(primaryKey)
+                                )
+                                    .fromMongoDB(objectMapper)
+                                    .also { node ->
+                                        item.set(node)
+                                        item.set(node, WellKnownKeys.NODE)
+                                        item.set(actualDatabaseName, MongoDBKeys.DATABASE_NAME)
+                                        item.set(actualCollectionName, MongoDBKeys.COLLECTION_NAME)
+                                    }
+                            }
+                    }
             }.let { true }
 
     private fun fetchDocument(database: String, collection: String, item: Document) =

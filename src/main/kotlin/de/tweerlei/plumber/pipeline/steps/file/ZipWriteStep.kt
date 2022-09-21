@@ -20,7 +20,6 @@ import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.file.ZipWriteWorker
 import org.springframework.stereotype.Service
-import java.io.File
 
 @Service("zip-writeWorker")
 class ZipWriteStep: ProcessingStep {
@@ -28,7 +27,7 @@ class ZipWriteStep: ProcessingStep {
     override val group = "Files"
     override val name = "Write ZIP entries"
     override val description = "Write entries to the given ZIP file"
-    override fun argDescription() = "<path>"
+    override fun argDescription() = "".toOutputFile().toString()
 
     override fun isValuePassThrough() = true
     override fun parallelDegreeFor(arg: String) = 1
@@ -42,7 +41,7 @@ class ZipWriteStep: ProcessingStep {
         parallelDegree: Int
     ) =
         ZipWriteWorker(
-            File(arg),
+            arg.toOutputFile(),
             w
         )
 }

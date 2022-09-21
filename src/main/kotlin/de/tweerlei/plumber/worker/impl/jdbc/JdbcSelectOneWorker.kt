@@ -34,17 +34,20 @@ class JdbcSelectOneWorker(
 ): DelegatingWorker(worker) {
 
     override fun doProcess(item: WorkItem) =
-        selectRow(
-            tableName.ifEmptyGetFrom(item, JdbcKeys.TABLE_NAME),
-            item.get()
-        ) { rs, _ ->
-            rs.toRecord()
-        }?.also { map ->
-            item.set(map)
-            item.set(map, WellKnownKeys.RECORD)
-            item.set(tableName, JdbcKeys.TABLE_NAME)
-            item.set(map[primaryKey], JdbcKeys.PRIMARY_KEY)
-        }?.let { true }
+        tableName.ifEmptyGetFrom(item, JdbcKeys.TABLE_NAME)
+            .let { actualTableName ->
+                selectRow(
+                    actualTableName,
+                    item.get()
+                ) { rs, _ ->
+                    rs.toRecord()
+                }?.also { map ->
+                    item.set(map)
+                    item.set(map, WellKnownKeys.RECORD)
+                    item.set(actualTableName, JdbcKeys.TABLE_NAME)
+                    item.set(map[primaryKey], JdbcKeys.PRIMARY_KEY)
+                }
+            }?.let { true }
         ?: false
 
     private fun selectRow(table: String, id: Value, rse: RowMapper<Record>) =

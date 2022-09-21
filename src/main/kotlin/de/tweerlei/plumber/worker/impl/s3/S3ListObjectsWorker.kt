@@ -41,9 +41,9 @@ class S3ListObjectsWorker(
     }
 
     override fun generateItems(item: WorkItem, fn: (WorkItem) -> Boolean) {
-        val range = item.getOptionalAs<Range>(WellKnownKeys.RANGE)
-        val startAfter = range?.startAfter?.toStringOrNull()
-        val endWith = range?.endWith?.toStringOrNull()
+        val range = item.getOptionalAs(WellKnownKeys.RANGE) ?: Range()
+        val startAfter = range.startAfter.toStringOrNull()
+        val endWith = range.endWith.toStringOrNull()
         logger.info { "fetching filenames from $startAfter to $endWith" }
 
         var result: ListObjectsV2Result? = null

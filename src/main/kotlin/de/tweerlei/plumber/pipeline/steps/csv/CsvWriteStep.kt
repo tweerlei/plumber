@@ -16,13 +16,14 @@
 package de.tweerlei.plumber.pipeline.steps.csv
 
 import com.fasterxml.jackson.dataformat.csv.CsvMapper
-import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
-import de.tweerlei.plumber.worker.types.Record
+import de.tweerlei.plumber.pipeline.steps.ProcessingStep
+import de.tweerlei.plumber.pipeline.steps.file.toInputFile
+import de.tweerlei.plumber.pipeline.steps.file.toOutputFile
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.csv.CsvWriteWorker
+import de.tweerlei.plumber.worker.types.Record
 import org.springframework.stereotype.Service
-import java.io.File
 
 @Service("csv-writeWorker")
 class CsvWriteStep(
@@ -32,7 +33,7 @@ class CsvWriteStep(
     override val group = "CSV"
     override val name = "Write value as CSV"
     override val description = "Write current value as CSV object to the given file"
-    override fun argDescription() = "<path>"
+    override fun argDescription() = "".toOutputFile().toString()
 
     override fun expectedInputFor(arg: String) = Record::class.java
     override fun parallelDegreeFor(arg: String) = 1
@@ -46,7 +47,7 @@ class CsvWriteStep(
         parallelDegree: Int
     ) =
         CsvWriteWorker(
-            File(arg),
+            arg.toOutputFile(),
             csvMapper,
             params.separator,
             params.header,

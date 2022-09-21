@@ -24,6 +24,7 @@ import java.time.Instant
 
 class FileListWorker(
     private val dir: String,
+    private val recursive: Boolean,
     limit: Long,
     worker: Worker
 ): GeneratingWorker(limit, worker) {
@@ -31,22 +32,36 @@ class FileListWorker(
     override fun generateItems(item: WorkItem, fn: (WorkItem) -> Boolean) {
         File(dir.ifEmpty { "." })
             .let { directory ->
-                when {
-                    directory.isFile -> arrayOf(directory)
-                    else -> directory.listFiles { file -> file.isFile }
-                        .orEmpty()
-                }.all { file ->
+                directory.listRecursively()
+                .all { file ->
                     fn(file.toWorkItem(directory))
                 }
             }
     }
 
+    private fun File.listRecursively(): Sequence<File> =
+        when {
+            isFile -> sequenceOf(this)
+            else -> listFiles()
+                .orEmpty()
+                .apply { sort() }
+                .asSequence()
+                .let { files ->
+                    when (recursive) {
+                        true -> files.flatMap { it.listRecursively() }
+                        false -> files.filter { it.isFile }
+                    }
+                }
+        }
+
     private fun File.toWorkItem(directory: File) =
-        WorkItem.from(
-            name,
-            WellKnownKeys.PATH to directory.absolutePath,
-            WellKnownKeys.NAME to name,
-            WellKnownKeys.SIZE to length(),
-            WellKnownKeys.LAST_MODIFIED to Instant.ofEpochMilli(lastModified())
-        )
+        relativeTo(directory).path.let { relativePath ->
+            WorkItem.from(
+                relativePath,
+                WellKnownKeys.PATH to directory.absolutePath,
+                WellKnownKeys.NAME to relativePath,
+                WellKnownKeys.SIZE to length(),
+                WellKnownKeys.LAST_MODIFIED to Instant.ofEpochMilli(lastModified())
+            )
+        }
 }

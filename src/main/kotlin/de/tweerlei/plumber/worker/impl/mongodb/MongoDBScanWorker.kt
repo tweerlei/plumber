@@ -45,15 +45,13 @@ class MongoDBScanWorker(
     companion object : KLogging()
 
     override fun generateItems(item: WorkItem, fn: (WorkItem) -> Boolean) {
-        val range = item.getOptionalAs<Range>(WellKnownKeys.RANGE)
-        val startAfter = range?.startAfter ?: NullValue.INSTANCE
-        val endWith = range?.endWith ?: NullValue.INSTANCE
-        logger.info { "fetching elements from $startAfter to $endWith" }
+        val range = item.getOptionalAs<Range>(WellKnownKeys.RANGE) ?: Range()
+        logger.info { "fetching elements from ${range.startAfter} to ${range.endWith}" }
 
         var firstKey: Any? = null
         var lastKey: Any? = null
         var itemCount = 0
-        listDocuments(startAfter, endWith)
+        listDocuments(range.startAfter, range.endWith)
             .all { resultItem ->
                 resultItem.fromMongoDB(objectMapper).let { row ->
                     if (fn(row.toWorkItem())) {
@@ -67,7 +65,7 @@ class MongoDBScanWorker(
                 }
             }
 
-        logger.info { "fetched $itemCount documents from $startAfter to $endWith, first key: $firstKey, last key: $lastKey" }
+        logger.info { "fetched $itemCount documents from ${range.startAfter} to ${range.endWith}, first key: $firstKey, last key: $lastKey" }
     }
 
     private fun listDocuments(startAfter: ComparableValue, endWith: ComparableValue) =

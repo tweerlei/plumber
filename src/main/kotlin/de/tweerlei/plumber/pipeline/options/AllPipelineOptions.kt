@@ -36,6 +36,7 @@ data class AllPipelineOptions(
     val maxWaitTimeSeconds: PipelineOption<Int>,
     val follow: PipelineOption<Boolean>,
     val reread: PipelineOption<Boolean>,
+    val recursive: PipelineOption<Boolean>,
     val partitionKey: PipelineOption<String>,
     val rangeKey: PipelineOption<String>,
     val startAfterRangeKey: PipelineOption<ComparableValue>,
@@ -172,6 +173,10 @@ data class AllPipelineOptions(
                 "reread",
                 "Kafka/SQS: Re-read all messages"
             ),
+            recursive = BooleanPipelineOption(
+                "recursive",
+                "Read/write files in subdirectories"
+            ),
         )
     }
 
@@ -214,6 +219,7 @@ data class AllPipelineOptions(
             prettyPrint = prettyPrint.readFrom(accessor),
             follow = follow.readFrom(accessor),
             reread = reread.readFrom(accessor),
+            recursive = recursive.readFrom(accessor),
             failFast = failFast.readFrom(accessor),
             assumeRoleArn = assumeRoleArn.readFrom(accessor)
         )

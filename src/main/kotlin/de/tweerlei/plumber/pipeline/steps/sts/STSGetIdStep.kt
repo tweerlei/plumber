@@ -13,32 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.tweerlei.plumber.pipeline.steps.json
+package de.tweerlei.plumber.pipeline.steps.sts
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import de.tweerlei.plumber.pipeline.PipelineParams
 import de.tweerlei.plumber.pipeline.steps.ProcessingStep
-import de.tweerlei.plumber.pipeline.steps.file.toInputFile
 import de.tweerlei.plumber.worker.Worker
-import de.tweerlei.plumber.worker.impl.WellKnownKeys
-import de.tweerlei.plumber.worker.impl.json.JsonReadWorker
+import de.tweerlei.plumber.worker.impl.sts.STSClientFactory
+import de.tweerlei.plumber.worker.impl.sts.STSGetIdWorker
 import org.springframework.stereotype.Service
 
-@Service("json-readWorker")
-class JsonReadStep(
-    private val objectMapper: ObjectMapper
+@Service("sts-accountidWorker")
+class STSGetIdStep(
+    private val stsClientFactory: STSClientFactory
 ): ProcessingStep {
 
-    override val group = "JSON"
-    override val name = "Read JSON objects from file"
-    override val description = "Read JSON objects from the given file"
-    override fun argDescription() = "".toInputFile().toString()
-
-    override fun producedAttributesFor(arg: String) = setOf(
-        WellKnownKeys.PATH,
-        WellKnownKeys.NAME,
-        WellKnownKeys.NODE
-    )
+    override val group = "AWS STS"
+    override val name = "Get account ID"
+    override val description = "Get the effective AWS account ID"
 
     override fun createWorker(
         arg: String,
@@ -48,11 +39,11 @@ class JsonReadStep(
         params: PipelineParams,
         parallelDegree: Int
     ) =
-        JsonReadWorker(
-            arg.toInputFile(),
-            expectedOutput,
-            objectMapper,
-            params.maxFilesPerThread,
-            w
-        )
+        stsClientFactory.createAmazonSTSClient(parallelDegree, params.assumeRoleArn)
+            .let { client ->
+                STSGetIdWorker(
+                    client,
+                    w
+                )
+            }
 }

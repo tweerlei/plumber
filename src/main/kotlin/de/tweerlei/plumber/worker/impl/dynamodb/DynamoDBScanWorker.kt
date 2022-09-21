@@ -42,10 +42,10 @@ class DynamoDBScanWorker(
     companion object : KLogging()
 
     override fun generateItems(item: WorkItem, fn: (WorkItem) -> Boolean) {
-        val primaryRange = item.getOptionalAs<Range>(WellKnownKeys.RANGE)
-        val secondaryRange = item.getOptionalAs<Range>(WellKnownKeys.SECONDARY_RANGE)
-        val startAfter = keyFrom(primaryRange?.startAfter, secondaryRange?.startAfter)
-        val endWith = keyFrom(primaryRange?.endWith, secondaryRange?.endWith)
+        val primaryRange = item.getOptionalAs(WellKnownKeys.RANGE) ?: Range()
+        val secondaryRange = item.getOptionalAs(WellKnownKeys.SECONDARY_RANGE) ?: Range()
+        val startAfter = keyFrom(primaryRange.startAfter, secondaryRange.startAfter)
+        val endWith = keyFrom(primaryRange.endWith, secondaryRange.endWith)
         logger.info { "fetching elements from $startAfter to $endWith" }
 
         var result: ScanResult? = null
@@ -83,10 +83,10 @@ class DynamoDBScanWorker(
             .withProjectionExpression(selectFields.ifEmpty { null }?.joinToString(","))
             .let { request -> amazonDynamoDBClient.scan(request) }
 
-    private fun keyFrom(partitionKeyValue: ComparableValue?, rangeKeyValue: ComparableValue?) =
+    private fun keyFrom(partitionKeyValue: ComparableValue, rangeKeyValue: ComparableValue) =
         when {
-            partitionKeyValue == null || partitionKeyValue is NullValue -> null
-            rangeKey.isEmpty() || rangeKeyValue == null || rangeKeyValue is NullValue ->
+            partitionKeyValue is NullValue -> null
+            rangeKey.isEmpty() || rangeKeyValue is NullValue ->
                 Record.of(
                     partitionKey to partitionKeyValue
                 )

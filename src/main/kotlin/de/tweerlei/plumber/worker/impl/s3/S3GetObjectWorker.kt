@@ -32,23 +32,24 @@ class S3GetObjectWorker(
 
     override fun doProcess(item: WorkItem) =
         item.getFirst(WellKnownKeys.NAME).toString()
-            .let { name ->
-                getFile(
-                    bucketName.ifEmptyGetFrom(item, S3Keys.BUCKET_NAME),
-                    name
-                )
-            }.also { file ->
-                item.set(bucketName, S3Keys.BUCKET_NAME)
-                item.set(file.key, S3Keys.OBJECT_KEY)
-                item.set(file.objectMetadata.contentLength, WellKnownKeys.SIZE)
-                file.objectMetadata.lastModified?.also { lastModified ->
-                    item.set(lastModified.toInstant(), WellKnownKeys.LAST_MODIFIED)
-                }
-                file.objectContent.use { stream ->
-                    stream.readAllBytes()
-                }.also { bytes ->
-                    item.set(bytes)
-                }
+            .let { fileName ->
+                bucketName.ifEmptyGetFrom(item, S3Keys.BUCKET_NAME)
+                    .let { actualBucketName ->
+                        getFile(actualBucketName, fileName)
+                            .also { file ->
+                                file.objectContent.use { stream ->
+                                    stream.readAllBytes()
+                                }.also { bytes ->
+                                    item.set(bytes)
+                                    item.set(actualBucketName, S3Keys.BUCKET_NAME)
+                                    item.set(file.key, S3Keys.OBJECT_KEY)
+                                    item.set(file.objectMetadata.contentLength, WellKnownKeys.SIZE)
+                                    file.objectMetadata.lastModified?.also { lastModified ->
+                                        item.set(lastModified.toInstant(), WellKnownKeys.LAST_MODIFIED)
+                                    }
+                                }
+                            }
+                    }
             }.let { true }
 
     private fun getFile(bucket: String, fileName: String) =

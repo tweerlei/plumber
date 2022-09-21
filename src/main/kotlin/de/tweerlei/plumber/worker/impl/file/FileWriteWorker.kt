@@ -27,6 +27,7 @@ import java.time.Instant
 
 class FileWriteWorker(
     private val dir: String,
+    private val recursive: Boolean,
     worker: Worker
 ): DelegatingWorker(worker) {
 
@@ -35,12 +36,11 @@ class FileWriteWorker(
             .let { name ->
                 File(dir.ifEmptyGetFrom(item, WellKnownKeys.PATH).ifEmpty { "." })
                     .let { directory ->
-                        directory.mkdirs()
+                        if (recursive) directory.mkdirs()
                         File(directory, name)
                             .let { file ->
                                 FileOutputStream(file).use { stream ->
-                                    stream.write(item.get().toByteArray()
-                                    )
+                                    stream.write(item.get().toByteArray())
                                 }
                                 item.getOptionalAs<InstantValue>(WellKnownKeys.LAST_MODIFIED)?.let { lastMod ->
                                     file.setLastModified(lastMod.value.toEpochMilli())

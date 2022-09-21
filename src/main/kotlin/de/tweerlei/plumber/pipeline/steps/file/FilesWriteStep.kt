@@ -45,6 +45,7 @@ class FilesWriteStep: ProcessingStep {
     ) =
         FileWriteWorker(
             arg,
+            params.recursive,
             w
         )
 }

@@ -16,12 +16,12 @@
 package de.tweerlei.plumber.pipeline.steps.json
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
+import de.tweerlei.plumber.pipeline.steps.ProcessingStep
+import de.tweerlei.plumber.pipeline.steps.file.toOutputFile
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.json.JsonWriteWorker
 import org.springframework.stereotype.Service
-import java.io.File
 
 @Service("json-writeWorker")
 class JsonWriteStep(
@@ -31,7 +31,7 @@ class JsonWriteStep(
     override val group = "JSON"
     override val name = "Write value as JSON"
     override val description = "Write current value as JSON object to the given file"
-    override fun argDescription() = "<path>"
+    override fun argDescription() = "".toOutputFile().toString()
 
     override fun isValuePassThrough() = true
     override fun parallelDegreeFor(arg: String) = 1
@@ -45,7 +45,7 @@ class JsonWriteStep(
         parallelDegree: Int
     ) =
         JsonWriteWorker(
-            File(arg),
+            arg.toOutputFile(),
             objectMapper,
             params.prettyPrint,
             w

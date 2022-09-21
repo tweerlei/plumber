@@ -19,3 +19,6 @@ import java.io.File
 
 fun String.toInputFile() =
     File(ifEmpty { "/dev/stdin" })
+
+fun String.toOutputFile() =
+    File(ifEmpty { "/dev/stdout" })

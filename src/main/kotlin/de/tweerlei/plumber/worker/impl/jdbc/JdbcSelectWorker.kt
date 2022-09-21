@@ -34,15 +34,15 @@ class JdbcSelectWorker(
 ): GeneratingWorker(limit, worker) {
 
     override fun generateItems(item: WorkItem, fn: (WorkItem) -> Boolean) {
-        val range = item.getOptionalAs<Range>(WellKnownKeys.RANGE)
-        val startAfter = range?.startAfter ?: NullValue.INSTANCE
-        val endWith = range?.endWith ?: NullValue.INSTANCE
+        val range = item.getOptionalAs(WellKnownKeys.RANGE) ?: Range()
         val table = tableName.ifEmptyGetFrom(item, JdbcKeys.TABLE_NAME)
+        logger.info { "fetching elements from ${range.startAfter} to ${range.endWith}" }
+
         val extractRows = ResultSetExtractor<Int> { rs ->
             var keepGenerating = true
             var itemCount = 0
             while (keepGenerating && rs.next()) {
-                if (fn(rs.toWorkItem()))
+                if (fn(rs.toWorkItem(table)))
                     itemCount++
                 else
                     keepGenerating = false
@@ -51,13 +51,13 @@ class JdbcSelectWorker(
         }
 
         val itemCount = when {
-            startAfter !is NullValue && endWith !is NullValue -> selectRange(table, startAfter, endWith, extractRows)
-            startAfter !is NullValue -> selectFrom(table, startAfter, extractRows)
-            endWith !is NullValue -> selectTo(table, endWith, extractRows)
+            range.startAfter !is NullValue && range.endWith !is NullValue -> selectRange(table, range.startAfter, range.endWith, extractRows)
+            range.startAfter !is NullValue -> selectFrom(table, range.startAfter, extractRows)
+            range.endWith !is NullValue -> selectTo(table, range.endWith, extractRows)
             else -> selectAll(table, extractRows)
         }
 
-        logger.info { "fetched $itemCount rows" }
+        logger.info { "fetched $itemCount rows from ${range.startAfter} to ${range.endWith}" }
     }
 
     private fun selectAll(table: String, rse: ResultSetExtractor<Int>) =
@@ -91,7 +91,7 @@ class JdbcSelectWorker(
     private fun fieldsToSelect() =
         selectFields.ifEmpty { setOf("*") }.joinToString(", ")
 
-    private fun ResultSet.toWorkItem() =
+    private fun ResultSet.toWorkItem(actualTableName: String) =
         Record()
             .also { map ->
                 for (i in 1..metaData.columnCount) {
@@ -101,7 +101,7 @@ class JdbcSelectWorker(
                 WorkItem.from(
                     map,
                     WellKnownKeys.RECORD to map,
-                    JdbcKeys.TABLE_NAME to tableName,
+                    JdbcKeys.TABLE_NAME to actualTableName,
                     JdbcKeys.PRIMARY_KEY to map[primaryKey]
                 )
             }

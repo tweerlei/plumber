@@ -16,12 +16,12 @@
 package de.tweerlei.plumber.pipeline.steps.xml
 
 import com.fasterxml.jackson.dataformat.xml.XmlMapper
-import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
+import de.tweerlei.plumber.pipeline.steps.ProcessingStep
+import de.tweerlei.plumber.pipeline.steps.file.toOutputFile
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.xml.XmlWriteWorker
 import org.springframework.stereotype.Service
-import java.io.File
 
 @Service("xml-writeWorker")
 class XmlWriteStep(
@@ -31,7 +31,7 @@ class XmlWriteStep(
     override val group = "XML"
     override val name = "Write value as XML"
     override val description = "Write current value as XML object to the given file"
-    override fun argDescription() = "<path>"
+    override fun argDescription() = "".toOutputFile().toString()
 
     override fun isValuePassThrough() = true
     override fun parallelDegreeFor(arg: String) = 1
@@ -45,7 +45,7 @@ class XmlWriteStep(
         parallelDegree: Int
     ) =
         XmlWriteWorker(
-            File(arg),
+            arg.toOutputFile(),
             params.elementName,
             params.rootElementName,
             xmlMapper,
