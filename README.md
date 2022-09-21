@@ -191,6 +191,14 @@ Each step knows which attributes it expects and what kind of "current value" it 
 
 How do you find out about the types and attributes handled by each step? Use the `--explain` option to see what's going on.
 
+## Limitations
+
+* This tool is designed to process *many* items rather than *large* items, so at the moment each item is expected to fit into memory (no streaming).
+
+* Options are global, so you can't e.g. use different CSV separators for reading and writing.
+
+* Due to limitations in the used AWS SDK, SSO credentials can not be used directly (https://github.com/aws/aws-sdk-java/issues/2434).
+
 ## Examples
 
 An empty pipeline is not allowed, so the simplest pipeline has one step:
@@ -210,7 +218,7 @@ You can also use attributes to handle more than one value:
     value:'Hello' set:greeting \
     value:'world' set:name \
     value:'beautiful' set:attr \
-    format:'${greeting}, ${attr} ${name}!' \
+    format:'@{greeting}, @{attr} @{name}!' \
     log
 ```
 While the current value gets overwritten by each `value` step, you can save each one to a named attribute and use those to compose a longer value.
@@ -390,7 +398,7 @@ If you want to evaluate 'false' to false, use an explicit `is-equal:`.
 ```bash
 ./plumber \
     value:2 set:two \
-    value:0,1,2,3,4 csv-parse record-each \
+    value:0,1,2,3,4 csv-parse rec-each \
     set:value \
     is-equal:@two \
     filter:false \
