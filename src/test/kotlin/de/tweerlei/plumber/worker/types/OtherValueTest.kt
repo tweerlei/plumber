@@ -19,7 +19,10 @@ import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.booleans.shouldBeTrue
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeSameInstanceAs
 import org.junit.jupiter.api.Test
+import java.math.BigDecimal
+import java.math.BigInteger
 
 class OtherValueTest {
 
@@ -27,10 +30,13 @@ class OtherValueTest {
     fun testIt() {
         val value = listOf(1, 2, 3)
         with (OtherValue(value)) {
+            asOptional().shouldBeSameInstanceAs(this)
             toAny().shouldBe(value)
             toBoolean().shouldBeTrue()
-            toNumber().shouldBe(0L)
-            toNumberOrNull().shouldBe(0L)
+            toLong().shouldBe(0L)
+            toDouble().shouldBe(0.0)
+            toBigInteger().shouldBe(BigInteger.valueOf(0L))
+            toBigDecimal().shouldBe(BigDecimal.valueOf(0.0))
             with (toByteArray()) {
                 size.shouldBe(9)
                 contentEquals(byteArrayOf(91, 49, 44, 32, 50, 44, 32, 51, 93)).shouldBeTrue()
@@ -40,7 +46,6 @@ class OtherValueTest {
                 textValue().shouldBe("[1, 2, 3]")
             }
             toString().shouldBe("[1, 2, 3]")
-            toStringOrNull().shouldBe("[1, 2, 3]")
             size().shouldBe(9L)
             hashCode().shouldBe(value.hashCode())
 

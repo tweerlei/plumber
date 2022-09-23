@@ -19,17 +19,23 @@ import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.booleans.shouldBeTrue
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeSameInstanceAs
 import org.junit.jupiter.api.Test
+import java.math.BigDecimal
+import java.math.BigInteger
 
 class LongValueTest {
 
     @Test
     fun testNonzero() {
         with (LongValue(42L)) {
+            asOptional().shouldBeSameInstanceAs(this)
             toAny().shouldBe(42L)
             toBoolean().shouldBeTrue()
-            toNumber().shouldBe(42L)
-            toNumberOrNull().shouldBe(42L)
+            toLong().shouldBe(42L)
+            toDouble().shouldBe(42.0)
+            toBigInteger().shouldBe(BigInteger.valueOf(42L))
+            toBigDecimal().shouldBe(BigDecimal.valueOf(42.0))
             with(toByteArray()) {
                 size.shouldBe(8)
                 contentEquals(byteArrayOf(42, 0, 0, 0, 0, 0, 0, 0)).shouldBeTrue()
@@ -39,7 +45,6 @@ class LongValueTest {
                 longValue().shouldBe(42L)
             }
             toString().shouldBe("42")
-            toStringOrNull().shouldBe("42")
             size().shouldBe(2L)
             hashCode().shouldBe(42L.hashCode())
 
@@ -65,10 +70,13 @@ class LongValueTest {
     @Test
     fun testZero() {
         with (LongValue(0L)) {
+            asOptional().shouldBeSameInstanceAs(this)
             toAny().shouldBe(0L)
             toBoolean().shouldBeFalse()
-            toNumber().shouldBe(0L)
-            toNumberOrNull().shouldBe(0L)
+            toLong().shouldBe(0L)
+            toDouble().shouldBe(0.0)
+            toBigInteger().shouldBe(BigInteger.valueOf(0L))
+            toBigDecimal().shouldBe(BigDecimal.valueOf(0.0))
             with(toByteArray()) {
                 size.shouldBe(8)
                 contentEquals(byteArrayOf(0, 0, 0, 0, 0, 0, 0, 0)).shouldBeTrue()
@@ -78,7 +86,6 @@ class LongValueTest {
                 longValue().shouldBe(0L)
             }
             toString().shouldBe("0")
-            toStringOrNull().shouldBe("0")
             size().shouldBe(1L)
             hashCode().shouldBe(0L.hashCode())
 
@@ -104,10 +111,13 @@ class LongValueTest {
     @Test
     fun testNegative() {
         with (LongValue(-42L)) {
+            asOptional().shouldBeSameInstanceAs(this)
             toAny().shouldBe(-42L)
             toBoolean().shouldBeTrue()
-            toNumber().shouldBe(-42L)
-            toNumberOrNull().shouldBe(-42L)
+            toLong().shouldBe(-42L)
+            toDouble().shouldBe(-42.0)
+            toBigInteger().shouldBe(BigInteger.valueOf(-42L))
+            toBigDecimal().shouldBe(BigDecimal.valueOf(-42.0))
             with(toByteArray()) {
                 size.shouldBe(8)
                 contentEquals(byteArrayOf(-42, -1, -1, -1, -1, -1, -1, -1)).shouldBeTrue()
@@ -117,7 +127,6 @@ class LongValueTest {
                 longValue().shouldBe(-42L)
             }
             toString().shouldBe("-42")
-            toStringOrNull().shouldBe("-42")
             size().shouldBe(3L)
             hashCode().shouldBe((-42L).hashCode())
 

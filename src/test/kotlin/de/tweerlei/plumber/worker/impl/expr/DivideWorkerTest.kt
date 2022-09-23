@@ -73,7 +73,7 @@ class DivideWorkerTest {
         with (item.getAs<ComparableValue>()) {
             getName().shouldBe(expected.getName())
             when {
-                expected is DoubleValue && expected.value.isNaN() -> toNumber().toDouble().shouldBeNaN()
+                expected is DoubleValue && expected.value.isNaN() -> toDouble().shouldBeNaN()
                 else -> shouldBe(expected)
             }
         }

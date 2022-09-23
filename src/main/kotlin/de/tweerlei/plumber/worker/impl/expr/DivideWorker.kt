@@ -19,8 +19,9 @@ import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.WorkItemAccessor
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.DelegatingWorker
-import de.tweerlei.plumber.worker.types.DoubleValue
-import de.tweerlei.plumber.worker.types.Value
+import de.tweerlei.plumber.worker.types.*
+import java.math.BigDecimal
+import java.math.BigInteger
 
 class DivideWorker(
     private val value: WorkItemAccessor<Value>,
@@ -31,10 +32,19 @@ class DivideWorker(
         item.get().let { left ->
             value(item).let { right ->
                 when {
-                    left is DoubleValue || right is DoubleValue -> (left.toNumber().toDouble() / right.toNumber().toDouble()).safeTruncate()
-                    else -> when (val divisor = right.toNumber().toLong()) {
-                        0L -> left.toNumber().toDouble() / 0.0
-                        else -> left.toNumber().toLong() / divisor
+                    left is BigDecimalValue ||
+                            right is BigDecimalValue ||
+                            (left is BigIntegerValue && right is DoubleValue) ||
+                            (left is DoubleValue && right is BigIntegerValue) ->
+                        (left.toBigDecimal() / right.toBigDecimal())
+                    left is DoubleValue || right is DoubleValue -> (left.toDouble() / right.toDouble()).safeTruncate()
+                    left is BigIntegerValue || right is BigIntegerValue -> when (val divisor = right.toBigInteger()) {
+                        BigInteger.ZERO -> left.toBigDecimal() / BigDecimal.ZERO
+                        else -> left.toBigInteger() / divisor
+                    }
+                    else -> when (val divisor = right.toLong()) {
+                        0L -> left.toDouble() / 0.0
+                        else -> left.toLong() / divisor
                     }
                 }
             }

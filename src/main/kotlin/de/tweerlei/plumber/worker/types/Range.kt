@@ -24,6 +24,8 @@ class Range(
 ): Value {
 
     companion object {
+        const val NAME = "range"
+
         fun from(startAfter: Any?, endWith: Any?) =
             Range(
                 startAfter.toValue().toComparableValue(),
@@ -32,35 +34,32 @@ class Range(
     }
 
     override fun getName() =
-        "range"
+        NAME
 
     override fun toAny() =
         this
-
     override fun toBoolean() =
-        startAfter.toBoolean()
-
-    override fun toNumber() =
-        endWith.toNumber().toLong() - startAfter.toNumber().toLong()
-
+        size() != 0L
+    override fun toLong() =
+        size()
+    override fun toDouble() =
+        size().toDouble()
     override fun toByteArray() =
-        startAfter.toByteArray()
-
+        toString().toByteArray()
     override fun toJsonNode(): JsonNode =
         JsonNodeFactory.instance.arrayNode().apply {
             add(startAfter.toJsonNode())
             add(endWith.toJsonNode())
         }
-
     override fun size() =
-        2L
+        endWith.toLong() - startAfter.toLong()
 
     fun contains(value: ComparableValue) =
         when (value) {
             is NullValue -> false
-            is DoubleValue -> contains(value.toNumber().toDouble(), startAfter.toNumberOrNull()?.toDouble(), endWith.toNumberOrNull()?.toDouble())
-            is NumberValue -> contains(value.toNumber().toLong(), startAfter.toNumberOrNull()?.toLong(), endWith.toNumberOrNull()?.toLong())
-            else -> contains(value.toString(), startAfter.toStringOrNull(), endWith.toStringOrNull())
+            is DoubleValue -> contains(value.toDouble(), startAfter.asOptional()?.toDouble(), endWith.asOptional()?.toDouble())
+            is NumberValue -> contains(value.toLong(), startAfter.asOptional()?.toLong(), endWith.asOptional()?.toLong())
+            else -> contains(value.toString(), startAfter.asOptional()?.toString(), endWith.asOptional()?.toString())
         }
 
     private fun <T: Comparable<*>> contains(value: T, lower: Comparable<T>?, upper: Comparable<T>?) =

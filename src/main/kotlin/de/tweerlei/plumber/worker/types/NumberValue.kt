@@ -18,7 +18,7 @@ package de.tweerlei.plumber.worker.types
 interface NumberValue: ComparableValue {
 
     override fun toByteArray() =
-        toNumber().toLong().let { value ->
+        toLong().let { value ->
             // TODO: Big endian only
             byteArrayOf(
                 (value and 0xff).toByte(),

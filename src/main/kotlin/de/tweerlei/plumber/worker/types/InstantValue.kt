@@ -23,23 +23,30 @@ class InstantValue(
     val value: Instant
 ): NumberValue {
 
+    companion object {
+        const val NAME = "instant"
+    }
+
     override fun getName() =
-        "instant"
+        NAME
 
     override fun toAny() =
         value
     override fun toBoolean() =
-        toNumber() != 0L
-    override fun toNumber() =
+        toLong() != 0L
+    override fun toLong() =
         value.toEpochMilli()
+    override fun toDouble() =
+        toLong().toDouble()
     override fun toJsonNode(): JsonNode =
-        JsonNodeFactory.instance.numberNode(toNumber().toLong())
+        JsonNodeFactory.instance.numberNode(toLong())
     override fun toString() =
         value.toString()
+
     override fun equals(other: Any?) =
-        other is Value && toNumber().toLong() == other.toNumber().toLong()
+        other is Value && toLong() == other.toLong()
     override fun hashCode() =
         value.hashCode()
     override fun compareTo(other: ComparableValue) =
-        toNumber().toLong().compareTo(other.toNumber().toLong())
+        toLong().compareTo(other.toLong())
 }

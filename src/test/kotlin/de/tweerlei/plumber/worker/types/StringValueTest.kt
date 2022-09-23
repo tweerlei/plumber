@@ -17,18 +17,25 @@ package de.tweerlei.plumber.worker.types
 
 import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeSameInstanceAs
 import org.junit.jupiter.api.Test
+import java.math.BigDecimal
+import java.math.BigInteger
 
 class StringValueTest {
 
     @Test
     fun testNonEmpty() {
         with (StringValue("hello")) {
+            asOptional().shouldBeSameInstanceAs(this)
             toAny().shouldBe("hello")
             toBoolean().shouldBeTrue()
-            toNumber().shouldBe(0L)
-            toNumberOrNull().shouldBe(0L)
+            toLong().shouldBe(0L)
+            toDouble().shouldBe(0.0)
+            toBigInteger().shouldBe(BigInteger.valueOf(0L))
+            toBigDecimal().shouldBe(BigDecimal.valueOf(0.0))
             with(toByteArray()) {
                 size.shouldBe(5)
                 contentEquals(byteArrayOf(104, 101, 108, 108, 111)).shouldBeTrue()
@@ -38,7 +45,6 @@ class StringValueTest {
                 textValue().shouldBe("hello")
             }
             toString().shouldBe("hello")
-            toStringOrNull().shouldBe("hello")
             size().shouldBe(5L)
             hashCode().shouldBe("hello".hashCode())
 
@@ -61,10 +67,13 @@ class StringValueTest {
     @Test
     fun testEmpty() {
         with (StringValue("")) {
+            asOptional().shouldBeSameInstanceAs(this)
             toAny().shouldBe("")
             toBoolean().shouldBeFalse()
-            toNumber().shouldBe(0L)
-            toNumberOrNull().shouldBe(0L)
+            toLong().shouldBe(0L)
+            toDouble().shouldBe(0.0)
+            toBigInteger().shouldBe(BigInteger.valueOf(0L))
+            toBigDecimal().shouldBe(BigDecimal.valueOf(0.0))
             with(toByteArray()) {
                 size.shouldBe(0)
             }
@@ -73,7 +82,6 @@ class StringValueTest {
                 textValue().shouldBe("")
             }
             toString().shouldBe("")
-            toStringOrNull().shouldBe("")
             size().shouldBe(0L)
             hashCode().shouldBe("".hashCode())
 
@@ -103,17 +111,25 @@ class StringValueTest {
     }
 
     @Test
-    fun testToNumber() {
-        StringValue("").toNumber().shouldBe(0L)
-        StringValue("0").toNumber().shouldBe(0L)
-        StringValue("1").toNumber().shouldBe(1L)
-        StringValue("-1").toNumber().shouldBe(-1L)
-        StringValue("foo").toNumber().shouldBe(0L)
-        StringValue("3a").toNumber().shouldBe(0L)
+    fun testToLong() {
+        StringValue("").toLong().shouldBe(0L)
+        StringValue("0").toLong().shouldBe(0L)
+        StringValue("1").toLong().shouldBe(1L)
+        StringValue("-1").toLong().shouldBe(-1L)
+        StringValue("foo").toLong().shouldBe(0L)
+        StringValue("3a").toLong().shouldBe(0L)
 
-        StringValue("0.0").toNumber().shouldBe(0.0)
-        StringValue("0.1").toNumber().shouldBe(0.1)
-        StringValue("2.1").toNumber().shouldBe(2.1)
-        StringValue("3e2").toNumber().shouldBe(300.0)
+        StringValue("0.0").toLong().shouldBe(0L)
+        StringValue("0.1").toLong().shouldBe(0L)
+        StringValue("2.1").toLong().shouldBe(0L)
+        StringValue("3e2").toLong().shouldBe(0L)
+    }
+
+    @Test
+    fun testToDouble() {
+        StringValue("0.0").toDouble().shouldBe(0.0)
+        StringValue("0.1").toDouble().shouldBe(0.1)
+        StringValue("2.1").toDouble().shouldBe(2.1)
+        StringValue("3e2").toDouble().shouldBe(300.0)
     }
 }

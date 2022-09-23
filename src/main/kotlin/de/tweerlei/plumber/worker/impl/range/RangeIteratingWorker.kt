@@ -39,8 +39,16 @@ class RangeIteratingWorker(
                 val startAfter = range.startAfter
                 val endWith = range.endWith
                 when {
-                    startAfter is LongValue && endWith is LongValue -> iterate(startAfter.value, endWith.value, step)
-                    else -> KeySequenceGenerator(keyChars).generateSequence(range.startAfter.toStringOrNull(), range.endWith.toStringOrNull(), step)
+                    startAfter is LongValue && endWith is LongValue -> iterate(
+                        startAfter.value,
+                        endWith.value,
+                        step
+                    )
+                    else -> KeySequenceGenerator(keyChars).generateSequence(
+                        range.startAfter.asOptional()?.toString(),
+                        range.endWith.asOptional()?.toString(),
+                        step
+                    )
                 }
             }?.all {
                 fn(WorkItem.from(it))

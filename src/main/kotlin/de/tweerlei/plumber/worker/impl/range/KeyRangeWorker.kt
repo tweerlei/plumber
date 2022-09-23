@@ -48,8 +48,8 @@ class KeyRangeWorker(
                 fn
             )
             else -> generateStringRanges(
-                startAfter.toStringOrNull(),
-                endWith.toStringOrNull(),
+                startAfter.asOptional()?.toString(),
+                endWith.asOptional()?.toString(),
                 fn
             )
         }

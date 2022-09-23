@@ -24,14 +24,18 @@ class ByteArrayValue(
     val value: ByteArray
 ): ComparableValue {
 
+    companion object {
+        const val NAME = "bytes"
+    }
+
     override fun getName() =
-        "bytes"
+        NAME
 
     override fun toAny() =
         value
     override fun toBoolean() =
         value.find { byte -> byte.toInt() != 0 } != null
-    override fun toNumber() =
+    override fun toLong() =
         when (value.size) {
             0 -> 0L
             1 -> value[0].toLong()
@@ -50,6 +54,8 @@ class ByteArrayValue(
                     (value[6].toLong() and 0xff shl 48) +
                     (value[7].toLong() and 0xff shl 56)
         }
+    override fun toDouble() =
+        toLong().toDouble()
     override fun toByteArray() =
         value
     override fun toJsonNode(): JsonNode =
@@ -58,6 +64,7 @@ class ByteArrayValue(
         value.size.toLong()
     override fun toString() =
         value.toString(Charset.defaultCharset())
+
     override fun equals(other: Any?) =
         other is Value && value.contentEquals(other.toByteArray())
     override fun hashCode() =

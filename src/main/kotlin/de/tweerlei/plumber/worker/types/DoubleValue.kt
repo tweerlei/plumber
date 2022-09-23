@@ -22,23 +22,30 @@ class DoubleValue(
     val value: Double
 ): NumberValue {
 
+    companion object {
+        const val NAME = "double"
+    }
+
     override fun getName() =
-        "double"
+        NAME
 
     override fun toAny() =
         value
     override fun toBoolean() =
         !value.isNaN() && value != 0.0
-    override fun toNumber() =
+    override fun toLong() =
+        value.toLong()
+    override fun toDouble() =
         value
     override fun toJsonNode(): JsonNode =
         JsonNodeFactory.instance.numberNode(value)
     override fun toString() =
         value.toString()
+
     override fun equals(other: Any?) =
-        other is Value && value == other.toNumber().toDouble()
+        other is Value && value == other.toDouble()
     override fun hashCode() =
         value.hashCode()
     override fun compareTo(other: ComparableValue) =
-        value.compareTo(other.toNumber().toDouble())
+        value.compareTo(other.toDouble())
 }

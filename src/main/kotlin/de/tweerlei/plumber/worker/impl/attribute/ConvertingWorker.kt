@@ -13,34 +13,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.tweerlei.plumber.worker.impl.expr
+package de.tweerlei.plumber.worker.impl.attribute
 
 import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.WorkItemAccessor
-import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.DelegatingWorker
+import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.types.*
 
-class PlusWorker(
-    private val value: WorkItemAccessor<Value>,
+class ConvertingWorker(
+    private val type: String,
     worker: Worker
 ): DelegatingWorker(worker) {
 
     override fun doProcess(item: WorkItem) =
-        item.get().let { left ->
-            value(item).let { right ->
-                when {
-                    left is BigDecimalValue ||
-                            right is BigDecimalValue ||
-                            (left is BigIntegerValue && right is DoubleValue) ||
-                            (left is DoubleValue && right is BigIntegerValue) ->
-                        (left.toBigDecimal() + right.toBigDecimal())
-                    left is DoubleValue || right is DoubleValue -> (left.toDouble() + right.toDouble()).safeTruncate()
-                    left is BigIntegerValue || right is BigIntegerValue -> left.toBigInteger() + right.toBigInteger()
-                    else -> left.toLong() + right.toLong()
-                }
+        item.get().let { value ->
+            when (type) {
+                StringValue.NAME -> value.toString()
+                LongValue.NAME -> value.toLong()
+                DoubleValue.NAME -> value.toDouble()
+                BooleanValue.NAME -> value.toBoolean()
+                InstantValue.NAME -> value.toInstant()
+                DurationValue.NAME -> value.toDuration()
+                BigIntegerValue.NAME -> value.toBigInteger()
+                BigDecimalValue.NAME -> value.toBigDecimal()
+                ByteArrayValue.NAME -> value.toByteArray()
+                else -> null
             }
-        }.also {
-            item.set(it)
+        }?.let { value ->
+            value.toValue()
+        }?.also { value ->
+            item.set(value)
         }.let { true }
 }

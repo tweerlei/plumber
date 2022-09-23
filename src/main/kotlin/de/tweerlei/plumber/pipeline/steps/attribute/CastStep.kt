@@ -13,28 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.tweerlei.plumber.pipeline.steps.json
+package de.tweerlei.plumber.pipeline.steps.attribute
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import de.tweerlei.plumber.pipeline.PipelineParams
 import de.tweerlei.plumber.pipeline.steps.ProcessingStep
-import de.tweerlei.plumber.pipeline.steps.file.toOutputFile
+import de.tweerlei.plumber.pipeline.steps.toRequiredAttributes
+import de.tweerlei.plumber.pipeline.steps.toWorkItemAccessor
+import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.Worker
-import de.tweerlei.plumber.worker.impl.json.JsonWriteWorker
+import de.tweerlei.plumber.worker.impl.attribute.ConvertingWorker
+import de.tweerlei.plumber.worker.impl.attribute.SettingWorker
 import org.springframework.stereotype.Service
 
-@Service("json-writeWorker")
-class JsonWriteStep(
-    private val objectMapper: ObjectMapper
-): ProcessingStep {
+@Service("castWorker")
+class CastStep: ProcessingStep {
 
-    override val group = "JSON"
-    override val name = "Write value as JSON"
-    override val description = "Write current value as JSON object to the given file"
-    override fun argDescription() = "".toOutputFile().toString()
-
-    override fun isValuePassThrough() = true
-    override fun parallelDegreeFor(arg: String) = 1
+    override val group = "Attributes"
+    override val name = "Cast value"
+    override val description = "Converts the current value to the given type"
+    override fun argDescription() = "<type>"
 
     override fun createWorker(
         arg: String,
@@ -44,14 +41,5 @@ class JsonWriteStep(
         params: PipelineParams,
         parallelDegree: Int
     ) =
-        JsonWriteWorker(
-            arg.toOutputFile(),
-            objectMapper,
-            when (params.wrapRoot) {
-                true -> params.rootElementName
-                else -> null
-            },
-            params.prettyPrint,
-            w
-        )
+        ConvertingWorker(arg, w)
 }

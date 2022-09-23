@@ -16,20 +16,32 @@
 package de.tweerlei.plumber.worker.types
 
 import com.fasterxml.jackson.databind.JsonNode
+import java.math.BigDecimal
+import java.math.BigInteger
+import java.time.Duration
+import java.time.Instant
 
 interface Value {
 
     fun getName(): String
+    fun asOptional(): Value? =
+        this
 
     fun toAny(): Any?
     fun toBoolean(): Boolean
-    fun toNumber(): Number
-    fun toNumberOrNull(): Number? =
-        toNumber()
+    fun toLong(): Long
+    fun toDouble(): Double
+    fun toBigInteger(): BigInteger =
+        toLong().toBigInteger()
+    fun toBigDecimal(): BigDecimal =
+        toDouble().toBigDecimal()
+    fun toInstant(): Instant =
+        Instant.ofEpochMilli(toLong())
+    fun toDuration(): Duration =
+        Duration.ofMillis(toLong())
     fun toByteArray(): ByteArray
     fun toJsonNode(): JsonNode
-    fun toStringOrNull(): String? =
-        toString()
+
     fun dump() =
         "${getName()}:${toString()}"
     fun size(): Long

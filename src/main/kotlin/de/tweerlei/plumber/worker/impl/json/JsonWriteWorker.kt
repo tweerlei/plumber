@@ -22,10 +22,12 @@ import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.Worker
 import java.io.*
+import java.nio.charset.StandardCharsets
 
 class JsonWriteWorker(
     private val file: File,
     private val objectMapper: ObjectMapper,
+    private val wrapAsProperty: String?,
     private val prettyPrint: Boolean,
     worker: Worker
 ): DelegatingWorker(worker) {
@@ -36,7 +38,11 @@ class JsonWriteWorker(
 
     override fun onOpen() {
         stream = FileOutputStream(file)
-        stream.write('['.code)
+        if (wrapAsProperty != null) {
+            stream.write("""{"$wrapAsProperty":[""".toByteArray(StandardCharsets.UTF_8))
+        } else {
+            stream.write('['.code)
+        }
         generator = objectMapper.createGenerator(stream)
         if (prettyPrint)
             generator.prettyPrinter = objectMapper.serializationConfig.constructDefaultPrettyPrinter()
@@ -53,7 +59,11 @@ class JsonWriteWorker(
             }.let { true }
 
     override fun onClose() {
-        stream.write(']'.code)
+        if (wrapAsProperty != null) {
+            stream.write("""]}""".toByteArray(StandardCharsets.UTF_8))
+        } else {
+            stream.write(']'.code)
+        }
         generator.close()
     }
 }

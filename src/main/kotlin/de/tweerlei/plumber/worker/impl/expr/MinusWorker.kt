@@ -19,8 +19,7 @@ import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.WorkItemAccessor
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.DelegatingWorker
-import de.tweerlei.plumber.worker.types.DoubleValue
-import de.tweerlei.plumber.worker.types.Value
+import de.tweerlei.plumber.worker.types.*
 
 class MinusWorker(
     private val value: WorkItemAccessor<Value>,
@@ -31,8 +30,14 @@ class MinusWorker(
         item.get().let { left ->
             value(item).let { right ->
                 when {
-                    left is DoubleValue || right is DoubleValue -> (left.toNumber().toDouble() - right.toNumber().toDouble()).safeTruncate()
-                    else -> left.toNumber().toLong() - right.toNumber().toLong()
+                    left is BigDecimalValue ||
+                            right is BigDecimalValue ||
+                            (left is BigIntegerValue && right is DoubleValue) ||
+                            (left is DoubleValue && right is BigIntegerValue) ->
+                        (left.toBigDecimal() - right.toBigDecimal())
+                    left is DoubleValue || right is DoubleValue -> (left.toDouble() - right.toDouble()).safeTruncate()
+                    left is BigIntegerValue || right is BigIntegerValue -> left.toBigInteger() - right.toBigInteger()
+                    else -> left.toLong() - right.toLong()
                 }
             }
         }.also {

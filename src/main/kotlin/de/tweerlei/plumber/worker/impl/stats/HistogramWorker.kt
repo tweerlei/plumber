@@ -50,7 +50,7 @@ class HistogramWorker(
     override fun doProcess(item: WorkItem) =
         item.get().let { value ->
             when (value) {
-                is NumberValue -> numberHistogram.add(value.toNumber().toLong())
+                is NumberValue -> numberHistogram.add(value.toLong())
                 else -> stringHistogram.add(value.toString())
             }
         }.let { true }

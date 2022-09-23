@@ -23,15 +23,15 @@ import java.time.Instant
 import java.time.format.DateTimeParseException
 import java.util.*
 
-private val byteCache = ValueCache<Byte, LongValue>("long") { LongValue(it.toLong()) }
+private val byteCache = ValueCache<Byte, LongValue>("byte") { LongValue(it.toLong()) }
 private val charCache = ValueCache<Char, StringValue>("char") { StringValue(it.toString()) }
-private val shortCache = ValueCache<Short, LongValue>("int") { LongValue(it.toLong()) }
+private val shortCache = ValueCache<Short, LongValue>("short") { LongValue(it.toLong()) }
 private val intCache = ValueCache<Int, LongValue>("int") { LongValue(it.toLong()) }
 private val longCache = ValueCache<Long, LongValue>("long") { LongValue(it) }
-private val bigIntegerCache = ValueCache<BigInteger, LongValue>("bigint") { LongValue(it.toLong()) }
+private val bigIntegerCache = ValueCache<BigInteger, BigIntegerValue>("bigint") { BigIntegerValue(it) }
 private val floatCache = ValueCache<Float, DoubleValue>("float") { DoubleValue(it.toDouble()) }
 private val doubleCache = ValueCache<Double, DoubleValue>("double") { DoubleValue(it) }
-private val bigDecimalCache = ValueCache<BigDecimal, DoubleValue>("bigdec") { DoubleValue(it.toDouble()) }
+private val bigDecimalCache = ValueCache<BigDecimal, BigDecimalValue>("bigdec") { BigDecimalValue(it) }
 private val stringCache = ValueCache<String, StringValue>("string", { it.length < 100 }) { StringValue(it) }
 private val instantCache = ValueCache<Instant, InstantValue>("instant") { InstantValue(it) }
 private val durationCache = ValueCache<Duration, DurationValue>("duration") { DurationValue(it) }
@@ -79,6 +79,8 @@ fun String?.toComparableValue(): ComparableValue =
         ?: toDurationOrNull()?.let { DurationValue(it) }
         ?: toLongOrNull()?.let { LongValue(it) }
         ?: toDoubleOrNull()?.let { DoubleValue(it) }
+        ?: toBigIntegerOrNull()?.let { BigIntegerValue(it) }
+        ?: toBigDecimalOrNull()?.let { BigDecimalValue(it) }
         ?: StringValue(this)
 
 private fun String.toInstantOrNull() =

@@ -20,20 +20,24 @@ import io.kotest.matchers.booleans.shouldBeTrue
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
+import java.math.BigDecimal
+import java.math.BigInteger
 
 class NullValueTest {
 
     @Test
     fun testIt() {
         with (NullValue.INSTANCE) {
+            asOptional().shouldBeNull()
             toAny().shouldBeNull()
             toBoolean().shouldBeFalse()
-            toNumber().shouldBe(0L)
-            toNumberOrNull().shouldBeNull()
+            toLong().shouldBe(0L)
+            toDouble().shouldBe(0.0)
+            toBigInteger().shouldBe(BigInteger.valueOf(0L))
+            toBigDecimal().shouldBe(BigDecimal.valueOf(0.0))
             toByteArray().size.shouldBe(0)
             toJsonNode().isNull.shouldBeTrue()
             toString().shouldBe("")
-            toStringOrNull().shouldBeNull()
             size().shouldBe(0L)
             hashCode().shouldBe(0)
 

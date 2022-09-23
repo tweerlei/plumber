@@ -23,6 +23,8 @@ class BooleanValue private constructor(
 ): ComparableValue {
 
     companion object {
+        const val NAME = "boolean"
+
         val TRUE = BooleanValue(true)
         val FALSE = BooleanValue(false)
 
@@ -34,32 +36,29 @@ class BooleanValue private constructor(
     }
 
     override fun getName() =
-        "boolean"
+        NAME
 
     override fun toAny() =
         value
     override fun toBoolean() =
         value
-    override fun toNumber() =
+    override fun toLong() =
         if (value) 1L else 0L
+    override fun toDouble() =
+        if (value) 1.0 else 0.0
     override fun toByteArray() =
-        byteArrayOf(toNumber().toByte())
+        byteArrayOf(toLong().toByte())
     override fun toJsonNode(): JsonNode =
         JsonNodeFactory.instance.booleanNode(value)
     override fun size() =
         1L
     override fun toString() =
         value.toString()
+
     override fun equals(other: Any?) =
         other is Value && value == other.toBoolean()
     override fun hashCode() =
         value.hashCode()
     override fun compareTo(other: ComparableValue) =
-        other.toBoolean().let { otherValue ->
-            when {
-                value && !otherValue -> 1
-                !value && otherValue -> -1
-                else -> 0
-            }
-        }
+        value.compareTo(other.toBoolean())
 }

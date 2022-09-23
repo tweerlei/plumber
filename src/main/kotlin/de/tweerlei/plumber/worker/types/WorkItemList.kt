@@ -21,21 +21,28 @@ import de.tweerlei.plumber.worker.WorkItem
 
 class WorkItemList(initialCapacity: Int): ArrayList<WorkItem>(initialCapacity), Value {
 
+    companion object {
+        const val NAME = "items"
+    }
+
     override fun getName() =
-        "items"
+        NAME
 
     override fun toAny() =
         this
     override fun toBoolean() =
         isNotEmpty()
-    override fun toNumber() =
+    override fun toLong() =
         size.toLong()
+    override fun toDouble() =
+        size.toDouble()
     override fun toByteArray() =
         byteArrayOf()
     override fun toJsonNode(): JsonNode =
         JsonNodeFactory.instance.arrayNode().also { node ->
             forEach { value -> node.add(value.get().toJsonNode()) }
         }
+
     override fun dump() =
         map { value -> value.dump() }.toString()
     override fun size() =

@@ -17,20 +17,32 @@ package de.tweerlei.plumber.worker.types
 
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.node.JsonNodeFactory
+import java.math.BigDecimal
+import java.math.BigInteger
 
 class StringValue(
     val value: String
 ): ComparableValue {
 
+    companion object {
+        const val NAME = "string"
+    }
+
     override fun getName() =
-        "string"
+        NAME
 
     override fun toAny() =
         value
     override fun toBoolean() =
         value.isNotBlank() && value != "0" && value != "false"
-    override fun toNumber(): Number =
-        value.toLongOrNull() ?: value.toDoubleOrNull() ?: 0L
+    override fun toLong(): Long =
+        value.toLongOrNull() ?: 0L
+    override fun toDouble(): Double =
+        value.toDoubleOrNull() ?: 0.0
+    override fun toBigInteger(): BigInteger =
+        value.toBigIntegerOrNull() ?: BigInteger.valueOf(0L)
+    override fun toBigDecimal(): BigDecimal =
+        value.toBigDecimalOrNull() ?: BigDecimal.valueOf(0.0)
     override fun toByteArray() =
         value.toByteArray()
     override fun toJsonNode(): JsonNode =
@@ -39,6 +51,7 @@ class StringValue(
         value.length.toLong()
     override fun toString() =
         value
+
     override fun equals(other: Any?) =
         other is Value && value == other.toString()
     override fun hashCode() =

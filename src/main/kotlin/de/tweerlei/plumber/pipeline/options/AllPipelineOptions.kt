@@ -45,7 +45,8 @@ data class AllPipelineOptions(
     val header: PipelineOption<Boolean>,
     val prettyPrint: PipelineOption<Boolean>,
     val elementName: PipelineOption<String>,
-    val rootElementName: PipelineOption<String>
+    val rootElementName: PipelineOption<String>,
+    val wrapRoot: PipelineOption<Boolean>
 ) {
     companion object {
         // Safe characters, see https://docs.aws.amazon.com/AmazonS3/latest/userguide/object-keys.html
@@ -146,6 +147,10 @@ data class AllPipelineOptions(
                 "XML: Root element name to wrap output in",
                 "items"
             ),
+            wrapRoot = BooleanPipelineOption(
+                "wrap-root",
+                "JSON: Wrap output array in an object with a single property (root-element-name)"
+            ),
             separator = CustomPipelineOption(
                 "separator",
                 "CSV: Separator character"
@@ -214,6 +219,7 @@ data class AllPipelineOptions(
             maxWaitTimeSeconds = maxWaitTimeSeconds.readFrom(accessor),
             elementName = elementName.readFrom(accessor),
             rootElementName = rootElementName.readFrom(accessor),
+            wrapRoot = wrapRoot.readFrom(accessor),
             separator = separator.readFrom(accessor),
             header = header.readFrom(accessor),
             prettyPrint = prettyPrint.readFrom(accessor),

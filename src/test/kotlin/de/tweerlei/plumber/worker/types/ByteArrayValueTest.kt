@@ -17,8 +17,12 @@ package de.tweerlei.plumber.worker.types
 
 import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeSameInstanceAs
 import org.junit.jupiter.api.Test
+import java.math.BigDecimal
+import java.math.BigInteger
 
 class ByteArrayValueTest {
 
@@ -26,10 +30,13 @@ class ByteArrayValueTest {
     fun testNonEmpty() {
         val value = byteArrayOf(104, 101, 108, 108, 111)
         with (ByteArrayValue(value)) {
+            asOptional().shouldBeSameInstanceAs(this)
             toAny().shouldBe(value)
             toBoolean().shouldBeTrue()
-            toNumber().shouldBe(1819043176L)
-            toNumberOrNull().shouldBe(1819043176L)
+            toLong().shouldBe(1819043176L)
+            toDouble().shouldBe(1819043176.0)
+            toBigInteger().shouldBe(BigInteger.valueOf(1819043176L))
+            toBigDecimal().shouldBe(BigDecimal.valueOf(1819043176L))
             with(toByteArray()) {
                 size.shouldBe(5)
                 contentEquals(value).shouldBeTrue()
@@ -39,7 +46,6 @@ class ByteArrayValueTest {
                 binaryValue().contentEquals(value).shouldBeTrue()
             }
             toString().shouldBe("hello")
-            toStringOrNull().shouldBe("hello")
             size().shouldBe(5L)
             hashCode().shouldBe(value.contentHashCode())
 
@@ -62,10 +68,13 @@ class ByteArrayValueTest {
     fun testEmpty() {
         val value = byteArrayOf()
         with (ByteArrayValue(value)) {
+            asOptional().shouldBeSameInstanceAs(this)
             toAny().shouldBe(value)
             toBoolean().shouldBeFalse()
-            toNumber().shouldBe(0L)
-            toNumberOrNull().shouldBe(0L)
+            toLong().shouldBe(0L)
+            toDouble().shouldBe(0.0)
+            toBigInteger().shouldBe(BigInteger.valueOf(0L))
+            toBigDecimal().shouldBe(BigDecimal.valueOf(0.0))
             with(toByteArray()) {
                 size.shouldBe(0)
             }
@@ -74,7 +83,6 @@ class ByteArrayValueTest {
                 binaryValue().size.shouldBe(0)
             }
             toString().shouldBe("")
-            toStringOrNull().shouldBe("")
             size().shouldBe(0L)
             hashCode().shouldBe(value.contentHashCode())
 
@@ -101,20 +109,20 @@ class ByteArrayValueTest {
     }
 
     @Test
-    fun testToNumber() {
-        ByteArrayValue(byteArrayOf()).toNumber().shouldBe(0L)
-        ByteArrayValue(byteArrayOf(0)).toNumber().shouldBe(0L)
-        ByteArrayValue(byteArrayOf(5)).toNumber().shouldBe(5L)
-        ByteArrayValue(byteArrayOf(0, 0)).toNumber().shouldBe(0L)
-        ByteArrayValue(byteArrayOf(1, 2)).toNumber().shouldBe(513L)
-        ByteArrayValue(byteArrayOf(1, 2, 3)).toNumber().shouldBe(513L)
-        ByteArrayValue(byteArrayOf(0, 0, 0, 0)).toNumber().shouldBe(0L)
-        ByteArrayValue(byteArrayOf(1, 2, 3, 4)).toNumber().shouldBe(67305985L)
-        ByteArrayValue(byteArrayOf(1, 2, 3, 4, 5)).toNumber().shouldBe(67305985L)
-        ByteArrayValue(byteArrayOf(1, 2, 3, 4, 5, 6)).toNumber().shouldBe(67305985L)
-        ByteArrayValue(byteArrayOf(1, 2, 3, 4, 5, 6, 7)).toNumber().shouldBe(67305985L)
-        ByteArrayValue(byteArrayOf(0, 0, 0, 0, 0, 0, 0, 0)).toNumber().shouldBe(0L)
-        ByteArrayValue(byteArrayOf(1, 2, 3, 4, 5, 6, 7, 8)).toNumber().shouldBe(578437695752307201L)
-        ByteArrayValue(byteArrayOf(1, 2, 3, 4, 5, 6, 7, 8, 9)).toNumber().shouldBe(578437695752307201L)
+    fun testToLong() {
+        ByteArrayValue(byteArrayOf()).toLong().shouldBe(0L)
+        ByteArrayValue(byteArrayOf(0)).toLong().shouldBe(0L)
+        ByteArrayValue(byteArrayOf(5)).toLong().shouldBe(5L)
+        ByteArrayValue(byteArrayOf(0, 0)).toLong().shouldBe(0L)
+        ByteArrayValue(byteArrayOf(1, 2)).toLong().shouldBe(513L)
+        ByteArrayValue(byteArrayOf(1, 2, 3)).toLong().shouldBe(513L)
+        ByteArrayValue(byteArrayOf(0, 0, 0, 0)).toLong().shouldBe(0L)
+        ByteArrayValue(byteArrayOf(1, 2, 3, 4)).toLong().shouldBe(67305985L)
+        ByteArrayValue(byteArrayOf(1, 2, 3, 4, 5)).toLong().shouldBe(67305985L)
+        ByteArrayValue(byteArrayOf(1, 2, 3, 4, 5, 6)).toLong().shouldBe(67305985L)
+        ByteArrayValue(byteArrayOf(1, 2, 3, 4, 5, 6, 7)).toLong().shouldBe(67305985L)
+        ByteArrayValue(byteArrayOf(0, 0, 0, 0, 0, 0, 0, 0)).toLong().shouldBe(0L)
+        ByteArrayValue(byteArrayOf(1, 2, 3, 4, 5, 6, 7, 8)).toLong().shouldBe(578437695752307201L)
+        ByteArrayValue(byteArrayOf(1, 2, 3, 4, 5, 6, 7, 8, 9)).toLong().shouldBe(578437695752307201L)
     }
 }

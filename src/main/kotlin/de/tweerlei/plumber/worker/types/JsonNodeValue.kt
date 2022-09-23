@@ -17,20 +17,32 @@ package de.tweerlei.plumber.worker.types
 
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.node.JsonNodeFactory
+import java.math.BigDecimal
+import java.math.BigInteger
 
 class JsonNodeValue(
     val value: JsonNode = JsonNodeFactory.instance.objectNode()
 ): Value {
 
+    companion object {
+        const val NAME = "node"
+    }
+
     override fun getName() =
-        "node"
+        NAME
 
     override fun toAny() =
         value
     override fun toBoolean() =
         value.booleanValue()
-    override fun toNumber() =
-        value.numberValue() ?: 0
+    override fun toLong() =
+        value.longValue()
+    override fun toDouble() =
+        value.doubleValue()
+    override fun toBigInteger(): BigInteger =
+        value.bigIntegerValue()
+    override fun toBigDecimal(): BigDecimal =
+        value.decimalValue()
     override fun toByteArray() =
         value.binaryValue() ?: byteArrayOf()
     override fun toJsonNode(): JsonNode =
@@ -39,6 +51,7 @@ class JsonNodeValue(
         value.size().toLong()
     override fun toString() =
         value.toString()
+
     override fun equals(other: Any?) =
         other is Value && value == other.toJsonNode()
     override fun hashCode() =

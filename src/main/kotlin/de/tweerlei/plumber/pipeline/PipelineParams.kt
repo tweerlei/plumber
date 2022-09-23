@@ -36,6 +36,7 @@ data class PipelineParams(
     val maxWaitTimeSeconds: Int,
     val elementName: String,
     val rootElementName: String,
+    val wrapRoot: Boolean,
     val separator: Char,
     val header: Boolean,
     val prettyPrint: Boolean,

@@ -22,23 +22,30 @@ class LongValue(
     val value: Long
 ): NumberValue {
 
+    companion object {
+        const val NAME = "long"
+    }
+
     override fun getName() =
-        "long"
+        NAME
 
     override fun toAny() =
         value
     override fun toBoolean() =
         value != 0L
-    override fun toNumber() =
+    override fun toLong() =
         value
+    override fun toDouble() =
+        value.toDouble()
     override fun toJsonNode(): JsonNode =
         JsonNodeFactory.instance.numberNode(value)
     override fun toString() =
         value.toString()
+
     override fun equals(other: Any?) =
-        other is Value && value == other.toNumber().toLong()
+        other is Value && value == other.toLong()
     override fun hashCode() =
         value.hashCode()
     override fun compareTo(other: ComparableValue) =
-        value.compareTo(other.toNumber().toLong())
+        value.compareTo(other.toLong())
 }

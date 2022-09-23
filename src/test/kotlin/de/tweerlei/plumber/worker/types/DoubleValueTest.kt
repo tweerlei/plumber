@@ -19,17 +19,23 @@ import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.booleans.shouldBeTrue
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeSameInstanceAs
 import org.junit.jupiter.api.Test
+import java.math.BigDecimal
+import java.math.BigInteger
 
 class DoubleValueTest {
 
     @Test
     fun testNonzero() {
         with (DoubleValue(42.1)) {
+            asOptional().shouldBeSameInstanceAs(this)
             toAny().shouldBe(42.1)
             toBoolean().shouldBeTrue()
-            toNumber().shouldBe(42.1)
-            toNumberOrNull().shouldBe(42.1)
+            toLong().shouldBe(42L)
+            toDouble().shouldBe(42.1)
+            toBigInteger().shouldBe(BigInteger.valueOf(42L))
+            toBigDecimal().shouldBe(BigDecimal.valueOf(42.1))
             with(toByteArray()) {
                 size.shouldBe(8)
                 contentEquals(byteArrayOf(42, 0, 0, 0, 0, 0, 0, 0)).shouldBeTrue()
@@ -39,7 +45,6 @@ class DoubleValueTest {
                 doubleValue().shouldBe(42.1)
             }
             toString().shouldBe("42.1")
-            toStringOrNull().shouldBe("42.1")
             size().shouldBe(4L)
             hashCode().shouldBe(42.1.hashCode())
 
@@ -65,10 +70,13 @@ class DoubleValueTest {
     @Test
     fun testZero() {
         with (DoubleValue(0.0)) {
+            asOptional().shouldBeSameInstanceAs(this)
             toAny().shouldBe(0.0)
             toBoolean().shouldBeFalse()
-            toNumber().shouldBe(0.0)
-            toNumberOrNull().shouldBe(0.0)
+            toLong().shouldBe(0L)
+            toDouble().shouldBe(0.0)
+            toBigInteger().shouldBe(BigInteger.valueOf(0L))
+            toBigDecimal().shouldBe(BigDecimal.valueOf(0.0))
             with(toByteArray()) {
                 size.shouldBe(8)
                 contentEquals(byteArrayOf(0, 0, 0, 0, 0, 0, 0, 0)).shouldBeTrue()
@@ -78,7 +86,6 @@ class DoubleValueTest {
                 doubleValue().shouldBe(0.0)
             }
             toString().shouldBe("0.0")
-            toStringOrNull().shouldBe("0.0")
             size().shouldBe(3L)
             hashCode().shouldBe(0.0.hashCode())
 
@@ -104,10 +111,13 @@ class DoubleValueTest {
     @Test
     fun testNegative() {
         with (DoubleValue(-42.1)) {
+            asOptional().shouldBeSameInstanceAs(this)
             toAny().shouldBe(-42.1)
             toBoolean().shouldBeTrue()
-            toNumber().shouldBe(-42.1)
-            toNumberOrNull().shouldBe(-42.1)
+            toLong().shouldBe(-42L)
+            toDouble().shouldBe(-42.1)
+            toBigInteger().shouldBe(BigInteger.valueOf(-42L))
+            toBigDecimal().shouldBe(BigDecimal.valueOf(-42.1))
             with(toByteArray()) {
                 size.shouldBe(8)
                 contentEquals(byteArrayOf(-42, -1, -1, -1, -1, -1, -1, -1)).shouldBeTrue()
@@ -117,7 +127,6 @@ class DoubleValueTest {
                 doubleValue().shouldBe(-42.1)
             }
             toString().shouldBe("-42.1")
-            toStringOrNull().shouldBe("-42.1")
             size().shouldBe(5L)
             hashCode().shouldBe((-42.1).hashCode())
 

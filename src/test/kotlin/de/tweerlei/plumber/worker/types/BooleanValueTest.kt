@@ -19,7 +19,10 @@ import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.booleans.shouldBeTrue
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeSameInstanceAs
 import org.junit.jupiter.api.Test
+import java.math.BigDecimal
+import java.math.BigInteger
 
 class BooleanValueTest {
 
@@ -32,10 +35,13 @@ class BooleanValueTest {
     @Test
     fun testTrue() {
         with (BooleanValue.TRUE) {
+            asOptional().shouldBeSameInstanceAs(this)
             toAny().shouldBeTrue()
             toBoolean().shouldBeTrue()
-            toNumber().shouldBe(1L)
-            toNumberOrNull().shouldBe(1L)
+            toLong().shouldBe(1L)
+            toDouble().shouldBe(1.0)
+            toBigInteger().shouldBe(BigInteger.valueOf(1L))
+            toBigDecimal().shouldBe(BigDecimal.valueOf(1.0))
             with(toByteArray()) {
                 size.shouldBe(1)
                 get(0).shouldBe(1)
@@ -45,7 +51,6 @@ class BooleanValueTest {
                 booleanValue().shouldBeTrue()
             }
             toString().shouldBe("true")
-            toStringOrNull().shouldBe("true")
             size().shouldBe(1L)
             hashCode().shouldBe(true.hashCode())
 
@@ -68,10 +73,13 @@ class BooleanValueTest {
     @Test
     fun testFalse() {
         with (BooleanValue.FALSE) {
+            asOptional().shouldBeSameInstanceAs(this)
             toAny().shouldBeFalse()
             toBoolean().shouldBeFalse()
-            toNumber().shouldBe(0L)
-            toNumberOrNull().shouldBe(0L)
+            toLong().shouldBe(0L)
+            toDouble().shouldBe(0.0)
+            toBigInteger().shouldBe(BigInteger.valueOf(0L))
+            toBigDecimal().shouldBe(BigDecimal.valueOf(0.0))
             with(toByteArray()) {
                 size.shouldBe(1)
                 get(0).shouldBe(0)
@@ -81,7 +89,6 @@ class BooleanValueTest {
                 booleanValue().shouldBeFalse()
             }
             toString().shouldBe("false")
-            toStringOrNull().shouldBe("false")
             size().shouldBe(1L)
             hashCode().shouldBe(false.hashCode())
 

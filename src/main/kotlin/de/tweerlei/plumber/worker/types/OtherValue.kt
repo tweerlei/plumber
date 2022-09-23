@@ -17,16 +17,22 @@ package de.tweerlei.plumber.worker.types
 
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.node.JsonNodeFactory
+import java.math.BigDecimal
+import java.math.BigInteger
 
 class OtherValue(
     val value: Any
 ): Value {
 
+    companion object {
+        const val NAME = "any"
+    }
+
     inline fun <reified T: Any> to() =
         value as T
 
     override fun getName() =
-        "other"
+        NAME
 
     override fun toAny(): Any =
         value
@@ -34,9 +40,21 @@ class OtherValue(
         toString().let {
             it.isNotBlank() && it != "0" && it != "false"
         }
-    override fun toNumber(): Number =
+    override fun toLong(): Long =
         toString().let {
-            it.toLongOrNull() ?: it.toDoubleOrNull() ?: 0L
+            it.toLongOrNull() ?: 0L
+        }
+    override fun toDouble(): Double =
+        toString().let {
+            it.toDoubleOrNull() ?: 0.0
+        }
+    override fun toBigInteger(): BigInteger =
+        toString().let {
+            it.toBigIntegerOrNull() ?: BigInteger.valueOf(0L)
+        }
+    override fun toBigDecimal(): BigDecimal =
+        toString().let {
+            it.toBigDecimalOrNull() ?: BigDecimal.valueOf(0.0)
         }
     override fun toByteArray(): ByteArray =
         toString().let {
@@ -52,6 +70,7 @@ class OtherValue(
         }
     override fun toString(): String =
         value.toString()
+
     override fun dump() =
         "${getName()}:${value::class.simpleName}:${toString()}"
     override fun equals(other: Any?) =

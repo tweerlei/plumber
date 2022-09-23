@@ -18,9 +18,35 @@ package de.tweerlei.plumber.worker.types
 import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.booleans.shouldBeTrue
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeSameInstanceAs
 import org.junit.jupiter.api.Test
+import java.math.BigDecimal
+import java.math.BigInteger
 
 class RangeTest {
+
+    @Test
+    fun testNonEmpty() {
+        with (Range(LongValue(0L), LongValue(10L))) {
+            asOptional().shouldBeSameInstanceAs(this)
+            toAny().shouldBeSameInstanceAs(this)
+            toBoolean().shouldBeTrue()
+            toLong().shouldBe(10L)
+            toDouble().shouldBe(10.0)
+            toBigInteger().shouldBe(BigInteger.valueOf(10L))
+            toBigDecimal().shouldBe(BigDecimal.valueOf(10.0))
+            with(toByteArray()) {
+                size.shouldBe(9)
+//                contentEquals(byteArrayOf(10, 0, 0, 0)).shouldBeTrue()
+            }
+            with (toJsonNode()) {
+                isArray.shouldBeTrue()
+            }
+            toString().shouldBe("[0 .. 10]")
+            size().shouldBe(10L)
+//            hashCode().shouldBe("hello".hashCode())
+        }
+    }
 
     @Test
     fun testEquals() {

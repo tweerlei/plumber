@@ -17,34 +17,43 @@ package de.tweerlei.plumber.worker.types
 
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.node.JsonNodeFactory
+import java.math.BigDecimal
+import java.math.BigInteger
 
 class NullValue private constructor(): ComparableValue {
 
     companion object {
+        const val NAME = "null"
+
         val INSTANCE = NullValue()
     }
 
     override fun getName() =
-        "null"
+        NAME
+    override fun asOptional(): Value? =
+        null
 
     override fun toAny(): Any? =
         null
     override fun toBoolean() =
         false
-    override fun toNumber() =
+    override fun toLong() =
         0L
-    override fun toNumberOrNull(): Number? =
-        null
+    override fun toDouble() =
+        0.0
+    override fun toBigInteger(): BigInteger =
+        BigInteger.valueOf(0L)
+    override fun toBigDecimal(): BigDecimal =
+        BigDecimal.valueOf(0.0)
     override fun toByteArray() =
         byteArrayOf()
     override fun toJsonNode(): JsonNode =
         JsonNodeFactory.instance.nullNode()
     override fun toString() =
         ""
-    override fun toStringOrNull(): String? =
-        null
     override fun size() =
         0L
+
     override fun equals(other: Any?) =
         other is NullValue
     override fun hashCode() =

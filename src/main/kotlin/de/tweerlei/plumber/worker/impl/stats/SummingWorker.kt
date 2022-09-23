@@ -39,7 +39,7 @@ class SummingWorker(
     }
 
     override fun doProcess(item: WorkItem) =
-        item.get(WellKnownKeys.SIZE).toNumber().toLong()
+        item.get(WellKnownKeys.SIZE).toLong()
             .let { size ->
                 sum.addAndGet(size)
                     .also { counter ->
