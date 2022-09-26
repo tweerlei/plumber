@@ -28,6 +28,6 @@ class RecordGetWorker(
     override fun doProcess(item: WorkItem) =
         item.getAs<Record>(WellKnownKeys.RECORD)
             .let { map ->
-                item.set(map[field])
+                item.set(map.getValue(field))
             }.let { true }
 }

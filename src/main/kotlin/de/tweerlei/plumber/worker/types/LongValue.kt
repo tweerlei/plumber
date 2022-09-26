@@ -18,12 +18,35 @@ package de.tweerlei.plumber.worker.types
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.node.JsonNodeFactory
 
-class LongValue(
+class LongValue private constructor(
     val value: Long
 ): NumberValue {
 
     companion object {
         const val NAME = "long"
+
+        val ZERO = LongValue(0L)
+
+        fun of(value: Long) =
+            when (value) {
+                0L -> ZERO
+                else -> LongValue(value)
+            }
+        fun of(value: Int) =
+            when (value) {
+                0 -> ZERO
+                else -> LongValue(value.toLong())
+            }
+        fun of(value: Short) =
+            when (value) {
+                0.toShort() -> ZERO
+                else -> LongValue(value.toLong())
+            }
+        fun of(value: Byte) =
+            when (value) {
+                0.toByte() -> ZERO
+                else -> LongValue(value.toLong())
+            }
     }
 
     override fun getName() =

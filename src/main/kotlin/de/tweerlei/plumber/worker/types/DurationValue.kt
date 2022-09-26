@@ -19,12 +19,17 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.node.JsonNodeFactory
 import java.time.Duration
 
-class DurationValue(
+class DurationValue private constructor(
     val value: Duration
 ): NumberValue {
 
     companion object {
         const val NAME = "duration"
+
+        fun of(value: Duration) =
+            DurationValue(value)
+        fun ofMillis(value: Long) =
+            DurationValue(Duration.ofMillis(value))
     }
 
     override fun getName() =

@@ -20,6 +20,7 @@ import com.amazonaws.services.securitytoken.model.GetCallerIdentityRequest
 import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.DelegatingWorker
+import de.tweerlei.plumber.worker.types.StringValue
 import mu.KLogging
 
 class STSGetIdWorker(
@@ -34,7 +35,7 @@ class STSGetIdWorker(
             .let { response ->
                 logger.debug { "AWS principal ARN: ${response.arn}" }
                 logger.debug { "AWS user ID: ${response.userId}" }
-                item.set(response.account)
+                item.set(StringValue.of(response.account))
             }.let { true }
 
     private fun getCallerIdentity() =

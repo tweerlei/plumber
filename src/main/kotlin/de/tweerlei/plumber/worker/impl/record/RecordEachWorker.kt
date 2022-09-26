@@ -20,6 +20,7 @@ import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.GeneratingWorker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.types.Record
+import de.tweerlei.plumber.worker.types.StringValue
 
 class RecordEachWorker(
     limit: Long,
@@ -29,9 +30,9 @@ class RecordEachWorker(
     override fun generateItems(item: WorkItem, fn: (WorkItem) -> Boolean) {
         item.getAs<Record>(WellKnownKeys.RECORD)
             .forEach { key, value ->
-                fn(WorkItem.from(
+                fn(WorkItem.of(
                     value,
-                    WellKnownKeys.NAME to key
+                    WellKnownKeys.NAME to StringValue.of(key)
                 ))
             }
     }

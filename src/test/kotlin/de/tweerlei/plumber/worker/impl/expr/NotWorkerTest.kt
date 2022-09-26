@@ -31,7 +31,7 @@ class NotWorkerTest {
     }
 
     private fun test(current: Boolean, expected: Boolean) {
-        val item = TestWorkerRunner(WorkItem.from(current))
+        val item = TestWorkerRunner(WorkItem.of(BooleanValue.of(current)))
             .append { w -> NegatingWorker(w) }
             .run()
             .singleOrNull()

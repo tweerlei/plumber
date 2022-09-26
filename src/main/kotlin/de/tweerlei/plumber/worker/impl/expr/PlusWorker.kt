@@ -27,20 +27,22 @@ class PlusWorker(
 ): DelegatingWorker(worker) {
 
     override fun doProcess(item: WorkItem) =
-        item.get().let { left ->
-            value(item).let { right ->
-                when {
-                    left is BigDecimalValue ||
-                            right is BigDecimalValue ||
-                            (left is BigIntegerValue && right is DoubleValue) ||
-                            (left is DoubleValue && right is BigIntegerValue) ->
-                        (left.toBigDecimal() + right.toBigDecimal())
-                    left is DoubleValue || right is DoubleValue -> (left.toDouble() + right.toDouble()).safeTruncate()
-                    left is BigIntegerValue || right is BigIntegerValue -> left.toBigInteger() + right.toBigInteger()
-                    else -> left.toLong() + right.toLong()
+        item.get()
+            .let { left ->
+                value(item).let { right ->
+                    when {
+                        left is BigDecimalValue ||
+                                right is BigDecimalValue ||
+                                (left is BigIntegerValue && right is DoubleValue) ||
+                                (left is DoubleValue && right is BigIntegerValue) ->
+                            (left.toBigDecimal() + right.toBigDecimal())
+                        left is DoubleValue || right is DoubleValue -> (left.toDouble() + right.toDouble()).safeTruncate()
+                        left is BigIntegerValue || right is BigIntegerValue -> left.toBigInteger() + right.toBigInteger()
+                        else -> left.toLong() + right.toLong()
+                    }
                 }
-            }
-        }.also {
-            item.set(it)
-        }.let { true }
+            }.toValue()
+            .also {
+                item.set(it)
+            }.let { true }
 }

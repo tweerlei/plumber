@@ -33,7 +33,7 @@ class XorWorkerTest {
     }
 
     private fun test(current: Boolean, other: Boolean, expected: Boolean) {
-        val item = TestWorkerRunner(WorkItem.from(current))
+        val item = TestWorkerRunner(WorkItem.of(BooleanValue.of(current)))
             .append { w -> XorWorker({ BooleanValue.of(other) }, w) }
             .run()
             .singleOrNull()

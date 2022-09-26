@@ -22,7 +22,7 @@ import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.DelegatingWorker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.impl.ifEmptyGetFrom
-import de.tweerlei.plumber.worker.types.JsonNodeValue
+import de.tweerlei.plumber.worker.types.Node
 import org.bson.Document
 
 class MongoDBDeleteWorker(
@@ -35,8 +35,8 @@ class MongoDBDeleteWorker(
 ): DelegatingWorker(worker) {
 
     override fun doProcess(item: WorkItem) =
-        item.getFirstAs<JsonNodeValue>(WellKnownKeys.NODE)
-            .value.toMongoDB(objectMapper)
+        item.getFirstAs<Node>(WellKnownKeys.NODE)
+            .toMongoDB(objectMapper)
             .let { attributes ->
                 deleteItem(
                     databaseName.ifEmptyGetFrom(item, MongoDBKeys.DATABASE_NAME),

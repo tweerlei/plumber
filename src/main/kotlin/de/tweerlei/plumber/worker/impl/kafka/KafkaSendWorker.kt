@@ -19,6 +19,7 @@ import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.DelegatingWorker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
+import de.tweerlei.plumber.worker.types.LongValue
 import org.apache.kafka.clients.producer.KafkaProducer
 import org.apache.kafka.clients.producer.ProducerRecord
 
@@ -33,8 +34,8 @@ class KafkaSendWorker(
             .let { record ->
                 producer.send(record).get()
             }.also { metadata ->
-                item.set(metadata.partition(), KafkaKeys.PARTITION)
-                item.set(metadata.offset(), KafkaKeys.OFFSET)
+                item.set(LongValue.of(metadata.partition()), KafkaKeys.PARTITION)
+                item.set(LongValue.of(metadata.offset()), KafkaKeys.OFFSET)
             }.let { true }
 
     private fun WorkItem.toProducerRecord() =

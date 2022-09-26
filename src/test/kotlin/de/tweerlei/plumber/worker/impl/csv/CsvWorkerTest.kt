@@ -19,6 +19,7 @@ import com.fasterxml.jackson.dataformat.csv.CsvMapper
 import de.tweerlei.plumber.worker.impl.TestWorkerRunner
 import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.impl.record.RecordGetWorker
+import de.tweerlei.plumber.worker.types.ByteArrayValue
 import de.tweerlei.plumber.worker.types.StringValue
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
@@ -33,7 +34,7 @@ class CsvWorkerTest {
         val csv = """Hello,42,true,null,"Hello,42,false,null""""
         val objectMapper = CsvMapper()
 
-        val item = TestWorkerRunner(WorkItem.from(csv.toByteArray(StandardCharsets.UTF_8)))
+        val item = TestWorkerRunner(WorkItem.of(ByteArrayValue.of(csv.toByteArray(StandardCharsets.UTF_8))))
             .append { w -> FromCsvWorker(objectMapper, ',', w) }
             .append { w -> RecordGetWorker("4", w) }
             .append { w -> FromCsvWorker(objectMapper, ',', w) }

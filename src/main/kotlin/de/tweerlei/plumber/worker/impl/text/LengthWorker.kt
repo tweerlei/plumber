@@ -19,6 +19,7 @@ import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.impl.DelegatingWorker
 import de.tweerlei.plumber.worker.Worker
+import de.tweerlei.plumber.worker.types.LongValue
 
 class LengthWorker(
     worker: Worker
@@ -27,6 +28,7 @@ class LengthWorker(
     override fun doProcess(item: WorkItem) =
         item.get()
             .size()
+            .let { LongValue.of(it) }
             .also { size ->
                 item.set(size, WellKnownKeys.SIZE)
                 item.set(size)

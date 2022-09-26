@@ -22,6 +22,7 @@ import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.impl.GeneratingWorker
 import de.tweerlei.plumber.worker.Worker
+import de.tweerlei.plumber.worker.types.StringValue
 import mu.KLogging
 
 class SQSReceiveWorker(
@@ -43,6 +44,7 @@ class SQSReceiveWorker(
 
     override fun generateItems(item: WorkItem, fn: (WorkItem) -> Boolean) {
         logger.info { "waiting $waitSeconds seconds for next message in $queueUrl" }
+        val actualQueueUrl = StringValue.of(queueUrl)
         var keepGenerating = true
         var itemCount = 0
         while (keepGenerating) {
@@ -50,7 +52,7 @@ class SQSReceiveWorker(
                 .also {
                     keepGenerating = follow || it.isNotEmpty()
                 }.forEach { message ->
-                    if (fn(message.toWorkItem())) {
+                    if (fn(message.toWorkItem(actualQueueUrl))) {
                         itemCount++
                     } else {
                         keepGenerating = false
@@ -67,12 +69,15 @@ class SQSReceiveWorker(
             .let { request -> amazonSQSClient.receiveMessage(request) }
             .messages
 
-    private fun Message.toWorkItem() =
-        WorkItem.from(
-            body,
-            WellKnownKeys.NAME to messageId,
-            SQSKeys.QUEUE_URL to queueUrl,
-            SQSKeys.MESSAGE_ID to messageId,
-            SQSKeys.DELETE_HANDLE to receiptHandle
-        )
+    private fun Message.toWorkItem(url: StringValue) =
+        StringValue.of(messageId)
+            .let { id ->
+                WorkItem.of(
+                    StringValue.of(body),
+                    WellKnownKeys.NAME to id,
+                    SQSKeys.QUEUE_URL to url,
+                    SQSKeys.MESSAGE_ID to id,
+                    SQSKeys.DELETE_HANDLE to StringValue.of(receiptHandle)
+                )
+            }
 }

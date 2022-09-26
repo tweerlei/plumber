@@ -34,7 +34,7 @@ class NodeEachWorkerTest {
 
         val objectMapper = ObjectMapper()
 
-        val items = TestWorkerRunner(WorkItem.from("""{}"""))
+        val items = TestWorkerRunner(WorkItem.of(StringValue.of("""{}""")))
             .append { w -> FromJsonWorker(JsonNode::class.java, objectMapper, w) }
             .append { w -> NodeEachWorker(JsonPointer.compile(""), 10, w) }
             .run()
@@ -47,7 +47,7 @@ class NodeEachWorkerTest {
 
         val objectMapper = ObjectMapper()
 
-        val items = TestWorkerRunner(WorkItem.from("""{"entry0":"value0","entry1":"value1","entry2":"value2"}"""))
+        val items = TestWorkerRunner(WorkItem.of(StringValue.of("""{"entry0":"value0","entry1":"value1","entry2":"value2"}""")))
             .append { w -> FromJsonWorker(JsonNode::class.java, objectMapper, w) }
             .append { w -> NodeEachWorker(JsonPointer.compile(""), 2, w) }
             .run()

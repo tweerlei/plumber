@@ -44,9 +44,9 @@ class RecordEachWorkerTest {
 
         val items = TestWorkerRunner(WorkItem.of(NullValue.INSTANCE,
             WellKnownKeys.RECORD to Record.of(
-                "entry0" to StringValue("value0"),
-                "entry1" to StringValue("value1"),
-                "entry2" to StringValue("value2")
+                "entry0" to StringValue.of("value0"),
+                "entry1" to StringValue.of("value1"),
+                "entry2" to StringValue.of("value2")
             )
         ))
             .append { w -> RecordEachWorker(2, w) }

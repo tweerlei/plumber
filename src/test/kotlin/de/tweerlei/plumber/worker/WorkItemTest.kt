@@ -25,36 +25,36 @@ class WorkItemTest {
 
     @Test
     fun testGetSetMain() {
-        val item = WorkItem.from("Test")
-        item.get().shouldBe(StringValue("Test"))
+        val item = WorkItem.of(StringValue.of("Test"))
+        item.get().shouldBe(StringValue.of("Test"))
 
-        item.getAs<Value>().shouldBe(StringValue("Test"))
-        item.getAs<ComparableValue>().shouldBe(StringValue("Test"))
-        item.getAs<StringValue>().shouldBe(StringValue("Test"))
-        item.set(42)
-        item.getAs<Value>().shouldBe(LongValue(42L))
-        item.getAs<ComparableValue>().shouldBe(LongValue(42L))
-        item.getAs<NumberValue>().shouldBe(LongValue(42L))
-        item.getAs<LongValue>().shouldBe(LongValue(42L))
+        item.getAs<Value>().shouldBe(StringValue.of("Test"))
+        item.getAs<ComparableValue>().shouldBe(StringValue.of("Test"))
+        item.getAs<StringValue>().shouldBe(StringValue.of("Test"))
+        item.set(LongValue.of(42))
+        item.getAs<Value>().shouldBe(LongValue.of(42L))
+        item.getAs<ComparableValue>().shouldBe(LongValue.of(42L))
+        item.getAs<NumberValue>().shouldBe(LongValue.of(42L))
+        item.getAs<LongValue>().shouldBe(LongValue.of(42L))
 
         shouldThrow<ClassCastException> { item.getAs<StringValue>() }
 
-        item.getOptional().shouldBe(LongValue(42L))
-        item.getOptionalAs<LongValue>().shouldBe(LongValue(42L))
-        item.set(null)
+        item.getOptional().shouldBe(LongValue.of(42L))
+        item.getOptionalAs<LongValue>().shouldBe(LongValue.of(42L))
+        item.set(NullValue.INSTANCE)
         item.getOptional().shouldBeNull()
         item.getOptionalAs<LongValue>().shouldBeNull()
     }
 
     @Test
     fun testGetSetAlternate() {
-        val item = WorkItem.from("")
-        item.set("Test 1", "value1")
-        item.set("Test 2", "value2")
+        val item = WorkItem.of(StringValue.of(""))
+        item.set(StringValue.of("Test 1"), "value1")
+        item.set(StringValue.of("Test 2"), "value2")
 
-        item.getAs<StringValue>().shouldBe(StringValue(""))
-        item.getAs<StringValue>("value1").shouldBe(StringValue("Test 1"))
-        item.getAs<StringValue>("value2").shouldBe(StringValue("Test 2"))
+        item.getAs<StringValue>().shouldBe(StringValue.of(""))
+        item.getAs<StringValue>("value1").shouldBe(StringValue.of("Test 1"))
+        item.getAs<StringValue>("value2").shouldBe(StringValue.of("Test 2"))
 
         item.getAs<NullValue>("value3").shouldBe(NullValue.INSTANCE)
     }

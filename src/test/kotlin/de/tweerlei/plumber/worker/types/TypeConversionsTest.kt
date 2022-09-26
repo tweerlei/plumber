@@ -29,24 +29,24 @@ class TypeConversionsTest {
     @Test
     fun testToValue() {
         null.toValue().shouldBe(NullValue.INSTANCE)
-        "Hallo".toValue().shouldBe(StringValue("Hallo"))
-        42.toByte().toValue().shouldBe(LongValue(42L))
-        42.toChar().toValue().shouldBe(StringValue("*"))
-        42.toShort().toValue().shouldBe(LongValue(42L))
-        42.toValue().shouldBe(LongValue(42L))
-        42L.toValue().shouldBe(LongValue(42L))
-        3.1415f.toValue().shouldBe(DoubleValue(3.1415f.toDouble()))
-        3.1415.toValue().shouldBe(DoubleValue(3.1415))
-        Instant.ofEpochMilli(123456789012L).toValue().shouldBe(InstantValue(Instant.ofEpochMilli(123456789012L)))
-        Date(123456789012L).toValue().shouldBe(InstantValue(Instant.ofEpochMilli(123456789012L)))
-        Duration.ofMillis(123456789012L).toValue().shouldBe(DurationValue(Duration.ofMillis(123456789012L)))
-        "Hallo".toByteArray(StandardCharsets.UTF_8).toValue().shouldBe(ByteArrayValue("Hallo".toByteArray(StandardCharsets.UTF_8)))
+        "Hallo".toValue().shouldBe(StringValue.of("Hallo"))
+        42.toByte().toValue().shouldBe(LongValue.of(42L))
+        42.toChar().toValue().shouldBe(StringValue.of("*"))
+        42.toShort().toValue().shouldBe(LongValue.of(42L))
+        42.toValue().shouldBe(LongValue.of(42L))
+        42L.toValue().shouldBe(LongValue.of(42L))
+        3.1415f.toValue().shouldBe(DoubleValue.of(3.1415f.toDouble()))
+        3.1415.toValue().shouldBe(DoubleValue.of(3.1415))
+        Instant.ofEpochMilli(123456789012L).toValue().shouldBe(InstantValue.of(Instant.ofEpochMilli(123456789012L)))
+        Date(123456789012L).toValue().shouldBe(InstantValue.of(Instant.ofEpochMilli(123456789012L)))
+        Duration.ofMillis(123456789012L).toValue().shouldBe(DurationValue.of(Duration.ofMillis(123456789012L)))
+        "Hallo".toByteArray(StandardCharsets.UTF_8).toValue().shouldBe(ByteArrayValue.of("Hallo".toByteArray(StandardCharsets.UTF_8)))
         true.toValue().shouldBe(BooleanValue.TRUE)
         false.toValue().shouldBe(BooleanValue.FALSE)
         with(Instant.now()) {
-            listOf(this).toValue().shouldBe(Record.of("0" to InstantValue(this)))
+            listOf(this).toValue().shouldBe(Record.of("0" to InstantValue.of(this)))
         }
-        mapOf("key1" to 42).toValue().shouldBe(Record.of("key1" to LongValue(42L)))
+        mapOf("key1" to 42).toValue().shouldBe(Record.of("key1" to LongValue.of(42L)))
     }
 
     @Test
@@ -55,21 +55,21 @@ class TypeConversionsTest {
         "null".toComparableValue().shouldBe(NullValue.INSTANCE)
         "true".toComparableValue().shouldBe(BooleanValue.TRUE)
         "false".toComparableValue().shouldBe(BooleanValue.FALSE)
-        "0".toComparableValue().shouldBe(LongValue(0L))
-        "1".toComparableValue().shouldBe(LongValue(1L))
-        "-1".toComparableValue().shouldBe(LongValue(-1L))
-        "0.0".toComparableValue().shouldBe(DoubleValue(0.0))
-        "3.1415".toComparableValue().shouldBe(DoubleValue(3.1415))
-        "-3.1415".toComparableValue().shouldBe(DoubleValue(-3.1415))
-        "2e".toComparableValue().shouldBe(StringValue("2e"))
-        "2e7".toComparableValue().shouldBe(DoubleValue(20000000.0))
-        "2022-02-27T00:00:00Z".toComparableValue().shouldBe(InstantValue(Instant.ofEpochSecond(1645920000)))
-        "P5DT10H23M46S".toComparableValue().shouldBe(DurationValue(Duration.ofSeconds(469426)))
+        "0".toComparableValue().shouldBe(LongValue.of(0L))
+        "1".toComparableValue().shouldBe(LongValue.of(1L))
+        "-1".toComparableValue().shouldBe(LongValue.of(-1L))
+        "0.0".toComparableValue().shouldBe(DoubleValue.of(0.0))
+        "3.1415".toComparableValue().shouldBe(DoubleValue.of(3.1415))
+        "-3.1415".toComparableValue().shouldBe(DoubleValue.of(-3.1415))
+        "2e".toComparableValue().shouldBe(StringValue.of("2e"))
+        "2e7".toComparableValue().shouldBe(DoubleValue.of(20000000.0))
+        "2022-02-27T00:00:00Z".toComparableValue().shouldBe(InstantValue.of(Instant.ofEpochSecond(1645920000)))
+        "P5DT10H23M46S".toComparableValue().shouldBe(DurationValue.of(Duration.ofSeconds(469426)))
     }
 
     @Test
     fun testIfEmptyGetFrom() {
-        val item = WorkItem.from(42, "foo" to "bar")
+        val item = WorkItem.of(LongValue.of(42), "foo" to StringValue.of("bar"))
 
         "Test".ifEmptyGetFrom(item).shouldBe("Test")
         "".ifEmptyGetFrom(item).shouldBe("42")

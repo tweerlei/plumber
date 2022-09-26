@@ -18,25 +18,31 @@ package de.tweerlei.plumber.worker.impl.text
 import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.DelegatingWorker
+import de.tweerlei.plumber.worker.types.AnyValue
+import de.tweerlei.plumber.worker.types.StringValue
+import de.tweerlei.plumber.worker.types.toValue
 
 class MatchingWorker(
     private val regex: Regex,
     worker: Worker
 ): DelegatingWorker(worker) {
 
+    private val matchExpression = AnyValue(regex)
+
     override fun doProcess(item: WorkItem) =
         item.get().toString()
             .let { value ->
-                item.set(value, TextKeys.MATCH_INPUT)
-                item.set(regex, TextKeys.MATCH_EXPRESSION)
+                item.set(StringValue.of(value), TextKeys.MATCH_INPUT)
+                item.set(matchExpression, TextKeys.MATCH_EXPRESSION)
                 regex.find(value)
             }?.let { result ->
                 result.groupValues.forEachIndexed { index, value ->
-                    item.set(value, "${TextKeys.MATCHED_GROUP}${index}")
+                    item.set(StringValue.of(value), "${TextKeys.MATCHED_GROUP}${index}")
                 }
                 if (result.groupValues.size > 1) result.groupValues[1]
                 else result.value
-            }.let { matchedText ->
+            }.toValue()
+            .let { matchedText ->
                 item.set(matchedText)
             }.let { true }
 }

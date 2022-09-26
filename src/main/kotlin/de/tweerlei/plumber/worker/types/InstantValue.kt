@@ -18,13 +18,21 @@ package de.tweerlei.plumber.worker.types
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.node.JsonNodeFactory
 import java.time.Instant
+import java.util.*
 
-class InstantValue(
+class InstantValue private constructor(
     val value: Instant
 ): NumberValue {
 
     companion object {
         const val NAME = "instant"
+
+        fun of(value: Instant) =
+            InstantValue(value)
+        fun of(value: Date) =
+            InstantValue(value.toInstant())
+        fun ofEpochMilli(value: Long) =
+            InstantValue(Instant.ofEpochMilli(value))
     }
 
     override fun getName() =

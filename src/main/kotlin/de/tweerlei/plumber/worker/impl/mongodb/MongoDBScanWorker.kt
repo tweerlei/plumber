@@ -15,7 +15,6 @@
  */
 package de.tweerlei.plumber.worker.impl.mongodb
 
-import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.JsonNodeFactory
 import com.fasterxml.jackson.databind.node.ObjectNode
@@ -24,9 +23,7 @@ import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.GeneratingWorker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
-import de.tweerlei.plumber.worker.types.ComparableValue
-import de.tweerlei.plumber.worker.types.NullValue
-import de.tweerlei.plumber.worker.types.Range
+import de.tweerlei.plumber.worker.types.*
 import mu.KLogging
 import org.bson.Document
 
@@ -45,7 +42,9 @@ class MongoDBScanWorker(
     companion object : KLogging()
 
     override fun generateItems(item: WorkItem, fn: (WorkItem) -> Boolean) {
-        val range = item.getOptionalAs<Range>(WellKnownKeys.RANGE) ?: Range()
+        val actualDatabaseName = StringValue.of(databaseName)
+        val actualCollectionName = StringValue.of(collectionName)
+        val range = item.getOptionalAs(WellKnownKeys.RANGE) ?: Range()
         logger.info { "fetching elements from ${range.startAfter} to ${range.endWith}" }
 
         var firstKey: Any? = null
@@ -54,10 +53,10 @@ class MongoDBScanWorker(
         listDocuments(range.startAfter, range.endWith)
             .all { resultItem ->
                 resultItem.fromMongoDB(objectMapper).let { row ->
-                    if (fn(row.toWorkItem())) {
+                    if (fn(row.toWorkItem(actualDatabaseName, actualCollectionName))) {
                         itemCount++
-                        if (firstKey == null) firstKey = row[primaryKey]
-                        lastKey = row[primaryKey]
+                        if (firstKey == null) firstKey = row.value[primaryKey]
+                        lastKey = row.value[primaryKey]
                         true
                     } else {
                         false
@@ -95,19 +94,19 @@ class MongoDBScanWorker(
                 })
             }
             else -> JsonNodeFactory.instance.objectNode()
-        }.toMongoDB(objectMapper)
+        }.let { Node(it) }.toMongoDB(objectMapper)
 
     private fun fieldsToSelect() =
         selectFields.ifEmpty { null }?.fold(Document()) { doc, field ->
             doc.apply { this[field] = 1 }
         }
 
-    private fun JsonNode.toWorkItem() =
-        WorkItem.from(
+    private fun Node.toWorkItem(database: StringValue, collection: StringValue) =
+        WorkItem.of(
             this,
             WellKnownKeys.NODE to this,
-            MongoDBKeys.DATABASE_NAME to databaseName,
-            MongoDBKeys.COLLECTION_NAME to collectionName,
-            MongoDBKeys.PRIMARY_KEY to this[primaryKey],
+            MongoDBKeys.DATABASE_NAME to database,
+            MongoDBKeys.COLLECTION_NAME to collection,
+            MongoDBKeys.PRIMARY_KEY to getValue(primaryKey)
         )
 }

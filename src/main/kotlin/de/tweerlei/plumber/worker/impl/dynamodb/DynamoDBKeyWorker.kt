@@ -19,12 +19,13 @@ import de.tweerlei.plumber.worker.*
 import de.tweerlei.plumber.worker.impl.DelegatingWorker
 import de.tweerlei.plumber.worker.types.Record
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
+import de.tweerlei.plumber.worker.types.Value
 import de.tweerlei.plumber.worker.types.toComparableValue
 
 class DynamoDBKeyWorker(
     private val partitionKey: String,
     private val rangeKey: String?,
-    private val rangeKeyValue: WorkItemAccessor<Any?>,
+    private val rangeKeyValue: WorkItemAccessor<Value>,
     worker: Worker
 ): DelegatingWorker(worker) {
 
@@ -32,18 +33,18 @@ class DynamoDBKeyWorker(
         item.get().toString()
             .let { key ->
                 when (rangeKey) {
-                    null -> item.apply {
-                        set(key.toComparableValue(), DynamoDBKeys.PARTITION_KEY)
+                    null -> {
+                        item.set(key.toComparableValue(), DynamoDBKeys.PARTITION_KEY)
                         Record.of(
-                            partitionKey to get(DynamoDBKeys.PARTITION_KEY)
+                            partitionKey to item.get(DynamoDBKeys.PARTITION_KEY)
                         )
                     }
-                    else -> item.apply {
-                        set(key.toComparableValue(), DynamoDBKeys.PARTITION_KEY)
-                        set(rangeKeyValue(item), DynamoDBKeys.RANGE_KEY)
+                    else -> {
+                        item.set(key.toComparableValue(), DynamoDBKeys.PARTITION_KEY)
+                        item.set(rangeKeyValue(item), DynamoDBKeys.RANGE_KEY)
                         Record.of(
-                            partitionKey to get(DynamoDBKeys.PARTITION_KEY),
-                            rangeKey to get(DynamoDBKeys.RANGE_KEY)
+                            partitionKey to item.get(DynamoDBKeys.PARTITION_KEY),
+                            rangeKey to item.get(DynamoDBKeys.RANGE_KEY)
                         )
                     }
                 }

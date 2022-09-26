@@ -29,30 +29,30 @@ class PlusWorkerTest {
 
     @Test
     fun testLong() {
-        test(LongValue(0L), LongValue(0L), LongValue(0L))
-        test(LongValue(0L), LongValue(1001L), LongValue(1001L))
-        test(LongValue(1001L), LongValue(0L), LongValue(1001L))
-        test(LongValue(1001L), LongValue(-1001L), LongValue(0L))
+        test(LongValue.of(0L), LongValue.of(0L), LongValue.of(0L))
+        test(LongValue.of(0L), LongValue.of(1001L), LongValue.of(1001L))
+        test(LongValue.of(1001L), LongValue.of(0L), LongValue.of(1001L))
+        test(LongValue.of(1001L), LongValue.of(-1001L), LongValue.of(0L))
     }
 
     @Test
     fun testDouble() {
-        test(DoubleValue(0.12), DoubleValue(0.23), DoubleValue(0.35))
-        test(DoubleValue(0.12), DoubleValue(1001.23), DoubleValue(1001.35))
-        test(DoubleValue(1001.12), DoubleValue(0.23), DoubleValue(1001.35))
-        test(DoubleValue(1001.12), DoubleValue(-1001.23), DoubleValue(-0.11))
+        test(DoubleValue.of(0.12), DoubleValue.of(0.23), DoubleValue.of(0.35))
+        test(DoubleValue.of(0.12), DoubleValue.of(1001.23), DoubleValue.of(1001.35))
+        test(DoubleValue.of(1001.12), DoubleValue.of(0.23), DoubleValue.of(1001.35))
+        test(DoubleValue.of(1001.12), DoubleValue.of(-1001.23), DoubleValue.of(-0.11))
     }
 
     @Test
     fun testMixed() {
-        test(LongValue(0L), DoubleValue(0.23), DoubleValue(0.23))
-        test(DoubleValue(0.12), LongValue(1001L), DoubleValue(1001.12))
-        test(LongValue(1001L), DoubleValue(0.23), DoubleValue(1001.23))
-        test(DoubleValue(1001.12), LongValue(-1001L), DoubleValue(0.12))
+        test(LongValue.of(0L), DoubleValue.of(0.23), DoubleValue.of(0.23))
+        test(DoubleValue.of(0.12), LongValue.of(1001L), DoubleValue.of(1001.12))
+        test(LongValue.of(1001L), DoubleValue.of(0.23), DoubleValue.of(1001.23))
+        test(DoubleValue.of(1001.12), LongValue.of(-1001L), DoubleValue.of(0.12))
     }
 
     private fun test(current: ComparableValue, other: ComparableValue, expected: ComparableValue) {
-        val item = TestWorkerRunner(WorkItem.from(current))
+        val item = TestWorkerRunner(WorkItem.of(current))
             .append { w -> PlusWorker({ other }, w) }
             .run()
             .singleOrNull()

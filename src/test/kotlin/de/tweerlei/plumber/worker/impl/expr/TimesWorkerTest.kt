@@ -28,30 +28,30 @@ class TimesWorkerTest {
 
     @Test
     fun testLong() {
-        test(LongValue(1L), LongValue(1L), LongValue(1L))
-        test(LongValue(1L), LongValue(-1001L), LongValue(-1001L))
-        test(LongValue(1001L), LongValue(1L), LongValue(1001L))
-        test(LongValue(1001L), LongValue(1001L), LongValue(1002001L))
+        test(LongValue.of(1L), LongValue.of(1L), LongValue.of(1L))
+        test(LongValue.of(1L), LongValue.of(-1001L), LongValue.of(-1001L))
+        test(LongValue.of(1001L), LongValue.of(1L), LongValue.of(1001L))
+        test(LongValue.of(1001L), LongValue.of(1001L), LongValue.of(1002001L))
     }
 
     @Test
     fun testDouble() {
-        test(DoubleValue(0.12), DoubleValue(0.23), DoubleValue(0.0276))
-        test(DoubleValue(0.12), DoubleValue(1001.23), DoubleValue(120.1476))
-        test(DoubleValue(1001.12), DoubleValue(0.23), DoubleValue(230.2576))
-        test(DoubleValue(1001.12), DoubleValue(1001.23), DoubleValue(1002351.3776))
+        test(DoubleValue.of(0.12), DoubleValue.of(0.23), DoubleValue.of(0.0276))
+        test(DoubleValue.of(0.12), DoubleValue.of(1001.23), DoubleValue.of(120.1476))
+        test(DoubleValue.of(1001.12), DoubleValue.of(0.23), DoubleValue.of(230.2576))
+        test(DoubleValue.of(1001.12), DoubleValue.of(1001.23), DoubleValue.of(1002351.3776))
     }
 
     @Test
     fun testMixed() {
-        test(LongValue(-1L), DoubleValue(0.23), DoubleValue(-0.23))
-        test(DoubleValue(0.12), LongValue(1001L), DoubleValue(120.12))
-        test(LongValue(1001L), DoubleValue(0.23), DoubleValue(230.23))
-        test(DoubleValue(1001.12), LongValue(1001L), DoubleValue(1002121.12))
+        test(LongValue.of(-1L), DoubleValue.of(0.23), DoubleValue.of(-0.23))
+        test(DoubleValue.of(0.12), LongValue.of(1001L), DoubleValue.of(120.12))
+        test(LongValue.of(1001L), DoubleValue.of(0.23), DoubleValue.of(230.23))
+        test(DoubleValue.of(1001.12), LongValue.of(1001L), DoubleValue.of(1002121.12))
     }
 
     private fun test(current: ComparableValue, other: ComparableValue, expected: ComparableValue) {
-        val item = TestWorkerRunner(WorkItem.from(current))
+        val item = TestWorkerRunner(WorkItem.of(current))
             .append { w -> TimesWorker({ other }, w) }
             .run()
             .singleOrNull()

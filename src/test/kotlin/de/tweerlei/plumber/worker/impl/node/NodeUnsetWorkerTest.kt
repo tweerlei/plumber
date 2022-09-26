@@ -22,7 +22,7 @@ import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.impl.TestWorkerRunner
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.impl.json.FromJsonWorker
-import de.tweerlei.plumber.worker.types.JsonNodeValue
+import de.tweerlei.plumber.worker.types.Node
 import de.tweerlei.plumber.worker.types.StringValue
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
@@ -35,14 +35,14 @@ class NodeUnsetWorkerTest {
 
         val objectMapper = ObjectMapper()
 
-        val item = TestWorkerRunner(WorkItem.from("""{"entry":"value2"}"""))
+        val item = TestWorkerRunner(WorkItem.of(StringValue.of("""{"entry":"value2"}""")))
             .append { w -> FromJsonWorker(JsonNode::class.java, objectMapper, w) }
             .append { w -> NodeUnsetWorker(JsonPointer.compile("/entry"), w) }
             .run()
             .singleOrNull()
 
         item.shouldNotBeNull()
-        item.getAs<JsonNodeValue>(WellKnownKeys.NODE).toString().shouldBe("""{}""")
+        item.getAs<Node>(WellKnownKeys.NODE).toString().shouldBe("""{}""")
     }
 
     @Test
@@ -50,13 +50,13 @@ class NodeUnsetWorkerTest {
 
         val objectMapper = ObjectMapper()
 
-        val item = TestWorkerRunner(WorkItem.from("""{"entry":"value2"}"""))
+        val item = TestWorkerRunner(WorkItem.of(StringValue.of("""{"entry":"value2"}""")))
             .append { w -> FromJsonWorker(JsonNode::class.java, objectMapper, w) }
             .append { w -> NodeUnsetWorker(JsonPointer.compile("/entry2"), w) }
             .run()
             .singleOrNull()
 
         item.shouldNotBeNull()
-        item.getAs<JsonNodeValue>(WellKnownKeys.NODE).toString().shouldBe("""{"entry":"value2"}""")
+        item.getAs<Node>(WellKnownKeys.NODE).toString().shouldBe("""{"entry":"value2"}""")
     }
 }

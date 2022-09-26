@@ -31,27 +31,27 @@ class RangeGetWorkerTest {
     fun testGetStart() {
 
         val item = TestWorkerRunner(WorkItem.of(NullValue.INSTANCE,
-            WellKnownKeys.RANGE to Range(LongValue(42L), LongValue(100L))
+            WellKnownKeys.RANGE to Range.of(42L, 100L)
         ))
             .append { w -> RangeGetWorker(RangeKey.start, w) }
             .run()
             .singleOrNull()
 
         item.shouldNotBeNull()
-        item.getAs<LongValue>().shouldBe(LongValue(42L))
+        item.getAs<LongValue>().shouldBe(LongValue.of(42L))
     }
 
     @Test
     fun testGetEnd() {
 
         val item = TestWorkerRunner(WorkItem.of(NullValue.INSTANCE,
-            WellKnownKeys.RANGE to Range(LongValue(42L), LongValue(100L))
+            WellKnownKeys.RANGE to Range.of(42L, 100L)
         ))
             .append { w -> RangeGetWorker(RangeKey.end, w) }
             .run()
             .singleOrNull()
 
         item.shouldNotBeNull()
-        item.getAs<LongValue>().shouldBe(LongValue(100L))
+        item.getAs<LongValue>().shouldBe(LongValue.of(100L))
     }
 }

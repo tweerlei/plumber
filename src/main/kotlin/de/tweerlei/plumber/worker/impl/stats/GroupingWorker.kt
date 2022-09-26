@@ -19,6 +19,7 @@ import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.DelegatingWorker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
+import de.tweerlei.plumber.worker.types.LongValue
 import mu.KLogging
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicLong
@@ -42,7 +43,7 @@ class GroupingWorker(
                         if (counter % interval == 0L) {
                             logger.info { "$name: $value: $counter" }
                         }
-                        item.set(counter, WellKnownKeys.COUNT)
+                        item.set(LongValue.of(counter), WellKnownKeys.COUNT)
                     }
             }.let { true }
 

@@ -18,12 +18,25 @@ package de.tweerlei.plumber.worker.types
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.node.JsonNodeFactory
 
-class DoubleValue(
+class DoubleValue private constructor(
     val value: Double
 ): NumberValue {
 
     companion object {
         const val NAME = "double"
+
+        val ZERO = DoubleValue(0.0)
+
+        fun of(value: Double) =
+            when (value) {
+                0.0 -> ZERO
+                else -> DoubleValue(value)
+            }
+        fun of(value: Float) =
+            when (value) {
+                0f -> ZERO
+                else -> DoubleValue(value.toDouble())
+            }
     }
 
     override fun getName() =

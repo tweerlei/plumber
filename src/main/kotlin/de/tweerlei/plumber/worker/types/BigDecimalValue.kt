@@ -20,12 +20,15 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory
 import java.math.BigDecimal
 import java.math.BigInteger
 
-class BigDecimalValue(
+class BigDecimalValue private constructor(
     val value: BigDecimal
 ): NumberValue {
 
     companion object {
         const val NAME = "bigdec"
+
+        fun of(value: BigDecimal) =
+            BigDecimalValue(value)
     }
 
     override fun getName() =

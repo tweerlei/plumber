@@ -19,6 +19,10 @@ import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.GeneratingWorker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
+import de.tweerlei.plumber.worker.types.ByteArrayValue
+import de.tweerlei.plumber.worker.types.InstantValue
+import de.tweerlei.plumber.worker.types.LongValue
+import de.tweerlei.plumber.worker.types.StringValue
 import java.io.File
 import java.io.FileInputStream
 import java.time.Instant
@@ -37,11 +41,11 @@ class ZipReadWorker(
                 keepGenerating = stream.nextEntry
                     ?.let { entry ->
                         stream.readAllBytes().let { bytes ->
-                            fn(WorkItem.from(
-                                bytes,
-                                WellKnownKeys.NAME to entry.name,
-                                WellKnownKeys.SIZE to entry.size,
-                                WellKnownKeys.LAST_MODIFIED to Instant.ofEpochMilli(entry.time)
+                            fn(WorkItem.of(
+                                ByteArrayValue.of(bytes),
+                                WellKnownKeys.NAME to StringValue.of(entry.name),
+                                WellKnownKeys.SIZE to LongValue.of(entry.size),
+                                WellKnownKeys.LAST_MODIFIED to InstantValue.ofEpochMilli(entry.time)
                             ))
                         }
                     } ?: false

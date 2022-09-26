@@ -30,34 +30,34 @@ class RecordSetWorkerTest {
     @Test
     fun testSet() {
 
-        val item = TestWorkerRunner(WorkItem.of(StringValue("value")))
+        val item = TestWorkerRunner(WorkItem.of(StringValue.of("value")))
             .append { w -> RecordSetWorker("entry", w) }
             .run()
             .singleOrNull()
 
         item.shouldNotBeNull()
-        item.getAs<Record>(WellKnownKeys.RECORD)["entry"].shouldBe(StringValue("value"))
+        item.getAs<Record>(WellKnownKeys.RECORD)["entry"].shouldBe(StringValue.of("value"))
     }
 
     @Test
     fun testOverwrite() {
 
-        val item = TestWorkerRunner(WorkItem.of(StringValue("value"),
-            WellKnownKeys.RECORD to Record.of("entry" to StringValue("value2"))
+        val item = TestWorkerRunner(WorkItem.of(StringValue.of("value"),
+            WellKnownKeys.RECORD to Record.of("entry" to StringValue.of("value2"))
         ))
             .append { w -> RecordSetWorker("entry", w) }
             .run()
             .singleOrNull()
 
         item.shouldNotBeNull()
-        item.getAs<Record>(WellKnownKeys.RECORD)["entry"].shouldBe(StringValue("value"))
+        item.getAs<Record>(WellKnownKeys.RECORD)["entry"].shouldBe(StringValue.of("value"))
     }
 
     @Test
     fun testSetNull() {
 
         val item = TestWorkerRunner(WorkItem.of(NullValue.INSTANCE,
-            WellKnownKeys.RECORD to Record.of("entry" to StringValue("value"))
+            WellKnownKeys.RECORD to Record.of("entry" to StringValue.of("value"))
         ))
             .append { w -> RecordSetWorker("entry", w) }
             .run()

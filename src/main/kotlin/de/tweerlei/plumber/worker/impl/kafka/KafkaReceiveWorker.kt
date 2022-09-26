@@ -15,15 +15,18 @@
  */
 package de.tweerlei.plumber.worker.impl.kafka
 
-import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.WorkItem
-import de.tweerlei.plumber.worker.impl.GeneratingWorker
 import de.tweerlei.plumber.worker.Worker
+import de.tweerlei.plumber.worker.impl.GeneratingWorker
+import de.tweerlei.plumber.worker.impl.WellKnownKeys
+import de.tweerlei.plumber.worker.types.InstantValue
+import de.tweerlei.plumber.worker.types.LongValue
+import de.tweerlei.plumber.worker.types.StringValue
+import de.tweerlei.plumber.worker.types.toValue
 import mu.KLogging
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.apache.kafka.clients.consumer.KafkaConsumer
 import java.time.Duration
-import java.time.Instant
 
 class KafkaReceiveWorker(
     private val topicName: String,
@@ -42,6 +45,7 @@ class KafkaReceiveWorker(
 
     override fun generateItems(item: WorkItem, fn: (WorkItem) -> Boolean) {
         logger.info { "waiting $waitSeconds seconds for next message in $topicName" }
+        val actualTopicName = StringValue.of(topicName)
         var keepGenerating = true
         var itemCount = 0
         while (keepGenerating) {
@@ -49,7 +53,7 @@ class KafkaReceiveWorker(
             consumer.poll(Duration.ofSeconds(waitSeconds.toLong()))
                 .also { records -> logger.debug { "fetched ${records.count()} items" } }
                 .forEach { record ->
-                    record.toWorkItem()
+                    record.toWorkItem(actualTopicName)
                         ?.also { newItem ->
                             if (fn(newItem)) {
                                 itemCount++
@@ -62,16 +66,19 @@ class KafkaReceiveWorker(
         logger.info { "received $itemCount messages" }
         }
 
-    private fun ConsumerRecord<String, String>.toWorkItem() =
+    private fun ConsumerRecord<String, String>.toWorkItem(name: StringValue) =
         value()?.let { value ->
-            WorkItem.from(value,
-                KafkaKeys.TOPIC_NAME to topicName,
-                KafkaKeys.PARTITION to partition(),
-                KafkaKeys.OFFSET to offset(),
-                KafkaKeys.KEY to key(),
-                WellKnownKeys.NAME to key(),
-                WellKnownKeys.LAST_MODIFIED to Instant.ofEpochMilli(timestamp())
-            )
+            key().toValue().let { keyValue ->
+                WorkItem.of(
+                    StringValue.of(value),
+                    KafkaKeys.TOPIC_NAME to name,
+                    KafkaKeys.PARTITION to LongValue.of(partition()),
+                    KafkaKeys.OFFSET to LongValue.of(offset()),
+                    KafkaKeys.KEY to keyValue,
+                    WellKnownKeys.NAME to keyValue,
+                    WellKnownKeys.LAST_MODIFIED to InstantValue.ofEpochMilli(timestamp())
+                )
+            }
         }
 
     override fun onClose() {

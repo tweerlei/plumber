@@ -16,11 +16,11 @@
 package de.tweerlei.plumber.worker.impl.filter
 
 import de.tweerlei.plumber.util.printStackTraceUpTo
-import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.Worker
+import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.impl.WrappingWorker
-import de.tweerlei.plumber.worker.types.NullValue
+import de.tweerlei.plumber.worker.types.LongValue
 import mu.KLogging
 import java.util.concurrent.LinkedBlockingQueue
 
@@ -43,13 +43,14 @@ class MultithreadedWorker(
         threads = (1 .. numberOfThreads).map { workerIndex ->
             Thread({
                 logger.debug("Starting thread $workerIndex")
+                val workerValue = LongValue.of(workerIndex)
                 while (true) {
                     val nextItem = blockingQueue.take()
                     if (nextItem === endMarker) {
                         break
                     }
                     if (!runContext.isInterrupted()) {
-                        nextItem.set(workerIndex.toLong(), WellKnownKeys.WORKER_INDEX)
+                        nextItem.set(workerValue, WellKnownKeys.WORKER_INDEX)
                         try {
                             passOn(nextItem)
                         } catch (e: Throwable) {

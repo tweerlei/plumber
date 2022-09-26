@@ -17,7 +17,6 @@ package de.tweerlei.plumber.worker.types
 
 import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.booleans.shouldBeTrue
-import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeSameInstanceAs
 import org.junit.jupiter.api.Test
@@ -29,7 +28,7 @@ class DurationValueTest {
 
     @Test
     fun testNonzero() {
-        with (DurationValue(Duration.ofMillis(42L))) {
+        with (DurationValue.of(Duration.ofMillis(42L))) {
             asOptional().shouldBeSameInstanceAs(this)
             toAny().shouldBe(Duration.ofMillis(42L))
             toBoolean().shouldBeTrue()
@@ -50,27 +49,27 @@ class DurationValueTest {
             hashCode().shouldBe(Duration.ofMillis(42L).hashCode())
 
             equals(NullValue.INSTANCE).shouldBeFalse()
-            equals(DurationValue(Duration.ofMillis(42L))).shouldBeTrue()
-            equals(DurationValue(Duration.ofMillis(0L))).shouldBeFalse()
+            equals(DurationValue.of(Duration.ofMillis(42L))).shouldBeTrue()
+            equals(DurationValue.of(Duration.ofMillis(0L))).shouldBeFalse()
             equals(42L).shouldBeFalse()
             equals(0L).shouldBeFalse()
-            equals(StringValue("0")).shouldBeFalse()
-            equals(StringValue("42")).shouldBeTrue()
-            equals(StringValue("")).shouldBeFalse()
+            equals(StringValue.of("0")).shouldBeFalse()
+            equals(StringValue.of("42")).shouldBeTrue()
+            equals(StringValue.of("")).shouldBeFalse()
 
             compareTo(NullValue.INSTANCE).shouldBe(1)
-            compareTo(DurationValue(Duration.ofMillis(42L))).shouldBe(0)
-            compareTo(DurationValue(Duration.ofMillis(0L))).shouldBe(1)
-            compareTo(DurationValue(Duration.ofMillis(100L))).shouldBe(-1)
-            compareTo(StringValue("")).shouldBe(1)
-            compareTo(StringValue("42")).shouldBe(0)
-            compareTo(StringValue("0")).shouldBe(1)
+            compareTo(DurationValue.of(Duration.ofMillis(42L))).shouldBe(0)
+            compareTo(DurationValue.of(Duration.ofMillis(0L))).shouldBe(1)
+            compareTo(DurationValue.of(Duration.ofMillis(100L))).shouldBe(-1)
+            compareTo(StringValue.of("")).shouldBe(1)
+            compareTo(StringValue.of("42")).shouldBe(0)
+            compareTo(StringValue.of("0")).shouldBe(1)
         }
     }
 
     @Test
     fun testZero() {
-        with (DurationValue(Duration.ofMillis(0L))) {
+        with (DurationValue.of(Duration.ofMillis(0L))) {
             asOptional().shouldBeSameInstanceAs(this)
             toAny().shouldBe(Duration.ofMillis(0L))
             toBoolean().shouldBeFalse()
@@ -91,21 +90,21 @@ class DurationValueTest {
             hashCode().shouldBe(Duration.ofMillis(0L).hashCode())
 
             equals(NullValue.INSTANCE).shouldBeTrue()
-            equals(DurationValue(Duration.ofMillis(42L))).shouldBeFalse()
-            equals(DurationValue(Duration.ofMillis(0L))).shouldBeTrue()
+            equals(DurationValue.of(Duration.ofMillis(42L))).shouldBeFalse()
+            equals(DurationValue.of(Duration.ofMillis(0L))).shouldBeTrue()
             equals(42L).shouldBeFalse()
             equals(0L).shouldBeFalse()
-            equals(StringValue("42")).shouldBeFalse()
-            equals(StringValue("0")).shouldBeTrue()
-            equals(StringValue("")).shouldBeTrue()
+            equals(StringValue.of("42")).shouldBeFalse()
+            equals(StringValue.of("0")).shouldBeTrue()
+            equals(StringValue.of("")).shouldBeTrue()
 
             compareTo(NullValue.INSTANCE).shouldBe(0)
-            compareTo(DurationValue(Duration.ofMillis(42L))).shouldBe(-1)
-            compareTo(DurationValue(Duration.ofMillis(0L))).shouldBe(0)
-            compareTo(DurationValue(Duration.ofMillis(100L))).shouldBe(-1)
-            compareTo(StringValue("")).shouldBe(0)
-            compareTo(StringValue("42")).shouldBe(-1)
-            compareTo(StringValue("0")).shouldBe(0)
+            compareTo(DurationValue.of(Duration.ofMillis(42L))).shouldBe(-1)
+            compareTo(DurationValue.of(Duration.ofMillis(0L))).shouldBe(0)
+            compareTo(DurationValue.of(Duration.ofMillis(100L))).shouldBe(-1)
+            compareTo(StringValue.of("")).shouldBe(0)
+            compareTo(StringValue.of("42")).shouldBe(-1)
+            compareTo(StringValue.of("0")).shouldBe(0)
         }
     }
 }

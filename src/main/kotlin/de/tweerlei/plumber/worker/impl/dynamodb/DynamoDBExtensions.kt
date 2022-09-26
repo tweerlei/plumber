@@ -23,9 +23,9 @@ fun Map<String, AttributeValue>.fromDynamoDB() =
         when {
             v.isNULL == true -> NullValue.INSTANCE
             v.isBOOL != null -> BooleanValue.of(v.bool)
-            v.n != null -> v.n.toLongOrNull()?.let { LongValue(it) } ?: DoubleValue(v.n.toDouble())
+            v.n != null -> v.n.toLongOrNull()?.let { LongValue.of(it) } ?: DoubleValue.of(v.n.toDouble())
             // FIXME: there are more cases
-            else -> StringValue(v.s)
+            else -> StringValue.of(v.s)
         }
     }
 

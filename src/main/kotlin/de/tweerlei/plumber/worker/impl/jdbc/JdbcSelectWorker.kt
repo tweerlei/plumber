@@ -35,7 +35,7 @@ class JdbcSelectWorker(
 
     override fun generateItems(item: WorkItem, fn: (WorkItem) -> Boolean) {
         val range = item.getOptionalAs(WellKnownKeys.RANGE) ?: Range()
-        val table = tableName.ifEmptyGetFrom(item, JdbcKeys.TABLE_NAME)
+        val table = StringValue.of(tableName.ifEmptyGetFrom(item, JdbcKeys.TABLE_NAME))
         logger.info { "fetching elements from ${range.startAfter} to ${range.endWith}" }
 
         val extractRows = ResultSetExtractor<Int> { rs ->
@@ -51,10 +51,10 @@ class JdbcSelectWorker(
         }
 
         val itemCount = when {
-            range.startAfter !is NullValue && range.endWith !is NullValue -> selectRange(table, range.startAfter, range.endWith, extractRows)
-            range.startAfter !is NullValue -> selectFrom(table, range.startAfter, extractRows)
-            range.endWith !is NullValue -> selectTo(table, range.endWith, extractRows)
-            else -> selectAll(table, extractRows)
+            range.startAfter !is NullValue && range.endWith !is NullValue -> selectRange(table.value, range.startAfter, range.endWith, extractRows)
+            range.startAfter !is NullValue -> selectFrom(table.value, range.startAfter, extractRows)
+            range.endWith !is NullValue -> selectTo(table.value, range.endWith, extractRows)
+            else -> selectAll(table.value, extractRows)
         }
 
         logger.info { "fetched $itemCount rows from ${range.startAfter} to ${range.endWith}" }
@@ -91,18 +91,18 @@ class JdbcSelectWorker(
     private fun fieldsToSelect() =
         selectFields.ifEmpty { setOf("*") }.joinToString(", ")
 
-    private fun ResultSet.toWorkItem(actualTableName: String) =
+    private fun ResultSet.toWorkItem(actualTableName: StringValue) =
         Record()
-            .also { map ->
+            .also { record ->
                 for (i in 1..metaData.columnCount) {
-                    map[metaData.getColumnName(i)] = getObject(i).toValue()
+                    record[metaData.getColumnName(i)] = getObject(i).toValue()
                 }
-            }.let { map ->
-                WorkItem.from(
-                    map,
-                    WellKnownKeys.RECORD to map,
+            }.let { record ->
+                WorkItem.of(
+                    record,
+                    WellKnownKeys.RECORD to record,
                     JdbcKeys.TABLE_NAME to actualTableName,
-                    JdbcKeys.PRIMARY_KEY to map[primaryKey]
+                    JdbcKeys.PRIMARY_KEY to record.getValue(primaryKey)
                 )
             }
 }

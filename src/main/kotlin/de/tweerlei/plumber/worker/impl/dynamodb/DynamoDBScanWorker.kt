@@ -21,11 +21,8 @@ import com.amazonaws.services.dynamodbv2.model.ScanRequest
 import com.amazonaws.services.dynamodbv2.model.ScanResult
 import de.tweerlei.plumber.worker.*
 import de.tweerlei.plumber.worker.impl.GeneratingWorker
-import de.tweerlei.plumber.worker.types.Range
-import de.tweerlei.plumber.worker.types.Record
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
-import de.tweerlei.plumber.worker.types.ComparableValue
-import de.tweerlei.plumber.worker.types.NullValue
+import de.tweerlei.plumber.worker.types.*
 import mu.KLogging
 
 class DynamoDBScanWorker(
@@ -42,6 +39,7 @@ class DynamoDBScanWorker(
     companion object : KLogging()
 
     override fun generateItems(item: WorkItem, fn: (WorkItem) -> Boolean) {
+        val actualTableName = StringValue.of(tableName)
         val primaryRange = item.getOptionalAs(WellKnownKeys.RANGE) ?: Range()
         val secondaryRange = item.getOptionalAs(WellKnownKeys.SECONDARY_RANGE) ?: Range()
         val startAfter = keyFrom(primaryRange.startAfter, secondaryRange.startAfter)
@@ -58,7 +56,7 @@ class DynamoDBScanWorker(
             result.items.forEach { resultItem ->
                 resultItem.fromDynamoDB().let { row ->
                     if (row.isNotAfter(endWith)) {
-                        if (fn(row.toWorkItem())) {
+                        if (fn(row.toWorkItem(actualTableName))) {
                             itemCount++
                             if (firstKey == null) firstKey = row[partitionKey]
                             lastKey = row[partitionKey]
@@ -106,12 +104,12 @@ class DynamoDBScanWorker(
             else -> true
         }
 
-    private fun Record.toWorkItem() =
-        WorkItem.from(
+    private fun Record.toWorkItem(actualTableName: StringValue) =
+        WorkItem.of(
             this,
             WellKnownKeys.RECORD to this,
-            DynamoDBKeys.TABLE_NAME to tableName,
-            DynamoDBKeys.PARTITION_KEY to this[partitionKey],
-            DynamoDBKeys.RANGE_KEY to if (rangeKey.isNotEmpty()) this[rangeKey] else null
+            DynamoDBKeys.TABLE_NAME to actualTableName,
+            DynamoDBKeys.PARTITION_KEY to getValue(partitionKey),
+            DynamoDBKeys.RANGE_KEY to if (rangeKey.isNotEmpty()) getValue(rangeKey) else NullValue.INSTANCE
         )
 }

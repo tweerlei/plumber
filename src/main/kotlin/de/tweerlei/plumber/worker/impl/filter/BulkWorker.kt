@@ -19,6 +19,7 @@ import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.WrappingWorker
+import de.tweerlei.plumber.worker.types.LongValue
 import de.tweerlei.plumber.worker.types.WorkItemList
 import mu.KLogging
 import java.util.concurrent.ConcurrentLinkedQueue
@@ -54,10 +55,10 @@ class BulkWorker(
         accumulator.get()?.set(null)
 
     private fun passOn(items: WorkItemList) {
-        val nextItem = WorkItem.from(
+        val nextItem = WorkItem.of(
             items,
             WellKnownKeys.WORK_ITEMS to items,
-            WellKnownKeys.SIZE to items.size
+            WellKnownKeys.SIZE to LongValue.of(items.size)
         )
         passOn(nextItem)
     }

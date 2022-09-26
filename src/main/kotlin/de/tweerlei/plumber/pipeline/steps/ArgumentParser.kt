@@ -5,7 +5,7 @@ import de.tweerlei.plumber.worker.types.*
 
 fun String.toWorkItemAccessor(): WorkItemAccessor<Value> =
     when {
-        startsWith(":") -> { _ -> StringValue(substring(1)) }
+        startsWith(":") -> { _ -> StringValue.of(substring(1)) }
         startsWith("@") -> { item -> item.get(substring(1)) }
         else -> { _ -> toComparableValue() }
     }
@@ -19,6 +19,6 @@ fun String.toRequiredAttributes(): Set<String> =
 fun String?.toOptionValue() =
     when {
         this == null -> NullValue.INSTANCE
-        startsWith(":") -> StringValue(substring(1))
+        startsWith(":") -> StringValue.of(substring(1))
         else -> toComparableValue()
     }

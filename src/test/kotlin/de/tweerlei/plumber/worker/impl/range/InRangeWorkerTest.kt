@@ -28,43 +28,43 @@ class InRangeWorkerTest {
     @Test
     fun testNull() {
         test(NullValue.INSTANCE, NullValue.INSTANCE, NullValue.INSTANCE, false)
-        test(NullValue.INSTANCE, LongValue(0L), LongValue(100L), false)
+        test(NullValue.INSTANCE, LongValue.of(0L), LongValue.of(100L), false)
     }
 
     @Test
     fun testLong() {
-        test(LongValue(1L), NullValue.INSTANCE, NullValue.INSTANCE, true)
-        test(LongValue(1L), NullValue.INSTANCE, LongValue(100L), true)
-        test(LongValue(1L), LongValue(0L), NullValue.INSTANCE, true)
-        test(LongValue(1L), LongValue(0L), LongValue(100L), true)
-        test(LongValue(1L), LongValue(100L), LongValue(0L), true)
+        test(LongValue.of(1L), NullValue.INSTANCE, NullValue.INSTANCE, true)
+        test(LongValue.of(1L), NullValue.INSTANCE, LongValue.of(100L), true)
+        test(LongValue.of(1L), LongValue.of(0L), NullValue.INSTANCE, true)
+        test(LongValue.of(1L), LongValue.of(0L), LongValue.of(100L), true)
+        test(LongValue.of(1L), LongValue.of(100L), LongValue.of(0L), true)
 
-        test(LongValue(-1L), LongValue(0L), LongValue(100L), false)
-        test(LongValue(-1L), LongValue(100L), LongValue(0L), false)
+        test(LongValue.of(-1L), LongValue.of(0L), LongValue.of(100L), false)
+        test(LongValue.of(-1L), LongValue.of(100L), LongValue.of(0L), false)
     }
 
     @Test
     fun testDouble() {
-        test(DoubleValue(1.0), NullValue.INSTANCE, NullValue.INSTANCE, true)
-        test(DoubleValue(1.0), NullValue.INSTANCE, DoubleValue(100.0), true)
-        test(DoubleValue(1.0), DoubleValue(0.0), NullValue.INSTANCE, true)
-        test(DoubleValue(1.0), DoubleValue(0.0), DoubleValue(100.0), true)
-        test(DoubleValue(1.0), DoubleValue(100.0), DoubleValue(0.0), true)
+        test(DoubleValue.of(1.0), NullValue.INSTANCE, NullValue.INSTANCE, true)
+        test(DoubleValue.of(1.0), NullValue.INSTANCE, DoubleValue.of(100.0), true)
+        test(DoubleValue.of(1.0), DoubleValue.of(0.0), NullValue.INSTANCE, true)
+        test(DoubleValue.of(1.0), DoubleValue.of(0.0), DoubleValue.of(100.0), true)
+        test(DoubleValue.of(1.0), DoubleValue.of(100.0), DoubleValue.of(0.0), true)
 
-        test(DoubleValue(-1.0), DoubleValue(0.0), DoubleValue(100.0), false)
-        test(DoubleValue(-1.0), DoubleValue(100.0), DoubleValue(0.0), false)
+        test(DoubleValue.of(-1.0), DoubleValue.of(0.0), DoubleValue.of(100.0), false)
+        test(DoubleValue.of(-1.0), DoubleValue.of(100.0), DoubleValue.of(0.0), false)
     }
 
     @Test
     fun testString() {
-        test(StringValue("c"), NullValue.INSTANCE, NullValue.INSTANCE, true)
-        test(StringValue("c"), NullValue.INSTANCE, StringValue("z"), true)
-        test(StringValue("c"), StringValue("abc"), NullValue.INSTANCE, true)
-        test(StringValue("c"), StringValue("abc"), StringValue("z"), true)
-        test(StringValue("c"), StringValue("z"), StringValue("abc"), true)
+        test(StringValue.of("c"), NullValue.INSTANCE, NullValue.INSTANCE, true)
+        test(StringValue.of("c"), NullValue.INSTANCE, StringValue.of("z"), true)
+        test(StringValue.of("c"), StringValue.of("abc"), NullValue.INSTANCE, true)
+        test(StringValue.of("c"), StringValue.of("abc"), StringValue.of("z"), true)
+        test(StringValue.of("c"), StringValue.of("z"), StringValue.of("abc"), true)
 
-        test(StringValue("C"), StringValue("abc"), StringValue("z"), false)
-        test(StringValue("C"), StringValue("z"), StringValue("abc"), false)
+        test(StringValue.of("C"), StringValue.of("abc"), StringValue.of("z"), false)
+        test(StringValue.of("C"), StringValue.of("z"), StringValue.of("abc"), false)
     }
 
     private fun test(value: ComparableValue, lower: ComparableValue, upper: ComparableValue, result: Boolean) {

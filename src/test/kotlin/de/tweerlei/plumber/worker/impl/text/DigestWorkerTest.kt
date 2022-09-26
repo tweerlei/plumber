@@ -31,7 +31,7 @@ class DigestWorkerTest {
         val value = byteArrayOf(42, -64, 0, 32, -128, 127)
         val digest = byteArrayOf(-82, 112, -122, 92, -82, -36, -128, -27, -47, 53, -96, -8, 16, -122, 100, -29, 122, -44, -51, -64)
 
-        val item = TestWorkerRunner(WorkItem.from(value))
+        val item = TestWorkerRunner(WorkItem.of(ByteArrayValue.of(value)))
             .append { w -> DigestWorker(DigestTransformer("sha1"), w) }
             .run()
             .singleOrNull()

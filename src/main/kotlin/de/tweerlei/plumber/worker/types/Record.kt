@@ -27,17 +27,26 @@ class Record: LinkedHashMap<String, Value>(), Value {
             Record().apply {
                 items.forEach { (k, v) -> this[k] = v }
             }
-
-        fun from(items: Array<String>) =
+        fun of(items: Array<String>) =
             Record().apply {
                 items.forEachIndexed { index, value ->
                     this[index.toString()] = value.toComparableValue()
                 }
             }
+        fun of(items: Collection<*>) =
+            Record().also { record ->
+                items.forEachIndexed { index, value -> record[index.toString()] = value.toValue() }
+            }
+        fun of(items: Map<*, *>) =
+            Record().also { record ->
+                items.forEach { (key, value) -> record[key.toString()] = value.toValue() }
+            }
     }
 
     override fun getName() =
         NAME
+    fun getValue(key: String) =
+        getOrDefault(key, NullValue.INSTANCE)
 
     override fun toAny() =
         this

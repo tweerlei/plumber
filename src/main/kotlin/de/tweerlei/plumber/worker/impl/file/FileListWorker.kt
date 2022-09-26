@@ -19,8 +19,10 @@ import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.GeneratingWorker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
+import de.tweerlei.plumber.worker.types.InstantValue
+import de.tweerlei.plumber.worker.types.LongValue
+import de.tweerlei.plumber.worker.types.StringValue
 import java.io.File
-import java.time.Instant
 
 class FileListWorker(
     private val dir: String,
@@ -32,10 +34,11 @@ class FileListWorker(
     override fun generateItems(item: WorkItem, fn: (WorkItem) -> Boolean) {
         File(dir.ifEmpty { "." })
             .let { directory ->
+                val path = StringValue.of(directory.absolutePath)
                 directory.listRecursively()
-                .all { file ->
-                    fn(file.toWorkItem(directory))
-                }
+                    .all { file ->
+                        fn(file.toWorkItem(directory, path))
+                    }
             }
     }
 
@@ -54,14 +57,16 @@ class FileListWorker(
                 }
         }
 
-    private fun File.toWorkItem(directory: File) =
-        relativeTo(directory).path.let { relativePath ->
-            WorkItem.from(
+    private fun File.toWorkItem(directory: File, path: StringValue) =
+        relativeTo(directory).path
+            .let { StringValue.of(it) }
+            .let { relativePath ->
+            WorkItem.of(
                 relativePath,
-                WellKnownKeys.PATH to directory.absolutePath,
+                WellKnownKeys.PATH to path,
                 WellKnownKeys.NAME to relativePath,
-                WellKnownKeys.SIZE to length(),
-                WellKnownKeys.LAST_MODIFIED to Instant.ofEpochMilli(lastModified())
+                WellKnownKeys.SIZE to LongValue.of(length()),
+                WellKnownKeys.LAST_MODIFIED to InstantValue.ofEpochMilli(lastModified())
             )
         }
 }

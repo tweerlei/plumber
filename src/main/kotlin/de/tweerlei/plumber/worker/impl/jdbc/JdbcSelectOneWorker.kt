@@ -20,6 +20,7 @@ import de.tweerlei.plumber.worker.impl.DelegatingWorker
 import de.tweerlei.plumber.worker.types.Record
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.impl.ifEmptyGetFrom
+import de.tweerlei.plumber.worker.types.StringValue
 import de.tweerlei.plumber.worker.types.Value
 import de.tweerlei.plumber.worker.types.toValue
 import org.springframework.jdbc.core.JdbcTemplate
@@ -41,11 +42,11 @@ class JdbcSelectOneWorker(
                     item.get()
                 ) { rs, _ ->
                     rs.toRecord()
-                }?.also { map ->
-                    item.set(map)
-                    item.set(map, WellKnownKeys.RECORD)
-                    item.set(actualTableName, JdbcKeys.TABLE_NAME)
-                    item.set(map[primaryKey], JdbcKeys.PRIMARY_KEY)
+                }?.also { record ->
+                    item.set(record)
+                    item.set(record, WellKnownKeys.RECORD)
+                    item.set(StringValue.of(actualTableName), JdbcKeys.TABLE_NAME)
+                    item.set(record.getValue(primaryKey), JdbcKeys.PRIMARY_KEY)
                 }
             }?.let { true }
         ?: false

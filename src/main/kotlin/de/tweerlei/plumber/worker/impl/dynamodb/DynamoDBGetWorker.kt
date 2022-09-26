@@ -23,6 +23,7 @@ import de.tweerlei.plumber.worker.impl.DelegatingWorker
 import de.tweerlei.plumber.worker.types.Record
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.impl.ifEmptyGetFrom
+import de.tweerlei.plumber.worker.types.StringValue
 
 class DynamoDBGetWorker(
     private val tableName: String,
@@ -37,9 +38,10 @@ class DynamoDBGetWorker(
             .toDynamoDB()
             .let { attributes ->
                 tableName.ifEmptyGetFrom(item, DynamoDBKeys.TABLE_NAME)
+                    .let { StringValue.of(it) }
                     .let { actualTableName ->
                         getItem(
-                            actualTableName,
+                            actualTableName.value,
                             attributes.extractKey(partitionKey, rangeKey)
                         )
                             .fromDynamoDB()

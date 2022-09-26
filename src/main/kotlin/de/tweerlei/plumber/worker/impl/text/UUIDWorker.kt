@@ -18,6 +18,7 @@ package de.tweerlei.plumber.worker.impl.text
 import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.impl.GeneratingWorker
 import de.tweerlei.plumber.worker.Worker
+import de.tweerlei.plumber.worker.types.StringValue
 import java.util.*
 
 class UUIDWorker(
@@ -28,7 +29,7 @@ class UUIDWorker(
     override fun generateItems(item: WorkItem, fn: (WorkItem) -> Boolean) {
         generateSequence { UUID.randomUUID().toString() }
             .all { uuid ->
-                fn(WorkItem.from(uuid))
+                fn(WorkItem.of(StringValue.of(uuid)))
             }
     }
 }

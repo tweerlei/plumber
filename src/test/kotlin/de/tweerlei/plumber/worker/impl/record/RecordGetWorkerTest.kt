@@ -31,7 +31,7 @@ class RecordGetWorkerTest {
     fun testGet() {
 
         val item = TestWorkerRunner(WorkItem.of(NullValue.INSTANCE,
-            WellKnownKeys.RECORD to Record.of("entry" to StringValue("value"))
+            WellKnownKeys.RECORD to Record.of("entry" to StringValue.of("value"))
         ))
             .append { w -> RecordGetWorker("entry", w) }
             .run()
@@ -45,7 +45,7 @@ class RecordGetWorkerTest {
     fun testGetNonExisting() {
 
         val item = TestWorkerRunner(WorkItem.of(NullValue.INSTANCE,
-            WellKnownKeys.RECORD to Record.of("entry" to StringValue("value"))
+            WellKnownKeys.RECORD to Record.of("entry" to StringValue.of("value"))
         ))
             .append { w -> RecordGetWorker("entry2", w) }
             .run()

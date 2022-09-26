@@ -19,6 +19,7 @@ import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.WorkItemAccessor
 import de.tweerlei.plumber.worker.impl.DelegatingWorker
 import de.tweerlei.plumber.worker.Worker
+import de.tweerlei.plumber.worker.types.BooleanValue
 import de.tweerlei.plumber.worker.types.ComparableValue
 import de.tweerlei.plumber.worker.types.Value
 import de.tweerlei.plumber.worker.types.toComparableValue
@@ -35,6 +36,6 @@ class GreaterThanWorker(
                 else -> false
             }
         }.also {
-            item.set(it)
+            item.set(BooleanValue.of(it))
         }.let { true }
 }

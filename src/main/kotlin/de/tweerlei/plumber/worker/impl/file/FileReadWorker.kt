@@ -20,9 +20,12 @@ import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.DelegatingWorker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.impl.ifEmptyGetFrom
+import de.tweerlei.plumber.worker.types.ByteArrayValue
+import de.tweerlei.plumber.worker.types.InstantValue
+import de.tweerlei.plumber.worker.types.LongValue
+import de.tweerlei.plumber.worker.types.StringValue
 import java.io.File
 import java.io.FileInputStream
-import java.time.Instant
 
 class FileReadWorker(
     private val dir: String,
@@ -39,11 +42,11 @@ class FileReadWorker(
                                 FileInputStream(file).use { stream ->
                                     stream.readAllBytes()
                                 }.also { bytes ->
-                                    item.set(directory.absolutePath, WellKnownKeys.PATH)
-                                    item.set(name, WellKnownKeys.NAME)
-                                    item.set(file.length(), WellKnownKeys.SIZE)
-                                    item.set(Instant.ofEpochMilli(file.lastModified()), WellKnownKeys.LAST_MODIFIED)
-                                    item.set(bytes)
+                                    item.set(StringValue.of(directory.absolutePath), WellKnownKeys.PATH)
+                                    item.set(StringValue.of(name), WellKnownKeys.NAME)
+                                    item.set(LongValue.of(file.length()), WellKnownKeys.SIZE)
+                                    item.set(InstantValue.ofEpochMilli(file.lastModified()), WellKnownKeys.LAST_MODIFIED)
+                                    item.set(ByteArrayValue.of(bytes))
                                 }
                             }
                     }

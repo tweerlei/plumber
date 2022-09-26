@@ -27,7 +27,7 @@ class FormattingWorkerTest {
     @Test
     fun testSimple() {
 
-        val item = TestWorkerRunner(WorkItem.from("foo"))
+        val item = TestWorkerRunner(WorkItem.of(StringValue.of("foo")))
             .append { w -> FormattingWorker("Hello", w) }
             .run()
             .singleOrNull()
@@ -39,7 +39,7 @@ class FormattingWorkerTest {
     @Test
     fun testReplacement() {
 
-        val item = TestWorkerRunner(WorkItem.from("foo", "name" to "variable"))
+        val item = TestWorkerRunner(WorkItem.of(StringValue.of("foo"), "name" to StringValue.of("variable")))
             .append { w -> FormattingWorker("My @@{name} is {value}", w) }
             .run()
             .singleOrNull()
@@ -51,7 +51,7 @@ class FormattingWorkerTest {
     @Test
     fun testNoReplacement() {
 
-        val item = TestWorkerRunner(WorkItem.from("foo"))
+        val item = TestWorkerRunner(WorkItem.of(StringValue.of("foo")))
             .append { w -> FormattingWorker("My @@{name} is {value}", w) }
             .run()
             .singleOrNull()
@@ -63,7 +63,7 @@ class FormattingWorkerTest {
     @Test
     fun testSpecialCharacters() {
 
-        val item = TestWorkerRunner(WorkItem.from("foo", "name" to "foo@1bar"))
+        val item = TestWorkerRunner(WorkItem.of(StringValue.of("foo"), "name" to StringValue.of("foo@1bar")))
             .append { w -> FormattingWorker("My @@{name} is {value}", w) }
             .run()
             .singleOrNull()

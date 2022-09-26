@@ -24,6 +24,7 @@ import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.GeneratingWorker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.types.Record
+import de.tweerlei.plumber.worker.types.StringValue
 import mu.KLogging
 import java.io.Closeable
 import java.io.File
@@ -53,19 +54,22 @@ class CsvReadWorker(
             false -> generateItemsWithoutHeader()
         }
             .use { reader ->
+                val filePath = StringValue.of(file.parentFile?.absolutePath ?: "")
+                val fileName = StringValue.of(file.name)
                 reader.all {
-                    fn(it.toWorkItem())
+                    fn(it.toWorkItem(filePath, fileName))
                 }
             }
     }
 
     private fun generateItemsWithHeader() =
         RecordIterator(csvMapper
-                .readerFor(Record::class.java)
+                .readerFor(Map::class.java)
                 .with(CsvParser.Feature.INSERT_NULLS_FOR_MISSING_COLUMNS)
+                .with(CsvParser.Feature.IGNORE_TRAILING_UNMAPPABLE)
                 .with(CsvSchema.emptySchema().withColumnSeparator(separator).withHeader())
-                .readValues<Record>(stream)) {
-            it
+                .readValues<Map<String, String>>(stream)) {
+            Record.of(it)
         }
 
     private fun generateItemsWithoutHeader() =
@@ -74,14 +78,14 @@ class CsvReadWorker(
                 .with(CsvParser.Feature.WRAP_AS_ARRAY)
                 .with(CsvSchema.emptySchema().withColumnSeparator(separator))
                 .readValues<Array<String>>(stream)) {
-            Record.from(it)
+            Record.of(it)
         }
 
-    private fun Record.toWorkItem() =
-        WorkItem.from(
+    private fun Record.toWorkItem(path: StringValue, name: StringValue) =
+        WorkItem.of(
             this,
-            WellKnownKeys.PATH to file.parentFile?.absolutePath,
-            WellKnownKeys.NAME to file.name
+            WellKnownKeys.PATH to path,
+            WellKnownKeys.NAME to name
         ).also { item ->
             item.set(this, WellKnownKeys.RECORD)
         }

@@ -23,6 +23,10 @@ import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.GeneratingWorker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
+import de.tweerlei.plumber.worker.types.Node
+import de.tweerlei.plumber.worker.types.StringValue
+import de.tweerlei.plumber.worker.types.Value
+import de.tweerlei.plumber.worker.types.toValue
 import mu.KLogging
 import java.io.File
 import java.io.FileInputStream
@@ -52,6 +56,8 @@ class JsonReadWorker<T>(
         JsonFactory().createParser(stream)
             .also { logger.info { "Reading JSON objects as ${valueType.simpleName}" } }
             .use { parser ->
+                val filePath = StringValue.of(file.parentFile?.absolutePath ?: "")
+                val fileName = StringValue.of(file.name)
                 var keepGenerating = true
                 var inArray = false
                 while (keepGenerating) {
@@ -61,8 +67,9 @@ class JsonReadWorker<T>(
                         JsonToken.END_ARRAY -> inArray = false
                         else -> if (inArray) {
                             keepGenerating = objectMapper.readValue(parser, valueType)
+                                ?.toValue()
                                 ?.let { obj ->
-                                    fn(obj.toWorkItem())
+                                    fn(obj.toWorkItem(filePath, fileName))
                                 } ?: false
                         }
                     }
@@ -70,13 +77,13 @@ class JsonReadWorker<T>(
             }
     }
 
-    private fun Any.toWorkItem() =
-        WorkItem.from(
+    private fun Value.toWorkItem(path: StringValue, name: StringValue) =
+        WorkItem.of(
             this,
-            WellKnownKeys.PATH to file.parentFile?.absolutePath,
-            WellKnownKeys.NAME to file.name
+            WellKnownKeys.PATH to path,
+            WellKnownKeys.NAME to name
         ).also { item ->
-            if (this is JsonNode)
+            if (this is Node)
                 item.set(this, WellKnownKeys.NODE)
         }
 

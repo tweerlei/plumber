@@ -19,9 +19,7 @@ import de.tweerlei.plumber.cmdline.CommandLineProcessor
 import de.tweerlei.plumber.pipeline.PipelineBuilder
 import de.tweerlei.plumber.pipeline.WorkerRunner
 import de.tweerlei.plumber.util.printStackTraceUpTo
-import de.tweerlei.plumber.worker.types.ValueCache
 import mu.KLogging
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.ApplicationArguments
 import org.springframework.boot.ApplicationRunner
 import org.springframework.boot.autoconfigure.SpringBootApplication
@@ -46,8 +44,7 @@ import org.springframework.boot.runApplication
 class PlumberApplication(
     private val cmdLineProcessor: CommandLineProcessor,
     private val pipelineBuilder: PipelineBuilder,
-    private val workerRunner: WorkerRunner,
-    @Value("\${plumber.value.cache}") val useValueCache: Boolean
+    private val workerRunner: WorkerRunner
 ) : ApplicationRunner {
 
     companion object : KLogging()
@@ -60,11 +57,9 @@ class PlumberApplication(
                     logger.info("___________________________________________________Building pipeline__")
                     pipelineBuilder.build(definition)
                         ?.let { worker ->
-                            ValueCache.useCache = useValueCache
                             logger.info("____________________________________________________Running pipeline__")
                             workerRunner.runWorker(worker, definition.params)
                             logger.info("_______________________________________________Finished_successfully__")
-                            if (useValueCache) ValueCache.dumpAll()
                         }
                 }
         } catch (e: Throwable) {

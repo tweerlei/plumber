@@ -31,14 +31,14 @@ class RangeSetWorkerTest {
     @Test
     fun testSetStart() {
 
-        val item = TestWorkerRunner(WorkItem.of(StringValue("value")))
+        val item = TestWorkerRunner(WorkItem.of(StringValue.of("value")))
             .append { w -> RangeSetWorker(RangeKey.start, w) }
             .run()
             .singleOrNull()
 
         item.shouldNotBeNull()
         with (item.getAs<Range>(WellKnownKeys.RANGE)) {
-            startAfter.shouldBe(StringValue("value"))
+            startAfter.shouldBe(StringValue.of("value"))
             endWith.shouldBe(NullValue.INSTANCE)
         }
     }
@@ -46,7 +46,7 @@ class RangeSetWorkerTest {
     @Test
     fun testSetEnd() {
 
-        val item = TestWorkerRunner(WorkItem.of(StringValue("value")))
+        val item = TestWorkerRunner(WorkItem.of(StringValue.of("value")))
             .append { w -> RangeSetWorker(RangeKey.end, w) }
             .run()
             .singleOrNull()
@@ -54,15 +54,15 @@ class RangeSetWorkerTest {
         item.shouldNotBeNull()
         with (item.getAs<Range>(WellKnownKeys.RANGE)) {
             startAfter.shouldBe(NullValue.INSTANCE)
-            endWith.shouldBe(StringValue("value"))
+            endWith.shouldBe(StringValue.of("value"))
         }
     }
 
     @Test
     fun testOverwrite() {
 
-        val item = TestWorkerRunner(WorkItem.of(StringValue("value"),
-            WellKnownKeys.RANGE to Range(LongValue(42L), LongValue(100L))
+        val item = TestWorkerRunner(WorkItem.of(StringValue.of("value"),
+            WellKnownKeys.RANGE to Range.of(42L, 100L)
         ))
             .append { w -> RangeSetWorker(RangeKey.start, w) }
             .run()
@@ -70,8 +70,8 @@ class RangeSetWorkerTest {
 
         item.shouldNotBeNull()
         with (item.getAs<Range>(WellKnownKeys.RANGE)) {
-            startAfter.shouldBe(StringValue("value"))
-            endWith.shouldBe(LongValue(100L))
+            startAfter.shouldBe(StringValue.of("value"))
+            endWith.shouldBe(LongValue.of(100L))
         }
     }
 }

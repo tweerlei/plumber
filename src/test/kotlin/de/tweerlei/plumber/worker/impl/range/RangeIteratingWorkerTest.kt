@@ -15,12 +15,11 @@
  */
 package de.tweerlei.plumber.worker.impl.range
 
-import de.tweerlei.plumber.worker.types.Range
 import de.tweerlei.plumber.worker.impl.TestWorkerRunner
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
-import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.impl.attribute.SettingWorker
 import de.tweerlei.plumber.worker.types.LongValue
+import de.tweerlei.plumber.worker.types.Range
 import de.tweerlei.plumber.worker.types.StringValue
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
@@ -32,7 +31,7 @@ class RangeIteratingWorkerTest {
         val items = TestWorkerRunner()
             .append { w -> SettingWorker(
                 WellKnownKeys.RANGE,
-                { Range.from(0L, 10L) },
+                { Range.of(0L, 10L) },
                 w
             ) }
             .append { w -> RangeIteratingWorker("0123456789", 1, Long.MAX_VALUE, w) }
@@ -57,7 +56,7 @@ class RangeIteratingWorkerTest {
         val items = TestWorkerRunner()
             .append { w -> SettingWorker(
                 WellKnownKeys.RANGE,
-                { Range.from(0L, 10L) },
+                { Range.of(0L, 10L) },
                 w
             ) }
             .append { w -> RangeIteratingWorker("0123456789", 2, Long.MAX_VALUE, w) }
@@ -77,7 +76,7 @@ class RangeIteratingWorkerTest {
         val items = TestWorkerRunner()
             .append { w -> SettingWorker(
                 WellKnownKeys.RANGE,
-                { Range.from(10L, 0L) },
+                { Range.of(10L, 0L) },
                 w
             ) }
             .append { w -> RangeIteratingWorker("0123456789", -2, Long.MAX_VALUE, w) }
@@ -97,7 +96,7 @@ class RangeIteratingWorkerTest {
         val items = TestWorkerRunner()
             .append { w -> SettingWorker(
                 WellKnownKeys.RANGE,
-                { Range.from(10L, 0L) },
+                { Range.of(10L, 0L) },
                 w
             ) }
             .append { w -> RangeIteratingWorker("0123456789", 2, Long.MAX_VALUE, w) }
@@ -112,7 +111,7 @@ class RangeIteratingWorkerTest {
         val items = TestWorkerRunner()
             .append { w -> SettingWorker(
                 WellKnownKeys.RANGE,
-                { Range.from(0L, 10L) },
+                { Range.of(0L, 10L) },
                 w
             ) }
             .append { w -> RangeIteratingWorker("0123456789", -2, Long.MAX_VALUE, w) }
@@ -127,7 +126,7 @@ class RangeIteratingWorkerTest {
         val items = TestWorkerRunner()
             .append { w -> SettingWorker(
                 WellKnownKeys.RANGE,
-                { Range.from("0", "10") },
+                { Range.of("0", "10") },
                 w
             ) }
             .append { w -> RangeIteratingWorker("0123456789abcdef", 1, Long.MAX_VALUE, w) }
@@ -158,7 +157,7 @@ class RangeIteratingWorkerTest {
         val items = TestWorkerRunner()
             .append { w -> SettingWorker(
                 WellKnownKeys.RANGE,
-                { Range.from("0", "10") },
+                { Range.of("0", "10") },
                 w
             ) }
             .append { w -> RangeIteratingWorker("0123456789abcdef", 2, Long.MAX_VALUE, w) }
@@ -181,7 +180,7 @@ class RangeIteratingWorkerTest {
         val items = TestWorkerRunner()
             .append { w -> SettingWorker(
                 WellKnownKeys.RANGE,
-                { Range.from("10", "0") },
+                { Range.of("10", "0") },
                 w
             ) }
             .append { w -> RangeIteratingWorker("0123456789abcdef", -2, Long.MAX_VALUE, w) }
@@ -204,7 +203,7 @@ class RangeIteratingWorkerTest {
         val items = TestWorkerRunner()
             .append { w -> SettingWorker(
                 WellKnownKeys.RANGE,
-                { Range.from("10", "0") },
+                { Range.of("10", "0") },
                 w
             ) }
             .append { w -> RangeIteratingWorker("0123456789abcdef", 2, Long.MAX_VALUE, w) }
@@ -219,7 +218,7 @@ class RangeIteratingWorkerTest {
         val items = TestWorkerRunner()
             .append { w -> SettingWorker(
                 WellKnownKeys.RANGE,
-                { Range.from("0", "10") },
+                { Range.of("0", "10") },
                 w
             ) }
             .append { w -> RangeIteratingWorker("0123456789abcdef", -2, Long.MAX_VALUE, w) }

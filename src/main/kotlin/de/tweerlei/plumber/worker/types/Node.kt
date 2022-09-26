@@ -20,7 +20,7 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory
 import java.math.BigDecimal
 import java.math.BigInteger
 
-class JsonNodeValue(
+class Node(
     val value: JsonNode = JsonNodeFactory.instance.objectNode()
 ): Value {
 
@@ -30,6 +30,8 @@ class JsonNodeValue(
 
     override fun getName() =
         NAME
+    fun getValue(key: String) =
+        value[key]?.let { Node(it) } ?: NullValue.INSTANCE
 
     override fun toAny() =
         value

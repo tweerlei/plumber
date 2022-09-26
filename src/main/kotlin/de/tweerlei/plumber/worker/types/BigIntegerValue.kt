@@ -17,15 +17,17 @@ package de.tweerlei.plumber.worker.types
 
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.node.JsonNodeFactory
-import java.math.BigDecimal
 import java.math.BigInteger
 
-class BigIntegerValue(
+class BigIntegerValue private constructor(
     val value: BigInteger
 ): NumberValue {
 
     companion object {
         const val NAME = "bigint"
+
+        fun of(value: BigInteger) =
+            BigIntegerValue(value)
     }
 
     override fun getName() =

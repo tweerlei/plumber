@@ -20,6 +20,7 @@ import de.tweerlei.plumber.util.codec.CharsetCodec
 import de.tweerlei.plumber.util.codec.HexCodec
 import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.impl.TestWorkerRunner
+import de.tweerlei.plumber.worker.types.ByteArrayValue
 import de.tweerlei.plumber.worker.types.StringValue
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
@@ -33,7 +34,7 @@ class EncodingWorkerTest {
 
         val value = byteArrayOf(42, -64, 0, 32, -128, 127)
 
-        val item = TestWorkerRunner(WorkItem.from(value))
+        val item = TestWorkerRunner(WorkItem.of(ByteArrayValue.of(value)))
             .append { w -> EncodingWorker(Base64Codec(), w) }
             .run()
             .singleOrNull()
@@ -47,7 +48,7 @@ class EncodingWorkerTest {
 
         val value = byteArrayOf(42, -64, 0, 32, -128, 127)
 
-        val item = TestWorkerRunner(WorkItem.from(value))
+        val item = TestWorkerRunner(WorkItem.of(ByteArrayValue.of(value)))
             .append { w -> EncodingWorker(HexCodec(), w) }
             .run()
             .singleOrNull()
@@ -61,7 +62,7 @@ class EncodingWorkerTest {
 
         val value = byteArrayOf(98, 105, -61, -97)
 
-        val item = TestWorkerRunner(WorkItem.from(value))
+        val item = TestWorkerRunner(WorkItem.of(ByteArrayValue.of(value)))
             .append { w -> EncodingWorker(CharsetCodec(StandardCharsets.UTF_8), w) }
             .run()
             .singleOrNull()

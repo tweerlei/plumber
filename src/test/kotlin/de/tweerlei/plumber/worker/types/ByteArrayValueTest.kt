@@ -17,7 +17,6 @@ package de.tweerlei.plumber.worker.types
 
 import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.booleans.shouldBeTrue
-import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeSameInstanceAs
 import org.junit.jupiter.api.Test
@@ -29,7 +28,7 @@ class ByteArrayValueTest {
     @Test
     fun testNonEmpty() {
         val value = byteArrayOf(104, 101, 108, 108, 111)
-        with (ByteArrayValue(value)) {
+        with (ByteArrayValue.of(value)) {
             asOptional().shouldBeSameInstanceAs(this)
             toAny().shouldBe(value)
             toBoolean().shouldBeTrue()
@@ -50,24 +49,24 @@ class ByteArrayValueTest {
             hashCode().shouldBe(value.contentHashCode())
 
             equals(NullValue.INSTANCE).shouldBeFalse()
-            equals(ByteArrayValue(value)).shouldBeTrue()
-            equals(ByteArrayValue(byteArrayOf(23))).shouldBeFalse()
+            equals(ByteArrayValue.of(value)).shouldBeTrue()
+            equals(ByteArrayValue.of(byteArrayOf(23))).shouldBeFalse()
             equals("hello").shouldBeFalse()
             equals("HELLO").shouldBeFalse()
-            equals(LongValue(1L)).shouldBeFalse()
-            equals(StringValue("")).shouldBeFalse()
+            equals(LongValue.of(1L)).shouldBeFalse()
+            equals(StringValue.of("")).shouldBeFalse()
 
             compareTo(NullValue.INSTANCE).shouldBe(5)
-            compareTo(ByteArrayValue(value)).shouldBe(0)
-            compareTo(ByteArrayValue(byteArrayOf(23))).shouldBe(81)
-            compareTo(LongValue(0L)).shouldBe(104)
+            compareTo(ByteArrayValue.of(value)).shouldBe(0)
+            compareTo(ByteArrayValue.of(byteArrayOf(23))).shouldBe(81)
+            compareTo(LongValue.of(0L)).shouldBe(104)
         }
     }
 
     @Test
     fun testEmpty() {
         val value = byteArrayOf()
-        with (ByteArrayValue(value)) {
+        with (ByteArrayValue.of(value)) {
             asOptional().shouldBeSameInstanceAs(this)
             toAny().shouldBe(value)
             toBoolean().shouldBeFalse()
@@ -87,42 +86,42 @@ class ByteArrayValueTest {
             hashCode().shouldBe(value.contentHashCode())
 
             equals(NullValue.INSTANCE).shouldBeTrue()
-            equals(ByteArrayValue(value)).shouldBeTrue()
-            equals(ByteArrayValue(byteArrayOf(0))).shouldBeFalse()
+            equals(ByteArrayValue.of(value)).shouldBeTrue()
+            equals(ByteArrayValue.of(byteArrayOf(0))).shouldBeFalse()
             equals("").shouldBeFalse()
             equals("HELLO").shouldBeFalse()
-            equals(LongValue(0L)).shouldBeFalse()
+            equals(LongValue.of(0L)).shouldBeFalse()
 
             compareTo(NullValue.INSTANCE).shouldBe(0)
-            compareTo(ByteArrayValue(value)).shouldBe(0)
-            compareTo(ByteArrayValue(byteArrayOf(0))).shouldBe(-1)
-            compareTo(LongValue(0L)).shouldBe(-8)
+            compareTo(ByteArrayValue.of(value)).shouldBe(0)
+            compareTo(ByteArrayValue.of(byteArrayOf(0))).shouldBe(-1)
+            compareTo(LongValue.of(0L)).shouldBe(-8)
         }
     }
 
     @Test
     fun testToBoolean() {
-        ByteArrayValue(byteArrayOf()).toBoolean().shouldBeFalse()
-        ByteArrayValue(byteArrayOf(0, 0, 0, 0)).toBoolean().shouldBeFalse()
-        ByteArrayValue(byteArrayOf(1)).toBoolean().shouldBeTrue()
-        ByteArrayValue(byteArrayOf(0, 0, 2, 0)).toBoolean().shouldBeTrue()
+        ByteArrayValue.of(byteArrayOf()).toBoolean().shouldBeFalse()
+        ByteArrayValue.of(byteArrayOf(0, 0, 0, 0)).toBoolean().shouldBeFalse()
+        ByteArrayValue.of(byteArrayOf(1)).toBoolean().shouldBeTrue()
+        ByteArrayValue.of(byteArrayOf(0, 0, 2, 0)).toBoolean().shouldBeTrue()
     }
 
     @Test
     fun testToLong() {
-        ByteArrayValue(byteArrayOf()).toLong().shouldBe(0L)
-        ByteArrayValue(byteArrayOf(0)).toLong().shouldBe(0L)
-        ByteArrayValue(byteArrayOf(5)).toLong().shouldBe(5L)
-        ByteArrayValue(byteArrayOf(0, 0)).toLong().shouldBe(0L)
-        ByteArrayValue(byteArrayOf(1, 2)).toLong().shouldBe(513L)
-        ByteArrayValue(byteArrayOf(1, 2, 3)).toLong().shouldBe(513L)
-        ByteArrayValue(byteArrayOf(0, 0, 0, 0)).toLong().shouldBe(0L)
-        ByteArrayValue(byteArrayOf(1, 2, 3, 4)).toLong().shouldBe(67305985L)
-        ByteArrayValue(byteArrayOf(1, 2, 3, 4, 5)).toLong().shouldBe(67305985L)
-        ByteArrayValue(byteArrayOf(1, 2, 3, 4, 5, 6)).toLong().shouldBe(67305985L)
-        ByteArrayValue(byteArrayOf(1, 2, 3, 4, 5, 6, 7)).toLong().shouldBe(67305985L)
-        ByteArrayValue(byteArrayOf(0, 0, 0, 0, 0, 0, 0, 0)).toLong().shouldBe(0L)
-        ByteArrayValue(byteArrayOf(1, 2, 3, 4, 5, 6, 7, 8)).toLong().shouldBe(578437695752307201L)
-        ByteArrayValue(byteArrayOf(1, 2, 3, 4, 5, 6, 7, 8, 9)).toLong().shouldBe(578437695752307201L)
+        ByteArrayValue.of(byteArrayOf()).toLong().shouldBe(0L)
+        ByteArrayValue.of(byteArrayOf(0)).toLong().shouldBe(0L)
+        ByteArrayValue.of(byteArrayOf(5)).toLong().shouldBe(5L)
+        ByteArrayValue.of(byteArrayOf(0, 0)).toLong().shouldBe(0L)
+        ByteArrayValue.of(byteArrayOf(1, 2)).toLong().shouldBe(513L)
+        ByteArrayValue.of(byteArrayOf(1, 2, 3)).toLong().shouldBe(513L)
+        ByteArrayValue.of(byteArrayOf(0, 0, 0, 0)).toLong().shouldBe(0L)
+        ByteArrayValue.of(byteArrayOf(1, 2, 3, 4)).toLong().shouldBe(67305985L)
+        ByteArrayValue.of(byteArrayOf(1, 2, 3, 4, 5)).toLong().shouldBe(67305985L)
+        ByteArrayValue.of(byteArrayOf(1, 2, 3, 4, 5, 6)).toLong().shouldBe(67305985L)
+        ByteArrayValue.of(byteArrayOf(1, 2, 3, 4, 5, 6, 7)).toLong().shouldBe(67305985L)
+        ByteArrayValue.of(byteArrayOf(0, 0, 0, 0, 0, 0, 0, 0)).toLong().shouldBe(0L)
+        ByteArrayValue.of(byteArrayOf(1, 2, 3, 4, 5, 6, 7, 8)).toLong().shouldBe(578437695752307201L)
+        ByteArrayValue.of(byteArrayOf(1, 2, 3, 4, 5, 6, 7, 8, 9)).toLong().shouldBe(578437695752307201L)
     }
 }

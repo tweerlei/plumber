@@ -19,6 +19,7 @@ import de.tweerlei.plumber.util.codec.Codec
 import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.DelegatingWorker
+import de.tweerlei.plumber.worker.types.StringValue
 
 class EncodingWorker(
     private val codec: Codec,
@@ -31,7 +32,7 @@ class EncodingWorker(
             .let { bytes ->
                 codec.toString(bytes)
                     .also { encoded ->
-                        item.set(encoded)
+                        item.set(StringValue.of(encoded))
                     }
             }.let { true }
 }

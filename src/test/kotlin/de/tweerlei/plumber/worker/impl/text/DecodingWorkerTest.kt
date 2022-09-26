@@ -21,6 +21,7 @@ import de.tweerlei.plumber.util.codec.HexCodec
 import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.impl.TestWorkerRunner
 import de.tweerlei.plumber.worker.types.ByteArrayValue
+import de.tweerlei.plumber.worker.types.StringValue
 import io.kotest.matchers.booleans.shouldBeTrue
 import io.kotest.matchers.nulls.shouldNotBeNull
 import org.junit.jupiter.api.Test
@@ -33,7 +34,7 @@ class DecodingWorkerTest {
 
         val value = byteArrayOf(42, -64, 0, 32, -128, 127)
 
-        val item = TestWorkerRunner(WorkItem.from("KsAAIIB/"))
+        val item = TestWorkerRunner(WorkItem.of(StringValue.of("KsAAIIB/")))
             .append { w -> DecodingWorker(Base64Codec(), w) }
             .run()
             .singleOrNull()
@@ -47,7 +48,7 @@ class DecodingWorkerTest {
 
         val value = byteArrayOf(42, -64, 0, 32, -128, 127)
 
-        val item = TestWorkerRunner(WorkItem.from("2ac00020807f"))
+        val item = TestWorkerRunner(WorkItem.of(StringValue.of("2ac00020807f")))
             .append { w -> DecodingWorker(HexCodec(), w) }
             .run()
             .singleOrNull()
@@ -61,7 +62,7 @@ class DecodingWorkerTest {
 
         val value = byteArrayOf(98, 105, -61, -97)
 
-        val item = TestWorkerRunner(WorkItem.from("bi\u00df"))
+        val item = TestWorkerRunner(WorkItem.of(StringValue.of("bi\u00df")))
             .append { w -> DecodingWorker(CharsetCodec(StandardCharsets.UTF_8), w) }
             .run()
             .singleOrNull()

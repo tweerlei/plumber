@@ -21,6 +21,10 @@ import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.GeneratingWorker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
+import de.tweerlei.plumber.worker.types.Node
+import de.tweerlei.plumber.worker.types.StringValue
+import de.tweerlei.plumber.worker.types.Value
+import de.tweerlei.plumber.worker.types.toValue
 import mu.KLogging
 import java.io.File
 import java.io.FileInputStream
@@ -54,13 +58,16 @@ class XmlReadWorker<T>(
             .also { logger.info { "Reading XML objects as ${valueType.simpleName}" } }
             .let { reader ->
                 try {
+                    val filePath = StringValue.of(file.parentFile?.absolutePath ?: "")
+                    val fileName = StringValue.of(file.name)
                     var keepGenerating = true
                     while (keepGenerating && reader.hasNext()) {
                         reader.next()
                         if (reader.eventType == START_ELEMENT && reader.localName == elementName) {
                             keepGenerating = xmlMapper.readValue(reader, valueType)
+                                ?.toValue()
                                 ?.let { obj ->
-                                    fn(obj.toWorkItem())
+                                    fn(obj.toWorkItem(filePath, fileName))
                                 } ?: false
                         }
                     }
@@ -70,13 +77,13 @@ class XmlReadWorker<T>(
             }
     }
 
-    private fun Any.toWorkItem() =
-        WorkItem.from(
+    private fun Value.toWorkItem(path: StringValue, name: StringValue) =
+        WorkItem.of(
             this,
-            WellKnownKeys.PATH to file.parentFile?.absolutePath,
-            WellKnownKeys.NAME to file.name
+            WellKnownKeys.PATH to path,
+            WellKnownKeys.NAME to name
         ).also { item ->
-            if (this is JsonNode)
+            if (this is Node)
                 item.set(this, WellKnownKeys.NODE)
         }
 

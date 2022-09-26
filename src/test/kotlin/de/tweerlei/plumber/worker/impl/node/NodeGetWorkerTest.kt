@@ -35,7 +35,7 @@ class NodeGetWorkerTest {
 
         val objectMapper = ObjectMapper()
 
-        val item = TestWorkerRunner(WorkItem.from("""{"entry":"value"}"""))
+        val item = TestWorkerRunner(WorkItem.of(StringValue.of("""{"entry":"value"}""")))
             .append { w -> FromJsonWorker(JsonNode::class.java, objectMapper, w) }
             .append { w -> NodeGetWorker(JsonPointer.compile("/entry"), w) }
             .run()
@@ -50,7 +50,7 @@ class NodeGetWorkerTest {
 
         val objectMapper = ObjectMapper()
 
-        val item = TestWorkerRunner(WorkItem.from("""{"entry":true}"""))
+        val item = TestWorkerRunner(WorkItem.of(StringValue.of("""{"entry":true}""")))
             .append { w -> FromJsonWorker(JsonNode::class.java, objectMapper, w) }
             .append { w -> NodeGetWorker(JsonPointer.compile("/entry"), w) }
             .run()
@@ -65,7 +65,7 @@ class NodeGetWorkerTest {
 
         val objectMapper = ObjectMapper()
 
-        val item = TestWorkerRunner(WorkItem.from("""{"entry":42}"""))
+        val item = TestWorkerRunner(WorkItem.of(StringValue.of("""{"entry":42}""")))
             .append { w -> FromJsonWorker(JsonNode::class.java, objectMapper, w) }
             .append { w -> NodeGetWorker(JsonPointer.compile("/entry"), w) }
             .run()
@@ -80,9 +80,9 @@ class NodeGetWorkerTest {
 
         val value = byteArrayOf(42, -64, 0, 32, -128, 127)
 
-        val item = TestWorkerRunner(WorkItem.from(value))
+        val item = TestWorkerRunner(WorkItem.of(ByteArrayValue.of(value)))
             .append { w -> NodeModifyWorker(JsonPointer.compile("/entry"), w) }
-            .append { w -> SettingWorker(WorkItem.DEFAULT_KEY, { StringValue("value") }, w) }
+            .append { w -> SettingWorker(WorkItem.DEFAULT_KEY, { StringValue.of("value") }, w) }
             .append { w -> NodeGetWorker(JsonPointer.compile("/entry"), w) }
             .run()
             .singleOrNull()
@@ -96,7 +96,7 @@ class NodeGetWorkerTest {
 
         val objectMapper = ObjectMapper()
 
-        val item = TestWorkerRunner(WorkItem.from("""{"entry2":"value"}"""))
+        val item = TestWorkerRunner(WorkItem.of(StringValue.of("""{"entry2":"value"}""")))
             .append { w -> FromJsonWorker(JsonNode::class.java, objectMapper, w) }
             .append { w -> NodeGetWorker(JsonPointer.compile("/entry"), w) }
             .run()

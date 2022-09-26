@@ -17,7 +17,6 @@ package de.tweerlei.plumber.worker.types
 
 import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.booleans.shouldBeTrue
-import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeSameInstanceAs
 import org.junit.jupiter.api.Test
@@ -59,14 +58,14 @@ class BooleanValueTest {
             equals(NullValue.INSTANCE).shouldBeFalse()
             equals(true).shouldBeFalse()
             equals(false).shouldBeFalse()
-            equals(LongValue(1L)).shouldBeTrue()
-            equals(StringValue("")).shouldBeFalse()
+            equals(LongValue.of(1L)).shouldBeTrue()
+            equals(StringValue.of("")).shouldBeFalse()
 
             compareTo(BooleanValue.TRUE).shouldBe(0)
             compareTo(BooleanValue.FALSE).shouldBe(1)
             compareTo(NullValue.INSTANCE).shouldBe(1)
-            compareTo(StringValue("")).shouldBe(1)
-            compareTo(LongValue(0L)).shouldBe(1)
+            compareTo(StringValue.of("")).shouldBe(1)
+            compareTo(LongValue.of(0L)).shouldBe(1)
         }
     }
 
@@ -97,14 +96,14 @@ class BooleanValueTest {
             equals(NullValue.INSTANCE).shouldBeTrue()
             equals(true).shouldBeFalse()
             equals(false).shouldBeFalse()
-            equals(LongValue(1L)).shouldBeFalse()
-            equals(StringValue("")).shouldBeTrue()
+            equals(LongValue.of(1L)).shouldBeFalse()
+            equals(StringValue.of("")).shouldBeTrue()
 
             compareTo(BooleanValue.TRUE).shouldBe(-1)
             compareTo(BooleanValue.FALSE).shouldBe(0)
             compareTo(NullValue.INSTANCE).shouldBe(0)
-            compareTo(StringValue("")).shouldBe(0)
-            compareTo(LongValue(0L)).shouldBe(0)
+            compareTo(StringValue.of("")).shouldBe(0)
+            compareTo(LongValue.of(0L)).shouldBe(0)
         }
     }
 }

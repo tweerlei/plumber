@@ -27,7 +27,7 @@ class RangeTest {
 
     @Test
     fun testNonEmpty() {
-        with (Range(LongValue(0L), LongValue(10L))) {
+        with (Range.of(0L, 10L)) {
             asOptional().shouldBeSameInstanceAs(this)
             toAny().shouldBeSameInstanceAs(this)
             toBoolean().shouldBeTrue()
@@ -51,43 +51,49 @@ class RangeTest {
     @Test
     fun testEquals() {
 
-        Range.from(null, null).shouldBe(Range(NullValue.INSTANCE, NullValue.INSTANCE))
-        Range.from(1, null).shouldBe(Range(LongValue(1L), NullValue.INSTANCE))
-        Range.from(null, 2).shouldBe(Range(NullValue.INSTANCE, LongValue(2L)))
-        Range.from(1, 2).shouldBe(Range(LongValue(1L), LongValue(2L)))
-        Range.from(1L, 2L).shouldBe(Range(LongValue(1L), LongValue(2L)))
-        Range.from("1", "2").shouldBe(Range(StringValue("1"), StringValue("2")))
+        Range().shouldBe(Range(NullValue.INSTANCE, NullValue.INSTANCE))
+
+        val noLong: Long? = null
+        Range.of(noLong, noLong).shouldBe(Range(NullValue.INSTANCE, NullValue.INSTANCE))
+        Range.of(1, noLong).shouldBe(Range(LongValue.of(1L), NullValue.INSTANCE))
+        Range.of(noLong, 2).shouldBe(Range(NullValue.INSTANCE, LongValue.of(2L)))
+        Range.of(1, 2).shouldBe(Range(LongValue.of(1L), LongValue.of(2L)))
+        Range.of(1L, 2L).shouldBe(Range(LongValue.of(1L), LongValue.of(2L)))
+
+        val noString: String? = null
+        Range.of(noString, noString).shouldBe(Range(NullValue.INSTANCE, NullValue.INSTANCE))
+        Range.of("1", "2").shouldBe(Range(StringValue.of("1"), StringValue.of("2")))
     }
 
     @Test
     fun testContains() {
 
-        Range.from(null, null).contains(NullValue.INSTANCE).shouldBeFalse()
-        Range.from(null, null).contains(LongValue(42L)).shouldBeTrue()
-        Range.from(null, null).contains(StringValue("42")).shouldBeTrue()
+        Range().contains(NullValue.INSTANCE).shouldBeFalse()
+        Range().contains(LongValue.of(42L)).shouldBeTrue()
+        Range().contains(StringValue.of("42")).shouldBeTrue()
 
-        Range.from(-10, 10).contains(NullValue.INSTANCE).shouldBeFalse()
-        Range.from(-10, 10).contains(LongValue(-10L)).shouldBeFalse()
-        Range.from(-10, 10).contains(LongValue(-9L)).shouldBeTrue()
-        Range.from(-10, 10).contains(LongValue(10L)).shouldBeTrue()
-        Range.from(-10, 10).contains(LongValue(11L)).shouldBeFalse()
-        Range.from(-10, 10).contains(StringValue("05")).shouldBeTrue()
-        Range.from(-10, 10).contains(StringValue("xyz")).shouldBeFalse()
+        Range.of(-10, 10).contains(NullValue.INSTANCE).shouldBeFalse()
+        Range.of(-10, 10).contains(LongValue.of(-10L)).shouldBeFalse()
+        Range.of(-10, 10).contains(LongValue.of(-9L)).shouldBeTrue()
+        Range.of(-10, 10).contains(LongValue.of(10L)).shouldBeTrue()
+        Range.of(-10, 10).contains(LongValue.of(11L)).shouldBeFalse()
+        Range.of(-10, 10).contains(StringValue.of("05")).shouldBeTrue()
+        Range.of(-10, 10).contains(StringValue.of("xyz")).shouldBeFalse()
 
-        Range.from(10, -10).contains(NullValue.INSTANCE).shouldBeFalse()
-        Range.from(10, -10).contains(LongValue(10L)).shouldBeFalse()
-        Range.from(10, -10).contains(LongValue(9L)).shouldBeTrue()
-        Range.from(10, -10).contains(LongValue(-10L)).shouldBeTrue()
-        Range.from(10, -10).contains(LongValue(-11L)).shouldBeFalse()
-        Range.from(10, -10).contains(StringValue("05")).shouldBeTrue()
-        Range.from(10, -10).contains(StringValue("xyz")).shouldBeFalse()
+        Range.of(10, -10).contains(NullValue.INSTANCE).shouldBeFalse()
+        Range.of(10, -10).contains(LongValue.of(10L)).shouldBeFalse()
+        Range.of(10, -10).contains(LongValue.of(9L)).shouldBeTrue()
+        Range.of(10, -10).contains(LongValue.of(-10L)).shouldBeTrue()
+        Range.of(10, -10).contains(LongValue.of(-11L)).shouldBeFalse()
+        Range.of(10, -10).contains(StringValue.of("05")).shouldBeTrue()
+        Range.of(10, -10).contains(StringValue.of("xyz")).shouldBeFalse()
 
-        Range.from("a", "z").contains(NullValue.INSTANCE).shouldBeFalse()
-        Range.from("a", "z").contains(StringValue("a")).shouldBeFalse()
-        Range.from("a", "z").contains(StringValue("aa")).shouldBeTrue()
-        Range.from("a", "z").contains(StringValue("b")).shouldBeTrue()
-        Range.from("a", "z").contains(StringValue("bb")).shouldBeTrue()
-        Range.from("a", "z").contains(StringValue("z")).shouldBeTrue()
-        Range.from("a", "z").contains(StringValue("zz")).shouldBeFalse()
+        Range.of("a", "z").contains(NullValue.INSTANCE).shouldBeFalse()
+        Range.of("a", "z").contains(StringValue.of("a")).shouldBeFalse()
+        Range.of("a", "z").contains(StringValue.of("aa")).shouldBeTrue()
+        Range.of("a", "z").contains(StringValue.of("b")).shouldBeTrue()
+        Range.of("a", "z").contains(StringValue.of("bb")).shouldBeTrue()
+        Range.of("a", "z").contains(StringValue.of("z")).shouldBeTrue()
+        Range.of("a", "z").contains(StringValue.of("zz")).shouldBeFalse()
     }
 }

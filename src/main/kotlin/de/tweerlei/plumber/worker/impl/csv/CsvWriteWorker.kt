@@ -66,13 +66,13 @@ class CsvWriteWorker(
     }
 
     private fun writerWithHeader(rec: Record) =
-        RecordWriter<Record, Record>(csvMapper
-                .writerFor(Record::class.java)
+        RecordWriter<Record, Iterable<Any>>(csvMapper
+                .writerFor(Iterable::class.java)
                 // See https://github.com/FasterXML/jackson-dataformats-text/issues/10
                 // withNullValue() does not apply to arrays and collections
                 .with(rec.toFormatSchema().withColumnSeparator(separator).withHeader())
                 .writeValues(stream)) {
-            it
+            it.values.mapNullTo("null")
         }
 
     private fun writerWithoutHeader(rec: Record) =

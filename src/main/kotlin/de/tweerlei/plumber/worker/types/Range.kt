@@ -26,10 +26,15 @@ class Range(
     companion object {
         const val NAME = "range"
 
-        fun from(startAfter: Any?, endWith: Any?) =
+        fun of(startAfter: Long?, endWith: Long?) =
             Range(
-                startAfter.toValue().toComparableValue(),
-                endWith.toValue().toComparableValue()
+                startAfter?.let { LongValue.of(it) } ?: NullValue.INSTANCE,
+                endWith?.let { LongValue.of(it) } ?: NullValue.INSTANCE
+            )
+        fun of(startAfter: String?, endWith: String?) =
+            Range(
+                startAfter?.let { StringValue.of(it) } ?: NullValue.INSTANCE,
+                endWith?.let { StringValue.of(it) } ?: NullValue.INSTANCE
             )
     }
 

@@ -20,12 +20,22 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory
 import java.math.BigDecimal
 import java.math.BigInteger
 
-class StringValue(
+class StringValue private constructor(
     val value: String
 ): ComparableValue {
 
     companion object {
         const val NAME = "string"
+
+        val EMPTY = StringValue("")
+
+        fun of(value: String) =
+            when (value.isEmpty()) {
+                true -> EMPTY
+                else -> StringValue(value)
+            }
+        fun of(value: Char) =
+            StringValue(value.toString())
     }
 
     override fun getName() =

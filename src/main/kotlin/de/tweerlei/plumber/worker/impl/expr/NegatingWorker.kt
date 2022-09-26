@@ -18,6 +18,7 @@ package de.tweerlei.plumber.worker.impl.expr
 import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.impl.DelegatingWorker
 import de.tweerlei.plumber.worker.Worker
+import de.tweerlei.plumber.worker.types.BooleanValue
 
 class NegatingWorker(
     worker: Worker
@@ -27,6 +28,6 @@ class NegatingWorker(
         item.get().toBoolean().let {
             it.not()
         }.also {
-            item.set(it)
+            item.set(BooleanValue.of(it))
         }.let { true }
 }

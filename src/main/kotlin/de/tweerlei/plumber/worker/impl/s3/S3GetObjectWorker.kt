@@ -22,6 +22,10 @@ import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.DelegatingWorker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.impl.ifEmptyGetFrom
+import de.tweerlei.plumber.worker.types.ByteArrayValue
+import de.tweerlei.plumber.worker.types.InstantValue
+import de.tweerlei.plumber.worker.types.LongValue
+import de.tweerlei.plumber.worker.types.StringValue
 
 class S3GetObjectWorker(
     private val bucketName: String,
@@ -40,12 +44,12 @@ class S3GetObjectWorker(
                                 file.objectContent.use { stream ->
                                     stream.readAllBytes()
                                 }.also { bytes ->
-                                    item.set(bytes)
-                                    item.set(actualBucketName, S3Keys.BUCKET_NAME)
-                                    item.set(file.key, S3Keys.OBJECT_KEY)
-                                    item.set(file.objectMetadata.contentLength, WellKnownKeys.SIZE)
+                                    item.set(ByteArrayValue.of(bytes))
+                                    item.set(StringValue.of(actualBucketName), S3Keys.BUCKET_NAME)
+                                    item.set(StringValue.of(file.key), S3Keys.OBJECT_KEY)
+                                    item.set(LongValue.of(file.objectMetadata.contentLength), WellKnownKeys.SIZE)
                                     file.objectMetadata.lastModified?.also { lastModified ->
-                                        item.set(lastModified.toInstant(), WellKnownKeys.LAST_MODIFIED)
+                                        item.set(InstantValue.of(lastModified), WellKnownKeys.LAST_MODIFIED)
                                     }
                                 }
                             }

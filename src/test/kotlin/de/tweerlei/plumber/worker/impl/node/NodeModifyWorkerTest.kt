@@ -23,7 +23,7 @@ import de.tweerlei.plumber.worker.impl.TestWorkerRunner
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.impl.attribute.SettingWorker
 import de.tweerlei.plumber.worker.impl.json.FromJsonWorker
-import de.tweerlei.plumber.worker.types.JsonNodeValue
+import de.tweerlei.plumber.worker.types.Node
 import de.tweerlei.plumber.worker.types.NullValue
 import de.tweerlei.plumber.worker.types.StringValue
 import io.kotest.matchers.collections.shouldBeEmpty
@@ -36,13 +36,13 @@ class NodeModifyWorkerTest {
     @Test
     fun testSet() {
 
-        val item = TestWorkerRunner(WorkItem.of(StringValue("value")))
+        val item = TestWorkerRunner(WorkItem.of(StringValue.of("value")))
             .append { w -> NodeModifyWorker(JsonPointer.compile("/entry"), w) }
             .run()
             .singleOrNull()
 
         item.shouldNotBeNull()
-        item.getAs<JsonNodeValue>(WellKnownKeys.NODE).toString().shouldBe("""{"entry":"value"}""")
+        item.getAs<Node>(WellKnownKeys.NODE).toString().shouldBe("""{"entry":"value"}""")
     }
 
     @Test
@@ -50,15 +50,15 @@ class NodeModifyWorkerTest {
 
         val objectMapper = ObjectMapper()
 
-        val item = TestWorkerRunner(WorkItem.from("""{"entry":"value2"}"""))
+        val item = TestWorkerRunner(WorkItem.of(StringValue.of("""{"entry":"value2"}""")))
             .append { w -> FromJsonWorker(JsonNode::class.java, objectMapper, w) }
-            .append { w -> SettingWorker(WorkItem.DEFAULT_KEY, { StringValue("value") }, w) }
+            .append { w -> SettingWorker(WorkItem.DEFAULT_KEY, { StringValue.of("value") }, w) }
             .append { w -> NodeModifyWorker(JsonPointer.compile("/entry"), w) }
             .run()
             .singleOrNull()
 
         item.shouldNotBeNull()
-        item.getAs<JsonNodeValue>(WellKnownKeys.NODE).toString().shouldBe("""{"entry":"value"}""")
+        item.getAs<Node>(WellKnownKeys.NODE).toString().shouldBe("""{"entry":"value"}""")
     }
 
     @Test
@@ -66,7 +66,7 @@ class NodeModifyWorkerTest {
 
         val objectMapper = ObjectMapper()
 
-        val item = TestWorkerRunner(WorkItem.from("""{"entry":"value2"}"""))
+        val item = TestWorkerRunner(WorkItem.of(StringValue.of("""{"entry":"value2"}""")))
             .append { w -> FromJsonWorker(JsonNode::class.java, objectMapper, w) }
             .append { w -> SettingWorker(WorkItem.DEFAULT_KEY, { NullValue.INSTANCE }, w) }
             .append { w -> NodeModifyWorker(JsonPointer.compile("/entry"), w) }
@@ -74,7 +74,7 @@ class NodeModifyWorkerTest {
             .singleOrNull()
 
         item.shouldNotBeNull()
-        item.getAs<JsonNodeValue>(WellKnownKeys.NODE).toString().shouldBe("""{"entry":null}""")
+        item.getAs<Node>(WellKnownKeys.NODE).toString().shouldBe("""{"entry":null}""")
     }
 
     @Test
@@ -82,15 +82,15 @@ class NodeModifyWorkerTest {
 
         val objectMapper = ObjectMapper()
 
-        val item = TestWorkerRunner(WorkItem.from("""{"values":{"entry":"value2"}}"""))
+        val item = TestWorkerRunner(WorkItem.of(StringValue.of("""{"values":{"entry":"value2"}}""")))
             .append { w -> FromJsonWorker(JsonNode::class.java, objectMapper, w) }
-            .append { w -> SettingWorker(WorkItem.DEFAULT_KEY, { StringValue("value") }, w) }
+            .append { w -> SettingWorker(WorkItem.DEFAULT_KEY, { StringValue.of("value") }, w) }
             .append { w -> NodeModifyWorker(JsonPointer.compile("/values/entry"), w) }
             .run()
             .singleOrNull()
 
         item.shouldNotBeNull()
-        item.getAs<JsonNodeValue>(WellKnownKeys.NODE).toString().shouldBe("""{"values":{"entry":"value"}}""")
+        item.getAs<Node>(WellKnownKeys.NODE).toString().shouldBe("""{"values":{"entry":"value"}}""")
     }
 
     @Test
@@ -98,15 +98,15 @@ class NodeModifyWorkerTest {
 
         val objectMapper = ObjectMapper()
 
-        val item = TestWorkerRunner(WorkItem.from("""{"values":["entry","value2"]}"""))
+        val item = TestWorkerRunner(WorkItem.of(StringValue.of("""{"values":["entry","value2"]}""")))
             .append { w -> FromJsonWorker(JsonNode::class.java, objectMapper, w) }
-            .append { w -> SettingWorker(WorkItem.DEFAULT_KEY, { StringValue("value") }, w) }
+            .append { w -> SettingWorker(WorkItem.DEFAULT_KEY, { StringValue.of("value") }, w) }
             .append { w -> NodeModifyWorker(JsonPointer.compile("/values/1"), w) }
             .run()
             .singleOrNull()
 
         item.shouldNotBeNull()
-        item.getAs<JsonNodeValue>(WellKnownKeys.NODE).toString().shouldBe("""{"values":["entry","value"]}""")
+        item.getAs<Node>(WellKnownKeys.NODE).toString().shouldBe("""{"values":["entry","value"]}""")
     }
 
     @Test
@@ -114,9 +114,9 @@ class NodeModifyWorkerTest {
 
         val objectMapper = ObjectMapper()
 
-        val items = TestWorkerRunner(WorkItem.from("""{"values":"value2"}"""))
+        val items = TestWorkerRunner(WorkItem.of(StringValue.of("""{"values":"value2"}""")))
             .append { w -> FromJsonWorker(JsonNode::class.java, objectMapper, w) }
-            .append { w -> SettingWorker(WorkItem.DEFAULT_KEY, { StringValue("value") }, w) }
+            .append { w -> SettingWorker(WorkItem.DEFAULT_KEY, { StringValue.of("value") }, w) }
             .append { w -> NodeModifyWorker(JsonPointer.compile("/values/entry"), w) }
             .run()
 

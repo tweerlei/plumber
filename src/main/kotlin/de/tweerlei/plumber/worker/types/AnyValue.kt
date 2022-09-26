@@ -16,17 +16,20 @@
 package de.tweerlei.plumber.worker.types
 
 import com.fasterxml.jackson.databind.JsonNode
-import com.fasterxml.jackson.databind.node.JsonNodeFactory
-import java.math.BigDecimal
-import java.math.BigInteger
 
-class OtherValue(
+class AnyValue(
     val value: Any
 ): Value {
 
     companion object {
         const val NAME = "any"
     }
+
+    private var stringValue: StringValue? = null
+
+    private fun toStringValue() =
+        stringValue ?: StringValue.of(value.toString())
+            .also { stringValue = it}
 
     inline fun <reified T: Any> to() =
         value as T
@@ -36,40 +39,25 @@ class OtherValue(
 
     override fun toAny(): Any =
         value
-    override fun toBoolean(): Boolean =
-        toString().let {
-            it.isNotBlank() && it != "0" && it != "false"
-        }
-    override fun toLong(): Long =
-        toString().let {
-            it.toLongOrNull() ?: 0L
-        }
-    override fun toDouble(): Double =
-        toString().let {
-            it.toDoubleOrNull() ?: 0.0
-        }
-    override fun toBigInteger(): BigInteger =
-        toString().let {
-            it.toBigIntegerOrNull() ?: BigInteger.valueOf(0L)
-        }
-    override fun toBigDecimal(): BigDecimal =
-        toString().let {
-            it.toBigDecimalOrNull() ?: BigDecimal.valueOf(0.0)
-        }
-    override fun toByteArray(): ByteArray =
-        toString().let {
-            it.toByteArray()
-        }
+    override fun toBoolean() =
+        toStringValue().toBoolean()
+    override fun toLong() =
+        toStringValue().toLong()
+    override fun toDouble() =
+        toStringValue().toDouble()
+    override fun toBigInteger() =
+        toStringValue().toBigInteger()
+    override fun toBigDecimal() =
+        toStringValue().toBigDecimal()
+    override fun toByteArray() =
+        toStringValue().toByteArray()
     override fun toJsonNode(): JsonNode =
-        toString().let {
-            JsonNodeFactory.instance.textNode(it)
-        }
-    override fun size(): Long =
-        toString().let {
-            it.length.toLong()
-        }
-    override fun toString(): String =
-        value.toString()
+        // TODO: use ObjectMapper.valueToTree()
+        toStringValue().toJsonNode()
+    override fun size() =
+        toStringValue().size()
+    override fun toString() =
+        toStringValue().toString()
 
     override fun dump() =
         "${getName()}:${value::class.simpleName}:${toString()}"

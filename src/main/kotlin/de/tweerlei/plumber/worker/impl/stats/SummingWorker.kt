@@ -20,6 +20,7 @@ import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.DelegatingWorker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
+import de.tweerlei.plumber.worker.types.LongValue
 import mu.KLogging
 import java.util.concurrent.atomic.AtomicLong
 
@@ -32,10 +33,12 @@ class SummingWorker(
     companion object: KLogging()
 
     private val sum = AtomicLong()
+    private var startTime: Long = 0L
     private var lastTime = AtomicLong()
 
     override fun onOpen() {
-        lastTime.set(System.currentTimeMillis())
+        startTime = System.currentTimeMillis()
+        lastTime.set(startTime)
     }
 
     override fun doProcess(item: WorkItem) =
@@ -50,11 +53,14 @@ class SummingWorker(
                             val perSecond = bytes.toDouble() * 1000 / (now - last).coerceAtLeast(1)
                             logger.info { "$name: Item sum: $counter @ ${perSecond.humanReadable()} byte/s" }
                         }
-                        item.set(counter, WellKnownKeys.SUM)
+                        item.set(LongValue.of(counter), WellKnownKeys.SUM)
                     }
             }.let { true }
 
     override fun onClose() {
+        val now = System.currentTimeMillis()
+        val perSecond = sum.get().toDouble() * 1000 / (now - startTime).coerceAtLeast(1)
         logger.info { "$name: Item sum: ${sum.get()}" }
+        logger.info { "$name: Throughput: ${perSecond.humanReadable()} byte/s" }
     }
 }

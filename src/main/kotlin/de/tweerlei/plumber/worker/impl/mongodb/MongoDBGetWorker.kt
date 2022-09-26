@@ -15,14 +15,15 @@
  */
 package de.tweerlei.plumber.worker.impl.mongodb
 
-import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.mongodb.client.MongoClient
-import de.tweerlei.plumber.worker.*
+import de.tweerlei.plumber.worker.WorkItem
+import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.DelegatingWorker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.impl.ifEmptyGetFrom
-import de.tweerlei.plumber.worker.types.JsonNodeValue
+import de.tweerlei.plumber.worker.types.Node
+import de.tweerlei.plumber.worker.types.StringValue
 import org.bson.Document
 
 class MongoDBGetWorker(
@@ -35,8 +36,8 @@ class MongoDBGetWorker(
 ): DelegatingWorker(worker) {
 
     override fun doProcess(item: WorkItem) =
-        item.getFirstAs<JsonNodeValue>(WellKnownKeys.NODE)
-            .value.toMongoDB(objectMapper)
+        item.getFirstAs<Node>(WellKnownKeys.NODE)
+            .toMongoDB(objectMapper)
             .let { attributes ->
                 databaseName.ifEmptyGetFrom(item, MongoDBKeys.DATABASE_NAME)
                     .let { actualDatabaseName ->
@@ -51,8 +52,8 @@ class MongoDBGetWorker(
                                     .also { node ->
                                         item.set(node)
                                         item.set(node, WellKnownKeys.NODE)
-                                        item.set(actualDatabaseName, MongoDBKeys.DATABASE_NAME)
-                                        item.set(actualCollectionName, MongoDBKeys.COLLECTION_NAME)
+                                        item.set(StringValue.of(actualDatabaseName), MongoDBKeys.DATABASE_NAME)
+                                        item.set(StringValue.of(actualCollectionName), MongoDBKeys.COLLECTION_NAME)
                                     }
                             }
                     }

@@ -17,7 +17,6 @@ package de.tweerlei.plumber.worker
 
 import de.tweerlei.plumber.worker.types.NullValue
 import de.tweerlei.plumber.worker.types.Value
-import de.tweerlei.plumber.worker.types.toValue
 
 class WorkItem private constructor(
     private val map: MutableMap<String, Value>
@@ -30,12 +29,6 @@ class WorkItem private constructor(
             WorkItem(HashMap()).also { item ->
                 entries.forEach { (k, v) -> item.set(v, k) }
                 item.set(value)
-            }
-
-        fun from(value: Any?, vararg entries: Pair<String, Any?>) =
-            WorkItem(HashMap()).also { item ->
-                entries.forEach { (k, v) -> item.set(v.toValue(), k) }
-                item.set(value.toValue())
             }
     }
 
@@ -78,10 +71,6 @@ class WorkItem private constructor(
             map.remove(key)
         else
             map[key] = value
-    }
-
-    fun set(value: Any?, key: String = DEFAULT_KEY) {
-        set(value.toValue(), key)
     }
 
     fun dump() =

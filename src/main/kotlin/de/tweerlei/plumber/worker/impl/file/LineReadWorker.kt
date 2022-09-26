@@ -19,12 +19,12 @@ import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.GeneratingWorker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
+import de.tweerlei.plumber.worker.types.StringValue
 import java.io.BufferedReader
 import java.io.File
 import java.io.FileInputStream
 import java.io.InputStreamReader
 import java.nio.charset.Charset
-import java.nio.charset.StandardCharsets
 
 class LineReadWorker(
     private val file: File,
@@ -40,20 +40,21 @@ class LineReadWorker(
     }
 
     override fun generateItems(item: WorkItem, fn: (WorkItem) -> Boolean) {
+        val fileName = StringValue.of(file.name)
         var keepGenerating = true
         while (keepGenerating) {
-            keepGenerating = reader.nextWorkItem()
+            keepGenerating = reader.nextWorkItem(fileName)
                 ?.let { workItem -> fn(workItem) }
                 ?: false
         }
     }
 
-    private fun BufferedReader.nextWorkItem() =
+    private fun BufferedReader.nextWorkItem(fileName: StringValue) =
         readLine()
             ?.let { line ->
-                WorkItem.from(
-                    line,
-                    WellKnownKeys.NAME to file.name
+                WorkItem.of(
+                    StringValue.of(line),
+                    WellKnownKeys.NAME to fileName
                 )
             }
 

@@ -17,19 +17,18 @@ package de.tweerlei.plumber.worker.types
 
 import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.booleans.shouldBeTrue
-import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeSameInstanceAs
 import org.junit.jupiter.api.Test
 import java.math.BigDecimal
 import java.math.BigInteger
 
-class OtherValueTest {
+class AnyValueTest {
 
     @Test
     fun testIt() {
         val value = listOf(1, 2, 3)
-        with (OtherValue(value)) {
+        with (AnyValue(value)) {
             asOptional().shouldBeSameInstanceAs(this)
             toAny().shouldBe(value)
             toBoolean().shouldBeTrue()
@@ -53,7 +52,7 @@ class OtherValueTest {
             equals(value).shouldBeFalse()
             equals(null).shouldBeFalse()
             equals("").shouldBeFalse()
-            equals(StringValue("[1, 2, 3]")).shouldBeFalse()
+            equals(StringValue.of("[1, 2, 3]")).shouldBeFalse()
         }
     }
 }

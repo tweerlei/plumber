@@ -17,7 +17,6 @@ package de.tweerlei.plumber.worker.types
 
 import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.booleans.shouldBeTrue
-import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeSameInstanceAs
 import org.junit.jupiter.api.Test
@@ -28,7 +27,7 @@ class DoubleValueTest {
 
     @Test
     fun testNonzero() {
-        with (DoubleValue(42.1)) {
+        with (DoubleValue.of(42.1)) {
             asOptional().shouldBeSameInstanceAs(this)
             toAny().shouldBe(42.1)
             toBoolean().shouldBeTrue()
@@ -49,27 +48,27 @@ class DoubleValueTest {
             hashCode().shouldBe(42.1.hashCode())
 
             equals(NullValue.INSTANCE).shouldBeFalse()
-            equals(DoubleValue(42.1)).shouldBeTrue()
-            equals(DoubleValue(0.0)).shouldBeFalse()
+            equals(DoubleValue.of(42.1)).shouldBeTrue()
+            equals(DoubleValue.of(0.0)).shouldBeFalse()
             equals(42L).shouldBeFalse()
             equals(0L).shouldBeFalse()
-            equals(StringValue("0")).shouldBeFalse()
-            equals(StringValue("42.1")).shouldBeTrue()
-            equals(StringValue("")).shouldBeFalse()
+            equals(StringValue.of("0")).shouldBeFalse()
+            equals(StringValue.of("42.1")).shouldBeTrue()
+            equals(StringValue.of("")).shouldBeFalse()
 
             compareTo(NullValue.INSTANCE).shouldBe(1)
-            compareTo(DoubleValue(42.1)).shouldBe(0)
-            compareTo(DoubleValue(0.0)).shouldBe(1)
-            compareTo(DoubleValue(100.0)).shouldBe(-1)
-            compareTo(StringValue("")).shouldBe(1)
-            compareTo(StringValue("42.1")).shouldBe(0)
-            compareTo(StringValue("0")).shouldBe(1)
+            compareTo(DoubleValue.of(42.1)).shouldBe(0)
+            compareTo(DoubleValue.of(0.0)).shouldBe(1)
+            compareTo(DoubleValue.of(100.0)).shouldBe(-1)
+            compareTo(StringValue.of("")).shouldBe(1)
+            compareTo(StringValue.of("42.1")).shouldBe(0)
+            compareTo(StringValue.of("0")).shouldBe(1)
         }
     }
 
     @Test
     fun testZero() {
-        with (DoubleValue(0.0)) {
+        with (DoubleValue.of(0.0)) {
             asOptional().shouldBeSameInstanceAs(this)
             toAny().shouldBe(0.0)
             toBoolean().shouldBeFalse()
@@ -90,27 +89,27 @@ class DoubleValueTest {
             hashCode().shouldBe(0.0.hashCode())
 
             equals(NullValue.INSTANCE).shouldBeTrue()
-            equals(DoubleValue(42.0)).shouldBeFalse()
-            equals(DoubleValue(0.0)).shouldBeTrue()
+            equals(DoubleValue.of(42.0)).shouldBeFalse()
+            equals(DoubleValue.of(0.0)).shouldBeTrue()
             equals(42L).shouldBeFalse()
             equals(0L).shouldBeFalse()
-            equals(StringValue("42.0")).shouldBeFalse()
-            equals(StringValue("0.0")).shouldBeTrue()
-            equals(StringValue("")).shouldBeTrue()
+            equals(StringValue.of("42.0")).shouldBeFalse()
+            equals(StringValue.of("0.0")).shouldBeTrue()
+            equals(StringValue.of("")).shouldBeTrue()
 
             compareTo(NullValue.INSTANCE).shouldBe(0)
-            compareTo(DoubleValue(42.0)).shouldBe(-1)
-            compareTo(DoubleValue(0.0)).shouldBe(0)
-            compareTo(DoubleValue(100.0)).shouldBe(-1)
-            compareTo(StringValue("")).shouldBe(0)
-            compareTo(StringValue("42.0")).shouldBe(-1)
-            compareTo(StringValue("0.0")).shouldBe(0)
+            compareTo(DoubleValue.of(42.0)).shouldBe(-1)
+            compareTo(DoubleValue.of(0.0)).shouldBe(0)
+            compareTo(DoubleValue.of(100.0)).shouldBe(-1)
+            compareTo(StringValue.of("")).shouldBe(0)
+            compareTo(StringValue.of("42.0")).shouldBe(-1)
+            compareTo(StringValue.of("0.0")).shouldBe(0)
         }
     }
 
     @Test
     fun testNegative() {
-        with (DoubleValue(-42.1)) {
+        with (DoubleValue.of(-42.1)) {
             asOptional().shouldBeSameInstanceAs(this)
             toAny().shouldBe(-42.1)
             toBoolean().shouldBeTrue()
@@ -131,21 +130,21 @@ class DoubleValueTest {
             hashCode().shouldBe((-42.1).hashCode())
 
             equals(NullValue.INSTANCE).shouldBeFalse()
-            equals(DoubleValue(-42.1)).shouldBeTrue()
-            equals(DoubleValue(0.0)).shouldBeFalse()
+            equals(DoubleValue.of(-42.1)).shouldBeTrue()
+            equals(DoubleValue.of(0.0)).shouldBeFalse()
             equals(-42L).shouldBeFalse()
             equals(0L).shouldBeFalse()
-            equals(StringValue("-42.1")).shouldBeTrue()
-            equals(StringValue("0")).shouldBeFalse()
-            equals(StringValue("")).shouldBeFalse()
+            equals(StringValue.of("-42.1")).shouldBeTrue()
+            equals(StringValue.of("0")).shouldBeFalse()
+            equals(StringValue.of("")).shouldBeFalse()
 
             compareTo(NullValue.INSTANCE).shouldBe(-1)
-            compareTo(DoubleValue(-42.1)).shouldBe(0)
-            compareTo(DoubleValue(0.0)).shouldBe(-1)
-            compareTo(DoubleValue(-100.0)).shouldBe(1)
-            compareTo(StringValue("")).shouldBe(-1)
-            compareTo(StringValue("-42.1")).shouldBe(0)
-            compareTo(StringValue("0")).shouldBe(-1)
+            compareTo(DoubleValue.of(-42.1)).shouldBe(0)
+            compareTo(DoubleValue.of(0.0)).shouldBe(-1)
+            compareTo(DoubleValue.of(-100.0)).shouldBe(1)
+            compareTo(StringValue.of("")).shouldBe(-1)
+            compareTo(StringValue.of("-42.1")).shouldBe(0)
+            compareTo(StringValue.of("0")).shouldBe(-1)
         }
     }
 }

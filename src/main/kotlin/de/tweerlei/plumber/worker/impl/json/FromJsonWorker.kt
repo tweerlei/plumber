@@ -21,6 +21,8 @@ import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.DelegatingWorker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
+import de.tweerlei.plumber.worker.types.Node
+import de.tweerlei.plumber.worker.types.toValue
 
 class FromJsonWorker<T>(
     private val itemType: Class<T>,
@@ -37,9 +39,10 @@ class FromJsonWorker<T>(
         item.get().toString()
             .let { value ->
                 objectMapper.readValue(value, valueType)
+                    ?.toValue()
                     ?.also { obj ->
                         item.set(obj)
-                        if (obj is JsonNode)
+                        if (obj is Node)
                             item.set(obj, WellKnownKeys.NODE)
                     }
             }?.let { true }

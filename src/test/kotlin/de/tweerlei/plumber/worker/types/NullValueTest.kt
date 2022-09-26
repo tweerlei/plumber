@@ -44,11 +44,11 @@ class NullValueTest {
             equals(NullValue.INSTANCE).shouldBeTrue()
             equals(null).shouldBeFalse()
             equals("").shouldBeFalse()
-            equals(StringValue("")).shouldBeFalse()
+            equals(StringValue.of("")).shouldBeFalse()
 
             compareTo(NullValue.INSTANCE).shouldBe(0)
-            compareTo(StringValue("")).shouldBe(-1)
-            compareTo(LongValue(0L)).shouldBe(-1)
+            compareTo(StringValue.of("")).shouldBe(-1)
+            compareTo(LongValue.of(0L)).shouldBe(-1)
         }
     }
 }

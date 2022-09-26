@@ -20,7 +20,9 @@ import com.fasterxml.jackson.databind.JsonNode
 import de.tweerlei.plumber.worker.*
 import de.tweerlei.plumber.worker.impl.GeneratingWorker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
-import de.tweerlei.plumber.worker.types.JsonNodeValue
+import de.tweerlei.plumber.worker.types.Node
+import de.tweerlei.plumber.worker.types.StringValue
+import de.tweerlei.plumber.worker.types.Value
 import mu.KLogging
 
 class NodeEachWorker(
@@ -29,22 +31,24 @@ class NodeEachWorker(
     worker: Worker
 ): GeneratingWorker(limit, worker) {
 
-    companion object: KLogging()
+    companion object: KLogging() {
+        private val INDEX_ZERO = StringValue.of("0")
+    }
 
     override fun generateItems(item: WorkItem, fn: (WorkItem) -> Boolean) {
-        item.getAs<JsonNodeValue>(WellKnownKeys.NODE)
+        item.getAs<Node>(WellKnownKeys.NODE)
             .value.at(ptr).toMap().all { (key, value) ->
-                fn(WorkItem.from(value,
+                fn(WorkItem.of(value,
                     WellKnownKeys.NAME to key
                 ))
             }
     }
 
-    private fun JsonNode.toMap(): Map<String, Any?> =
+    private fun JsonNode.toMap(): Map<StringValue, Value> =
         when {
-            isArray -> withIndex().associate { v -> v.index.toString() to v.value.toSimpleType() }
-            isObject -> fields().asSequence().associate { v -> v.key to v.value.toSimpleType() }
+            isArray -> withIndex().associate { v -> StringValue.of(v.index.toString()) to v.value.toComparableValue() }
+            isObject -> fields().asSequence().associate { v -> StringValue.of(v.key) to v.value.toComparableValue() }
             isEmpty -> emptyMap()
-            else -> mapOf("0" to toSimpleType())
+            else -> mapOf(INDEX_ZERO to toComparableValue())
         }
 }

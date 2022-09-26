@@ -20,19 +20,24 @@ import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.DelegatingWorker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
+import de.tweerlei.plumber.worker.types.ByteArrayValue
+import de.tweerlei.plumber.worker.types.StringValue
 
 class DigestWorker(
     private val transformer: Transformer,
     worker: Worker
 ): DelegatingWorker(worker) {
 
+    private val digestAlgorithm = StringValue.of(transformer.name)
+
     override fun doProcess(item: WorkItem) =
         item.get()
             .toByteArray()
             .let { bytes ->
                 transformer.transform(bytes)
-            }.also { digest ->
-                item.set(transformer.name, WellKnownKeys.DIGEST_ALGORITHM)
+            }.let { ByteArrayValue.of(it) }
+            .also { digest ->
+                item.set(digestAlgorithm, WellKnownKeys.DIGEST_ALGORITHM)
                 item.set(digest, WellKnownKeys.DIGEST)
                 item.set(digest)
             }.let { true }

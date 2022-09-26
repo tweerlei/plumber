@@ -29,42 +29,42 @@ class ModuloWorkerTest {
 
     @Test
     fun testLong() {
-        test(LongValue(1L), LongValue(2L), LongValue(1L))
-        test(LongValue(-1001L), LongValue(10L), LongValue(-1L))
-        test(LongValue(1001L), LongValue(3L), LongValue(2L))
-        test(LongValue(0L), LongValue(1L), LongValue(0L))
+        test(LongValue.of(1L), LongValue.of(2L), LongValue.of(1L))
+        test(LongValue.of(-1001L), LongValue.of(10L), LongValue.of(-1L))
+        test(LongValue.of(1001L), LongValue.of(3L), LongValue.of(2L))
+        test(LongValue.of(0L), LongValue.of(1L), LongValue.of(0L))
 
-        test(LongValue(1L), LongValue(0L), DoubleValue(Double.NaN))
-        test(LongValue(-1L), LongValue(0L), DoubleValue(Double.NaN))
-        test(LongValue(0L), LongValue(0L), DoubleValue(Double.NaN))
+        test(LongValue.of(1L), LongValue.of(0L), DoubleValue.of(Double.NaN))
+        test(LongValue.of(-1L), LongValue.of(0L), DoubleValue.of(Double.NaN))
+        test(LongValue.of(0L), LongValue.of(0L), DoubleValue.of(Double.NaN))
     }
 
     @Test
     fun testDouble() {
-        test(DoubleValue(0.12), DoubleValue(1.2), DoubleValue(0.12))
-        test(DoubleValue(1001.23), DoubleValue(2.1), DoubleValue(1.63))
-        test(DoubleValue(-1001.12), DoubleValue(-0.5), DoubleValue(-0.12))
-        test(DoubleValue(1001.12), DoubleValue(500.56), DoubleValue(0.0))
+        test(DoubleValue.of(0.12), DoubleValue.of(1.2), DoubleValue.of(0.12))
+        test(DoubleValue.of(1001.23), DoubleValue.of(2.1), DoubleValue.of(1.63))
+        test(DoubleValue.of(-1001.12), DoubleValue.of(-0.5), DoubleValue.of(-0.12))
+        test(DoubleValue.of(1001.12), DoubleValue.of(500.56), DoubleValue.of(0.0))
 
-        test(DoubleValue(1.0), DoubleValue(0.0), DoubleValue(Double.NaN))
-        test(DoubleValue(-1.0), DoubleValue(0.0), DoubleValue(Double.NaN))
-        test(DoubleValue(0.0), DoubleValue(0.0), DoubleValue(Double.NaN))
+        test(DoubleValue.of(1.0), DoubleValue.of(0.0), DoubleValue.of(Double.NaN))
+        test(DoubleValue.of(-1.0), DoubleValue.of(0.0), DoubleValue.of(Double.NaN))
+        test(DoubleValue.of(0.0), DoubleValue.of(0.0), DoubleValue.of(Double.NaN))
     }
 
     @Test
     fun testMixed() {
-        test(LongValue(-1L), DoubleValue(2.5), DoubleValue(-1.0))
-        test(DoubleValue(0.12), LongValue(2L), DoubleValue(0.12))
-        test(LongValue(-1001L), DoubleValue(-2.5), DoubleValue(-1.0))
-        test(DoubleValue(1001.12), LongValue(2L), DoubleValue(1.12))
+        test(LongValue.of(-1L), DoubleValue.of(2.5), DoubleValue.of(-1.0))
+        test(DoubleValue.of(0.12), LongValue.of(2L), DoubleValue.of(0.12))
+        test(LongValue.of(-1001L), DoubleValue.of(-2.5), DoubleValue.of(-1.0))
+        test(DoubleValue.of(1001.12), LongValue.of(2L), DoubleValue.of(1.12))
 
-        test(LongValue(1L), DoubleValue(0.0), DoubleValue(Double.NaN))
-        test(DoubleValue(-1.0), LongValue(0L), DoubleValue(Double.NaN))
-        test(DoubleValue(0.0), LongValue(0L), DoubleValue(Double.NaN))
+        test(LongValue.of(1L), DoubleValue.of(0.0), DoubleValue.of(Double.NaN))
+        test(DoubleValue.of(-1.0), LongValue.of(0L), DoubleValue.of(Double.NaN))
+        test(DoubleValue.of(0.0), LongValue.of(0L), DoubleValue.of(Double.NaN))
     }
 
     private fun test(current: ComparableValue, other: ComparableValue, expected: ComparableValue) {
-        val item = TestWorkerRunner(WorkItem.from(current))
+        val item = TestWorkerRunner(WorkItem.of(current))
             .append { w -> ModuloWorker({ other }, w) }
             .run()
             .singleOrNull()

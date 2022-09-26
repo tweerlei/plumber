@@ -17,6 +17,7 @@ package de.tweerlei.plumber.worker.impl.text
 
 import de.tweerlei.plumber.worker.impl.TestWorkerRunner
 import de.tweerlei.plumber.worker.WorkItem
+import de.tweerlei.plumber.worker.types.ByteArrayValue
 import de.tweerlei.plumber.worker.types.StringValue
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.nulls.shouldNotBeNull
@@ -28,7 +29,7 @@ class FindReplaceWorkerTest {
     @Test
     fun testFindMatch() {
 
-        val item = TestWorkerRunner(WorkItem.from("foobazbar"))
+        val item = TestWorkerRunner(WorkItem.of(StringValue.of("foobazbar")))
             .append { w -> MatchingWorker(Regex("foo.*bar"), w) }
             .run()
             .singleOrNull()
@@ -40,7 +41,7 @@ class FindReplaceWorkerTest {
     @Test
     fun testFindMatchWithGroups() {
 
-        val item = TestWorkerRunner(WorkItem.from("foobazbar"))
+        val item = TestWorkerRunner(WorkItem.of(StringValue.of("foobazbar")))
             .append { w -> MatchingWorker(Regex("foo(.*)bar"), w) }
             .run()
             .singleOrNull()
@@ -54,7 +55,7 @@ class FindReplaceWorkerTest {
     @Test
     fun testFindNoMatch() {
 
-        val item = TestWorkerRunner(WorkItem.from("barfoo"))
+        val item = TestWorkerRunner(WorkItem.of(StringValue.of("barfoo")))
             .append { w -> MatchingWorker(Regex("foo.*bar"), w) }
             .run()
             .singleOrNull()
@@ -66,9 +67,9 @@ class FindReplaceWorkerTest {
     @Test
     fun testReplace() {
 
-        val item = TestWorkerRunner(WorkItem.from("foobazbar"))
+        val item = TestWorkerRunner(WorkItem.of(StringValue.of("foobazbar")))
             .append { w -> MatchingWorker(Regex("foo.*bar"), w) }
-            .append { w -> ReplacingWorker({ StringValue("bar") }, w) }
+            .append { w -> ReplacingWorker({ StringValue.of("bar") }, w) }
             .run()
             .singleOrNull()
 
@@ -79,9 +80,9 @@ class FindReplaceWorkerTest {
     @Test
     fun testReplaceWithGroups() {
 
-        val item = TestWorkerRunner(WorkItem.from("0foobazbar1"))
+        val item = TestWorkerRunner(WorkItem.of(StringValue.of("0foobazbar1")))
             .append { w -> MatchingWorker(Regex("foo(.*)bar"), w) }
-            .append { w -> ReplacingWorker({ StringValue("doo$1") }, w) }
+            .append { w -> ReplacingWorker({ StringValue.of("doo$1") }, w) }
             .run()
             .singleOrNull()
 
@@ -92,9 +93,9 @@ class FindReplaceWorkerTest {
     @Test
     fun testReplaceWithAnchor() {
 
-        val item = TestWorkerRunner(WorkItem.from("foobazbar"))
+        val item = TestWorkerRunner(WorkItem.of(StringValue.of("foobazbar")))
             .append { w -> MatchingWorker(Regex("^foo(.*)bar$"), w) }
-            .append { w -> ReplacingWorker({ StringValue("doo$1") }, w) }
+            .append { w -> ReplacingWorker({ StringValue.of("doo$1") }, w) }
             .run()
             .singleOrNull()
 
@@ -105,9 +106,9 @@ class FindReplaceWorkerTest {
     @Test
     fun testNoReplaceWithAnchor() {
 
-        val item = TestWorkerRunner(WorkItem.from("0foobazbar1"))
+        val item = TestWorkerRunner(WorkItem.of(StringValue.of("0foobazbar1")))
             .append { w -> MatchingWorker(Regex("^foo(.*)bar$"), w) }
-            .append { w -> ReplacingWorker({ StringValue("doo$1") }, w) }
+            .append { w -> ReplacingWorker({ StringValue.of("doo$1") }, w) }
             .run()
             .singleOrNull()
 

@@ -27,22 +27,23 @@ class ConvertingWorker(
 ): DelegatingWorker(worker) {
 
     override fun doProcess(item: WorkItem) =
-        item.get().let { value ->
-            when (type) {
-                StringValue.NAME -> value.toString()
-                LongValue.NAME -> value.toLong()
-                DoubleValue.NAME -> value.toDouble()
-                BooleanValue.NAME -> value.toBoolean()
-                InstantValue.NAME -> value.toInstant()
-                DurationValue.NAME -> value.toDuration()
-                BigIntegerValue.NAME -> value.toBigInteger()
-                BigDecimalValue.NAME -> value.toBigDecimal()
-                ByteArrayValue.NAME -> value.toByteArray()
-                else -> null
-            }
-        }?.let { value ->
-            value.toValue()
-        }?.also { value ->
-            item.set(value)
-        }.let { true }
+        item.get()
+            .let { value ->
+                when (type) {
+                    StringValue.NAME -> value.toString()
+                    LongValue.NAME -> value.toLong()
+                    DoubleValue.NAME -> value.toDouble()
+                    BooleanValue.NAME -> value.toBoolean()
+                    InstantValue.NAME -> value.toInstant()
+                    DurationValue.NAME -> value.toDuration()
+                    BigIntegerValue.NAME -> value.toBigInteger()
+                    BigDecimalValue.NAME -> value.toBigDecimal()
+                    ByteArrayValue.NAME -> value.toByteArray()
+                    Node.NAME -> value.toJsonNode()
+                    else -> null
+                }
+            }?.toValue()
+            ?.also { value ->
+                item.set(value)
+            }.let { true }
 }

@@ -23,7 +23,10 @@ import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.GeneratingWorker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
+import de.tweerlei.plumber.worker.types.InstantValue
+import de.tweerlei.plumber.worker.types.LongValue
 import de.tweerlei.plumber.worker.types.Range
+import de.tweerlei.plumber.worker.types.StringValue
 import mu.KLogging
 
 class S3ListObjectsWorker(
@@ -41,6 +44,7 @@ class S3ListObjectsWorker(
     }
 
     override fun generateItems(item: WorkItem, fn: (WorkItem) -> Boolean) {
+        val actualBucketName = StringValue.of(bucketName)
         val range = item.getOptionalAs(WellKnownKeys.RANGE) ?: Range()
         val startAfter = range.startAfter.asOptional()?.toString()
         val endWith = range.endWith.asOptional()?.toString()
@@ -55,7 +59,7 @@ class S3ListObjectsWorker(
             logger.debug { "fetched ${result.objectSummaries.size} items" }
             result.objectSummaries.forEach { objectSummary ->
                 if (endWith == null || objectSummary.key <= endWith) {
-                    if (fn(objectSummary.toWorkItem())) {
+                    if (fn(objectSummary.toWorkItem(actualBucketName))) {
                         itemCount++
                         if (firstKey == null) {
                             firstKey = objectSummary.key
@@ -86,13 +90,16 @@ class S3ListObjectsWorker(
                     withStartAfter(startWith)
             }.let { request -> amazonS3Client.listObjectsV2(request) }
 
-    private fun S3ObjectSummary.toWorkItem() =
-        WorkItem.from(
-            key,
-            S3Keys.BUCKET_NAME to bucketName,
-            S3Keys.OBJECT_KEY to key,
-            WellKnownKeys.NAME to key,
-            WellKnownKeys.SIZE to size,
-            WellKnownKeys.LAST_MODIFIED to lastModified.toInstant()
-        )
+    private fun S3ObjectSummary.toWorkItem(bucket: StringValue) =
+        StringValue.of(key)
+            .let { keyValue ->
+                WorkItem.of(
+                    keyValue,
+                    S3Keys.BUCKET_NAME to bucket,
+                    S3Keys.OBJECT_KEY to keyValue,
+                    WellKnownKeys.NAME to keyValue,
+                    WellKnownKeys.SIZE to LongValue.of(size),
+                    WellKnownKeys.LAST_MODIFIED to InstantValue.of(lastModified)
+                )
+            }
 }

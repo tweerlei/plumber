@@ -30,8 +30,8 @@ class RecordUnsetWorkerTest {
     @Test
     fun testUnset() {
 
-        val item = TestWorkerRunner(WorkItem.of(StringValue("value"),
-            WellKnownKeys.RECORD to Record.of("entry" to StringValue("value2"))
+        val item = TestWorkerRunner(WorkItem.of(StringValue.of("value"),
+            WellKnownKeys.RECORD to Record.of("entry" to StringValue.of("value2"))
         ))
             .append { w -> RecordUnsetWorker("entry", w) }
             .run()
@@ -45,7 +45,7 @@ class RecordUnsetWorkerTest {
     fun testUnsetNonexisting() {
 
         val item = TestWorkerRunner(WorkItem.of(NullValue.INSTANCE,
-            WellKnownKeys.RECORD to Record.of("entry2" to StringValue("value"))
+            WellKnownKeys.RECORD to Record.of("entry2" to StringValue.of("value"))
         ))
             .append { w -> RecordUnsetWorker("entry", w) }
             .run()

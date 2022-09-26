@@ -18,6 +18,7 @@ package de.tweerlei.plumber.worker.impl.text
 import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.impl.DelegatingWorker
 import de.tweerlei.plumber.worker.Worker
+import de.tweerlei.plumber.worker.types.StringValue
 
 class FormattingWorker(
     private val formatString: String,
@@ -35,6 +36,6 @@ class FormattingWorker(
                     item.get(varName).toString()
                 }.orEmpty()
         }.also { result ->
-            item.set(result)
+            item.set(StringValue.of(result))
         }.let { true }
 }

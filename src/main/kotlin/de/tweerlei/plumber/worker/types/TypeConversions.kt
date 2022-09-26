@@ -23,47 +23,29 @@ import java.time.Instant
 import java.time.format.DateTimeParseException
 import java.util.*
 
-private val byteCache = ValueCache<Byte, LongValue>("byte") { LongValue(it.toLong()) }
-private val charCache = ValueCache<Char, StringValue>("char") { StringValue(it.toString()) }
-private val shortCache = ValueCache<Short, LongValue>("short") { LongValue(it.toLong()) }
-private val intCache = ValueCache<Int, LongValue>("int") { LongValue(it.toLong()) }
-private val longCache = ValueCache<Long, LongValue>("long") { LongValue(it) }
-private val bigIntegerCache = ValueCache<BigInteger, BigIntegerValue>("bigint") { BigIntegerValue(it) }
-private val floatCache = ValueCache<Float, DoubleValue>("float") { DoubleValue(it.toDouble()) }
-private val doubleCache = ValueCache<Double, DoubleValue>("double") { DoubleValue(it) }
-private val bigDecimalCache = ValueCache<BigDecimal, BigDecimalValue>("bigdec") { BigDecimalValue(it) }
-private val stringCache = ValueCache<String, StringValue>("string", { it.length < 100 }) { StringValue(it) }
-private val instantCache = ValueCache<Instant, InstantValue>("instant") { InstantValue(it) }
-private val durationCache = ValueCache<Duration, DurationValue>("duration") { DurationValue(it) }
-private val dateCache = ValueCache<Date, InstantValue>("date") { InstantValue(it.toInstant()) }
-
 fun Any?.toValue(): Value =
     when (this) {
         null -> NullValue.INSTANCE
         is Value -> this
         is Boolean -> BooleanValue.of(this)
-        is Byte -> byteCache.getOrCreateValue(this)
-        is Char -> charCache.getOrCreateValue(this)
-        is Short -> shortCache.getOrCreateValue(this)
-        is Int -> intCache.getOrCreateValue(this)
-        is Long -> longCache.getOrCreateValue(this)
-        is BigInteger -> bigIntegerCache.getOrCreateValue(this)
-        is Float -> floatCache.getOrCreateValue(this)
-        is Double -> doubleCache.getOrCreateValue(this)
-        is BigDecimal -> bigDecimalCache.getOrCreateValue(this)
-        is String -> stringCache.getOrCreateValue(this)
-        is ByteArray -> ByteArrayValue(this)
-        is Instant -> instantCache.getOrCreateValue(this)
-        is Duration -> durationCache.getOrCreateValue(this)
-        is Date -> dateCache.getOrCreateValue(this)
-        is JsonNode -> JsonNodeValue(this)
-        is Collection<*> -> Record().also { record ->
-            forEachIndexed { index, value -> record[index.toString()] = value.toValue() }
-        }
-        is Map<*, *> -> Record().also { record ->
-            forEach { (key, value) -> record[key.toString()] = value.toValue() }
-        }
-        else -> OtherValue(this)
+        is Byte -> LongValue.of(this)
+        is Char -> StringValue.of(this)
+        is Short -> LongValue.of(this)
+        is Int -> LongValue.of(this)
+        is Long -> LongValue.of(this)
+        is BigInteger -> BigIntegerValue.of(this)
+        is Float -> DoubleValue.of(this)
+        is Double -> DoubleValue.of(this)
+        is BigDecimal -> BigDecimalValue.of(this)
+        is String -> StringValue.of(this)
+        is ByteArray -> ByteArrayValue.of(this)
+        is Instant -> InstantValue.of(this)
+        is Duration -> DurationValue.of(this)
+        is Date -> InstantValue.of(this)
+        is JsonNode -> Node(this)
+        is Collection<*> -> Record.of(this)
+        is Map<*, *> -> Record.of(this)
+        else -> AnyValue(this)
     }
 
 fun Value.toComparableValue() =
@@ -75,13 +57,13 @@ fun Value.toComparableValue() =
 fun String?.toComparableValue(): ComparableValue =
     if (this == null || this == "null") NullValue.INSTANCE
     else toBooleanStrictOrNull()?.let { BooleanValue.of(it) }
-        ?: toInstantOrNull()?.let { InstantValue(it) }
-        ?: toDurationOrNull()?.let { DurationValue(it) }
-        ?: toLongOrNull()?.let { LongValue(it) }
-        ?: toDoubleOrNull()?.let { DoubleValue(it) }
-        ?: toBigIntegerOrNull()?.let { BigIntegerValue(it) }
-        ?: toBigDecimalOrNull()?.let { BigDecimalValue(it) }
-        ?: StringValue(this)
+        ?: toInstantOrNull()?.let { InstantValue.of(it) }
+        ?: toDurationOrNull()?.let { DurationValue.of(it) }
+        ?: toLongOrNull()?.let { LongValue.of(it) }
+        ?: toDoubleOrNull()?.let { DoubleValue.of(it) }
+        ?: toBigIntegerOrNull()?.let { BigIntegerValue.of(it) }
+        ?: toBigDecimalOrNull()?.let { BigDecimalValue.of(it) }
+        ?: StringValue.of(this)
 
 private fun String.toInstantOrNull() =
     try {

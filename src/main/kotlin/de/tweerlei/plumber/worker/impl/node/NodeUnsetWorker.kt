@@ -22,7 +22,7 @@ import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.DelegatingWorker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
-import de.tweerlei.plumber.worker.types.JsonNodeValue
+import de.tweerlei.plumber.worker.types.Node
 
 class NodeUnsetWorker(
     private val p: JsonPointer,
@@ -34,7 +34,7 @@ class NodeUnsetWorker(
     private val index = p.last().matchingIndex
 
     override fun doProcess(item: WorkItem) =
-        item.getAs<JsonNodeValue>(WellKnownKeys.NODE)
+        item.getAs<Node>(WellKnownKeys.NODE)
             .value.at(ptr)
             .let { node ->
                 when {

@@ -28,7 +28,7 @@ class PatternWorkerTest {
     @Test
     fun testFindNoMatch() {
 
-        val item = TestWorkerRunner(WorkItem.from("foo"))
+        val item = TestWorkerRunner(WorkItem.of(StringValue.of("foo")))
             .append { w -> MatchingWorker(Regex("He..o"), w) }
             .run()
             .singleOrNull()
@@ -40,7 +40,7 @@ class PatternWorkerTest {
     @Test
     fun testFindMatch() {
 
-        val item = TestWorkerRunner(WorkItem.from("foo Hello bar"))
+        val item = TestWorkerRunner(WorkItem.of(StringValue.of("foo Hello bar")))
             .append { w -> MatchingWorker(Regex("He..o"), w) }
             .run()
             .singleOrNull()
@@ -52,9 +52,9 @@ class PatternWorkerTest {
     @Test
     fun testReplace() {
 
-        val item = TestWorkerRunner(WorkItem.from("foo x-1 yz-23 bar"))
+        val item = TestWorkerRunner(WorkItem.of(StringValue.of("foo x-1 yz-23 bar")))
             .append { w -> MatchingWorker(Regex("(\\S+)-(\\S+)"), w) }
-            .append { w -> ReplacingWorker({ StringValue("$2_$1") }, w) }
+            .append { w -> ReplacingWorker({ StringValue.of("$2_$1") }, w) }
             .run()
             .singleOrNull()
 
@@ -68,9 +68,9 @@ class PatternWorkerTest {
     @Test
     fun testReplaceWithoutMatch() {
 
-        val item = TestWorkerRunner(WorkItem.from("foo x_1 yz_23 bar"))
+        val item = TestWorkerRunner(WorkItem.of(StringValue.of("foo x_1 yz_23 bar")))
             .append { w -> MatchingWorker(Regex("(\\S+)-(\\S+)"), w) }
-            .append { w -> ReplacingWorker({ StringValue("$2_$1") }, w) }
+            .append { w -> ReplacingWorker({ StringValue.of("$2_$1") }, w) }
             .run()
             .singleOrNull()
 

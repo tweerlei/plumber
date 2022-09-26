@@ -22,6 +22,7 @@ import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.DelegatingWorker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.types.Record
+import de.tweerlei.plumber.worker.types.StringValue
 
 class ToCsvWorker(
     csvMapper: CsvMapper,
@@ -30,7 +31,7 @@ class ToCsvWorker(
 ): DelegatingWorker(worker) {
 
     companion object {
-        const val CONTENT_TYPE_CSV = "text/csv"
+        val CONTENT_TYPE_CSV = StringValue.of("text/csv")
     }
 
     private val writer = csvMapper
@@ -44,7 +45,7 @@ class ToCsvWorker(
             .let { obj ->
                 writer.writeValueAsString(obj.values.mapNullTo("null"))
                     .also { str ->
-                        item.set(str)
+                        item.set(StringValue.of(str))
                         item.set(CONTENT_TYPE_CSV, WellKnownKeys.CONTENT_TYPE)
                     }
             }.let { true }

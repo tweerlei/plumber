@@ -20,7 +20,7 @@ import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.impl.attribute.SettingWorker
-import de.tweerlei.plumber.worker.types.JsonNodeValue
+import de.tweerlei.plumber.worker.types.Node
 import org.springframework.stereotype.Service
 
 @Service("node-clearWorker")
@@ -40,5 +40,5 @@ class NodeClearStep: ProcessingStep {
         params: PipelineParams,
         parallelDegree: Int
     ) =
-        SettingWorker(WellKnownKeys.NODE, { JsonNodeValue() }, w)
+        SettingWorker(WellKnownKeys.NODE, { Node() }, w)
 }

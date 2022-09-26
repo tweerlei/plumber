@@ -29,42 +29,42 @@ class DivideWorkerTest {
 
     @Test
     fun testLong() {
-        test(LongValue(1L), LongValue(1L), LongValue(1L))
-        test(LongValue(-1001L), LongValue(1L), LongValue(-1001L))
-        test(LongValue(1001L), LongValue(1L), LongValue(1001L))
-        test(LongValue(1002001L), LongValue(1001L), LongValue(1001L))
+        test(LongValue.of(1L), LongValue.of(1L), LongValue.of(1L))
+        test(LongValue.of(-1001L), LongValue.of(1L), LongValue.of(-1001L))
+        test(LongValue.of(1001L), LongValue.of(1L), LongValue.of(1001L))
+        test(LongValue.of(1002001L), LongValue.of(1001L), LongValue.of(1001L))
 
-        test(LongValue(1L), LongValue(0L), DoubleValue(Double.POSITIVE_INFINITY))
-        test(LongValue(-1L), LongValue(0L), DoubleValue(Double.NEGATIVE_INFINITY))
-        test(LongValue(0L), LongValue(0L), DoubleValue(Double.NaN))
+        test(LongValue.of(1L), LongValue.of(0L), DoubleValue.of(Double.POSITIVE_INFINITY))
+        test(LongValue.of(-1L), LongValue.of(0L), DoubleValue.of(Double.NEGATIVE_INFINITY))
+        test(LongValue.of(0L), LongValue.of(0L), DoubleValue.of(Double.NaN))
     }
 
     @Test
     fun testDouble() {
-        test(DoubleValue(0.12), DoubleValue(1.2), DoubleValue(0.1))
-        test(DoubleValue(1001.23), DoubleValue(0.1), DoubleValue(10012.3))
-        test(DoubleValue(-1001.12), DoubleValue(-0.5), DoubleValue(2002.24))
-        test(DoubleValue(1001.12), DoubleValue(500.56), DoubleValue(2.0))
+        test(DoubleValue.of(0.12), DoubleValue.of(1.2), DoubleValue.of(0.1))
+        test(DoubleValue.of(1001.23), DoubleValue.of(0.1), DoubleValue.of(10012.3))
+        test(DoubleValue.of(-1001.12), DoubleValue.of(-0.5), DoubleValue.of(2002.24))
+        test(DoubleValue.of(1001.12), DoubleValue.of(500.56), DoubleValue.of(2.0))
 
-        test(DoubleValue(1.0), DoubleValue(0.0), DoubleValue(Double.POSITIVE_INFINITY))
-        test(DoubleValue(-1.0), DoubleValue(0.0), DoubleValue(Double.NEGATIVE_INFINITY))
-        test(DoubleValue(0.0), DoubleValue(0.0), DoubleValue(Double.NaN))
+        test(DoubleValue.of(1.0), DoubleValue.of(0.0), DoubleValue.of(Double.POSITIVE_INFINITY))
+        test(DoubleValue.of(-1.0), DoubleValue.of(0.0), DoubleValue.of(Double.NEGATIVE_INFINITY))
+        test(DoubleValue.of(0.0), DoubleValue.of(0.0), DoubleValue.of(Double.NaN))
     }
 
     @Test
     fun testMixed() {
-        test(LongValue(-1L), DoubleValue(2.5), DoubleValue(-0.4))
-        test(DoubleValue(0.12), LongValue(2L), DoubleValue(0.06))
-        test(LongValue(-1001L), DoubleValue(-2.5), DoubleValue(400.4))
-        test(DoubleValue(1001.12), LongValue(2L), DoubleValue(500.56))
+        test(LongValue.of(-1L), DoubleValue.of(2.5), DoubleValue.of(-0.4))
+        test(DoubleValue.of(0.12), LongValue.of(2L), DoubleValue.of(0.06))
+        test(LongValue.of(-1001L), DoubleValue.of(-2.5), DoubleValue.of(400.4))
+        test(DoubleValue.of(1001.12), LongValue.of(2L), DoubleValue.of(500.56))
 
-        test(LongValue(1L), DoubleValue(0.0), DoubleValue(Double.POSITIVE_INFINITY))
-        test(DoubleValue(-1.0), LongValue(0L), DoubleValue(Double.NEGATIVE_INFINITY))
-        test(DoubleValue(0.0), LongValue(0L), DoubleValue(Double.NaN))
+        test(LongValue.of(1L), DoubleValue.of(0.0), DoubleValue.of(Double.POSITIVE_INFINITY))
+        test(DoubleValue.of(-1.0), LongValue.of(0L), DoubleValue.of(Double.NEGATIVE_INFINITY))
+        test(DoubleValue.of(0.0), LongValue.of(0L), DoubleValue.of(Double.NaN))
     }
 
     private fun test(current: ComparableValue, other: ComparableValue, expected: ComparableValue) {
-        val item = TestWorkerRunner(WorkItem.from(current))
+        val item = TestWorkerRunner(WorkItem.of(current))
             .append { w -> DivideWorker({ other }, w) }
             .run()
             .singleOrNull()

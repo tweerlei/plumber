@@ -20,6 +20,7 @@ import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.impl.DelegatingWorker
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
+import de.tweerlei.plumber.worker.types.StringValue
 import java.io.StringWriter
 
 class ToXmlWorker(
@@ -30,7 +31,7 @@ class ToXmlWorker(
 ): DelegatingWorker(worker) {
 
     companion object {
-        const val CONTENT_TYPE_XML = "application/xml"
+        val CONTENT_TYPE_XML = StringValue.of("application/xml")
     }
 
     private val writer = xmlMapper.writer().withRootName(elementName)
@@ -39,7 +40,7 @@ class ToXmlWorker(
         item.get().toAny()
             .let { obj -> writeValue(obj) }
             .also { str ->
-                item.set(str)
+                item.set(StringValue.of(str))
                 item.set(CONTENT_TYPE_XML, WellKnownKeys.CONTENT_TYPE)
             }
             .let { true }

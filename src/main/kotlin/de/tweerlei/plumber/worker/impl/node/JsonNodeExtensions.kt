@@ -16,14 +16,21 @@
 package de.tweerlei.plumber.worker.impl.node
 
 import com.fasterxml.jackson.databind.JsonNode
+import de.tweerlei.plumber.worker.types.*
 
-fun JsonNode.toSimpleType(): Any? =
+fun JsonNode.toComparableValue(): Value =
     when {
-        isBoolean -> booleanValue()
-        isNumber -> numberValue()
-        isTextual -> textValue()
-        isBinary -> binaryValue()
-        isNull -> null
-        isEmpty -> null
-        else -> this
+        isBoolean -> BooleanValue.of(booleanValue())
+        isLong -> LongValue.of(longValue())
+        isInt -> LongValue.of(intValue())
+        isShort -> LongValue.of(shortValue())
+        isDouble -> DoubleValue.of(doubleValue())
+        isFloat -> DoubleValue.of(floatValue())
+        isBigInteger -> BigIntegerValue.of(bigIntegerValue())
+        isBigDecimal -> BigDecimalValue.of(decimalValue())
+        isTextual -> StringValue.of(textValue())
+        isBinary -> ByteArrayValue.of(binaryValue())
+        isNull -> NullValue.INSTANCE
+        isEmpty -> NullValue.INSTANCE
+        else -> Node(this)
     }

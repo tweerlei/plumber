@@ -20,6 +20,7 @@ import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.impl.DelegatingWorker
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
+import de.tweerlei.plumber.worker.types.StringValue
 import java.io.StringWriter
 
 class ToJsonWorker(
@@ -29,14 +30,14 @@ class ToJsonWorker(
 ): DelegatingWorker(worker) {
 
     companion object {
-        const val CONTENT_TYPE_JSON = "application/json"
+        val CONTENT_TYPE_JSON = StringValue.of("application/json")
     }
 
     override fun doProcess(item: WorkItem) =
         item.get().toAny()
             .let { obj -> writeValue(obj) }
             .also { str ->
-                item.set(str)
+                item.set(StringValue.of(str))
                 item.set(CONTENT_TYPE_JSON, WellKnownKeys.CONTENT_TYPE)
             }
             .let { true }

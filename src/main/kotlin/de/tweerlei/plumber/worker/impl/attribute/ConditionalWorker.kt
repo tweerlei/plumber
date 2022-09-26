@@ -20,18 +20,22 @@ import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.WorkItemAccessor
 import de.tweerlei.plumber.worker.Worker
+import de.tweerlei.plumber.worker.types.BooleanValue
+import de.tweerlei.plumber.worker.types.Value
 
 class ConditionalWorker(
     private val predicate: WorkItemAccessor<Boolean>,
-    private val value: WorkItemAccessor<Any?>,
+    private val value: WorkItemAccessor<Value>,
     worker: Worker
 ): DelegatingWorker(worker) {
 
     override fun doProcess(item: WorkItem) =
-        predicate(item).let { condition ->
-            item.set(condition, WellKnownKeys.TEST_RESULT)
-            if (condition) {
-                item.set(value(item))
-            }
-        }.let { true }
+        predicate(item)
+            .let { BooleanValue.of(it) }
+            .let { condition ->
+                item.set(condition, WellKnownKeys.TEST_RESULT)
+                if (condition.value) {
+                    item.set(value(item))
+                }
+            }.let { true }
 }

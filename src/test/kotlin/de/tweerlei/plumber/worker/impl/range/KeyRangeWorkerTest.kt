@@ -15,11 +15,10 @@
  */
 package de.tweerlei.plumber.worker.impl.range
 
-import de.tweerlei.plumber.worker.types.Range
 import de.tweerlei.plumber.worker.impl.TestWorkerRunner
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
-import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.impl.attribute.SettingWorker
+import de.tweerlei.plumber.worker.types.Range
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
 
@@ -30,7 +29,7 @@ class KeyRangeWorkerTest {
         val items = TestWorkerRunner()
             .append { w -> SettingWorker(
                 WellKnownKeys.RANGE,
-                { Range.from(100L, 200L) },
+                { Range.of(100L, 200L) },
                 w
             ) }
             .append { w -> KeyRangeWorker(10, "0123456789", Long.MAX_VALUE, w) }
@@ -38,16 +37,16 @@ class KeyRangeWorkerTest {
             .toList()
 
         items.size.shouldBe(10)
-        items[0].getAs<Range>(WellKnownKeys.RANGE).shouldBe(Range.from(100L, 110L))
-        items[1].getAs<Range>(WellKnownKeys.RANGE).shouldBe(Range.from(110L, 120L))
-        items[2].getAs<Range>(WellKnownKeys.RANGE).shouldBe(Range.from(120L, 130L))
-        items[3].getAs<Range>(WellKnownKeys.RANGE).shouldBe(Range.from(130L, 140L))
-        items[4].getAs<Range>(WellKnownKeys.RANGE).shouldBe(Range.from(140L, 150L))
-        items[5].getAs<Range>(WellKnownKeys.RANGE).shouldBe(Range.from(150L, 160L))
-        items[6].getAs<Range>(WellKnownKeys.RANGE).shouldBe(Range.from(160L, 170L))
-        items[7].getAs<Range>(WellKnownKeys.RANGE).shouldBe(Range.from(170L, 180L))
-        items[8].getAs<Range>(WellKnownKeys.RANGE).shouldBe(Range.from(180L, 190L))
-        items[9].getAs<Range>(WellKnownKeys.RANGE).shouldBe(Range.from(190L, 200L))
+        items[0].getAs<Range>(WellKnownKeys.RANGE).shouldBe(Range.of(100L, 110L))
+        items[1].getAs<Range>(WellKnownKeys.RANGE).shouldBe(Range.of(110L, 120L))
+        items[2].getAs<Range>(WellKnownKeys.RANGE).shouldBe(Range.of(120L, 130L))
+        items[3].getAs<Range>(WellKnownKeys.RANGE).shouldBe(Range.of(130L, 140L))
+        items[4].getAs<Range>(WellKnownKeys.RANGE).shouldBe(Range.of(140L, 150L))
+        items[5].getAs<Range>(WellKnownKeys.RANGE).shouldBe(Range.of(150L, 160L))
+        items[6].getAs<Range>(WellKnownKeys.RANGE).shouldBe(Range.of(160L, 170L))
+        items[7].getAs<Range>(WellKnownKeys.RANGE).shouldBe(Range.of(170L, 180L))
+        items[8].getAs<Range>(WellKnownKeys.RANGE).shouldBe(Range.of(180L, 190L))
+        items[9].getAs<Range>(WellKnownKeys.RANGE).shouldBe(Range.of(190L, 200L))
     }
 
     @Test
@@ -55,7 +54,7 @@ class KeyRangeWorkerTest {
         val items = TestWorkerRunner()
             .append { w -> SettingWorker(
                 WellKnownKeys.RANGE,
-                { Range.from(100L, 105L) },
+                { Range.of(100L, 105L) },
                 w
             ) }
             .append { w -> KeyRangeWorker(10, "0123456789", Long.MAX_VALUE, w) }
@@ -63,11 +62,11 @@ class KeyRangeWorkerTest {
             .toList()
 
         items.size.shouldBe(5)
-        items[0].getAs<Range>(WellKnownKeys.RANGE).shouldBe(Range.from(100L, 101L))
-        items[1].getAs<Range>(WellKnownKeys.RANGE).shouldBe(Range.from(101L, 102L))
-        items[2].getAs<Range>(WellKnownKeys.RANGE).shouldBe(Range.from(102L, 103L))
-        items[3].getAs<Range>(WellKnownKeys.RANGE).shouldBe(Range.from(103L, 104L))
-        items[4].getAs<Range>(WellKnownKeys.RANGE).shouldBe(Range.from(104L, 105L))
+        items[0].getAs<Range>(WellKnownKeys.RANGE).shouldBe(Range.of(100L, 101L))
+        items[1].getAs<Range>(WellKnownKeys.RANGE).shouldBe(Range.of(101L, 102L))
+        items[2].getAs<Range>(WellKnownKeys.RANGE).shouldBe(Range.of(102L, 103L))
+        items[3].getAs<Range>(WellKnownKeys.RANGE).shouldBe(Range.of(103L, 104L))
+        items[4].getAs<Range>(WellKnownKeys.RANGE).shouldBe(Range.of(104L, 105L))
     }
 
     @Test
@@ -75,7 +74,7 @@ class KeyRangeWorkerTest {
         val items = TestWorkerRunner()
             .append { w -> SettingWorker(
                 WellKnownKeys.RANGE,
-                { Range.from("abc", null) },
+                { Range.of("abc", null) },
                 w
             ) }
             .append { w -> KeyRangeWorker(10, "0123456789abcdef", Long.MAX_VALUE, w) }
@@ -83,15 +82,15 @@ class KeyRangeWorkerTest {
             .toList()
 
         items.size.shouldBe(10)
-        items[0].getAs<Range>(WellKnownKeys.RANGE).shouldBe(Range.from("abc", "b3"))
-        items[1].getAs<Range>(WellKnownKeys.RANGE).shouldBe(Range.from("b3", "bc"))
-        items[2].getAs<Range>(WellKnownKeys.RANGE).shouldBe(Range.from("bc", "c4"))
-        items[3].getAs<Range>(WellKnownKeys.RANGE).shouldBe(Range.from("c4", "cd"))
-        items[4].getAs<Range>(WellKnownKeys.RANGE).shouldBe(Range.from("cd", "d5"))
-        items[5].getAs<Range>(WellKnownKeys.RANGE).shouldBe(Range.from("d5", "de"))
-        items[6].getAs<Range>(WellKnownKeys.RANGE).shouldBe(Range.from("de", "e6"))
-        items[7].getAs<Range>(WellKnownKeys.RANGE).shouldBe(Range.from("e6", "ef"))
-        items[8].getAs<Range>(WellKnownKeys.RANGE).shouldBe(Range.from("ef", "f7"))
-        items[9].getAs<Range>(WellKnownKeys.RANGE).shouldBe(Range.from("f7", null))
+        items[0].getAs<Range>(WellKnownKeys.RANGE).shouldBe(Range.of("abc", "b3"))
+        items[1].getAs<Range>(WellKnownKeys.RANGE).shouldBe(Range.of("b3", "bc"))
+        items[2].getAs<Range>(WellKnownKeys.RANGE).shouldBe(Range.of("bc", "c4"))
+        items[3].getAs<Range>(WellKnownKeys.RANGE).shouldBe(Range.of("c4", "cd"))
+        items[4].getAs<Range>(WellKnownKeys.RANGE).shouldBe(Range.of("cd", "d5"))
+        items[5].getAs<Range>(WellKnownKeys.RANGE).shouldBe(Range.of("d5", "de"))
+        items[6].getAs<Range>(WellKnownKeys.RANGE).shouldBe(Range.of("de", "e6"))
+        items[7].getAs<Range>(WellKnownKeys.RANGE).shouldBe(Range.of("e6", "ef"))
+        items[8].getAs<Range>(WellKnownKeys.RANGE).shouldBe(Range.of("ef", "f7"))
+        items[9].getAs<Range>(WellKnownKeys.RANGE).shouldBe(Range.of("f7", null))
     }
 }

@@ -22,6 +22,7 @@ import de.tweerlei.plumber.worker.impl.GeneratingWorker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.types.LongValue
 import de.tweerlei.plumber.worker.types.Range
+import de.tweerlei.plumber.worker.types.toValue
 import mu.KLogging
 
 class RangeIteratingWorker(
@@ -51,7 +52,7 @@ class RangeIteratingWorker(
                     )
                 }
             }?.all {
-                fn(WorkItem.from(it))
+                fn(WorkItem.of(it.toValue()))
             }
     }
     

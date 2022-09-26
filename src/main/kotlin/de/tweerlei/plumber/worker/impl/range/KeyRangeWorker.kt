@@ -71,7 +71,7 @@ class KeyRangeWorker(
     private fun toWorkItem(startAfter: Long, endWith: Long) =
         WorkItem.of(
             NullValue.INSTANCE,
-            WellKnownKeys.RANGE to Range.from(startAfter, endWith)
+            WellKnownKeys.RANGE to Range.of(startAfter, endWith)
         )
 
     private fun generateStringRanges(startAfterKey: String?, stopAfterKey: String?, fn: (WorkItem) -> Boolean) {
@@ -84,6 +84,6 @@ class KeyRangeWorker(
 
     private fun KeyRange.toWorkItem() =
         WorkItem.of(NullValue.INSTANCE,
-            WellKnownKeys.RANGE to Range.from(startAfterKey, endWithKey)
+            WellKnownKeys.RANGE to Range.of(startAfterKey, endWithKey)
         )
 }

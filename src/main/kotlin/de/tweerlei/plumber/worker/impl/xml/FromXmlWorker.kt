@@ -17,9 +17,12 @@ package de.tweerlei.plumber.worker.impl.xml
 
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.dataformat.xml.XmlMapper
-import de.tweerlei.plumber.worker.*
+import de.tweerlei.plumber.worker.WorkItem
+import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.DelegatingWorker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
+import de.tweerlei.plumber.worker.types.Node
+import de.tweerlei.plumber.worker.types.toValue
 
 class FromXmlWorker<T>(
     private val itemType: Class<T>,
@@ -36,9 +39,10 @@ class FromXmlWorker<T>(
         item.get().toString()
             .let { value ->
                 xmlMapper.readValue(value, valueType)
+                    ?.toValue()
                     ?.also { obj ->
                         item.set(obj)
-                        if (obj is JsonNode)
+                        if (obj is Node)
                             item.set(obj, WellKnownKeys.NODE)
                     }
             }?.let { true }

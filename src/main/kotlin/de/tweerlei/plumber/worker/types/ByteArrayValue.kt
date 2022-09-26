@@ -20,12 +20,20 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory
 import java.nio.charset.Charset
 import java.util.*
 
-class ByteArrayValue(
+class ByteArrayValue private constructor(
     val value: ByteArray
 ): ComparableValue {
 
     companion object {
         const val NAME = "bytes"
+
+        val EMPTY = ByteArrayValue(byteArrayOf())
+
+        fun of(value: ByteArray) =
+            when {
+                value.isEmpty() -> EMPTY
+                else -> ByteArrayValue(value)
+            }
     }
 
     override fun getName() =

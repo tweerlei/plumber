@@ -17,7 +17,6 @@ package de.tweerlei.plumber.worker.types
 
 import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.booleans.shouldBeTrue
-import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeSameInstanceAs
 import org.junit.jupiter.api.Test
@@ -28,7 +27,7 @@ class LongValueTest {
 
     @Test
     fun testNonzero() {
-        with (LongValue(42L)) {
+        with (LongValue.of(42L)) {
             asOptional().shouldBeSameInstanceAs(this)
             toAny().shouldBe(42L)
             toBoolean().shouldBeTrue()
@@ -49,27 +48,27 @@ class LongValueTest {
             hashCode().shouldBe(42L.hashCode())
 
             equals(NullValue.INSTANCE).shouldBeFalse()
-            equals(LongValue(42L)).shouldBeTrue()
-            equals(LongValue(0L)).shouldBeFalse()
+            equals(LongValue.of(42L)).shouldBeTrue()
+            equals(LongValue.of(0L)).shouldBeFalse()
             equals(42L).shouldBeFalse()
             equals(0L).shouldBeFalse()
-            equals(StringValue("0")).shouldBeFalse()
-            equals(StringValue("42")).shouldBeTrue()
-            equals(StringValue("")).shouldBeFalse()
+            equals(StringValue.of("0")).shouldBeFalse()
+            equals(StringValue.of("42")).shouldBeTrue()
+            equals(StringValue.of("")).shouldBeFalse()
 
             compareTo(NullValue.INSTANCE).shouldBe(1)
-            compareTo(LongValue(42L)).shouldBe(0)
-            compareTo(LongValue(0L)).shouldBe(1)
-            compareTo(LongValue(100L)).shouldBe(-1)
-            compareTo(StringValue("")).shouldBe(1)
-            compareTo(StringValue("42")).shouldBe(0)
-            compareTo(StringValue("0")).shouldBe(1)
+            compareTo(LongValue.of(42L)).shouldBe(0)
+            compareTo(LongValue.of(0L)).shouldBe(1)
+            compareTo(LongValue.of(100L)).shouldBe(-1)
+            compareTo(StringValue.of("")).shouldBe(1)
+            compareTo(StringValue.of("42")).shouldBe(0)
+            compareTo(StringValue.of("0")).shouldBe(1)
         }
     }
 
     @Test
     fun testZero() {
-        with (LongValue(0L)) {
+        with (LongValue.of(0L)) {
             asOptional().shouldBeSameInstanceAs(this)
             toAny().shouldBe(0L)
             toBoolean().shouldBeFalse()
@@ -90,27 +89,27 @@ class LongValueTest {
             hashCode().shouldBe(0L.hashCode())
 
             equals(NullValue.INSTANCE).shouldBeTrue()
-            equals(LongValue(42L)).shouldBeFalse()
-            equals(LongValue(0L)).shouldBeTrue()
+            equals(LongValue.of(42L)).shouldBeFalse()
+            equals(LongValue.of(0L)).shouldBeTrue()
             equals(42L).shouldBeFalse()
             equals(0L).shouldBeFalse()
-            equals(StringValue("42")).shouldBeFalse()
-            equals(StringValue("0")).shouldBeTrue()
-            equals(StringValue("")).shouldBeTrue()
+            equals(StringValue.of("42")).shouldBeFalse()
+            equals(StringValue.of("0")).shouldBeTrue()
+            equals(StringValue.of("")).shouldBeTrue()
 
             compareTo(NullValue.INSTANCE).shouldBe(0)
-            compareTo(LongValue(42L)).shouldBe(-1)
-            compareTo(LongValue(0L)).shouldBe(0)
-            compareTo(LongValue(100L)).shouldBe(-1)
-            compareTo(StringValue("")).shouldBe(0)
-            compareTo(StringValue("42")).shouldBe(-1)
-            compareTo(StringValue("0")).shouldBe(0)
+            compareTo(LongValue.of(42L)).shouldBe(-1)
+            compareTo(LongValue.of(0L)).shouldBe(0)
+            compareTo(LongValue.of(100L)).shouldBe(-1)
+            compareTo(StringValue.of("")).shouldBe(0)
+            compareTo(StringValue.of("42")).shouldBe(-1)
+            compareTo(StringValue.of("0")).shouldBe(0)
         }
     }
 
     @Test
     fun testNegative() {
-        with (LongValue(-42L)) {
+        with (LongValue.of(-42L)) {
             asOptional().shouldBeSameInstanceAs(this)
             toAny().shouldBe(-42L)
             toBoolean().shouldBeTrue()
@@ -131,21 +130,21 @@ class LongValueTest {
             hashCode().shouldBe((-42L).hashCode())
 
             equals(NullValue.INSTANCE).shouldBeFalse()
-            equals(LongValue(-42L)).shouldBeTrue()
-            equals(LongValue(0L)).shouldBeFalse()
+            equals(LongValue.of(-42L)).shouldBeTrue()
+            equals(LongValue.of(0L)).shouldBeFalse()
             equals(-42L).shouldBeFalse()
             equals(0L).shouldBeFalse()
-            equals(StringValue("-42")).shouldBeTrue()
-            equals(StringValue("0")).shouldBeFalse()
-            equals(StringValue("")).shouldBeFalse()
+            equals(StringValue.of("-42")).shouldBeTrue()
+            equals(StringValue.of("0")).shouldBeFalse()
+            equals(StringValue.of("")).shouldBeFalse()
 
             compareTo(NullValue.INSTANCE).shouldBe(-1)
-            compareTo(LongValue(-42L)).shouldBe(0)
-            compareTo(LongValue(0L)).shouldBe(-1)
-            compareTo(LongValue(-100L)).shouldBe(1)
-            compareTo(StringValue("")).shouldBe(-1)
-            compareTo(StringValue("-42")).shouldBe(0)
-            compareTo(StringValue("0")).shouldBe(-1)
+            compareTo(LongValue.of(-42L)).shouldBe(0)
+            compareTo(LongValue.of(0L)).shouldBe(-1)
+            compareTo(LongValue.of(-100L)).shouldBe(1)
+            compareTo(StringValue.of("")).shouldBe(-1)
+            compareTo(StringValue.of("-42")).shouldBe(0)
+            compareTo(StringValue.of("0")).shouldBe(-1)
         }
     }
 }

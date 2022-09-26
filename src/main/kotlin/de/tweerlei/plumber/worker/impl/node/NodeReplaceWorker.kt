@@ -20,7 +20,7 @@ import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.DelegatingWorker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
-import de.tweerlei.plumber.worker.types.JsonNodeValue
+import de.tweerlei.plumber.worker.types.Node
 
 class NodeReplaceWorker(
     private val ptr: JsonPointer,
@@ -28,11 +28,11 @@ class NodeReplaceWorker(
 ): DelegatingWorker(worker) {
 
     override fun doProcess(item: WorkItem) =
-        item.getAs<JsonNodeValue>(WellKnownKeys.NODE)
+        item.getAs<Node>(WellKnownKeys.NODE)
             .value.let { json ->
                 json.at(ptr)
                     .also { value ->
-                        item.set(value, WellKnownKeys.NODE)
+                        item.set(Node(value), WellKnownKeys.NODE)
                     }
             }.let { true }
 }

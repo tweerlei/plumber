@@ -17,7 +17,6 @@ package de.tweerlei.plumber.worker.types
 
 import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.booleans.shouldBeTrue
-import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeSameInstanceAs
 import org.junit.jupiter.api.Test
@@ -28,7 +27,7 @@ class StringValueTest {
 
     @Test
     fun testNonEmpty() {
-        with (StringValue("hello")) {
+        with (StringValue.of("hello")) {
             asOptional().shouldBeSameInstanceAs(this)
             toAny().shouldBe("hello")
             toBoolean().shouldBeTrue()
@@ -49,24 +48,24 @@ class StringValueTest {
             hashCode().shouldBe("hello".hashCode())
 
             equals(NullValue.INSTANCE).shouldBeFalse()
-            equals(StringValue("hello")).shouldBeTrue()
-            equals(StringValue("HELLO")).shouldBeFalse()
+            equals(StringValue.of("hello")).shouldBeTrue()
+            equals(StringValue.of("HELLO")).shouldBeFalse()
             equals("hello").shouldBeFalse()
             equals("HELLO").shouldBeFalse()
-            equals(LongValue(1L)).shouldBeFalse()
-            equals(StringValue("")).shouldBeFalse()
+            equals(LongValue.of(1L)).shouldBeFalse()
+            equals(StringValue.of("")).shouldBeFalse()
 
             compareTo(NullValue.INSTANCE).shouldBe(5)
-            compareTo(StringValue("hello")).shouldBe(0)
-            compareTo(StringValue("HELLO")).shouldBe(32)
-            compareTo(StringValue("iello")).shouldBe(-1)
-            compareTo(LongValue(0L)).shouldBe(56)
+            compareTo(StringValue.of("hello")).shouldBe(0)
+            compareTo(StringValue.of("HELLO")).shouldBe(32)
+            compareTo(StringValue.of("iello")).shouldBe(-1)
+            compareTo(LongValue.of(0L)).shouldBe(56)
         }
     }
 
     @Test
     fun testEmpty() {
-        with (StringValue("")) {
+        with (StringValue.of("")) {
             asOptional().shouldBeSameInstanceAs(this)
             toAny().shouldBe("")
             toBoolean().shouldBeFalse()
@@ -86,50 +85,50 @@ class StringValueTest {
             hashCode().shouldBe("".hashCode())
 
             equals(NullValue.INSTANCE).shouldBeTrue()
-            equals(StringValue("")).shouldBeTrue()
-            equals(StringValue("HELLO")).shouldBeFalse()
+            equals(StringValue.of("")).shouldBeTrue()
+            equals(StringValue.of("HELLO")).shouldBeFalse()
             equals("").shouldBeFalse()
             equals("HELLO").shouldBeFalse()
-            equals(LongValue(0L)).shouldBeFalse()
+            equals(LongValue.of(0L)).shouldBeFalse()
 
             compareTo(NullValue.INSTANCE).shouldBe(0)
-            compareTo(StringValue("")).shouldBe(0)
-            compareTo(StringValue("HELLO")).shouldBe(-5)
-            compareTo(StringValue("iello")).shouldBe(-5)
-            compareTo(LongValue(0L)).shouldBe(-1)
+            compareTo(StringValue.of("")).shouldBe(0)
+            compareTo(StringValue.of("HELLO")).shouldBe(-5)
+            compareTo(StringValue.of("iello")).shouldBe(-5)
+            compareTo(LongValue.of(0L)).shouldBe(-1)
         }
     }
 
     @Test
     fun testToBoolean() {
-        StringValue("").toBoolean().shouldBeFalse()
-        StringValue("0").toBoolean().shouldBeFalse()
-        StringValue("false").toBoolean().shouldBeFalse()
-        StringValue("hello").toBoolean().shouldBeTrue()
-        StringValue("1").toBoolean().shouldBeTrue()
-        StringValue("true").toBoolean().shouldBeTrue()
+        StringValue.of("").toBoolean().shouldBeFalse()
+        StringValue.of("0").toBoolean().shouldBeFalse()
+        StringValue.of("false").toBoolean().shouldBeFalse()
+        StringValue.of("hello").toBoolean().shouldBeTrue()
+        StringValue.of("1").toBoolean().shouldBeTrue()
+        StringValue.of("true").toBoolean().shouldBeTrue()
     }
 
     @Test
     fun testToLong() {
-        StringValue("").toLong().shouldBe(0L)
-        StringValue("0").toLong().shouldBe(0L)
-        StringValue("1").toLong().shouldBe(1L)
-        StringValue("-1").toLong().shouldBe(-1L)
-        StringValue("foo").toLong().shouldBe(0L)
-        StringValue("3a").toLong().shouldBe(0L)
+        StringValue.of("").toLong().shouldBe(0L)
+        StringValue.of("0").toLong().shouldBe(0L)
+        StringValue.of("1").toLong().shouldBe(1L)
+        StringValue.of("-1").toLong().shouldBe(-1L)
+        StringValue.of("foo").toLong().shouldBe(0L)
+        StringValue.of("3a").toLong().shouldBe(0L)
 
-        StringValue("0.0").toLong().shouldBe(0L)
-        StringValue("0.1").toLong().shouldBe(0L)
-        StringValue("2.1").toLong().shouldBe(0L)
-        StringValue("3e2").toLong().shouldBe(0L)
+        StringValue.of("0.0").toLong().shouldBe(0L)
+        StringValue.of("0.1").toLong().shouldBe(0L)
+        StringValue.of("2.1").toLong().shouldBe(0L)
+        StringValue.of("3e2").toLong().shouldBe(0L)
     }
 
     @Test
     fun testToDouble() {
-        StringValue("0.0").toDouble().shouldBe(0.0)
-        StringValue("0.1").toDouble().shouldBe(0.1)
-        StringValue("2.1").toDouble().shouldBe(2.1)
-        StringValue("3e2").toDouble().shouldBe(300.0)
+        StringValue.of("0.0").toDouble().shouldBe(0.0)
+        StringValue.of("0.1").toDouble().shouldBe(0.1)
+        StringValue.of("2.1").toDouble().shouldBe(2.1)
+        StringValue.of("3e2").toDouble().shouldBe(300.0)
     }
 }
