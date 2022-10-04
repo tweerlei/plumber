@@ -19,6 +19,7 @@ import com.fasterxml.jackson.databind.MappingIterator
 import com.fasterxml.jackson.dataformat.csv.CsvMapper
 import com.fasterxml.jackson.dataformat.csv.CsvParser
 import com.fasterxml.jackson.dataformat.csv.CsvSchema
+import de.tweerlei.plumber.worker.InputStreamProvider
 import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.GeneratingWorker
@@ -27,12 +28,10 @@ import de.tweerlei.plumber.worker.types.Record
 import de.tweerlei.plumber.worker.types.StringValue
 import mu.KLogging
 import java.io.Closeable
-import java.io.File
-import java.io.FileInputStream
 import java.io.InputStream
 
 class CsvReadWorker(
-    private val file: File,
+    private val inputStreamProvider: InputStreamProvider,
     private val csvMapper: CsvMapper,
     private val separator: Char,
     private val header: Boolean,
@@ -45,7 +44,7 @@ class CsvReadWorker(
     private lateinit var stream: InputStream
 
     override fun onOpen() {
-        stream = FileInputStream(file)
+        stream = inputStreamProvider.open()
     }
 
     override fun generateItems(item: WorkItem, fn: (WorkItem) -> Boolean) {
@@ -54,8 +53,8 @@ class CsvReadWorker(
             false -> generateItemsWithoutHeader()
         }
             .use { reader ->
-                val filePath = StringValue.of(file.parentFile?.absolutePath ?: "")
-                val fileName = StringValue.of(file.name)
+                val filePath = StringValue.of(inputStreamProvider.getPath())
+                val fileName = StringValue.of(inputStreamProvider.getName())
                 reader.all {
                     fn(it.toWorkItem(filePath, fileName))
                 }

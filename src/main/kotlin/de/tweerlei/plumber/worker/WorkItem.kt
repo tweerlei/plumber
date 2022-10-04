@@ -32,10 +32,8 @@ class WorkItem private constructor(
             }
     }
 
-    fun plus(item: WorkItem) =
-        HashMap(this.map)
-            .apply { putAll(item.map) }
-            .let { map -> WorkItem(map) }
+    fun mergeMissingFrom(item: WorkItem) =
+        item.map.forEach { (k, v) -> map.putIfAbsent(k, v) }
 
     fun get(key: String = DEFAULT_KEY) =
         map[key] ?: NullValue.INSTANCE

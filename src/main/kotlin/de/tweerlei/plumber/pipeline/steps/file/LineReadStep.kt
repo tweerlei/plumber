@@ -29,7 +29,7 @@ class LineReadStep: ProcessingStep {
     override val group = "Files"
     override val name = "Read lines from file"
     override val description = "Read lines from the given file"
-    override fun argDescription() = "".toInputFile().toString()
+    override fun argDescription() = "".toInputStreamProvider().toString()
 
     override fun producedAttributesFor(arg: String) = setOf(
         WellKnownKeys.PATH,
@@ -45,7 +45,7 @@ class LineReadStep: ProcessingStep {
         parallelDegree: Int
     ) =
         LineReadWorker(
-            arg.toInputFile(),
+            arg.toInputStreamProvider(),
             StandardCharsets.UTF_8,
             params.maxFilesPerThread,
             w

@@ -18,7 +18,7 @@ package de.tweerlei.plumber.pipeline.steps.xml
 import com.fasterxml.jackson.dataformat.xml.XmlMapper
 import de.tweerlei.plumber.pipeline.PipelineParams
 import de.tweerlei.plumber.pipeline.steps.ProcessingStep
-import de.tweerlei.plumber.pipeline.steps.file.toInputFile
+import de.tweerlei.plumber.pipeline.steps.file.toInputStreamProvider
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.impl.xml.XmlReadWorker
@@ -32,7 +32,7 @@ class XmlReadStep(
     override val group = "XML"
     override val name = "Read XML objects from file"
     override val description = "Read XML objects from the given file"
-    override fun argDescription() = "".toInputFile().toString()
+    override fun argDescription() = "".toInputStreamProvider().toString()
 
     override fun producedAttributesFor(arg: String) = setOf(
         WellKnownKeys.PATH,
@@ -49,7 +49,7 @@ class XmlReadStep(
         parallelDegree: Int
     ) =
         XmlReadWorker(
-            arg.toInputFile(),
+            arg.toInputStreamProvider(),
             params.elementName,
             expectedOutput,
             xmlMapper,

@@ -15,6 +15,7 @@
  */
 package de.tweerlei.plumber.worker.impl.stats
 
+import de.tweerlei.plumber.util.Stopwatch
 import de.tweerlei.plumber.util.humanReadable
 import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.Worker
@@ -23,6 +24,7 @@ import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.types.LongValue
 import mu.KLogging
 import java.util.concurrent.atomic.AtomicLong
+import java.util.concurrent.atomic.AtomicReference
 
 class SummingWorker(
     private val name: String,
@@ -33,12 +35,12 @@ class SummingWorker(
     companion object: KLogging()
 
     private val sum = AtomicLong()
-    private var startTime: Long = 0L
-    private var lastTime = AtomicLong()
+    private lateinit var stopwatch: Stopwatch
+    private val current = AtomicReference<Stopwatch>()
 
     override fun onOpen() {
-        startTime = System.currentTimeMillis()
-        lastTime.set(startTime)
+        stopwatch = Stopwatch()
+        current.set(stopwatch)
     }
 
     override fun doProcess(item: WorkItem) =
@@ -47,10 +49,9 @@ class SummingWorker(
                 sum.addAndGet(size)
                     .also { counter ->
                         if (counter / interval > (counter - size) / interval) {
-                            val now = System.currentTimeMillis()
-                            val last = lastTime.getAndSet(now)
+                            val last = current.getAndSet(Stopwatch())
                             val bytes = interval * (counter / interval - (counter - size) / interval)
-                            val perSecond = bytes.toDouble() * 1000 / (now - last).coerceAtLeast(1)
+                            val perSecond = last.perSecond(bytes.toDouble())
                             logger.info { "$name: Item sum: $counter @ ${perSecond.humanReadable()} byte/s" }
                         }
                         item.set(LongValue.of(counter), WellKnownKeys.SUM)
@@ -58,8 +59,7 @@ class SummingWorker(
             }.let { true }
 
     override fun onClose() {
-        val now = System.currentTimeMillis()
-        val perSecond = sum.get().toDouble() * 1000 / (now - startTime).coerceAtLeast(1)
+        val perSecond = stopwatch.perSecond(sum.get().toDouble())
         logger.info { "$name: Item sum: ${sum.get()}" }
         logger.info { "$name: Throughput: ${perSecond.humanReadable()} byte/s" }
     }

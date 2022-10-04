@@ -15,6 +15,7 @@
  */
 package de.tweerlei.plumber.worker.impl.file
 
+import de.tweerlei.plumber.worker.InputStreamProvider
 import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.GeneratingWorker
@@ -29,13 +30,13 @@ import java.time.Instant
 import java.util.zip.ZipInputStream
 
 class ZipReadWorker(
-    private val inputFile: File,
+    private val inputStreamProvider: InputStreamProvider,
     limit: Long,
     worker: Worker
 ): GeneratingWorker(limit, worker) {
 
     override fun generateItems(item: WorkItem, fn: (WorkItem) -> Boolean) {
-        ZipInputStream(FileInputStream(inputFile)).use { stream ->
+        ZipInputStream(inputStreamProvider.open()).use { stream ->
             var keepGenerating = true
             while (keepGenerating) {
                 keepGenerating = stream.nextEntry

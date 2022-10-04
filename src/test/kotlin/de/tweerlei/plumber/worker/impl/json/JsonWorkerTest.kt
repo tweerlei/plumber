@@ -18,10 +18,15 @@ package de.tweerlei.plumber.worker.impl.json
 import com.fasterxml.jackson.core.JsonPointer
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
-import de.tweerlei.plumber.worker.impl.TestWorkerRunner
 import de.tweerlei.plumber.worker.WorkItem
+import de.tweerlei.plumber.worker.impl.ByteArrayInputStreamProvider
+import de.tweerlei.plumber.worker.impl.ByteArrayOutputStreamProvider
+import de.tweerlei.plumber.worker.impl.TestWorkerRunner
+import de.tweerlei.plumber.worker.impl.attribute.SettingWorker
 import de.tweerlei.plumber.worker.impl.node.NodeGetWorker
+import de.tweerlei.plumber.worker.impl.record.RecordSetWorker
 import de.tweerlei.plumber.worker.types.ByteArrayValue
+import de.tweerlei.plumber.worker.types.DoubleValue
 import de.tweerlei.plumber.worker.types.StringValue
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
@@ -56,5 +61,67 @@ class JsonWorkerTest {
 
         item.shouldNotBeNull()
         item.getAs<StringValue>().value.shouldBe("""{"string":"Hello","number":42,"boolean":true,"null":null,"array":[1,2,3]}""")
+    }
+
+    @Test
+    fun testReadWrite() {
+
+        val xml = """
+            {
+            "version": 1,
+            "obj": {
+                "string": "Hello",
+                "number": 42,
+                "boolean": true,
+                "null": null,
+                "array": [ 1,2,3 ]
+                }
+            }
+        """
+        val objectMapper = ObjectMapper()
+        val output = ByteArrayOutputStreamProvider()
+
+        val items = TestWorkerRunner(WorkItem.of())
+            .append { w -> JsonReadWorker(ByteArrayInputStreamProvider(xml.toByteArray(StandardCharsets.UTF_8)), JsonNode::class.java, objectMapper, 10, w) }
+            .append { w -> SettingWorker(WorkItem.DEFAULT_KEY, { DoubleValue.of(3.14) }, w) }
+            .append { w -> RecordSetWorker("2", w) }
+            .append { w -> JsonWriteWorker(output, objectMapper, null, false, w) }
+            .run()
+
+        items.size.shouldBe(3)
+        output.getBytes().toString(StandardCharsets.UTF_8).shouldBe(
+            """[1, 2, 3]"""
+        )
+    }
+
+    @Test
+    fun testReadWriteWrapped() {
+
+        val xml = """
+            {
+            "version": 1,
+            "obj": {
+                "string": "Hello",
+                "number": 42,
+                "boolean": true,
+                "null": null,
+                "array": [ 1,2,3 ]
+                }
+            }
+        """
+        val objectMapper = ObjectMapper()
+        val output = ByteArrayOutputStreamProvider()
+
+        val items = TestWorkerRunner(WorkItem.of())
+            .append { w -> JsonReadWorker(ByteArrayInputStreamProvider(xml.toByteArray(StandardCharsets.UTF_8)), JsonNode::class.java, objectMapper, 10, w) }
+            .append { w -> SettingWorker(WorkItem.DEFAULT_KEY, { DoubleValue.of(3.14) }, w) }
+            .append { w -> RecordSetWorker("2", w) }
+            .append { w -> JsonWriteWorker(output, objectMapper, "items", false, w) }
+            .run()
+
+        items.size.shouldBe(3)
+        output.getBytes().toString(StandardCharsets.UTF_8).shouldBe(
+            """{"items":[1, 2, 3]}"""
+        )
     }
 }

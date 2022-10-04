@@ -18,7 +18,7 @@ package de.tweerlei.plumber.pipeline.steps.json
 import com.fasterxml.jackson.databind.ObjectMapper
 import de.tweerlei.plumber.pipeline.PipelineParams
 import de.tweerlei.plumber.pipeline.steps.ProcessingStep
-import de.tweerlei.plumber.pipeline.steps.file.toInputFile
+import de.tweerlei.plumber.pipeline.steps.file.toInputStreamProvider
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.impl.json.JsonReadWorker
@@ -32,7 +32,7 @@ class JsonReadStep(
     override val group = "JSON"
     override val name = "Read JSON objects from file"
     override val description = "Read JSON objects from the given file"
-    override fun argDescription() = "".toInputFile().toString()
+    override fun argDescription() = "".toInputStreamProvider().toString()
 
     override fun producedAttributesFor(arg: String) = setOf(
         WellKnownKeys.PATH,
@@ -49,7 +49,7 @@ class JsonReadStep(
         parallelDegree: Int
     ) =
         JsonReadWorker(
-            arg.toInputFile(),
+            arg.toInputStreamProvider(),
             expectedOutput,
             objectMapper,
             params.maxFilesPerThread,

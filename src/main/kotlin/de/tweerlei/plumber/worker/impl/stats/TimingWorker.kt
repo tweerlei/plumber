@@ -15,6 +15,7 @@
  */
 package de.tweerlei.plumber.worker.impl.stats
 
+import de.tweerlei.plumber.util.Stopwatch
 import de.tweerlei.plumber.util.humanReadable
 import de.tweerlei.plumber.util.printStackTraceUpTo
 import de.tweerlei.plumber.worker.WorkItem
@@ -39,7 +40,7 @@ class TimingWorker(
 
     override fun process(item: WorkItem) {
         val active = activeWorkers.incrementAndGet()
-        val startTime = System.currentTimeMillis()
+        val stopwatch = Stopwatch()
         var succ: Long
         var fail: Long
         try {
@@ -56,17 +57,17 @@ class TimingWorker(
             }
             succ = successfulFiles.get()
             fail = failedFiles.incrementAndGet()
+        } finally {
+            totalProcessingTime.addAndGet(stopwatch.elapsedMillis())
+            activeWorkers.decrementAndGet()
         }
-        val endTime = System.currentTimeMillis()
 
-        totalProcessingTime.addAndGet(endTime - startTime)
         if ((succ + fail) % interval == 0L) {
-            val perItem = (endTime - startTime).toDouble() / (succ + fail)
+            val perItem = stopwatch.perItem((succ + fail).toDouble())
             logger.info {
                 "$name: $succ / ${succ + fail} ($active active) @ ${perItem.humanReadable()} ms/item"
             }
         }
-        activeWorkers.decrementAndGet()
     }
 
     override fun onClose() {

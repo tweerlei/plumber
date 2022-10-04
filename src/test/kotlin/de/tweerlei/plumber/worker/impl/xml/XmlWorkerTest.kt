@@ -19,9 +19,14 @@ import com.fasterxml.jackson.core.JsonPointer
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.dataformat.xml.XmlMapper
 import de.tweerlei.plumber.worker.WorkItem
+import de.tweerlei.plumber.worker.impl.ByteArrayInputStreamProvider
+import de.tweerlei.plumber.worker.impl.ByteArrayOutputStreamProvider
 import de.tweerlei.plumber.worker.impl.TestWorkerRunner
+import de.tweerlei.plumber.worker.impl.attribute.SettingWorker
 import de.tweerlei.plumber.worker.impl.node.NodeGetWorker
+import de.tweerlei.plumber.worker.impl.record.RecordSetWorker
 import de.tweerlei.plumber.worker.types.ByteArrayValue
+import de.tweerlei.plumber.worker.types.DoubleValue
 import de.tweerlei.plumber.worker.types.StringValue
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
@@ -61,6 +66,41 @@ class XmlWorkerTest {
         item.shouldNotBeNull()
         item.getAs<StringValue>().value.shouldBe(
             """<ROOT><string>Hello</string><number>42</number><boolean>true</boolean><null>null</null><array><item>1</item><item>2</item><item>3</item></array></ROOT>"""
+        )
+    }
+
+    @Test
+    fun testReadWrite() {
+
+        val xml = """
+            <root>
+            <version>1</version>
+            <obj>
+                <string>Hello</string>
+                <number>42</number>
+                <boolean>true</boolean>
+                <null>null</null>
+                <array>
+                    <item>1</item>
+                    <item>2</item>
+                    <item>3</item>
+                </array>
+            </obj>
+            </root>
+        """
+        val objectMapper = XmlMapper()
+        val output = ByteArrayOutputStreamProvider()
+
+        val items = TestWorkerRunner(WorkItem.of())
+            .append { w -> XmlReadWorker(ByteArrayInputStreamProvider(xml.toByteArray(StandardCharsets.UTF_8)), "item", JsonNode::class.java, objectMapper, 10, w) }
+            .append { w -> SettingWorker(WorkItem.DEFAULT_KEY, { DoubleValue.of(3.14) }, w) }
+            .append { w -> RecordSetWorker("2", w) }
+            .append { w -> XmlWriteWorker(output, "item", "items", objectMapper, false, w) }
+            .run()
+
+        items.size.shouldBe(3)
+        output.getBytes().toString(StandardCharsets.UTF_8).shouldBe(
+            """<?xml version='1.0' encoding='UTF-8'?><items><item>1</item><item>2</item><item>3</item></items>"""
         )
     }
 }

@@ -17,6 +17,7 @@ package de.tweerlei.plumber.worker.impl.xml
 
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.dataformat.xml.XmlMapper
+import de.tweerlei.plumber.worker.InputStreamProvider
 import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.GeneratingWorker
@@ -26,14 +27,12 @@ import de.tweerlei.plumber.worker.types.StringValue
 import de.tweerlei.plumber.worker.types.Value
 import de.tweerlei.plumber.worker.types.toValue
 import mu.KLogging
-import java.io.File
-import java.io.FileInputStream
 import java.io.InputStream
 import javax.xml.stream.XMLInputFactory
 import javax.xml.stream.XMLStreamConstants.START_ELEMENT
 
 class XmlReadWorker<T>(
-    private val file: File,
+    private val inputStreamProvider: InputStreamProvider,
     private val elementName: String,
     private val itemType: Class<T>,
     private val xmlMapper: XmlMapper,
@@ -50,7 +49,7 @@ class XmlReadWorker<T>(
     private lateinit var stream: InputStream
 
     override fun onOpen() {
-        stream = FileInputStream(file)
+        stream = inputStreamProvider.open()
     }
 
     override fun generateItems(item: WorkItem, fn: (WorkItem) -> Boolean) {
@@ -58,8 +57,8 @@ class XmlReadWorker<T>(
             .also { logger.info { "Reading XML objects as ${valueType.simpleName}" } }
             .let { reader ->
                 try {
-                    val filePath = StringValue.of(file.parentFile?.absolutePath ?: "")
-                    val fileName = StringValue.of(file.name)
+                    val filePath = StringValue.of(inputStreamProvider.getPath())
+                    val fileName = StringValue.of(inputStreamProvider.getName())
                     var keepGenerating = true
                     while (keepGenerating && reader.hasNext()) {
                         reader.next()

@@ -17,6 +17,7 @@ package de.tweerlei.plumber.worker.impl.xml
 
 import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.dataformat.xml.XmlMapper
+import de.tweerlei.plumber.worker.OutputStreamProvider
 import de.tweerlei.plumber.worker.impl.DelegatingWorker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.WorkItem
@@ -25,7 +26,7 @@ import java.io.*
 import javax.xml.stream.XMLOutputFactory
 
 class XmlWriteWorker(
-    private val file: File,
+    private val outputStreamProvider: OutputStreamProvider,
     private val elementName: String,
     private val rootElementName: String,
     private val xmlMapper: XmlMapper,
@@ -37,7 +38,7 @@ class XmlWriteWorker(
     private lateinit var generator: JsonGenerator
 
     override fun onOpen() {
-        XMLOutputFactory.newInstance().createXMLStreamWriter(FileOutputStream(file))
+        XMLOutputFactory.newInstance().createXMLStreamWriter(outputStreamProvider.open())
             .also { streamWriter ->
                 generator = xmlMapper.factory.createGenerator(streamWriter)
                 if (prettyPrint)

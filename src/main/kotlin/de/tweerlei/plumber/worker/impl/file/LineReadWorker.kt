@@ -15,6 +15,7 @@
  */
 package de.tweerlei.plumber.worker.impl.file
 
+import de.tweerlei.plumber.worker.InputStreamProvider
 import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.GeneratingWorker
@@ -27,7 +28,7 @@ import java.io.InputStreamReader
 import java.nio.charset.Charset
 
 class LineReadWorker(
-    private val file: File,
+    private val inputStreamProvider: InputStreamProvider,
     private val charset: Charset,
     limit: Long,
     worker: Worker
@@ -36,11 +37,11 @@ class LineReadWorker(
     private lateinit var reader: BufferedReader
 
     override fun onOpen() {
-        reader = BufferedReader(InputStreamReader(FileInputStream(file), charset))
+        reader = BufferedReader(InputStreamReader(inputStreamProvider.open(), charset))
     }
 
     override fun generateItems(item: WorkItem, fn: (WorkItem) -> Boolean) {
-        val fileName = StringValue.of(file.name)
+        val fileName = StringValue.of(inputStreamProvider.getName())
         var keepGenerating = true
         while (keepGenerating) {
             keepGenerating = reader.nextWorkItem(fileName)

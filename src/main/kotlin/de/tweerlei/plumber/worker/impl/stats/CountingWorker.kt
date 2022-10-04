@@ -15,6 +15,7 @@
  */
 package de.tweerlei.plumber.worker.impl.stats
 
+import de.tweerlei.plumber.util.Stopwatch
 import de.tweerlei.plumber.util.humanReadable
 import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.Worker
@@ -23,6 +24,7 @@ import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.types.LongValue
 import mu.KLogging
 import java.util.concurrent.atomic.AtomicLong
+import java.util.concurrent.atomic.AtomicReference
 
 class CountingWorker(
     private val name: String,
@@ -33,29 +35,27 @@ class CountingWorker(
     companion object: KLogging()
 
     private val sentFiles = AtomicLong()
-    private var startTime: Long = 0L
-    private var lastTime = AtomicLong()
+    private lateinit var stopwatch: Stopwatch
+    private val current = AtomicReference<Stopwatch>()
 
     override fun onOpen() {
-        startTime = System.currentTimeMillis()
-        lastTime.set(startTime)
+        stopwatch = Stopwatch()
+        current.set(stopwatch)
     }
 
     override fun doProcess(item: WorkItem) =
         sentFiles.incrementAndGet()
             .also { counter ->
                 if (counter % interval == 0L) {
-                    val now = System.currentTimeMillis()
-                    val last = lastTime.getAndSet(now)
-                    val perSecond = interval.toDouble() * 1000 / (now - last).coerceAtLeast(1)
+                    val last = current.getAndSet(Stopwatch())
+                    val perSecond = last.perSecond(interval.toDouble())
                     logger.info { "$name: Items processed: $counter @ ${perSecond.humanReadable()} items/s" }
                 }
                 item.set(LongValue.of(counter), WellKnownKeys.COUNT)
             }.let { true }
 
     override fun onClose() {
-        val now = System.currentTimeMillis()
-        val perSecond = sentFiles.get().toDouble() * 1000 / (now - startTime).coerceAtLeast(1)
+        val perSecond = stopwatch.perSecond(sentFiles.get().toDouble())
         logger.info { "$name: Items processed: ${sentFiles.get()}" }
         logger.info { "$name: Throughput: ${perSecond.humanReadable()} items/s" }
     }

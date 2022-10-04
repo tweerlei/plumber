@@ -22,7 +22,7 @@ abstract class DelegatingWorker(
     worker: Worker
 ): WrappingWorker(worker) {
 
-    final override fun process(item: WorkItem) {
+    override final fun process(item: WorkItem) {
         if (doProcess(item))
             passOn(item)
     }

@@ -18,18 +18,17 @@ package de.tweerlei.plumber.worker.impl.csv
 import com.fasterxml.jackson.databind.SequenceWriter
 import com.fasterxml.jackson.dataformat.csv.CsvMapper
 import com.fasterxml.jackson.dataformat.csv.CsvSchema
+import de.tweerlei.plumber.worker.OutputStreamProvider
 import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.DelegatingWorker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.types.Record
 import java.io.Closeable
-import java.io.File
-import java.io.FileOutputStream
 import java.io.OutputStream
 
 class CsvWriteWorker(
-    private val file: File,
+    private val outputStreamProvider: OutputStreamProvider,
     private val csvMapper: CsvMapper,
     private val separator: Char,
     private val header: Boolean,
@@ -40,7 +39,7 @@ class CsvWriteWorker(
     private var writer: RecordWriter<Record, out Any>? = null
 
     override fun onOpen() {
-        stream = FileOutputStream(file)
+        stream = outputStreamProvider.open()
     }
 
     override fun doProcess(item: WorkItem): Boolean =
@@ -62,7 +61,10 @@ class CsvWriteWorker(
         }
 
     override fun onClose() {
-        writer?.close()
+        when (writer) {
+            null -> stream.close()
+            else -> writer?.close()
+        }
     }
 
     private fun writerWithHeader(rec: Record) =

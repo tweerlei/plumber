@@ -28,7 +28,7 @@ class LineWriteStep: ProcessingStep {
     override val group = "Files"
     override val name = "Write lines to file"
     override val description = "Write lines to the given file"
-    override fun argDescription() = "".toOutputFile().toString()
+    override fun argDescription() = "".toOutputStreamProvider().toString()
 
     override fun isValuePassThrough() = true
     override fun parallelDegreeFor(arg: String) = 1
@@ -42,7 +42,7 @@ class LineWriteStep: ProcessingStep {
         parallelDegree: Int
     ) =
         LineWriteWorker(
-            arg.toOutputFile(),
+            arg.toOutputStreamProvider(),
             StandardCharsets.UTF_8,
             "\n",
             w

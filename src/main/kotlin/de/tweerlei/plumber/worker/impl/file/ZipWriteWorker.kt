@@ -15,6 +15,7 @@
  */
 package de.tweerlei.plumber.worker.impl.file
 
+import de.tweerlei.plumber.worker.OutputStreamProvider
 import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.DelegatingWorker
@@ -26,14 +27,14 @@ import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 
 class ZipWriteWorker(
-    private val outputFile: File,
+    private val outputStreamProvider: OutputStreamProvider,
     worker: Worker
 ): DelegatingWorker(worker) {
 
     private lateinit var stream: ZipOutputStream
 
     override fun onOpen() {
-        stream = ZipOutputStream(FileOutputStream(outputFile))
+        stream = ZipOutputStream(outputStreamProvider.open())
     }
 
     override fun doProcess(item: WorkItem) =

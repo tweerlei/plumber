@@ -18,7 +18,7 @@ package de.tweerlei.plumber.pipeline.steps.csv
 import com.fasterxml.jackson.dataformat.csv.CsvMapper
 import de.tweerlei.plumber.pipeline.PipelineParams
 import de.tweerlei.plumber.pipeline.steps.ProcessingStep
-import de.tweerlei.plumber.pipeline.steps.file.toInputFile
+import de.tweerlei.plumber.pipeline.steps.file.toInputStreamProvider
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.impl.csv.CsvReadWorker
@@ -32,7 +32,7 @@ class CsvReadStep(
     override val group = "CSV"
     override val name = "Read CSV lines from file"
     override val description = "Read CSV lines from the given file"
-    override fun argDescription() = "".toInputFile().toString()
+    override fun argDescription() = "".toInputStreamProvider().toString()
 
     override fun producedAttributesFor(arg: String) = setOf(
         WellKnownKeys.PATH,
@@ -49,7 +49,7 @@ class CsvReadStep(
         parallelDegree: Int
     ) =
         CsvReadWorker(
-            arg.toInputFile(),
+            arg.toInputStreamProvider(),
             csvMapper,
             params.separator,
             params.header,

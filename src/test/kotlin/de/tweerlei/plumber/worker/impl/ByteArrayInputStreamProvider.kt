@@ -1,12 +1,12 @@
 /*
  * Copyright 2022 tweerlei Wruck + Buchmeier GbR - http://www.tweerlei.de/
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,34 +15,17 @@
  */
 package de.tweerlei.plumber.worker.impl
 
-import de.tweerlei.plumber.worker.WorkItem
-import de.tweerlei.plumber.worker.Worker
+import de.tweerlei.plumber.worker.InputStreamProvider
+import java.io.ByteArrayInputStream
 
-abstract class WrappingWorker(
-    private val worker: Worker
-): Worker {
+class ByteArrayInputStreamProvider(bytes: ByteArray): InputStreamProvider {
 
-    private lateinit var context: Worker.RunContext
-    protected val runContext
-        get() = context
+    private val stream = ByteArrayInputStream(bytes)
 
-    override final fun open(ctx: Worker.RunContext) =
-        this.apply {
-            context = ctx
-            worker.open(ctx)
-            onOpen()
-        }
-
-    protected open fun onOpen() {}
-
-    protected fun passOn(item: WorkItem) {
-        worker.process(item)
-    }
-
-    override final fun close() {
-        onClose()
-        worker.close()
-    }
-
-    protected open fun onClose() {}
+    override fun open() =
+        stream
+    override fun getName() =
+        "raw data"
+    override fun getPath() =
+        "/"
 }

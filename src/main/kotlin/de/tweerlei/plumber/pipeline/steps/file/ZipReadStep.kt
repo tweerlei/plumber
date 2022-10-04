@@ -28,7 +28,7 @@ class ZipReadStep: ProcessingStep {
     override val group = "Files"
     override val name = "Read ZIP entries"
     override val description = "Read entries from the given ZIP file"
-    override fun argDescription() = "".toInputFile().toString()
+    override fun argDescription() = "".toInputStreamProvider().toString()
 
     override fun producedAttributesFor(arg: String) = setOf(
         WellKnownKeys.NAME,
@@ -45,7 +45,7 @@ class ZipReadStep: ProcessingStep {
         parallelDegree: Int
     ) =
         ZipReadWorker(
-            arg.toInputFile(),
+            arg.toInputStreamProvider(),
             params.maxFilesPerThread,
             w
         )

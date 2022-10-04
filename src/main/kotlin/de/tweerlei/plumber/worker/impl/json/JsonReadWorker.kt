@@ -19,6 +19,7 @@ import com.fasterxml.jackson.core.JsonFactory
 import com.fasterxml.jackson.core.JsonToken
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
+import de.tweerlei.plumber.worker.InputStreamProvider
 import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.GeneratingWorker
@@ -28,12 +29,10 @@ import de.tweerlei.plumber.worker.types.StringValue
 import de.tweerlei.plumber.worker.types.Value
 import de.tweerlei.plumber.worker.types.toValue
 import mu.KLogging
-import java.io.File
-import java.io.FileInputStream
 import java.io.InputStream
 
 class JsonReadWorker<T>(
-    private val file: File,
+    private val inputStreamProvider: InputStreamProvider,
     private val itemType: Class<T>,
     private val objectMapper: ObjectMapper,
     limit: Long,
@@ -49,15 +48,15 @@ class JsonReadWorker<T>(
     private lateinit var stream: InputStream
 
     override fun onOpen() {
-        stream = FileInputStream(file)
+        stream = inputStreamProvider.open()
     }
 
     override fun generateItems(item: WorkItem, fn: (WorkItem) -> Boolean) {
         JsonFactory().createParser(stream)
             .also { logger.info { "Reading JSON objects as ${valueType.simpleName}" } }
             .use { parser ->
-                val filePath = StringValue.of(file.parentFile?.absolutePath ?: "")
-                val fileName = StringValue.of(file.name)
+                val filePath = StringValue.of(inputStreamProvider.getPath())
+                val fileName = StringValue.of(inputStreamProvider.getName())
                 var keepGenerating = true
                 var inArray = false
                 while (keepGenerating) {

@@ -17,6 +17,7 @@ package de.tweerlei.plumber.worker.impl.json
 
 import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.databind.ObjectMapper
+import de.tweerlei.plumber.worker.OutputStreamProvider
 import de.tweerlei.plumber.worker.impl.DelegatingWorker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.WorkItem
@@ -25,7 +26,7 @@ import java.io.*
 import java.nio.charset.StandardCharsets
 
 class JsonWriteWorker(
-    private val file: File,
+    private val outputStreamProvider: OutputStreamProvider,
     private val objectMapper: ObjectMapper,
     private val wrapAsProperty: String?,
     private val prettyPrint: Boolean,
@@ -37,7 +38,7 @@ class JsonWriteWorker(
     private var firstItem: Boolean = true
 
     override fun onOpen() {
-        stream = FileOutputStream(file)
+        stream = outputStreamProvider.open()
         if (wrapAsProperty != null) {
             stream.write("""{"$wrapAsProperty":[""".toByteArray(StandardCharsets.UTF_8))
         } else {

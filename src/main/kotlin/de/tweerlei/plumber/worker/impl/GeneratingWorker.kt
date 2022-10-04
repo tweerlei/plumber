@@ -29,14 +29,15 @@ abstract class GeneratingWorker(
 
     private var count = 0L
 
-    final override fun process(item: WorkItem) {
+    override final fun process(item: WorkItem) {
         generateItems(item) { newItem ->
             count++
             if (count > limit || runContext.isInterrupted())
                 false
             else
-                item.plus(newItem)
+                newItem
                     .also { nextItem ->
+                        nextItem.mergeMissingFrom(item)
                         try {
                             passOn(nextItem)
                         } catch (e: Exception) {

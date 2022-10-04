@@ -15,6 +15,7 @@
  */
 package de.tweerlei.plumber.worker.impl.file
 
+import de.tweerlei.plumber.worker.OutputStreamProvider
 import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.impl.DelegatingWorker
 import de.tweerlei.plumber.worker.Worker
@@ -22,7 +23,7 @@ import java.io.*
 import java.nio.charset.Charset
 
 class LineWriteWorker(
-    private val outputFile: File,
+    private val outputStreamProvider: OutputStreamProvider,
     private val charset: Charset,
     private val separator: String,
     worker: Worker
@@ -31,7 +32,7 @@ class LineWriteWorker(
     private lateinit var writer: Writer
 
     override fun onOpen() {
-        writer = OutputStreamWriter(FileOutputStream(outputFile), charset)
+        writer = OutputStreamWriter(outputStreamProvider.open(), charset)
     }
 
     override fun doProcess(item: WorkItem) =
