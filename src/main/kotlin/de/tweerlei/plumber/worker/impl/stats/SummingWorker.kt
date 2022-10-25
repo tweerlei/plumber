@@ -51,7 +51,7 @@ class SummingWorker(
                         if (counter / interval > (counter - size) / interval) {
                             val last = current.getAndSet(Stopwatch())
                             val bytes = interval * (counter / interval - (counter - size) / interval)
-                            val perSecond = last.perSecond(bytes.toDouble())
+                            val perSecond = last.itemsPerSecond(bytes.toDouble())
                             logger.info { "$name: Item sum: $counter @ ${perSecond.humanReadable()} byte/s" }
                         }
                         item.set(LongValue.of(counter), WellKnownKeys.SUM)
@@ -59,7 +59,7 @@ class SummingWorker(
             }.let { true }
 
     override fun onClose() {
-        val perSecond = stopwatch.perSecond(sum.get().toDouble())
+        val perSecond = stopwatch.itemsPerSecond(sum.get().toDouble())
         logger.info { "$name: Item sum: ${sum.get()}" }
         logger.info { "$name: Throughput: ${perSecond.humanReadable()} byte/s" }
     }

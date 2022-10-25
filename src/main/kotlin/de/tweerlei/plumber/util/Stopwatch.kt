@@ -19,17 +19,17 @@ import java.time.Duration
 
 class Stopwatch {
 
-    val startTime = System.currentTimeMillis()
+    private val startTime = System.currentTimeMillis()
 
     fun elapsedMillis() =
         System.currentTimeMillis() - startTime
 
-    fun elapsedDuration() =
+    fun elapsedDuration(): Duration =
         Duration.ofMillis(elapsedMillis())
 
-    fun perSecond(count: Double) =
+    fun itemsPerSecond(count: Double) =
         (count * 1000.0) / elapsedMillis().coerceAtLeast(1L)
 
-    fun perItem(count: Double) =
-        elapsedMillis() / (count * 1000.0)
+    fun millisPerItem(count: Double) =
+        elapsedMillis() / count.coerceAtLeast(1.0)
 }

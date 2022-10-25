@@ -48,14 +48,14 @@ class CountingWorker(
             .also { counter ->
                 if (counter % interval == 0L) {
                     val last = current.getAndSet(Stopwatch())
-                    val perSecond = last.perSecond(interval.toDouble())
+                    val perSecond = last.itemsPerSecond(interval.toDouble())
                     logger.info { "$name: Items processed: $counter @ ${perSecond.humanReadable()} items/s" }
                 }
                 item.set(LongValue.of(counter), WellKnownKeys.COUNT)
             }.let { true }
 
     override fun onClose() {
-        val perSecond = stopwatch.perSecond(sentFiles.get().toDouble())
+        val perSecond = stopwatch.itemsPerSecond(sentFiles.get().toDouble())
         logger.info { "$name: Items processed: ${sentFiles.get()}" }
         logger.info { "$name: Throughput: ${perSecond.humanReadable()} items/s" }
     }

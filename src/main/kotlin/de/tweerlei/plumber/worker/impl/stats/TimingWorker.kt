@@ -63,7 +63,7 @@ class TimingWorker(
         }
 
         if ((succ + fail) % interval == 0L) {
-            val perItem = stopwatch.perItem((succ + fail).toDouble())
+            val perItem = stopwatch.millisPerItem((succ + fail).toDouble())
             logger.info {
                 "$name: $succ / ${succ + fail} ($active active) @ ${perItem.humanReadable()} ms/item"
             }
