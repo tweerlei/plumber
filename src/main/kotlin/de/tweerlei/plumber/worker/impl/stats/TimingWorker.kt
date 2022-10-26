@@ -24,6 +24,7 @@ import de.tweerlei.plumber.worker.impl.WrappingWorker
 import mu.KLogging
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.atomic.AtomicLong
+import java.util.concurrent.atomic.AtomicReference
 
 class TimingWorker(
     private val name: String,
@@ -37,12 +38,14 @@ class TimingWorker(
     private val successfulFiles = AtomicLong()
     private val failedFiles = AtomicLong()
     private val totalProcessingTime = AtomicLong()
+    private val current = AtomicLong()
 
     override fun process(item: WorkItem) {
         val active = activeWorkers.incrementAndGet()
         val stopwatch = Stopwatch()
         var succ: Long
         var fail: Long
+        var elapsed: Long
         try {
             passOn(item)
             succ = successfulFiles.incrementAndGet()
@@ -58,12 +61,13 @@ class TimingWorker(
             succ = successfulFiles.get()
             fail = failedFiles.incrementAndGet()
         } finally {
-            totalProcessingTime.addAndGet(stopwatch.elapsedMillis())
+            elapsed = totalProcessingTime.addAndGet(stopwatch.elapsedMillis())
             activeWorkers.decrementAndGet()
         }
 
         if ((succ + fail) % interval == 0L) {
-            val perItem = stopwatch.millisPerItem((succ + fail).toDouble())
+            val last = current.getAndSet(elapsed)
+            val perItem = (elapsed - last).toDouble() / interval
             logger.info {
                 "$name: $succ / ${succ + fail} ($active active) @ ${perItem.humanReadable()} ms/item"
             }
