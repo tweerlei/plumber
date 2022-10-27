@@ -28,7 +28,7 @@ class IsEqualStep: ProcessingStep {
 
     override val group = "Attributes"
     override val name = "Compare"
-    override val description = "Compare the current value to the given attribute's value resulting in a boolean"
+    override val description = "Compare the current value to the given value resulting in a boolean"
     override fun argDescription() = "<value>"
 
     override fun requiredAttributesFor(arg: String) =

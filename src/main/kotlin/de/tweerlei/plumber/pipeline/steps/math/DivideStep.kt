@@ -13,23 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.tweerlei.plumber.pipeline.steps.expr
+package de.tweerlei.plumber.pipeline.steps.math
 
 import de.tweerlei.plumber.pipeline.PipelineParams
 import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.pipeline.steps.toRequiredAttributes
 import de.tweerlei.plumber.pipeline.steps.toWorkItemAccessor
 import de.tweerlei.plumber.worker.Worker
-import de.tweerlei.plumber.worker.impl.expr.MinusWorker
+import de.tweerlei.plumber.worker.impl.math.DivideWorker
 import org.springframework.stereotype.Service
 
-@Service("minusWorker")
-class MinusStep: ProcessingStep {
+@Service("divideWorker")
+class DivideStep: ProcessingStep {
 
-    override val group = "Attributes"
-    override val name = "Subtract"
-    override val description = "Subtract the given attribute's value to the current value"
-    override fun argDescription() = "<value>"
+    override val group = "Math"
+    override val name = "Divide"
+    override val description = "Divide the current value by the given value"
+    override fun argDescription() = valueFor("")
 
     override fun requiredAttributesFor(arg: String) =
         arg.toRequiredAttributes()
@@ -42,5 +42,8 @@ class MinusStep: ProcessingStep {
         params: PipelineParams,
         parallelDegree: Int
     ) =
-        MinusWorker(arg.toWorkItemAccessor(), w)
+        DivideWorker(valueFor(arg).toWorkItemAccessor(), w)
+
+    private fun valueFor(arg: String) =
+        arg.ifEmpty { "1" }
 }

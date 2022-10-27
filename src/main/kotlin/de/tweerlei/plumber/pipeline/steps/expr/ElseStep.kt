@@ -29,7 +29,7 @@ class ElseStep: ProcessingStep {
 
     override val group = "Attributes"
     override val name = "Conditionally set value"
-    override val description = "Sets the current value to the given attribute's value if a previous then: did not match"
+    override val description = "Sets the current value to the given value if a previous then: did not match"
     override fun argDescription() = "<value>"
 
     override fun requiredAttributesFor(arg: String) = setOf(

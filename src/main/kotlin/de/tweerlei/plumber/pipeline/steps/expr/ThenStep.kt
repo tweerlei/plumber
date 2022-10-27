@@ -28,7 +28,7 @@ class ThenStep: ProcessingStep {
 
     override val group = "Attributes"
     override val name = "Conditionally set value"
-    override val description = "Sets the current value to the given attribute's value if current value is truthy"
+    override val description = "Sets the current value to the given value if current value is truthy"
     override fun argDescription() = "<value>"
 
     override fun requiredAttributesFor(arg: String) =

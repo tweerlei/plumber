@@ -13,23 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.tweerlei.plumber.pipeline.steps.expr
+package de.tweerlei.plumber.pipeline.steps.math
 
 import de.tweerlei.plumber.pipeline.PipelineParams
 import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.pipeline.steps.toRequiredAttributes
 import de.tweerlei.plumber.pipeline.steps.toWorkItemAccessor
 import de.tweerlei.plumber.worker.Worker
-import de.tweerlei.plumber.worker.impl.expr.ModuloWorker
+import de.tweerlei.plumber.worker.impl.math.ModuloWorker
 import org.springframework.stereotype.Service
 
 @Service("moduloWorker")
 class ModuloStep: ProcessingStep {
 
-    override val group = "Attributes"
+    override val group = "Math"
     override val name = "Modulo"
-    override val description = "Calculate the remainder of dividing the current value by the given attribute's value"
-    override fun argDescription() = "<value>"
+    override val description = "Calculate the remainder of dividing the current value by the given value"
+    override fun argDescription() = valueFor("")
 
     override fun requiredAttributesFor(arg: String) =
         arg.toRequiredAttributes()
@@ -42,5 +42,8 @@ class ModuloStep: ProcessingStep {
         params: PipelineParams,
         parallelDegree: Int
     ) =
-        ModuloWorker(arg.toWorkItemAccessor(), w)
+        ModuloWorker(valueFor(arg).toWorkItemAccessor(), w)
+
+    private fun valueFor(arg: String) =
+        arg.ifEmpty { "1" }
 }

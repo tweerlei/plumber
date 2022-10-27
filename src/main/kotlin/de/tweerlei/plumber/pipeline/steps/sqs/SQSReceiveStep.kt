@@ -36,6 +36,7 @@ class SQSReceiveStep(
 
     override fun producedAttributesFor(arg: String) = setOf(
         WellKnownKeys.NAME,
+        WellKnownKeys.LAST_MODIFIED,
         SQSKeys.QUEUE_URL,
         SQSKeys.MESSAGE_ID,
         SQSKeys.DELETE_HANDLE

@@ -13,30 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.tweerlei.plumber.pipeline.steps.stats
+package de.tweerlei.plumber.pipeline.steps.math
 
-import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
-import de.tweerlei.plumber.worker.impl.WellKnownKeys
-import de.tweerlei.plumber.worker.impl.stats.SummingWorker
+import de.tweerlei.plumber.pipeline.steps.ProcessingStep
+import de.tweerlei.plumber.pipeline.steps.toRequiredAttributes
+import de.tweerlei.plumber.pipeline.steps.toWorkItemAccessor
 import de.tweerlei.plumber.worker.Worker
+import de.tweerlei.plumber.worker.impl.math.LogarithmWorker
 import org.springframework.stereotype.Service
 
-@Service("sumWorker")
-class SumStep: ProcessingStep {
+@Service("lnWorker")
+class LogarithmStep: ProcessingStep {
 
-    override val group = "Logging"
-    override val name = "Calculate size sum"
-    override val description = "Log item sum of item sizes every given number of bytes"
-    override fun argDescription() = intervalFor("").toString()
+    override val group = "Math"
+    override val name = "Logarithm"
+    override val description = "Calculate the logarithm of the current value to the given base"
+    override fun argDescription() = baseFor("")
 
-    override fun isValuePassThrough() = true
+    override fun requiredAttributesFor(arg: String) =
+        arg.toRequiredAttributes()
 
-    override fun producedAttributesFor(arg: String) = setOf(
-        WellKnownKeys.SUM
-    )
-
-    @Suppress("UNCHECKED_CAST")
     override fun createWorker(
         arg: String,
         expectedOutput: Class<*>,
@@ -45,12 +42,8 @@ class SumStep: ProcessingStep {
         params: PipelineParams,
         parallelDegree: Int
     ) =
-        SummingWorker(
-            predecessorName,
-            intervalFor(arg),
-            w
-        )
+        LogarithmWorker(baseFor(arg).toWorkItemAccessor(), w)
 
-    private fun intervalFor(arg: String) =
-        arg.toLongOrNull() ?: Long.MAX_VALUE
+    private fun baseFor(arg: String) =
+        arg.ifEmpty { Math.E.toString() }
 }

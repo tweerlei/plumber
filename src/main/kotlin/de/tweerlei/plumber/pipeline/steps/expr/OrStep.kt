@@ -28,8 +28,8 @@ class OrStep: ProcessingStep {
 
     override val group = "Attributes"
     override val name = "Compare"
-    override val description = "Logically OR the current value with the given attribute's value"
-    override fun argDescription() = "<value>"
+    override val description = "Logically OR the current value with the given value"
+    override fun argDescription() = valueFor("")
 
     override fun requiredAttributesFor(arg: String) =
         arg.toRequiredAttributes()
@@ -42,5 +42,8 @@ class OrStep: ProcessingStep {
         params: PipelineParams,
         parallelDegree: Int
     ) =
-        OrWorker(arg.toWorkItemAccessor(), w)
+        OrWorker(valueFor(arg).toWorkItemAccessor(), w)
+
+    private fun valueFor(arg: String) =
+        arg.ifEmpty { "false" }
 }

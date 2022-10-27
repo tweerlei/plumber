@@ -13,30 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.tweerlei.plumber.pipeline.steps.stats
+package de.tweerlei.plumber.pipeline.steps.math
 
-import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
-import de.tweerlei.plumber.worker.impl.WellKnownKeys
-import de.tweerlei.plumber.worker.impl.stats.SummingWorker
+import de.tweerlei.plumber.pipeline.steps.ProcessingStep
+import de.tweerlei.plumber.pipeline.steps.toRequiredAttributes
+import de.tweerlei.plumber.pipeline.steps.toWorkItemAccessor
 import de.tweerlei.plumber.worker.Worker
+import de.tweerlei.plumber.worker.impl.math.MinusWorker
 import org.springframework.stereotype.Service
 
-@Service("sumWorker")
-class SumStep: ProcessingStep {
+@Service("minusWorker")
+class MinusStep: ProcessingStep {
 
-    override val group = "Logging"
-    override val name = "Calculate size sum"
-    override val description = "Log item sum of item sizes every given number of bytes"
-    override fun argDescription() = intervalFor("").toString()
+    override val group = "Math"
+    override val name = "Subtract"
+    override val description = "Subtract the given value from the current value"
+    override fun argDescription() = valueFor("")
 
-    override fun isValuePassThrough() = true
+    override fun requiredAttributesFor(arg: String) =
+        arg.toRequiredAttributes()
 
-    override fun producedAttributesFor(arg: String) = setOf(
-        WellKnownKeys.SUM
-    )
-
-    @Suppress("UNCHECKED_CAST")
     override fun createWorker(
         arg: String,
         expectedOutput: Class<*>,
@@ -45,12 +42,8 @@ class SumStep: ProcessingStep {
         params: PipelineParams,
         parallelDegree: Int
     ) =
-        SummingWorker(
-            predecessorName,
-            intervalFor(arg),
-            w
-        )
+        MinusWorker(valueFor(arg).toWorkItemAccessor(), w)
 
-    private fun intervalFor(arg: String) =
-        arg.toLongOrNull() ?: Long.MAX_VALUE
+    private fun valueFor(arg: String) =
+        arg.ifEmpty { "0" }
 }

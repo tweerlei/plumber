@@ -13,46 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.tweerlei.plumber.worker.impl.expr
+package de.tweerlei.plumber.worker.impl.math
 
 import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.impl.TestWorkerRunner
 import de.tweerlei.plumber.worker.types.ComparableValue
 import de.tweerlei.plumber.worker.types.DoubleValue
-import de.tweerlei.plumber.worker.types.LongValue
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
 
-class TimesWorkerTest {
-
-    @Test
-    fun testLong() {
-        test(LongValue.of(1L), LongValue.of(1L), LongValue.of(1L))
-        test(LongValue.of(1L), LongValue.of(-1001L), LongValue.of(-1001L))
-        test(LongValue.of(1001L), LongValue.of(1L), LongValue.of(1001L))
-        test(LongValue.of(1001L), LongValue.of(1001L), LongValue.of(1002001L))
-    }
+class LogarithmWorkerTest {
 
     @Test
     fun testDouble() {
-        test(DoubleValue.of(0.12), DoubleValue.of(0.23), DoubleValue.of(0.0276))
-        test(DoubleValue.of(0.12), DoubleValue.of(1001.23), DoubleValue.of(120.1476))
-        test(DoubleValue.of(1001.12), DoubleValue.of(0.23), DoubleValue.of(230.2576))
-        test(DoubleValue.of(1001.12), DoubleValue.of(1001.23), DoubleValue.of(1002351.3776))
-    }
-
-    @Test
-    fun testMixed() {
-        test(LongValue.of(-1L), DoubleValue.of(0.23), DoubleValue.of(-0.23))
-        test(DoubleValue.of(0.12), LongValue.of(1001L), DoubleValue.of(120.12))
-        test(LongValue.of(1001L), DoubleValue.of(0.23), DoubleValue.of(230.23))
-        test(DoubleValue.of(1001.12), LongValue.of(1001L), DoubleValue.of(1002121.12))
+        test(DoubleValue.of(1000.0), DoubleValue.of(10.0), DoubleValue.of(3.0))
+        test(DoubleValue.of(64.0), DoubleValue.of(2.0), DoubleValue.of(6.0))
     }
 
     private fun test(current: ComparableValue, other: ComparableValue, expected: ComparableValue) {
         val item = TestWorkerRunner(WorkItem.of(current))
-            .append { w -> TimesWorker({ other }, w) }
+            .append { w -> LogarithmWorker({ other }, w) }
             .run()
             .singleOrNull()
 

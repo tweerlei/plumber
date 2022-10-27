@@ -18,10 +18,12 @@ package de.tweerlei.plumber.worker.impl.sqs
 import com.amazonaws.services.sqs.AmazonSQS
 import com.amazonaws.services.sqs.model.Message
 import com.amazonaws.services.sqs.model.ReceiveMessageRequest
-import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.WorkItem
-import de.tweerlei.plumber.worker.impl.GeneratingWorker
 import de.tweerlei.plumber.worker.Worker
+import de.tweerlei.plumber.worker.impl.GeneratingWorker
+import de.tweerlei.plumber.worker.impl.WellKnownKeys
+import de.tweerlei.plumber.worker.types.InstantValue
+import de.tweerlei.plumber.worker.types.NullValue
 import de.tweerlei.plumber.worker.types.StringValue
 import mu.KLogging
 
@@ -40,6 +42,8 @@ class SQSReceiveWorker(
         const val MAX_WAIT_SECONDS = 20
         // AWS limit for maxNumberOfMessages is 10
         const val MAX_NUMBER_OF_MESSAGES = 10
+        // AWS message attribute name for the timestamp, see Message.attributes
+        const val SENT_TIMESTAMP = "SentTimestamp"
     }
 
     override fun generateItems(item: WorkItem, fn: (WorkItem) -> Boolean) {
@@ -48,7 +52,7 @@ class SQSReceiveWorker(
         var keepGenerating = true
         var itemCount = 0
         while (keepGenerating) {
-            receiveFile()
+            receiveFiles()
                 .also {
                     keepGenerating = follow || it.isNotEmpty()
                 }.forEach { message ->
@@ -62,10 +66,11 @@ class SQSReceiveWorker(
         logger.info { "received $itemCount messages" }
     }
 
-    private fun receiveFile() =
+    private fun receiveFiles() =
         ReceiveMessageRequest(queueUrl)
             .withWaitTimeSeconds(waitSeconds.coerceAtMost(MAX_WAIT_SECONDS))
             .withMaxNumberOfMessages(numberOfFilesPerRequest.coerceAtMost(MAX_NUMBER_OF_MESSAGES))
+            .withAttributeNames(SENT_TIMESTAMP)
             .let { request -> amazonSQSClient.receiveMessage(request) }
             .messages
 
@@ -77,7 +82,15 @@ class SQSReceiveWorker(
                     WellKnownKeys.NAME to id,
                     SQSKeys.QUEUE_URL to url,
                     SQSKeys.MESSAGE_ID to id,
-                    SQSKeys.DELETE_HANDLE to StringValue.of(receiptHandle)
+                    SQSKeys.DELETE_HANDLE to StringValue.of(receiptHandle),
+                    WellKnownKeys.LAST_MODIFIED to getSentTimestamp()
                 )
             }
+
+    private fun Message.getSentTimestamp() =
+        attributes[SENT_TIMESTAMP]
+            ?.toLong()
+            ?.let { value ->
+                InstantValue.ofEpochMilli(value)
+            }?: NullValue.INSTANCE
 }

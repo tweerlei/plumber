@@ -13,23 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.tweerlei.plumber.pipeline.steps.expr
+package de.tweerlei.plumber.pipeline.steps.math
 
 import de.tweerlei.plumber.pipeline.PipelineParams
 import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.pipeline.steps.toRequiredAttributes
 import de.tweerlei.plumber.pipeline.steps.toWorkItemAccessor
 import de.tweerlei.plumber.worker.Worker
-import de.tweerlei.plumber.worker.impl.expr.PlusWorker
+import de.tweerlei.plumber.worker.impl.math.TimesWorker
 import org.springframework.stereotype.Service
 
-@Service("plusWorker")
-class PlusStep: ProcessingStep {
+@Service("multiplyWorker")
+class MultiplyStep: ProcessingStep {
 
-    override val group = "Attributes"
-    override val name = "Add"
-    override val description = "Add the given attribute's value to the current value"
-    override fun argDescription() = "<value>"
+    override val group = "Math"
+    override val name = "Multiply"
+    override val description = "Multiply the current value with the given value"
+    override fun argDescription() = valueFor("")
 
     override fun requiredAttributesFor(arg: String) =
         arg.toRequiredAttributes()
@@ -42,5 +42,8 @@ class PlusStep: ProcessingStep {
         params: PipelineParams,
         parallelDegree: Int
     ) =
-        PlusWorker(arg.toWorkItemAccessor(), w)
+        TimesWorker(valueFor(arg).toWorkItemAccessor(), w)
+
+    private fun valueFor(arg: String) =
+        arg.ifEmpty { "1" }
 }

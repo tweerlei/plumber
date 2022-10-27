@@ -13,15 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.tweerlei.plumber.worker.impl.expr
+package de.tweerlei.plumber.worker.impl.math
 
 import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.WorkItemAccessor
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.DelegatingWorker
-import de.tweerlei.plumber.worker.types.*
+import de.tweerlei.plumber.worker.types.Value
+import de.tweerlei.plumber.worker.types.toValue
+import kotlin.math.pow
 
-class PlusWorker(
+class PowerWorker(
     private val value: WorkItemAccessor<Value>,
     worker: Worker
 ): DelegatingWorker(worker) {
@@ -30,16 +32,7 @@ class PlusWorker(
         item.get()
             .let { left ->
                 value(item).let { right ->
-                    when {
-                        left is BigDecimalValue ||
-                                right is BigDecimalValue ||
-                                (left is BigIntegerValue && right is DoubleValue) ||
-                                (left is DoubleValue && right is BigIntegerValue) ->
-                            (left.toBigDecimal() + right.toBigDecimal())
-                        left is DoubleValue || right is DoubleValue -> (left.toDouble() + right.toDouble()).safeTruncate()
-                        left is BigIntegerValue || right is BigIntegerValue -> left.toBigInteger() + right.toBigInteger()
-                        else -> left.toLong() + right.toLong()
-                    }
+                    left.toDouble().pow(right.toDouble()).safeTruncate()
                 }
             }.toValue()
             .also {

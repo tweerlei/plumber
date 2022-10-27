@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.tweerlei.plumber.worker.impl.expr
+package de.tweerlei.plumber.worker.impl.math
 
 import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.WorkItemAccessor
@@ -38,15 +38,18 @@ class DivideWorker(
                                 (left is BigIntegerValue && right is DoubleValue) ||
                                 (left is DoubleValue && right is BigIntegerValue) ->
                             (left.toBigDecimal() / right.toBigDecimal())
-                        left is DoubleValue || right is DoubleValue -> (left.toDouble() / right.toDouble()).safeTruncate()
-                        left is BigIntegerValue || right is BigIntegerValue -> when (val divisor = right.toBigInteger()) {
-                            BigInteger.ZERO -> left.toBigDecimal() / BigDecimal.ZERO
-                            else -> left.toBigInteger() / divisor
-                        }
-                        else -> when (val divisor = right.toLong()) {
-                            0L -> left.toDouble() / 0.0
-                            else -> left.toLong() / divisor
-                        }
+                        left is DoubleValue || right is DoubleValue ->
+                            (left.toDouble() / right.toDouble()).safeTruncate()
+                        left is BigIntegerValue || right is BigIntegerValue ->
+                            when (val divisor = right.toBigInteger()) {
+                                BigInteger.ZERO -> left.toBigDecimal() / BigDecimal.ZERO
+                                else -> left.toBigInteger() / divisor
+                            }
+                        else ->
+                            when (val divisor = right.toLong()) {
+                                0L -> left.toDouble() / 0.0
+                                else -> left.toLong() / divisor
+                            }
                     }
                 }
             }.toValue()

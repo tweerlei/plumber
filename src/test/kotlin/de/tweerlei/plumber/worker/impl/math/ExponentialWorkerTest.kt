@@ -13,47 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.tweerlei.plumber.worker.impl.expr
+package de.tweerlei.plumber.worker.impl.math
 
 import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.impl.TestWorkerRunner
-import de.tweerlei.plumber.worker.types.BooleanValue
 import de.tweerlei.plumber.worker.types.ComparableValue
 import de.tweerlei.plumber.worker.types.DoubleValue
-import de.tweerlei.plumber.worker.types.LongValue
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
 
-class PlusWorkerTest {
-
-    @Test
-    fun testLong() {
-        test(LongValue.of(0L), LongValue.of(0L), LongValue.of(0L))
-        test(LongValue.of(0L), LongValue.of(1001L), LongValue.of(1001L))
-        test(LongValue.of(1001L), LongValue.of(0L), LongValue.of(1001L))
-        test(LongValue.of(1001L), LongValue.of(-1001L), LongValue.of(0L))
-    }
+class ExponentialWorkerTest {
 
     @Test
     fun testDouble() {
-        test(DoubleValue.of(0.12), DoubleValue.of(0.23), DoubleValue.of(0.35))
-        test(DoubleValue.of(0.12), DoubleValue.of(1001.23), DoubleValue.of(1001.35))
-        test(DoubleValue.of(1001.12), DoubleValue.of(0.23), DoubleValue.of(1001.35))
-        test(DoubleValue.of(1001.12), DoubleValue.of(-1001.23), DoubleValue.of(-0.11))
-    }
-
-    @Test
-    fun testMixed() {
-        test(LongValue.of(0L), DoubleValue.of(0.23), DoubleValue.of(0.23))
-        test(DoubleValue.of(0.12), LongValue.of(1001L), DoubleValue.of(1001.12))
-        test(LongValue.of(1001L), DoubleValue.of(0.23), DoubleValue.of(1001.23))
-        test(DoubleValue.of(1001.12), LongValue.of(-1001L), DoubleValue.of(0.12))
+        test(DoubleValue.of(2.0), DoubleValue.of(10.0), DoubleValue.of(100.0))
+        test(DoubleValue.of(0.5), DoubleValue.of(64.0), DoubleValue.of(8.0))
     }
 
     private fun test(current: ComparableValue, other: ComparableValue, expected: ComparableValue) {
         val item = TestWorkerRunner(WorkItem.of(current))
-            .append { w -> PlusWorker({ other }, w) }
+            .append { w -> ExponentialWorker({ other }, w) }
             .run()
             .singleOrNull()
 

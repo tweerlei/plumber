@@ -28,8 +28,8 @@ class XorStep: ProcessingStep {
 
     override val group = "Attributes"
     override val name = "Compare"
-    override val description = "Logically XOR the current value with the given attribute's value"
-    override fun argDescription() = "<value>"
+    override val description = "Logically XOR the current value with the given value"
+    override fun argDescription() = valueFor("")
 
     override fun requiredAttributesFor(arg: String) =
         arg.toRequiredAttributes()
@@ -42,5 +42,8 @@ class XorStep: ProcessingStep {
         params: PipelineParams,
         parallelDegree: Int
     ) =
-        XorWorker(arg.toWorkItemAccessor(), w)
+        XorWorker(valueFor(arg).toWorkItemAccessor(), w)
+
+    private fun valueFor(arg: String) =
+        arg.ifEmpty { "false" }
 }
