@@ -22,6 +22,7 @@ import io.kotest.matchers.types.shouldBeSameInstanceAs
 import org.junit.jupiter.api.Test
 import java.math.BigDecimal
 import java.math.BigInteger
+import java.time.Instant
 
 class LongValueTest {
 
@@ -38,6 +39,10 @@ class LongValueTest {
             with(toByteArray()) {
                 size.shouldBe(8)
                 contentEquals(byteArrayOf(42, 0, 0, 0, 0, 0, 0, 0)).shouldBeTrue()
+            }
+            with (toRecord()) {
+                size.shouldBe(1)
+                getValue("0").toAny().shouldBe(42L)
             }
             with (toJsonNode()) {
                 isLong.shouldBeTrue()

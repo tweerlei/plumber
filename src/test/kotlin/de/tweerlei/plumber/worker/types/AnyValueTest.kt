@@ -28,7 +28,7 @@ class AnyValueTest {
     @Test
     fun testIt() {
         val value = listOf(1, 2, 3)
-        with (AnyValue(value)) {
+        with (AnyValue.of(value)) {
             asOptional().shouldBeSameInstanceAs(this)
             toAny().shouldBe(value)
             toBoolean().shouldBeTrue()
@@ -39,6 +39,10 @@ class AnyValueTest {
             with (toByteArray()) {
                 size.shouldBe(9)
                 contentEquals(byteArrayOf(91, 49, 44, 32, 50, 44, 32, 51, 93)).shouldBeTrue()
+            }
+            with (toRecord()) {
+                size.shouldBe(1)
+                getValue("0").toAny().shouldBe(value)
             }
             with (toJsonNode()) {
                 isTextual.shouldBeTrue()

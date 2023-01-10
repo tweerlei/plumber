@@ -19,6 +19,7 @@ import com.amazonaws.services.dynamodbv2.AmazonDynamoDB
 import com.amazonaws.services.dynamodbv2.model.AttributeValue
 import com.amazonaws.services.dynamodbv2.model.ScanRequest
 import com.amazonaws.services.dynamodbv2.model.ScanResult
+import com.fasterxml.jackson.databind.ObjectMapper
 import de.tweerlei.plumber.worker.*
 import de.tweerlei.plumber.worker.impl.GeneratingWorker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
@@ -32,6 +33,7 @@ class DynamoDBScanWorker(
     private val selectFields: Set<String>,
     private val numberOfFilesPerRequest: Int,
     private val amazonDynamoDBClient: AmazonDynamoDB,
+    private val objectMapper: ObjectMapper,
     limit: Long,
     worker: Worker
 ): GeneratingWorker(limit, worker) {
@@ -51,10 +53,10 @@ class DynamoDBScanWorker(
         var lastKey: Any? = null
         var itemCount = 0
         do {
-            result = listFilenames(startAfter?.toDynamoDB(), result?.lastEvaluatedKey)
+            result = listFilenames(startAfter?.toDynamoDB(objectMapper), result?.lastEvaluatedKey)
             logger.debug { "fetched ${result.items.size} items" }
             result.items.forEach { resultItem ->
-                resultItem.fromDynamoDB().let { row ->
+                resultItem.fromDynamoDB(objectMapper).let { row ->
                     if (row.isNotAfter(endWith)) {
                         if (fn(row.toWorkItem(actualTableName))) {
                             itemCount++

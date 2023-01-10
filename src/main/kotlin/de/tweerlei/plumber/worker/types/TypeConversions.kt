@@ -43,9 +43,9 @@ fun Any?.toValue(): Value =
         is Duration -> DurationValue.of(this)
         is Date -> InstantValue.of(this)
         is JsonNode -> Node(this)
-        is Collection<*> -> Record.of(this)
-        is Map<*, *> -> Record.of(this)
-        else -> AnyValue(this)
+        is Collection<*> -> Record.ofCollection(this)
+        is Map<*, *> -> Record.ofMap(this)
+        else -> AnyValue.of(this)
     }
 
 fun Value.toComparableValue() =

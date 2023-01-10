@@ -15,6 +15,7 @@
  */
 package de.tweerlei.plumber.pipeline.steps.dynamodb
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
 import de.tweerlei.plumber.worker.types.Record
@@ -26,7 +27,8 @@ import org.springframework.stereotype.Service
 
 @Service("dynamodb-deleteWorker")
 class DynamoDBDeleteStep(
-    private val dynamoDBClientFactory: DynamoDBClientFactory
+    private val dynamoDBClientFactory: DynamoDBClientFactory,
+    private val objectMapper: ObjectMapper
 ): ProcessingStep {
 
     override val group = "AWS DynamoDB"
@@ -54,6 +56,7 @@ class DynamoDBDeleteStep(
                     params.partitionKey.ifEmpty { throw IllegalArgumentException("No partition key specified") },
                     params.rangeKey,
                     client,
+                    objectMapper,
                     w
                 )
             }

@@ -43,6 +43,8 @@ class DurationValue private constructor(
         value.toMillis()
     override fun toDouble() =
         toLong().toDouble()
+    override fun toRecord() =
+        Record.of(this)
     override fun toJsonNode(): JsonNode =
         JsonNodeFactory.instance.numberNode(toLong())
     override fun toString() =

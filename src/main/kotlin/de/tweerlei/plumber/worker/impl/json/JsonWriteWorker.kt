@@ -18,12 +18,11 @@ package de.tweerlei.plumber.worker.impl.json
 import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.databind.ObjectMapper
 import de.tweerlei.plumber.worker.OutputStreamProvider
-import de.tweerlei.plumber.worker.impl.DelegatingWorker
-import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.Worker
-import java.io.*
-import java.nio.charset.StandardCharsets
+import de.tweerlei.plumber.worker.impl.DelegatingWorker
+import de.tweerlei.plumber.worker.impl.WellKnownKeys
+import java.io.OutputStream
 
 class JsonWriteWorker(
     private val outputStreamProvider: OutputStreamProvider,
@@ -40,7 +39,7 @@ class JsonWriteWorker(
     override fun onOpen() {
         stream = outputStreamProvider.open()
         if (wrapAsProperty != null) {
-            stream.write("""{"$wrapAsProperty":[""".toByteArray(StandardCharsets.UTF_8))
+            stream.write("""{"$wrapAsProperty":[""".toByteArray())
         } else {
             stream.write('['.code)
         }
@@ -50,7 +49,7 @@ class JsonWriteWorker(
     }
 
     override fun doProcess(item: WorkItem): Boolean =
-        item.getFirst(WellKnownKeys.NODE).toAny()
+        item.getFirst(WellKnownKeys.NODE).toJsonNode()
             .let { obj ->
                 if (firstItem)
                     firstItem = false
@@ -61,7 +60,7 @@ class JsonWriteWorker(
 
     override fun onClose() {
         if (wrapAsProperty != null) {
-            stream.write("""]}""".toByteArray(StandardCharsets.UTF_8))
+            stream.write("""]}""".toByteArray())
         } else {
             stream.write(']'.code)
         }

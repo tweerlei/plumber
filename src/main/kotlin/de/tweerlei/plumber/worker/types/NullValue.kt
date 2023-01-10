@@ -47,6 +47,8 @@ class NullValue private constructor(): ComparableValue {
         BigDecimal.valueOf(0.0)
     override fun toByteArray() =
         byteArrayOf()
+    override fun toRecord() =
+        Record.of(this)
     override fun toJsonNode(): JsonNode =
         JsonNodeFactory.instance.nullNode()
     override fun toString() =

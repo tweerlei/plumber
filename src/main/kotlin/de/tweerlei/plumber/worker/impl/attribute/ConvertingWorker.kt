@@ -39,6 +39,7 @@ class ConvertingWorker(
                     BigIntegerValue.NAME -> value.toBigInteger()
                     BigDecimalValue.NAME -> value.toBigDecimal()
                     ByteArrayValue.NAME -> value.toByteArray()
+                    Record.NAME -> value.toRecord()
                     Node.NAME -> value.toJsonNode()
                     else -> null
                 }

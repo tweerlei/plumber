@@ -17,12 +17,15 @@ package de.tweerlei.plumber.worker.types
 
 import com.fasterxml.jackson.databind.JsonNode
 
-class AnyValue(
+class AnyValue private constructor(
     val value: Any
 ): Value {
 
     companion object {
         const val NAME = "any"
+
+        fun of(value: Any) =
+            AnyValue(value)
     }
 
     private var stringValue: StringValue? = null
@@ -51,6 +54,8 @@ class AnyValue(
         toStringValue().toBigDecimal()
     override fun toByteArray() =
         toStringValue().toByteArray()
+    override fun toRecord() =
+        Record.of(this)
     override fun toJsonNode(): JsonNode =
         // TODO: use ObjectMapper.valueToTree()
         toStringValue().toJsonNode()

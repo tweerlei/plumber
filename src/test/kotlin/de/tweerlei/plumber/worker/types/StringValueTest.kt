@@ -17,6 +17,7 @@ package de.tweerlei.plumber.worker.types
 
 import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeSameInstanceAs
 import org.junit.jupiter.api.Test
@@ -38,6 +39,10 @@ class StringValueTest {
             with(toByteArray()) {
                 size.shouldBe(5)
                 contentEquals(byteArrayOf(104, 101, 108, 108, 111)).shouldBeTrue()
+            }
+            with (toRecord()) {
+                size.shouldBe(1)
+                getValue("0").toAny().shouldBe("hello")
             }
             with (toJsonNode()) {
                 isTextual.shouldBeTrue()

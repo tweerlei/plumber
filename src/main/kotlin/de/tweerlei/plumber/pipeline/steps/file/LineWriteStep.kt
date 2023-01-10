@@ -20,7 +20,7 @@ import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.file.LineWriteWorker
 import org.springframework.stereotype.Service
-import java.nio.charset.StandardCharsets
+import java.nio.charset.Charset
 
 @Service("lines-writeWorker")
 class LineWriteStep: ProcessingStep {
@@ -43,7 +43,7 @@ class LineWriteStep: ProcessingStep {
     ) =
         LineWriteWorker(
             arg.toOutputStreamProvider(),
-            StandardCharsets.UTF_8,
+            Charset.defaultCharset(),
             "\n",
             w
         )

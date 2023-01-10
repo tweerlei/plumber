@@ -45,6 +45,10 @@ class BooleanValueTest {
                 size.shouldBe(1)
                 get(0).shouldBe(1)
             }
+            with (toRecord()) {
+                size.shouldBe(1)
+                getValue("0").toAny().shouldBe(true)
+            }
             with (toJsonNode()) {
                 isBoolean.shouldBeTrue()
                 booleanValue().shouldBeTrue()

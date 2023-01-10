@@ -27,17 +27,23 @@ class Record: LinkedHashMap<String, Value>(), Value {
             Record().apply {
                 items.forEach { (k, v) -> this[k] = v }
             }
-        fun of(items: Array<String>) =
+        fun of(vararg items: Value) =
+            Record().apply {
+                items.forEachIndexed { index, value ->
+                    this[index.toString()] = value
+                }
+            }
+        fun ofComparableValues(items: Array<String>) =
             Record().apply {
                 items.forEachIndexed { index, value ->
                     this[index.toString()] = value.toComparableValue()
                 }
             }
-        fun of(items: Collection<*>) =
+        fun ofCollection(items: Collection<*>) =
             Record().also { record ->
                 items.forEachIndexed { index, value -> record[index.toString()] = value.toValue() }
             }
-        fun of(items: Map<*, *>) =
+        fun ofMap(items: Map<*, *>) =
             Record().also { record ->
                 items.forEach { (key, value) -> record[key.toString()] = value.toValue() }
             }
@@ -58,6 +64,8 @@ class Record: LinkedHashMap<String, Value>(), Value {
         size.toDouble()
     override fun toByteArray() =
         toString().toByteArray()
+    override fun toRecord() =
+        this
     override fun toJsonNode(): JsonNode =
         JsonNodeFactory.instance.objectNode().also { node ->
             forEach { key, value -> node.set<JsonNode>(key, value.toJsonNode()) }

@@ -45,6 +45,8 @@ class BigIntegerValue private constructor(
         value
     override fun toBigDecimal() =
         value.toBigDecimal()
+    override fun toRecord() =
+        Record.of(this)
     override fun toJsonNode(): JsonNode =
         JsonNodeFactory.instance.numberNode(value)
     override fun toString() =

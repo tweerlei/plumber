@@ -18,6 +18,7 @@ package de.tweerlei.plumber.worker.impl.dynamodb
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB
 import com.amazonaws.services.dynamodbv2.model.AttributeValue
 import com.amazonaws.services.dynamodbv2.model.GetItemRequest
+import com.fasterxml.jackson.databind.ObjectMapper
 import de.tweerlei.plumber.worker.*
 import de.tweerlei.plumber.worker.impl.DelegatingWorker
 import de.tweerlei.plumber.worker.types.Record
@@ -30,12 +31,13 @@ class DynamoDBGetWorker(
     private val partitionKey: String,
     private val rangeKey: String?,
     private val amazonDynamoDBClient: AmazonDynamoDB,
+    private val objectMapper: ObjectMapper,
     worker: Worker
 ): DelegatingWorker(worker) {
 
     override fun doProcess(item: WorkItem) =
         item.getFirstAs<Record>(WellKnownKeys.RECORD)
-            .toDynamoDB()
+            .toDynamoDB(objectMapper)
             .let { attributes ->
                 tableName.ifEmptyGetFrom(item, DynamoDBKeys.TABLE_NAME)
                     .let { StringValue.of(it) }
@@ -44,7 +46,7 @@ class DynamoDBGetWorker(
                             actualTableName.value,
                             attributes.extractKey(partitionKey, rangeKey)
                         )
-                            .fromDynamoDB()
+                            .fromDynamoDB(objectMapper)
                             .also { record ->
                                 item.set(record)
                                 item.set(record, WellKnownKeys.RECORD)

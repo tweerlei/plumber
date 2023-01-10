@@ -27,7 +27,7 @@ class MatchingWorker(
     worker: Worker
 ): DelegatingWorker(worker) {
 
-    private val matchExpression = AnyValue(regex)
+    private val matchExpression = AnyValue.of(regex)
 
     override fun doProcess(item: WorkItem) =
         item.get().toString()

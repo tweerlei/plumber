@@ -66,6 +66,8 @@ class ByteArrayValue private constructor(
         toLong().toDouble()
     override fun toByteArray() =
         value
+    override fun toRecord() =
+        Record.of(this)
     override fun toJsonNode(): JsonNode =
         JsonNodeFactory.instance.binaryNode(value)
     override fun size() =

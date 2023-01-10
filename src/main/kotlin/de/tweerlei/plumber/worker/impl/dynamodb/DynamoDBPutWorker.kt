@@ -18,6 +18,7 @@ package de.tweerlei.plumber.worker.impl.dynamodb
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB
 import com.amazonaws.services.dynamodbv2.model.AttributeValue
 import com.amazonaws.services.dynamodbv2.model.PutItemRequest
+import com.fasterxml.jackson.databind.ObjectMapper
 import de.tweerlei.plumber.worker.*
 import de.tweerlei.plumber.worker.impl.DelegatingWorker
 import de.tweerlei.plumber.worker.types.Record
@@ -27,12 +28,13 @@ import de.tweerlei.plumber.worker.impl.ifEmptyGetFrom
 class DynamoDBPutWorker(
     private val tableName: String,
     private val amazonDynamoDBClient: AmazonDynamoDB,
+    private val objectMapper: ObjectMapper,
     worker: Worker
 ): DelegatingWorker(worker) {
 
     override fun doProcess(item: WorkItem) =
         item.getFirstAs<Record>(WellKnownKeys.RECORD)
-            .toDynamoDB()
+            .toDynamoDB(objectMapper)
             .also { attributes ->
                 putItem(
                     tableName.ifEmptyGetFrom(item, DynamoDBKeys.TABLE_NAME),

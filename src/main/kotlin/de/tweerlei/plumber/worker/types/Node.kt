@@ -16,7 +16,10 @@
 package de.tweerlei.plumber.worker.types
 
 import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.JsonNodeFactory
+import com.fasterxml.jackson.databind.node.ObjectNode
+import org.bson.json.JsonObject
 import java.math.BigDecimal
 import java.math.BigInteger
 
@@ -47,6 +50,16 @@ class Node(
         value.decimalValue()
     override fun toByteArray() =
         value.binaryValue() ?: byteArrayOf()
+    override fun toRecord() =
+        when (value) {
+            is ObjectNode -> Record().also { record ->
+                value.fields().forEach { (k, v) -> record[k] = Node(v) }
+            }
+            is ArrayNode -> Record().also { record ->
+                value.elements().asSequence().forEachIndexed { k, v -> record[k.toString()] = Node(v) }
+            }
+            else -> Record.of(this)
+        }
     override fun toJsonNode(): JsonNode =
         value
     override fun size() =

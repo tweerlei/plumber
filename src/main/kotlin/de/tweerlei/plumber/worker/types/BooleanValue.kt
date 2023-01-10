@@ -48,6 +48,8 @@ class BooleanValue private constructor(
         if (value) 1.0 else 0.0
     override fun toByteArray() =
         byteArrayOf(toLong().toByte())
+    override fun toRecord() =
+        Record.of(this)
     override fun toJsonNode(): JsonNode =
         JsonNodeFactory.instance.booleanNode(value)
     override fun size() =

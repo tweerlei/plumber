@@ -60,6 +60,8 @@ class LongValue private constructor(
         value
     override fun toDouble() =
         value.toDouble()
+    override fun toRecord() =
+        Record.of(this)
     override fun toJsonNode(): JsonNode =
         JsonNodeFactory.instance.numberNode(value)
     override fun toString() =

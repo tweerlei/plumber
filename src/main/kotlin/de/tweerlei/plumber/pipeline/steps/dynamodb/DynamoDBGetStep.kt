@@ -15,6 +15,7 @@
  */
 package de.tweerlei.plumber.pipeline.steps.dynamodb
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
 import de.tweerlei.plumber.worker.types.Record
@@ -27,7 +28,8 @@ import org.springframework.stereotype.Service
 
 @Service("dynamodb-readWorker")
 class DynamoDBGetStep(
-    private val dynamoDBClientFactory: DynamoDBClientFactory
+    private val dynamoDBClientFactory: DynamoDBClientFactory,
+    private val objectMapper: ObjectMapper
 ): ProcessingStep {
 
     override val group = "AWS DynamoDB"
@@ -56,6 +58,7 @@ class DynamoDBGetStep(
                     params.partitionKey.ifEmpty { throw IllegalArgumentException("No partition key specified") },
                     params.rangeKey,
                     client,
+                    objectMapper,
                     w
                 )
             }

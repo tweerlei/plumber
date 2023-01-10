@@ -26,6 +26,8 @@ class Range(
     companion object {
         const val NAME = "range"
 
+        fun of(startAfter: ComparableValue, endWith: ComparableValue) =
+            Range(startAfter, endWith)
         fun of(startAfter: Long?, endWith: Long?) =
             Range(
                 startAfter?.let { LongValue.of(it) } ?: NullValue.INSTANCE,
@@ -51,6 +53,8 @@ class Range(
         size().toDouble()
     override fun toByteArray() =
         toString().toByteArray()
+    override fun toRecord() =
+        Record.of(startAfter, endWith)
     override fun toJsonNode(): JsonNode =
         JsonNodeFactory.instance.arrayNode().apply {
             add(startAfter.toJsonNode())

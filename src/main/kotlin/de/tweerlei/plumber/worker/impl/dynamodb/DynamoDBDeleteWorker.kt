@@ -18,6 +18,7 @@ package de.tweerlei.plumber.worker.impl.dynamodb
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB
 import com.amazonaws.services.dynamodbv2.model.AttributeValue
 import com.amazonaws.services.dynamodbv2.model.DeleteItemRequest
+import com.fasterxml.jackson.databind.ObjectMapper
 import de.tweerlei.plumber.worker.*
 import de.tweerlei.plumber.worker.impl.DelegatingWorker
 import de.tweerlei.plumber.worker.types.Record
@@ -29,12 +30,13 @@ class DynamoDBDeleteWorker(
     private val partitionKey: String,
     private val rangeKey: String?,
     private val amazonDynamoDBClient: AmazonDynamoDB,
+    private val objectMapper: ObjectMapper,
     worker: Worker
 ): DelegatingWorker(worker) {
 
     override fun doProcess(item: WorkItem) =
         item.getFirstAs<Record>(WellKnownKeys.RECORD)
-            .toDynamoDB()
+            .toDynamoDB(objectMapper)
             .let { attributes ->
                 deleteItem(
                     tableName.ifEmptyGetFrom(item, DynamoDBKeys.TABLE_NAME),

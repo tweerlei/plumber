@@ -15,6 +15,7 @@
  */
 package de.tweerlei.plumber.pipeline.steps.dynamodb
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
@@ -26,7 +27,8 @@ import org.springframework.stereotype.Service
 
 @Service("dynamodb-listWorker")
 class DynamoDBScanStep(
-    private val dynamoDBClientFactory: DynamoDBClientFactory
+    private val dynamoDBClientFactory: DynamoDBClientFactory,
+    private val objectMapper: ObjectMapper
 ): ProcessingStep {
 
     override val group = "AWS DynamoDB"
@@ -56,6 +58,7 @@ class DynamoDBScanStep(
                     params.selectFields,
                     params.numberOfFilesPerRequest,
                     client,
+                    objectMapper,
                     params.maxFilesPerThread,
                     w
                 )

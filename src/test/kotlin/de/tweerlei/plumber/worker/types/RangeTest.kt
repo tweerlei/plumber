@@ -17,6 +17,7 @@ package de.tweerlei.plumber.worker.types
 
 import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeSameInstanceAs
 import org.junit.jupiter.api.Test
@@ -38,6 +39,11 @@ class RangeTest {
             with(toByteArray()) {
                 size.shouldBe(9)
 //                contentEquals(byteArrayOf(10, 0, 0, 0)).shouldBeTrue()
+            }
+            with (toRecord()) {
+                size.shouldBe(2)
+                getValue("0").toAny().shouldBe(0L)
+                getValue("1").toAny().shouldBe(10L)
             }
             with (toJsonNode()) {
                 isArray.shouldBeTrue()

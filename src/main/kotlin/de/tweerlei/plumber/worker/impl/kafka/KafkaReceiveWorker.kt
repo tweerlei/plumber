@@ -32,7 +32,7 @@ class KafkaReceiveWorker(
     private val topicName: String,
     private val waitSeconds: Int,
     private val follow: Boolean,
-    private val consumer: KafkaConsumer<String, String>,
+    private val consumer: KafkaConsumer<ByteArray, ByteArray>,
     limit: Long,
     worker: Worker
 ): GeneratingWorker(limit, worker) {
@@ -66,11 +66,11 @@ class KafkaReceiveWorker(
         logger.info { "received $itemCount messages" }
         }
 
-    private fun ConsumerRecord<String, String>.toWorkItem(name: StringValue) =
+    private fun ConsumerRecord<ByteArray, ByteArray>.toWorkItem(name: StringValue) =
         value()?.let { value ->
             key().toValue().let { keyValue ->
                 WorkItem.of(
-                    StringValue.of(value),
+                    value.toValue(),
                     KafkaKeys.TOPIC_NAME to name,
                     KafkaKeys.PARTITION to LongValue.of(partition()),
                     KafkaKeys.OFFSET to LongValue.of(offset()),

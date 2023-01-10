@@ -17,8 +17,8 @@ package de.tweerlei.plumber.worker.impl.kafka
 
 import org.apache.kafka.clients.consumer.KafkaConsumer
 import org.apache.kafka.clients.producer.KafkaProducer
-import org.apache.kafka.common.serialization.StringDeserializer
-import org.apache.kafka.common.serialization.StringSerializer
+import org.apache.kafka.common.serialization.ByteArrayDeserializer
+import org.apache.kafka.common.serialization.ByteArraySerializer
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.stereotype.Service
 import java.util.*
@@ -32,22 +32,22 @@ class KafkaClientFactory {
 
     fun createProducer() =
         producer.plus(mapOf(
-            "key.serializer" to StringSerializer::class.java.name,
-            "value.serializer" to StringSerializer::class.java.name,
+            "key.serializer" to ByteArraySerializer::class.java.name,
+            "value.serializer" to ByteArraySerializer::class.java.name,
             "enable.idempotence" to "true"
         )).let { props ->
-            KafkaProducer<String, String>(props)
+            KafkaProducer<ByteArray, ByteArray>(props)
         }
 
     fun createConsumer(maxRecordsPerPoll: Int, reread: Boolean) =
         consumer.plus(mapOf(
-            "key.deserializer" to StringDeserializer::class.java.name,
-            "value.deserializer" to StringDeserializer::class.java.name,
+            "key.deserializer" to ByteArrayDeserializer::class.java.name,
+            "value.deserializer" to ByteArrayDeserializer::class.java.name,
             "group.id" to "plumber-${UUID.randomUUID()}",
             "max.poll.records" to maxRecordsPerPoll,
             "enable.auto.commit" to "false",
             "auto.offset.reset" to if (reread) "earliest" else "latest"
         )).let { props ->
-            KafkaConsumer<String, String>(props)
+            KafkaConsumer<ByteArray, ByteArray>(props)
         }
 }

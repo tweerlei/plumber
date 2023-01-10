@@ -55,6 +55,8 @@ class StringValue private constructor(
         value.toBigDecimalOrNull() ?: BigDecimal.valueOf(0.0)
     override fun toByteArray() =
         value.toByteArray()
+    override fun toRecord() =
+        Record.of(this)
     override fun toJsonNode(): JsonNode =
         JsonNodeFactory.instance.textNode(value)
     override fun size() =

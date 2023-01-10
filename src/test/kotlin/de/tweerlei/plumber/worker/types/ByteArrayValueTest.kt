@@ -40,6 +40,10 @@ class ByteArrayValueTest {
                 size.shouldBe(5)
                 contentEquals(value).shouldBeTrue()
             }
+            with (toRecord()) {
+                size.shouldBe(1)
+                getValue("0").toAny().shouldBe(value)
+            }
             with (toJsonNode()) {
                 isBinary.shouldBeTrue()
                 binaryValue().contentEquals(value).shouldBeTrue()

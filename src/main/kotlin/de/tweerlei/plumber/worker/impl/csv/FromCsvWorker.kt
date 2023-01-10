@@ -37,7 +37,7 @@ class FromCsvWorker(
             .let { value ->
                 reader.readValue<Array<String>>(value)
                     ?.let { arr ->
-                        Record.of(arr)
+                        Record.ofComparableValues(arr)
                     }?.also { obj ->
                         item.set(obj)
                         item.set(obj, WellKnownKeys.RECORD)

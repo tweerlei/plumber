@@ -25,7 +25,7 @@ import org.apache.kafka.clients.producer.ProducerRecord
 
 class KafkaSendWorker(
     private val topicName: String,
-    private val producer: KafkaProducer<String, String>,
+    private val producer: KafkaProducer<ByteArray, ByteArray>,
     worker: Worker
 ): DelegatingWorker(worker) {
 
@@ -40,7 +40,7 @@ class KafkaSendWorker(
 
     private fun WorkItem.toProducerRecord() =
         when (val name = getOptional(WellKnownKeys.NAME)) {
-            null -> ProducerRecord<String, String>(topicName, get().toString())
-            else -> ProducerRecord<String, String>(topicName, name.toString(), get().toString())
+            null -> ProducerRecord<ByteArray, ByteArray>(topicName, get().toByteArray())
+            else -> ProducerRecord<ByteArray, ByteArray>(topicName, name.toByteArray(), get().toByteArray())
         }
 }

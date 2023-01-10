@@ -21,7 +21,7 @@ import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.impl.file.LineReadWorker
 import org.springframework.stereotype.Service
-import java.nio.charset.StandardCharsets
+import java.nio.charset.Charset
 
 @Service("lines-readWorker")
 class LineReadStep: ProcessingStep {
@@ -46,7 +46,7 @@ class LineReadStep: ProcessingStep {
     ) =
         LineReadWorker(
             arg.toInputStreamProvider(),
-            StandardCharsets.UTF_8,
+            Charset.defaultCharset(),
             params.maxFilesPerThread,
             w
         )

@@ -38,6 +38,8 @@ class WorkItemList(initialCapacity: Int): ArrayList<WorkItem>(initialCapacity), 
         size.toDouble()
     override fun toByteArray() =
         byteArrayOf()
+    override fun toRecord() =
+        Record.of(this)
     override fun toJsonNode(): JsonNode =
         JsonNodeFactory.instance.arrayNode().also { node ->
             forEach { value -> node.add(value.get().toJsonNode()) }
