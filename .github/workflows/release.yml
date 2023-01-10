@@ -35,7 +35,7 @@ jobs:
         CONTAINER_ID=$(docker create "${{ steps.docker-build.outputs.imageid }}")
         docker cp "$CONTAINER_ID:/usr/local/bin" - | gzip > "plumber-${{ github.ref_name }}.tar.gz"
         docker rm "$CONTAINER_ID"
-        echo "::set-output name=tarball::plumber-${{ github.ref_name }}.tar.gz"
+        echo "tarball=plumber-${{ github.ref_name }}.tar.gz" >> $GITHUB_OUTPUT
 
     - name: Create a release
       uses: softprops/action-gh-release@v1
