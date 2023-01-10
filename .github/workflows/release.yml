@@ -15,7 +15,7 @@ jobs:
     steps:
 
     - name: Log in to Github container registry
-      uses: docker/login-action@v1
+      uses: docker/login-action@v2
       with:
         registry: ghcr.io
         username: ${{ github.actor }}
@@ -23,7 +23,7 @@ jobs:
 
     - name: Build and push the Docker image
       id: docker-build
-      uses: docker/build-push-action@v2
+      uses: docker/build-push-action@v3
       with:
         build-args: PACKAGE_VERSION=${{ github.ref_name }}
         push: true
