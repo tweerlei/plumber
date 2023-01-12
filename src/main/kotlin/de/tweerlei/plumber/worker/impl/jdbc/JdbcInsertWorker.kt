@@ -31,7 +31,8 @@ class JdbcInsertWorker(
     private var updater: Updater? = null
 
     override fun doProcess(item: WorkItem) =
-        item.getFirstAs<Record>(WellKnownKeys.RECORD)
+        item.getFirst(WellKnownKeys.RECORD)
+            .toRecord()
             .let { map ->
                 updaterFor(item, map).process(map, jdbcTemplate)
             }.let { true }
@@ -59,20 +60,20 @@ class JdbcInsertWorker(
             private fun buildSql(tableName: String, map: Record) =
                 StringBuilder().apply {
                     append("INSERT INTO $tableName (")
-                    append(map.keys.joinToString(", "))
+                    append(map.toAny().keys.joinToString(", "))
                     append(") VALUES (")
-                    append(map.keys.joinToString(", ") { "?" })
+                    append(map.toAny().keys.joinToString(", ") { "?" })
                     append(")")
                 }.toString()
 
             private fun buildColumns(map: Record) =
-                map.keys.toList()
+                map.toAny().keys.toList()
         }
 
         fun process(map: Record, jdbcTemplate: JdbcTemplate) =
             arrayOfNulls<Any>(columns.size).also { arr ->
                 columns.forEachIndexed { index, columnName ->
-                    arr[index] = map[columnName]
+                    arr[index] = map.toAny()[columnName]
                 }
             }.let { values ->
                 jdbcTemplate.update(sql, *values)

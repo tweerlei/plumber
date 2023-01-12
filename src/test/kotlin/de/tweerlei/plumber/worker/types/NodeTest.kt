@@ -46,7 +46,7 @@ class NodeTest {
 //                contentEquals(byteArrayOf(10, 0, 0, 0)).shouldBeTrue()
             }
             with (toRecord()) {
-                size.shouldBe(2)
+                size().shouldBe(2)
                 getValue("foo").toAny().shouldBe(JsonNodeFactory.instance.textNode("bar"))
                 getValue("0").toAny().shouldBe(JsonNodeFactory.instance.numberNode(42L))
             }
@@ -77,7 +77,7 @@ class NodeTest {
 
         with (Node(jsonNode)) {
             with (toRecord()) {
-                size.shouldBe(2)
+                size().shouldBe(2)
                 getValue("0").toAny().shouldBe(JsonNodeFactory.instance.textNode("bar"))
                 getValue("1").toAny().shouldBe(JsonNodeFactory.instance.numberNode(42L))
             }
@@ -90,7 +90,7 @@ class NodeTest {
 
         with (Node(jsonNode)) {
             with (toRecord()) {
-                size.shouldBe(1)
+                size().shouldBe(1)
                 getValue("0").toAny().shouldBe(JsonNodeFactory.instance.textNode("Hello"))
             }
         }

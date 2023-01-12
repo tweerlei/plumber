@@ -40,8 +40,9 @@ class AnyValueTest {
                 size.shouldBe(9)
                 contentEquals(byteArrayOf(91, 49, 44, 32, 50, 44, 32, 51, 93)).shouldBeTrue()
             }
+            toRange().shouldBe(Range())
             with (toRecord()) {
-                size.shouldBe(1)
+                size().shouldBe(1)
                 getValue("0").toAny().shouldBe(value)
             }
             with (toJsonNode()) {

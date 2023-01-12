@@ -15,11 +15,11 @@
  */
 package de.tweerlei.plumber.pipeline.steps.stats
 
-import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
+import de.tweerlei.plumber.pipeline.steps.ProcessingStep
+import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.impl.stats.SummingWorker
-import de.tweerlei.plumber.worker.Worker
 import org.springframework.stereotype.Service
 
 @Service("sumWorker")
@@ -28,9 +28,8 @@ class SumStep: ProcessingStep {
     override val group = "Logging"
     override val name = "Calculate size sum"
     override val description = "Log item sum of item sizes every given number of bytes"
+    override val help = ""
     override fun argDescription() = intervalFor("").toString()
-
-    override fun isValuePassThrough() = true
 
     override fun producedAttributesFor(arg: String) = setOf(
         WellKnownKeys.SUM
@@ -39,7 +38,6 @@ class SumStep: ProcessingStep {
     @Suppress("UNCHECKED_CAST")
     override fun createWorker(
         arg: String,
-        expectedOutput: Class<*>,
         w: Worker,
         predecessorName: String,
         params: PipelineParams,

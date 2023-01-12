@@ -17,11 +17,11 @@ package de.tweerlei.plumber.pipeline.steps.csv
 
 import com.fasterxml.jackson.dataformat.csv.CsvMapper
 import de.tweerlei.plumber.pipeline.PipelineParams
+import de.tweerlei.plumber.pipeline.options.AllPipelineOptions
 import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.pipeline.steps.file.toOutputStreamProvider
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.csv.CsvWriteWorker
-import de.tweerlei.plumber.worker.types.Record
 import org.springframework.stereotype.Service
 
 @Service("csv-writeWorker")
@@ -32,14 +32,17 @@ class CsvWriteStep(
     override val group = "CSV"
     override val name = "Write value as CSV"
     override val description = "Write current value as CSV object to the given file"
+    override val help = """
+        This will encode the current record, if set. Otherwise the current value is encoded.
+        Use --${AllPipelineOptions.INSTANCE.separator.name} to specify the record separator character.
+        Use --${AllPipelineOptions.INSTANCE.header.name} to write column headings as first line (those will be generated from the first item received).
+    """.trimIndent()
     override fun argDescription() = "".toOutputStreamProvider().toString()
 
-    override fun expectedInputFor(arg: String) = Record::class.java
     override fun parallelDegreeFor(arg: String) = 1
 
     override fun createWorker(
         arg: String,
-        expectedOutput: Class<*>,
         w: Worker,
         predecessorName: String,
         params: PipelineParams,

@@ -19,9 +19,9 @@ import com.amazonaws.services.dynamodbv2.AmazonDynamoDB
 import com.amazonaws.services.dynamodbv2.model.AttributeValue
 import com.amazonaws.services.dynamodbv2.model.PutItemRequest
 import com.fasterxml.jackson.databind.ObjectMapper
-import de.tweerlei.plumber.worker.*
+import de.tweerlei.plumber.worker.WorkItem
+import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.DelegatingWorker
-import de.tweerlei.plumber.worker.types.Record
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.impl.ifEmptyGetFrom
 
@@ -33,7 +33,8 @@ class DynamoDBPutWorker(
 ): DelegatingWorker(worker) {
 
     override fun doProcess(item: WorkItem) =
-        item.getFirstAs<Record>(WellKnownKeys.RECORD)
+        item.getFirst(WellKnownKeys.RECORD)
+            .toRecord()
             .toDynamoDB(objectMapper)
             .also { attributes ->
                 putItem(

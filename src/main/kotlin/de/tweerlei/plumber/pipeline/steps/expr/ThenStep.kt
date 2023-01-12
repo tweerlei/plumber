@@ -19,8 +19,8 @@ import de.tweerlei.plumber.pipeline.PipelineParams
 import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.pipeline.steps.toRequiredAttributes
 import de.tweerlei.plumber.pipeline.steps.toWorkItemAccessor
-import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.Worker
+import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import org.springframework.stereotype.Service
 
 @Service("thenWorker")
@@ -29,6 +29,13 @@ class ThenStep: ProcessingStep {
     override val group = "Attributes"
     override val name = "Conditionally set value"
     override val description = "Sets the current value to the given value if current value is truthy"
+    override val help = """
+        The current value is evaluated as boolean. Examples:
+          value:true then:yes -> yes
+          value:false then:yes -> false
+          value:123 then:yes -> yes
+          value:0 then:yes -> 0
+    """.trimIndent()
     override fun argDescription() = "<value>"
 
     override fun requiredAttributesFor(arg: String) =
@@ -40,7 +47,6 @@ class ThenStep: ProcessingStep {
 
     override fun createWorker(
         arg: String,
-        expectedOutput: Class<*>,
         w: Worker,
         predecessorName: String,
         params: PipelineParams,

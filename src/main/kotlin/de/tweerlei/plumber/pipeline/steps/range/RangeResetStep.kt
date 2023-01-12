@@ -16,6 +16,7 @@
 package de.tweerlei.plumber.pipeline.steps.range
 
 import de.tweerlei.plumber.pipeline.PipelineParams
+import de.tweerlei.plumber.pipeline.options.AllPipelineOptions
 import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
@@ -28,16 +29,15 @@ class RangeResetStep: ProcessingStep {
 
     override val group = "Attributes"
     override val name = "Reset range"
-    override val description = "Reset range to default given by --start-after/--stop-after"
+    override val description = "Reset the given range to default given by --${AllPipelineOptions.INSTANCE.startAfterKey.name}/--${AllPipelineOptions.INSTANCE.stopAfterKey}"
+    override val help = ""
 
-    override fun isValuePassThrough() = true
     override fun producedAttributesFor(arg: String) = setOf(
         arg
     )
 
     override fun createWorker(
         arg: String,
-        expectedOutput: Class<*>,
         w: Worker,
         predecessorName: String,
         params: PipelineParams,

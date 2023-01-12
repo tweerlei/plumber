@@ -29,6 +29,10 @@ class ModuloStep: ProcessingStep {
     override val group = "Math"
     override val name = "Modulo"
     override val description = "Calculate the remainder of dividing the current value by the given value"
+    override val help = """
+        Both operands are evaluated as numbers.
+        The remainder of dividing by zero will be NaN.
+    """.trimIndent()
     override fun argDescription() = valueFor("")
 
     override fun requiredAttributesFor(arg: String) =
@@ -36,7 +40,6 @@ class ModuloStep: ProcessingStep {
 
     override fun createWorker(
         arg: String,
-        expectedOutput: Class<*>,
         w: Worker,
         predecessorName: String,
         params: PipelineParams,

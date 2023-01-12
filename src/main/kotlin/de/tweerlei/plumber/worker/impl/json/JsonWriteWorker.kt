@@ -49,7 +49,8 @@ class JsonWriteWorker(
     }
 
     override fun doProcess(item: WorkItem): Boolean =
-        item.getFirst(WellKnownKeys.NODE).toJsonNode()
+        item.getFirst(WellKnownKeys.NODE)
+            .toJsonNode()
             .let { obj ->
                 if (firstItem)
                     firstItem = false

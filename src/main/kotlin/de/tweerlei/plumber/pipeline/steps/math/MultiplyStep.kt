@@ -29,6 +29,9 @@ class MultiplyStep: ProcessingStep {
     override val group = "Math"
     override val name = "Multiply"
     override val description = "Multiply the current value with the given value"
+    override val help = """
+        Both operands are evaluated as numbers.
+    """.trimIndent()
     override fun argDescription() = valueFor("")
 
     override fun requiredAttributesFor(arg: String) =
@@ -36,7 +39,6 @@ class MultiplyStep: ProcessingStep {
 
     override fun createWorker(
         arg: String,
-        expectedOutput: Class<*>,
         w: Worker,
         predecessorName: String,
         params: PipelineParams,

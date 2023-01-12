@@ -19,7 +19,7 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.node.JsonNodeFactory
 
 class DoubleValue private constructor(
-    val value: Double
+    private val value: Double
 ): NumberValue {
 
     companion object {
@@ -50,17 +50,15 @@ class DoubleValue private constructor(
         value.toLong()
     override fun toDouble() =
         value
-    override fun toRecord() =
-        Record.of(this)
     override fun toJsonNode(): JsonNode =
         JsonNodeFactory.instance.numberNode(value)
-    override fun toString() =
-        value.toString()
 
+    override fun compareTo(other: ComparableValue) =
+        value.compareTo(other.toDouble())
     override fun equals(other: Any?) =
         other is Value && value == other.toDouble()
     override fun hashCode() =
         value.hashCode()
-    override fun compareTo(other: ComparableValue) =
-        value.compareTo(other.toDouble())
+    override fun toString() =
+        value.toString()
 }

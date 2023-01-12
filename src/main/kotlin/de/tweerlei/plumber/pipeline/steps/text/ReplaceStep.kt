@@ -30,6 +30,7 @@ class ReplaceStep: ProcessingStep {
     override val group = "Text"
     override val name = "Replace text"
     override val description = "Replace all matches of a previous find: with the given replacement"
+    override val help = ""
     override fun argDescription() = "<value>"
 
     override fun requiredAttributesFor(arg: String) = setOf(
@@ -39,7 +40,6 @@ class ReplaceStep: ProcessingStep {
 
     override fun createWorker(
         arg: String,
-        expectedOutput: Class<*>,
         w: Worker,
         predecessorName: String,
         params: PipelineParams,

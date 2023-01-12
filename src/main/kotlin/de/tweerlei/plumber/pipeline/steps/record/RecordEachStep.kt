@@ -22,12 +22,15 @@ import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.impl.record.RecordEachWorker
 import org.springframework.stereotype.Service
 
-@Service("rec-eachWorker")
+@Service("record-eachWorker")
 class RecordEachStep: ProcessingStep {
 
     override val group = "Records"
     override val name = "Expand record"
     override val description = "Extract record elements to individual items"
+    override val help = """
+        The current value will be set to each extracted element.
+    """.trimIndent()
 
     override fun requiredAttributesFor(arg: String) = setOf(
         WellKnownKeys.RECORD
@@ -38,7 +41,6 @@ class RecordEachStep: ProcessingStep {
 
     override fun createWorker(
         arg: String,
-        expectedOutput: Class<*>,
         w: Worker,
         predecessorName: String,
         params: PipelineParams,

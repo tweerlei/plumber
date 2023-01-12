@@ -27,13 +27,13 @@ class RepeatStep: ProcessingStep {
     override val group = "Flow control"
     override val name = "Repeat"
     override val description = "Repeat the following steps a given number of times"
+    override val help = """
+        Each received item will be passed along the given number of times.
+    """.trimIndent()
     override fun argDescription() = repeatCountFor("").toString()
-
-    override fun isValuePassThrough() = true
 
     override fun createWorker(
         arg: String,
-        expectedOutput: Class<*>,
         w: Worker,
         predecessorName: String,
         params: PipelineParams,

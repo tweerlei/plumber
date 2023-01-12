@@ -19,9 +19,9 @@ import com.amazonaws.services.dynamodbv2.AmazonDynamoDB
 import com.amazonaws.services.dynamodbv2.model.AttributeValue
 import com.amazonaws.services.dynamodbv2.model.DeleteItemRequest
 import com.fasterxml.jackson.databind.ObjectMapper
-import de.tweerlei.plumber.worker.*
+import de.tweerlei.plumber.worker.WorkItem
+import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.DelegatingWorker
-import de.tweerlei.plumber.worker.types.Record
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.impl.ifEmptyGetFrom
 
@@ -35,7 +35,8 @@ class DynamoDBDeleteWorker(
 ): DelegatingWorker(worker) {
 
     override fun doProcess(item: WorkItem) =
-        item.getFirstAs<Record>(WellKnownKeys.RECORD)
+        item.getFirst(WellKnownKeys.RECORD)
+            .toRecord()
             .toDynamoDB(objectMapper)
             .let { attributes ->
                 deleteItem(
@@ -44,7 +45,7 @@ class DynamoDBDeleteWorker(
                 )
             }.let { true }
 
-    private fun deleteItem(table: String, item: Map<String, AttributeValue>) =
-        DeleteItemRequest(table, item)
+    private fun deleteItem(table: String, key: Map<String, AttributeValue>) =
+        DeleteItemRequest(table, key)
             .let { request -> amazonDynamoDBClient.deleteItem(request) }
 }

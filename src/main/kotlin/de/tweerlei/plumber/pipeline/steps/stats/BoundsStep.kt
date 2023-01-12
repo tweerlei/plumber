@@ -15,8 +15,8 @@
  */
 package de.tweerlei.plumber.pipeline.steps.stats
 
-import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
+import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.stats.MinMaxWorker
 import org.springframework.stereotype.Service
@@ -27,14 +27,12 @@ class BoundsStep: ProcessingStep {
     override val group = "Logging"
     override val name = "Calculate bounds"
     override val description = "Log smallest and largest value at every given number of items"
+    override val help = ""
     override fun argDescription() = intervalFor("").toString()
-
-    override fun isValuePassThrough() = true
 
     @Suppress("UNCHECKED_CAST")
     override fun createWorker(
         arg: String,
-        expectedOutput: Class<*>,
         w: Worker,
         predecessorName: String,
         params: PipelineParams,

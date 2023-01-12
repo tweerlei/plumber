@@ -30,10 +30,10 @@ class STSGetIdStep(
     override val group = "AWS STS"
     override val name = "Get account ID"
     override val description = "Get the effective AWS account ID"
+    override val help = ""
 
     override fun createWorker(
         arg: String,
-        expectedOutput: Class<*>,
         w: Worker,
         predecessorName: String,
         params: PipelineParams,

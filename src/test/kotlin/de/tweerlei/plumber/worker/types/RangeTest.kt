@@ -40,8 +40,9 @@ class RangeTest {
                 size.shouldBe(9)
 //                contentEquals(byteArrayOf(10, 0, 0, 0)).shouldBeTrue()
             }
+            toRange().shouldBeSameInstanceAs(this)
             with (toRecord()) {
-                size.shouldBe(2)
+                size().shouldBe(2)
                 getValue("0").toAny().shouldBe(0L)
                 getValue("1").toAny().shouldBe(10L)
             }

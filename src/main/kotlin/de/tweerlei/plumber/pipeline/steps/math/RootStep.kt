@@ -29,6 +29,11 @@ class RootStep: ProcessingStep {
     override val group = "Math"
     override val name = "Root"
     override val description = "Calculate the given root of the current value"
+    override val help = """
+        Both operands are evaluated as numbers.
+        The zeroth root will be infinity.
+        Roots of negative values will yield NaN. 
+    """.trimIndent()
     override fun argDescription() = valueFor("")
 
     override fun requiredAttributesFor(arg: String) =
@@ -36,7 +41,6 @@ class RootStep: ProcessingStep {
 
     override fun createWorker(
         arg: String,
-        expectedOutput: Class<*>,
         w: Worker,
         predecessorName: String,
         params: PipelineParams,

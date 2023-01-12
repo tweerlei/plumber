@@ -61,12 +61,12 @@ class FileListWorker(
         relativeTo(directory).path
             .let { StringValue.of(it) }
             .let { relativePath ->
-            WorkItem.of(
-                relativePath,
-                WellKnownKeys.PATH to path,
-                WellKnownKeys.NAME to relativePath,
-                WellKnownKeys.SIZE to LongValue.of(length()),
-                WellKnownKeys.LAST_MODIFIED to InstantValue.ofEpochMilli(lastModified())
-            )
-        }
+                WorkItem.of(
+                    relativePath,
+                    WellKnownKeys.PATH to path,
+                    WellKnownKeys.NAME to relativePath,
+                    WellKnownKeys.SIZE to LongValue.of(length()),
+                    WellKnownKeys.LAST_MODIFIED to InstantValue.ofEpochMilli(lastModified())
+                )
+            }
 }

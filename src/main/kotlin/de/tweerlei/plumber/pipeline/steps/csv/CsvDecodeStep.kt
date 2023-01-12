@@ -16,10 +16,11 @@
 package de.tweerlei.plumber.pipeline.steps.csv
 
 import com.fasterxml.jackson.dataformat.csv.CsvMapper
-import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
-import de.tweerlei.plumber.worker.impl.WellKnownKeys
+import de.tweerlei.plumber.pipeline.options.AllPipelineOptions
+import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.worker.Worker
+import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.impl.csv.FromCsvWorker
 import org.springframework.stereotype.Service
 
@@ -31,6 +32,10 @@ class CsvDecodeStep(
     override val group = "CSV"
     override val name = "Deserialize from CSV"
     override val description = "Deserialize objects from CSV text"
+    override val help = """
+        The current value will be set to the read record, which will also be available to record-* steps. 
+        Use --${AllPipelineOptions.INSTANCE.separator.name} to specify the record separator character.
+    """.trimIndent()
 
     override fun producedAttributesFor(arg: String) = setOf(
         WellKnownKeys.RECORD
@@ -38,7 +43,6 @@ class CsvDecodeStep(
 
     override fun createWorker(
         arg: String,
-        expectedOutput: Class<*>,
         w: Worker,
         predecessorName: String,
         params: PipelineParams,

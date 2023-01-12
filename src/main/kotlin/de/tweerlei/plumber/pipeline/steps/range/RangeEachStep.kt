@@ -15,10 +15,11 @@
  */
 package de.tweerlei.plumber.pipeline.steps.range
 
-import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
-import de.tweerlei.plumber.worker.impl.WellKnownKeys
+import de.tweerlei.plumber.pipeline.options.AllPipelineOptions
+import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.worker.Worker
+import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.impl.range.RangeIteratingWorker
 import org.springframework.stereotype.Service
 
@@ -28,6 +29,11 @@ class RangeEachStep: ProcessingStep {
     override val group = "Ranges"
     override val name = "Iterate range"
     override val description = "Generate items with the values of the input item's range using the given increment"
+    override val help = """
+        The types of the current range's bounds are important. Numeric bounds will generate numbers
+        while string bounds will generate strings.
+        Use --${AllPipelineOptions.INSTANCE.keyChars.name} to specify valid characters for key range generation.
+    """.trimIndent()
     override fun argDescription() = stepCountFor("").toString()
 
     override fun requiredAttributesFor(arg: String) = setOf(
@@ -36,13 +42,17 @@ class RangeEachStep: ProcessingStep {
 
     override fun createWorker(
         arg: String,
-        expectedOutput: Class<*>,
         w: Worker,
         predecessorName: String,
         params: PipelineParams,
         parallelDegree: Int
     ) =
-        RangeIteratingWorker(params.keyChars, stepCountFor(arg), params.maxFilesPerThread, w)
+        RangeIteratingWorker(
+            params.keyChars,
+            stepCountFor(arg),
+            params.maxFilesPerThread,
+            w
+        )
 
     private fun stepCountFor(arg: String) =
         arg.toLongOrNull() ?: 1

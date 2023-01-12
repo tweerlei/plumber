@@ -16,13 +16,11 @@
 package de.tweerlei.plumber.worker.impl.node
 
 import com.fasterxml.jackson.core.JsonPointer
-import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.impl.TestWorkerRunner
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.impl.json.FromJsonWorker
-import de.tweerlei.plumber.worker.types.Node
 import de.tweerlei.plumber.worker.types.StringValue
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
@@ -36,13 +34,13 @@ class NodeReplaceWorkerTest {
         val objectMapper = ObjectMapper()
 
         val item = TestWorkerRunner(WorkItem.of(StringValue.of("""{"values":{"entry":"value2"}}""")))
-            .append { w -> FromJsonWorker(JsonNode::class.java, objectMapper, w) }
+            .append { w -> FromJsonWorker(objectMapper, w) }
             .append { w -> NodeReplaceWorker(JsonPointer.compile("/values"), w) }
             .run()
             .singleOrNull()
 
         item.shouldNotBeNull()
-        item.getAs<Node>(WellKnownKeys.NODE).toString().shouldBe("""{"entry":"value2"}""")
+        item.get(WellKnownKeys.NODE).toString().shouldBe("""{"entry":"value2"}""")
     }
 
     @Test
@@ -51,12 +49,12 @@ class NodeReplaceWorkerTest {
         val objectMapper = ObjectMapper()
 
         val item = TestWorkerRunner(WorkItem.of(StringValue.of("""{"entry":"value2"}""")))
-            .append { w -> FromJsonWorker(JsonNode::class.java, objectMapper, w) }
+            .append { w -> FromJsonWorker(objectMapper, w) }
             .append { w -> NodeReplaceWorker(JsonPointer.compile("/values"), w) }
             .run()
             .singleOrNull()
 
         item.shouldNotBeNull()
-        item.getAs<Node>(WellKnownKeys.NODE).toString().shouldBe("""""")
+        item.get(WellKnownKeys.NODE).toString().shouldBe("""""")
     }
 }

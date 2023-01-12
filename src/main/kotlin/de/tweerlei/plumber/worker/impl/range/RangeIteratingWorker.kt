@@ -35,14 +35,15 @@ class RangeIteratingWorker(
     companion object: KLogging()
 
     override fun generateItems(item: WorkItem, fn: (WorkItem) -> Boolean) {
-        item.getOptionalAs<Range>(WellKnownKeys.RANGE)
-            ?.let { range ->
+        item.get(WellKnownKeys.RANGE)
+            .toRange()
+            .let { range ->
                 val startAfter = range.startAfter
                 val endWith = range.endWith
                 when {
                     startAfter is LongValue && endWith is LongValue -> iterate(
-                        startAfter.value,
-                        endWith.value,
+                        startAfter.toAny(),
+                        endWith.toAny(),
                         step
                     )
                     else -> KeySequenceGenerator(keyChars).generateSequence(
@@ -51,7 +52,7 @@ class RangeIteratingWorker(
                         step
                     )
                 }
-            }?.all {
+            }.all {
                 fn(WorkItem.of(it.toValue()))
             }
     }

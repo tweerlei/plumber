@@ -15,19 +15,22 @@
  */
 package de.tweerlei.plumber.pipeline.steps.record
 
-import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
-import de.tweerlei.plumber.worker.impl.WellKnownKeys
+import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.worker.Worker
+import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.impl.record.RecordGetWorker
 import org.springframework.stereotype.Service
 
-@Service("rec-getWorker")
+@Service("record-getWorker")
 class RecordGetStep: ProcessingStep {
 
     override val group = "Records"
     override val name = "Get record field"
     override val description = "Set the given record field as current value"
+    override val help = """
+        The current value will be set to the extracted value.
+    """.trimIndent()
     override fun argDescription() = "<name>"
 
     override fun requiredAttributesFor(arg: String) = setOf(
@@ -36,7 +39,6 @@ class RecordGetStep: ProcessingStep {
 
     override fun createWorker(
         arg: String,
-        expectedOutput: Class<*>,
         w: Worker,
         predecessorName: String,
         params: PipelineParams,

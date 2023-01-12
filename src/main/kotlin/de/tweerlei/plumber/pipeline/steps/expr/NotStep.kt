@@ -27,10 +27,16 @@ class NotStep: ProcessingStep {
     override val group = "Attributes"
     override val name = "Compare"
     override val description = "Logically negate the current value"
+    override val help = """
+        The current value is evaluated as boolean. Examples:
+          value:false not -> true
+          value:true not -> false
+          value:0 not -> true
+          value:123 not -> false
+    """.trimIndent()
 
     override fun createWorker(
         arg: String,
-        expectedOutput: Class<*>,
         w: Worker,
         predecessorName: String,
         params: PipelineParams,

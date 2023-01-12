@@ -36,7 +36,7 @@ class RecordSetWorkerTest {
             .singleOrNull()
 
         item.shouldNotBeNull()
-        item.getAs<Record>(WellKnownKeys.RECORD)["entry"].shouldBe(StringValue.of("value"))
+        item.get(WellKnownKeys.RECORD).toRecord().toAny()["entry"].shouldBe(StringValue.of("value"))
     }
 
     @Test
@@ -50,7 +50,7 @@ class RecordSetWorkerTest {
             .singleOrNull()
 
         item.shouldNotBeNull()
-        item.getAs<Record>(WellKnownKeys.RECORD)["entry"].shouldBe(StringValue.of("value"))
+        item.get(WellKnownKeys.RECORD).toRecord().toAny()["entry"].shouldBe(StringValue.of("value"))
     }
 
     @Test
@@ -64,6 +64,6 @@ class RecordSetWorkerTest {
             .singleOrNull()
 
         item.shouldNotBeNull()
-        item.getAs<Record>(WellKnownKeys.RECORD)["entry"].shouldBe(NullValue.INSTANCE)
+        item.get(WellKnownKeys.RECORD).toRecord().toAny()["entry"].shouldBe(NullValue.INSTANCE)
     }
 }

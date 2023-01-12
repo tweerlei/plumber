@@ -24,21 +24,15 @@ import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.types.Node
 import de.tweerlei.plumber.worker.types.toValue
 
-class FromJsonWorker<T>(
-    private val itemType: Class<T>,
+class FromJsonWorker(
     private val objectMapper: ObjectMapper,
     worker: Worker
 ): DelegatingWorker(worker) {
 
-    private val valueType = when (itemType) {
-        Any::class.java -> JsonNode::class.java
-        else -> itemType
-    }
-
     override fun doProcess(item: WorkItem) =
         item.get().toString()
             .let { value ->
-                objectMapper.readValue(value, valueType)
+                objectMapper.readValue(value, JsonNode::class.java)
                     ?.toValue()
                     ?.also { obj ->
                         item.set(obj)

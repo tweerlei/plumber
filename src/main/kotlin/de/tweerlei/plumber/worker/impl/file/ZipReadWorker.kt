@@ -24,9 +24,6 @@ import de.tweerlei.plumber.worker.types.ByteArrayValue
 import de.tweerlei.plumber.worker.types.InstantValue
 import de.tweerlei.plumber.worker.types.LongValue
 import de.tweerlei.plumber.worker.types.StringValue
-import java.io.File
-import java.io.FileInputStream
-import java.time.Instant
 import java.util.zip.ZipInputStream
 
 class ZipReadWorker(

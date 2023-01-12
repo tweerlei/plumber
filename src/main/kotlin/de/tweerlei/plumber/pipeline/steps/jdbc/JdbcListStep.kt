@@ -15,10 +15,11 @@
  */
 package de.tweerlei.plumber.pipeline.steps.jdbc
 
-import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
-import de.tweerlei.plumber.worker.impl.WellKnownKeys
+import de.tweerlei.plumber.pipeline.options.AllPipelineOptions
+import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.worker.Worker
+import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.impl.jdbc.JdbcKeys
 import de.tweerlei.plumber.worker.impl.jdbc.JdbcSelectWorker
 import de.tweerlei.plumber.worker.impl.jdbc.JdbcTemplateFactory
@@ -32,6 +33,13 @@ class JdbcListStep(
     override val group = "JDBC"
     override val name = "Fetch JDBC rows"
     override val description = "Retrieve rows from the given JDBC table"
+    override val help = """
+        THe key range to scan can be specified by setting the current range. If not set,
+        the whole table will be listed.
+        The current value will be set to the read record, which will also be available to record-* steps. 
+        Use --${AllPipelineOptions.INSTANCE.primaryKey.name} to specify the PK column.
+        Use --${AllPipelineOptions.INSTANCE.selectFields.name} to specify columns to fetch
+    """.trimIndent()
     override fun argDescription() = "<table>"
 
     override fun producedAttributesFor(arg: String) = setOf(
@@ -41,7 +49,6 @@ class JdbcListStep(
 
     override fun createWorker(
         arg: String,
-        expectedOutput: Class<*>,
         w: Worker,
         predecessorName: String,
         params: PipelineParams,

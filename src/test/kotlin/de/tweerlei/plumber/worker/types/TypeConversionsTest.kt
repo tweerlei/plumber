@@ -51,7 +51,7 @@ class TypeConversionsTest {
 
     @Test
     fun testToComparableValue() {
-        null.toComparableValue().shouldBe(NullValue.INSTANCE)
+        (null as String?).toComparableValue().shouldBe(NullValue.INSTANCE)
         "null".toComparableValue().shouldBe(NullValue.INSTANCE)
         "true".toComparableValue().shouldBe(BooleanValue.TRUE)
         "false".toComparableValue().shouldBe(BooleanValue.FALSE)

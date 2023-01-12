@@ -20,7 +20,7 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory
 import java.math.BigInteger
 
 class BigIntegerValue private constructor(
-    val value: BigInteger
+    private val value: BigInteger
 ): NumberValue {
 
     companion object {
@@ -45,17 +45,15 @@ class BigIntegerValue private constructor(
         value
     override fun toBigDecimal() =
         value.toBigDecimal()
-    override fun toRecord() =
-        Record.of(this)
     override fun toJsonNode(): JsonNode =
         JsonNodeFactory.instance.numberNode(value)
-    override fun toString() =
-        value.toString()
 
+    override fun compareTo(other: ComparableValue) =
+        value.compareTo(other.toBigInteger())
     override fun equals(other: Any?) =
         other is Value && value == other.toBigInteger()
     override fun hashCode() =
         value.hashCode()
-    override fun compareTo(other: ComparableValue) =
-        value.compareTo(other.toBigInteger())
+    override fun toString() =
+        value.toString()
 }

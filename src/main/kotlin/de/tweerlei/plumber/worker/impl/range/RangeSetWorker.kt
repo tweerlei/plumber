@@ -28,11 +28,10 @@ class RangeSetWorker(
 ): DelegatingWorker(worker) {
 
     override fun doProcess(item: WorkItem) =
-        item.getOrSetAs(WellKnownKeys.RANGE) {
-            Range()
-        }.let { range ->
-            item.get().toComparableValue().let { value ->
-                field.set(range, value)
-            }
-        }.let { true }
+        (item.getOptional(WellKnownKeys.RANGE) ?: Range())
+            .toRange()
+            .let { range ->
+                field.set(range, item.get().toComparableValue())
+                item.set(range, WellKnownKeys.RANGE)
+            }.let { true }
 }

@@ -16,6 +16,7 @@
 package de.tweerlei.plumber.pipeline.steps.file
 
 import de.tweerlei.plumber.pipeline.PipelineParams
+import de.tweerlei.plumber.pipeline.options.AllPipelineOptions
 import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
@@ -28,6 +29,9 @@ class FilesListStep: ProcessingStep {
     override val group = "Files"
     override val name = "List files"
     override val description = "Read file names from the given directory"
+    override val help = """
+        Use --${AllPipelineOptions.INSTANCE.recursive.name} to enable descending into subdirectories
+    """.trimIndent()
     override fun argDescription() = "<path>"
 
     override fun producedAttributesFor(arg: String) = setOf(
@@ -39,7 +43,6 @@ class FilesListStep: ProcessingStep {
 
     override fun createWorker(
         arg: String,
-        expectedOutput: Class<*>,
         w: Worker,
         predecessorName: String,
         params: PipelineParams,

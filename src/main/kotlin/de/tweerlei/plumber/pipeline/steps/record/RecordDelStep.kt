@@ -15,29 +15,30 @@
  */
 package de.tweerlei.plumber.pipeline.steps.record
 
-import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
-import de.tweerlei.plumber.worker.impl.WellKnownKeys
+import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.worker.Worker
+import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.impl.record.RecordUnsetWorker
 import org.springframework.stereotype.Service
 
-@Service("rec-delWorker")
+@Service("record-delWorker")
 class RecordDelStep: ProcessingStep {
 
     override val group = "Records"
     override val name = "Remove record field"
     override val description = "Remove the given field from the current record"
+    override val help = """
+        The current record will be modified.
+    """.trimIndent()
     override fun argDescription() = "<name>"
 
-    override fun isValuePassThrough() = true
     override fun requiredAttributesFor(arg: String) = setOf(
         WellKnownKeys.RECORD
     )
 
     override fun createWorker(
         arg: String,
-        expectedOutput: Class<*>,
         w: Worker,
         predecessorName: String,
         params: PipelineParams,

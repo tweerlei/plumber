@@ -16,10 +16,11 @@
 package de.tweerlei.plumber.pipeline.steps.xml
 
 import com.fasterxml.jackson.dataformat.xml.XmlMapper
-import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
-import de.tweerlei.plumber.worker.impl.WellKnownKeys
+import de.tweerlei.plumber.pipeline.options.AllPipelineOptions
+import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.worker.Worker
+import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.impl.xml.ToXmlWorker
 import org.springframework.stereotype.Service
 
@@ -31,6 +32,11 @@ class XmlEncodeStep(
     override val group = "XML"
     override val name = "Serialize to XML"
     override val description = "Serialize objects to XML text"
+    override val help = """
+        This will encode the current node, if set. Otherwise the current value is encoded.
+        Use --${AllPipelineOptions.INSTANCE.elementName.name} to specify the wrapping element name.
+        Use --${AllPipelineOptions.INSTANCE.prettyPrint.name} to enable pretty printing.
+    """.trimIndent()
 
     override fun producedAttributesFor(arg: String) = setOf(
         WellKnownKeys.NODE
@@ -38,7 +44,6 @@ class XmlEncodeStep(
 
     override fun createWorker(
         arg: String,
-        expectedOutput: Class<*>,
         w: Worker,
         predecessorName: String,
         params: PipelineParams,

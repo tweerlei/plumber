@@ -45,7 +45,7 @@ class BulkWorker(
             else -> ref
         }.let { ref ->
             when (val list = ref.get()) {
-                null -> WorkItemList(queueSizePerThread)
+                null -> WorkItemList.ofSize(queueSizePerThread)
                     .also { ref.set(it) }
                 else -> list
             }
@@ -58,16 +58,16 @@ class BulkWorker(
         val nextItem = WorkItem.of(
             items,
             WellKnownKeys.WORK_ITEMS to items,
-            WellKnownKeys.SIZE to LongValue.of(items.size)
+            WellKnownKeys.SIZE to LongValue.of(items.size())
         )
         passOn(nextItem)
     }
 
     override fun process(item: WorkItem) {
         val items = currentAccumulator()
-        items.add(item)
+        items.toAny().add(item)
 
-        if (items.size >= queueSizePerThread) {
+        if (items.size() >= queueSizePerThread) {
             resetAccumulator()
             passOn(items)
         }

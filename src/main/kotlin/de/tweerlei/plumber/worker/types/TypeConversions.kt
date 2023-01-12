@@ -48,11 +48,17 @@ fun Any?.toValue(): Value =
         else -> AnyValue.of(this)
     }
 
-fun Value.toComparableValue() =
+fun Value?.toComparableValue() =
     when (this) {
         is ComparableValue -> this
         else -> NullValue.INSTANCE
     }
+
+inline fun <T, reified U> T?.ifTypeIs(fn: (U) -> Unit): T? {
+    if (this is U)
+        fn(this)
+    return this
+}
 
 fun String?.toComparableValue(): ComparableValue =
     if (this == null || this == "null") NullValue.INSTANCE
@@ -77,4 +83,21 @@ private fun String.toDurationOrNull() =
         Duration.parse(this)
     } catch (e: DateTimeParseException) {
         null
+    }
+
+fun JsonNode.extractValue(): Value =
+    when {
+        isBoolean -> BooleanValue.of(booleanValue())
+        isLong -> LongValue.of(longValue())
+        isInt -> LongValue.of(intValue())
+        isShort -> LongValue.of(shortValue())
+        isDouble -> DoubleValue.of(doubleValue())
+        isFloat -> DoubleValue.of(floatValue())
+        isBigInteger -> BigIntegerValue.of(bigIntegerValue())
+        isBigDecimal -> BigDecimalValue.of(decimalValue())
+        isTextual -> StringValue.of(textValue())
+        isBinary -> ByteArrayValue.of(binaryValue())
+        isNull -> NullValue.INSTANCE
+        isEmpty -> NullValue.INSTANCE
+        else -> Node(this)
     }

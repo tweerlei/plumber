@@ -38,7 +38,7 @@ class RecordUnsetWorkerTest {
             .singleOrNull()
 
         item.shouldNotBeNull()
-        item.getAs<Record>(WellKnownKeys.RECORD)["entry"].shouldBeNull()
+        item.get(WellKnownKeys.RECORD).toRecord().toAny()["entry"].shouldBeNull()
     }
 
     @Test
@@ -52,6 +52,6 @@ class RecordUnsetWorkerTest {
             .singleOrNull()
 
         item.shouldNotBeNull()
-        item.getAs<Record>(WellKnownKeys.RECORD)["entry"].shouldBeNull()
+        item.get(WellKnownKeys.RECORD).toRecord().toAny()["entry"].shouldBeNull()
     }
 }

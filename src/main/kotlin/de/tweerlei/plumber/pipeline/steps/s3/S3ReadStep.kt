@@ -15,12 +15,13 @@
  */
 package de.tweerlei.plumber.pipeline.steps.s3
 
-import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
+import de.tweerlei.plumber.pipeline.options.AllPipelineOptions
+import de.tweerlei.plumber.pipeline.steps.ProcessingStep
+import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.impl.s3.S3ClientFactory
 import de.tweerlei.plumber.worker.impl.s3.S3GetObjectWorker
-import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.s3.S3Keys
 import org.springframework.stereotype.Service
 
@@ -32,6 +33,9 @@ class S3ReadStep(
     override val group = "AWS S3"
     override val name = "Fetch S3 object"
     override val description = "Get an object from the given S3 bucket"
+    override val help = """
+        Use --${AllPipelineOptions.INSTANCE.requesterPays.name} to accept being charged with S3 access costs.
+    """.trimIndent()
     override fun argDescription() = "<bucket>"
 
     override fun requiredAttributesFor(arg: String) = setOf(
@@ -47,7 +51,6 @@ class S3ReadStep(
 
     override fun createWorker(
         arg: String,
-        expectedOutput: Class<*>,
         w: Worker,
         predecessorName: String,
         params: PipelineParams,

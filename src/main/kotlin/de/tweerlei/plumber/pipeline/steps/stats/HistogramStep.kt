@@ -27,14 +27,13 @@ class HistogramStep: ProcessingStep {
     override val group = "Logging"
     override val name = "Histogram"
     override val description = "Build a histogram with the given number of buckets"
+    override val help = ""
     override fun argDescription() = bucketCountFor("").toString()
 
-    override fun isValuePassThrough() = true
     override fun parallelDegreeFor(arg: String) = 1
 
     override fun createWorker(
         arg: String,
-        expectedOutput: Class<*>,
         w: Worker,
         predecessorName: String,
         params: PipelineParams,

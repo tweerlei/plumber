@@ -15,9 +15,8 @@
  */
 package de.tweerlei.plumber.pipeline.steps.jdbc
 
-import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
-import de.tweerlei.plumber.worker.types.Record
+import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.jdbc.JdbcInsertWorker
 import de.tweerlei.plumber.worker.impl.jdbc.JdbcTemplateFactory
@@ -31,13 +30,14 @@ class JdbcWriteStep(
     override val group = "JDBC"
     override val name = "Insert JDBC rows"
     override val description = "Insert rows into the given JDBC table"
+    override val help = """
+        This will write the current record, if any. Otherwise the current value will be used.
+        If the argument is omitted, the table name will be taken from a previously read JDBC item.
+    """.trimIndent()
     override fun argDescription() = "<table>"
-
-    override fun expectedInputFor(arg: String) = Record::class.java
 
     override fun createWorker(
         arg: String,
-        expectedOutput: Class<*>,
         w: Worker,
         predecessorName: String,
         params: PipelineParams,

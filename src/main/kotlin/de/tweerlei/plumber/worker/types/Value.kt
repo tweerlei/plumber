@@ -40,10 +40,14 @@ interface Value {
     fun toDuration(): Duration =
         Duration.ofMillis(toLong())
     fun toByteArray(): ByteArray
-    fun toRecord(): Record
     fun toJsonNode(): JsonNode
 
+    fun toRange(): Range
+    fun toRecord(): Record
+    fun toNode(): Node =
+        Node(toJsonNode())
+
+    fun size(): Long
     fun dump() =
         "${getName()}:${toString()}"
-    fun size(): Long
 }

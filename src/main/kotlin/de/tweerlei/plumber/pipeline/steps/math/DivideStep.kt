@@ -29,6 +29,11 @@ class DivideStep: ProcessingStep {
     override val group = "Math"
     override val name = "Divide"
     override val description = "Divide the current value by the given value"
+    override val help = """
+        Both operands are evaluated as numbers.
+        Division by zero is possible and will yield positive or negative infinity.
+        0/0 will yield NaN.
+    """.trimIndent()
     override fun argDescription() = valueFor("")
 
     override fun requiredAttributesFor(arg: String) =
@@ -36,7 +41,6 @@ class DivideStep: ProcessingStep {
 
     override fun createWorker(
         arg: String,
-        expectedOutput: Class<*>,
         w: Worker,
         predecessorName: String,
         params: PipelineParams,

@@ -15,8 +15,8 @@
  */
 package de.tweerlei.plumber.pipeline.steps.text
 
-import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
+import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.text.UUIDWorker
 import org.springframework.stereotype.Service
@@ -27,10 +27,10 @@ class UuidStep: ProcessingStep {
     override val group = "Text"
     override val name = "Generate UUIDs"
     override val description = "Generate random UUIDs"
+    override val help = ""
 
     override fun createWorker(
         arg: String,
-        expectedOutput: Class<*>,
         w: Worker,
         predecessorName: String,
         params: PipelineParams,

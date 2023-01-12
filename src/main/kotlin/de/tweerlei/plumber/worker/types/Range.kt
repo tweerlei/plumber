@@ -26,8 +26,6 @@ class Range(
     companion object {
         const val NAME = "range"
 
-        fun of(startAfter: ComparableValue, endWith: ComparableValue) =
-            Range(startAfter, endWith)
         fun of(startAfter: Long?, endWith: Long?) =
             Range(
                 startAfter?.let { LongValue.of(it) } ?: NullValue.INSTANCE,
@@ -53,15 +51,16 @@ class Range(
         size().toDouble()
     override fun toByteArray() =
         toString().toByteArray()
-    override fun toRecord() =
-        Record.of(startAfter, endWith)
     override fun toJsonNode(): JsonNode =
         JsonNodeFactory.instance.arrayNode().apply {
             add(startAfter.toJsonNode())
             add(endWith.toJsonNode())
         }
-    override fun size() =
-        endWith.toLong() - startAfter.toLong()
+
+    override fun toRange() =
+        this
+    override fun toRecord() =
+        Record.of(startAfter, endWith)
 
     fun contains(value: ComparableValue) =
         when (value) {
@@ -79,17 +78,16 @@ class Range(
             else -> true
         }
 
+    override fun size() =
+        endWith.toLong() - startAfter.toLong()
     override fun equals(other: Any?) =
         other is Range &&
                 startAfter == other.startAfter &&
                 endWith == other.endWith
-
     override fun hashCode() =
         startAfter.hashCode() xor endWith.hashCode()
-
     override fun toString() =
         "[${startAfter} .. ${endWith}]"
-
     override fun dump() =
         "[${startAfter.dump()} .. ${endWith.dump()}]"
 }

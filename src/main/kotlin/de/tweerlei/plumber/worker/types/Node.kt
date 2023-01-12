@@ -24,7 +24,7 @@ import java.math.BigDecimal
 import java.math.BigInteger
 
 class Node(
-    val value: JsonNode = JsonNodeFactory.instance.objectNode()
+    private val value: JsonNode = JsonNodeFactory.instance.objectNode()
 ): Value {
 
     companion object {
@@ -50,25 +50,38 @@ class Node(
         value.decimalValue()
     override fun toByteArray() =
         value.binaryValue() ?: byteArrayOf()
+    override fun toJsonNode(): JsonNode =
+        value
+
+    override fun toRange() =
+        when (value) {
+            is ArrayNode -> if (value.size() >= 2)
+                    Range(
+                        value[0].toValue().toComparableValue(),
+                        value[1].toValue().toComparableValue()
+                    )
+                else Range()
+            else -> Range()
+        }
     override fun toRecord() =
         when (value) {
             is ObjectNode -> Record().also { record ->
-                value.fields().forEach { (k, v) -> record[k] = Node(v) }
+                value.fields().forEach { (k, v) -> record.toAny()[k] = Node(v) }
             }
             is ArrayNode -> Record().also { record ->
-                value.elements().asSequence().forEachIndexed { k, v -> record[k.toString()] = Node(v) }
+                value.elements().asSequence().forEachIndexed { k, v -> record.toAny()[k.toString()] = Node(v) }
             }
             else -> Record.of(this)
         }
-    override fun toJsonNode(): JsonNode =
-        value
+    override fun toNode() =
+        this
+
     override fun size() =
         value.size().toLong()
-    override fun toString() =
-        value.toString()
-
     override fun equals(other: Any?) =
         other is Value && value == other.toJsonNode()
     override fun hashCode() =
         value.hashCode()
+    override fun toString() =
+        value.toString()
 }

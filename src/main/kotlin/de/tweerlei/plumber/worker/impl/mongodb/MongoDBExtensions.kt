@@ -17,19 +17,16 @@ package de.tweerlei.plumber.worker.impl.mongodb
 
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
-import de.tweerlei.plumber.worker.types.Node
 import org.bson.Document
 
-fun Document.fromMongoDB(objectMapper: ObjectMapper): Node =
+fun Document.fromMongoDB(objectMapper: ObjectMapper): JsonNode =
     toBsonDocument().toJson()
         .let { json ->
             objectMapper.readValue(json, JsonNode::class.java)
-        }.let { jsonNode ->
-            Node(jsonNode)
         }
 
-fun Node.toMongoDB(objectMapper: ObjectMapper): Document =
-    objectMapper.writeValueAsString(value)
+fun JsonNode.toMongoDB(objectMapper: ObjectMapper): Document =
+    objectMapper.writeValueAsString(this)
         .let { json ->
             Document.parse(json)
         }

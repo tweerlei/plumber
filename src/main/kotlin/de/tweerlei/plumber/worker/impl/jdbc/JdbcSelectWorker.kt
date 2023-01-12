@@ -34,7 +34,7 @@ class JdbcSelectWorker(
 ): GeneratingWorker(limit, worker) {
 
     override fun generateItems(item: WorkItem, fn: (WorkItem) -> Boolean) {
-        val range = item.getOptionalAs(WellKnownKeys.RANGE) ?: Range()
+        val range = (item.getOptional(WellKnownKeys.RANGE) ?: Range()).toRange()
         val table = StringValue.of(tableName.ifEmptyGetFrom(item, JdbcKeys.TABLE_NAME))
         logger.info { "fetching elements from ${range.startAfter} to ${range.endWith}" }
 
@@ -51,10 +51,10 @@ class JdbcSelectWorker(
         }
 
         val itemCount = when {
-            range.startAfter !is NullValue && range.endWith !is NullValue -> selectRange(table.value, range.startAfter, range.endWith, extractRows)
-            range.startAfter !is NullValue -> selectFrom(table.value, range.startAfter, extractRows)
-            range.endWith !is NullValue -> selectTo(table.value, range.endWith, extractRows)
-            else -> selectAll(table.value, extractRows)
+            range.startAfter !is NullValue && range.endWith !is NullValue -> selectRange(table.toAny(), range.startAfter, range.endWith, extractRows)
+            range.startAfter !is NullValue -> selectFrom(table.toAny(), range.startAfter, extractRows)
+            range.endWith !is NullValue -> selectTo(table.toAny(), range.endWith, extractRows)
+            else -> selectAll(table.toAny(), extractRows)
         }
 
         logger.info { "fetched $itemCount rows from ${range.startAfter} to ${range.endWith}" }
@@ -95,7 +95,7 @@ class JdbcSelectWorker(
         Record()
             .also { record ->
                 for (i in 1..metaData.columnCount) {
-                    record[metaData.getColumnName(i)] = getObject(i).toValue()
+                    record.toAny()[metaData.getColumnName(i)] = getObject(i).toValue()
                 }
             }.let { record ->
                 WorkItem.of(

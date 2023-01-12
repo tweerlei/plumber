@@ -32,7 +32,8 @@ class JdbcDeleteWorker(
     private var deleter: Deleter? = null
 
     override fun doProcess(item: WorkItem) =
-        item.getFirstAs<Record>(WellKnownKeys.RECORD)
+        item.getFirst(WellKnownKeys.RECORD)
+            .toRecord()
             .let { map ->
                 deleterFor(item).process(map, jdbcTemplate)
             }.let { true }
@@ -62,6 +63,6 @@ class JdbcDeleteWorker(
         }
 
         fun process(map: Record, jdbcTemplate: JdbcTemplate) =
-            jdbcTemplate.update(sql, map[primaryKey])
+            jdbcTemplate.update(sql, map.toAny()[primaryKey])
     }
 }

@@ -45,7 +45,7 @@ class S3ListObjectsWorker(
 
     override fun generateItems(item: WorkItem, fn: (WorkItem) -> Boolean) {
         val actualBucketName = StringValue.of(bucketName)
-        val range = item.getOptionalAs(WellKnownKeys.RANGE) ?: Range()
+        val range = (item.getOptional(WellKnownKeys.RANGE) ?: Range()).toRange()
         val startAfter = range.startAfter.asOptional()?.toString()
         val endWith = range.endWith.asOptional()?.toString()
         logger.info { "fetching filenames from $startAfter to $endWith" }

@@ -33,7 +33,7 @@ class RecordTest {
             "0" to LongValue.of(42L),
         )) {
             asOptional().shouldBeSameInstanceAs(this)
-            toAny().shouldBeSameInstanceAs(this)
+            toAny().size.shouldBe(2)
             toBoolean().shouldBeTrue()
             toLong().shouldBe(2L)
             toDouble().shouldBe(2.0)
@@ -43,6 +43,7 @@ class RecordTest {
                 size.shouldBe(15)
 //                contentEquals(byteArrayOf(10, 0, 0, 0)).shouldBeTrue()
             }
+            toRange().shouldBe(Range(LongValue.of(42L), NullValue.INSTANCE))
             toRecord().shouldBeSameInstanceAs(this)
             with (toJsonNode()) {
                 isObject.shouldBeTrue()
@@ -56,7 +57,7 @@ class RecordTest {
     @Test
     fun testEquals() {
 
-        Record().shouldBeEmpty()
+        Record().toAny().shouldBeEmpty()
 
         Record.of(
             "foo" to StringValue.of("bar"),

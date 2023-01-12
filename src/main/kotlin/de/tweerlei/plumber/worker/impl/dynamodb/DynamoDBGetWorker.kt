@@ -19,9 +19,9 @@ import com.amazonaws.services.dynamodbv2.AmazonDynamoDB
 import com.amazonaws.services.dynamodbv2.model.AttributeValue
 import com.amazonaws.services.dynamodbv2.model.GetItemRequest
 import com.fasterxml.jackson.databind.ObjectMapper
-import de.tweerlei.plumber.worker.*
+import de.tweerlei.plumber.worker.WorkItem
+import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.DelegatingWorker
-import de.tweerlei.plumber.worker.types.Record
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.impl.ifEmptyGetFrom
 import de.tweerlei.plumber.worker.types.StringValue
@@ -36,14 +36,15 @@ class DynamoDBGetWorker(
 ): DelegatingWorker(worker) {
 
     override fun doProcess(item: WorkItem) =
-        item.getFirstAs<Record>(WellKnownKeys.RECORD)
+        item.getFirst(WellKnownKeys.RECORD)
+            .toRecord()
             .toDynamoDB(objectMapper)
             .let { attributes ->
                 tableName.ifEmptyGetFrom(item, DynamoDBKeys.TABLE_NAME)
                     .let { StringValue.of(it) }
                     .let { actualTableName ->
                         getItem(
-                            actualTableName.value,
+                            actualTableName.toAny(),
                             attributes.extractKey(partitionKey, rangeKey)
                         )
                             .fromDynamoDB(objectMapper)

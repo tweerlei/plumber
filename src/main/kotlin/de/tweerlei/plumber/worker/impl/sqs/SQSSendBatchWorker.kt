@@ -24,6 +24,7 @@ import de.tweerlei.plumber.worker.impl.DelegatingWorker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.impl.ifEmptyGetFrom
 import de.tweerlei.plumber.worker.types.WorkItemList
+import de.tweerlei.plumber.worker.types.ifTypeIs
 
 class SQSSendBatchWorker(
     private val queueUrl: String,
@@ -32,13 +33,13 @@ class SQSSendBatchWorker(
 ): DelegatingWorker(worker) {
 
     override fun doProcess(item: WorkItem) =
-        item.getAs<WorkItemList>(WellKnownKeys.WORK_ITEMS)
-            .let { items ->
+        item.get(WellKnownKeys.WORK_ITEMS)
+            .ifTypeIs { items: WorkItemList ->
                 sendFiles(
-                    queueUrl.ifEmptyGetFrom(items.first(), SQSKeys.QUEUE_URL),
-                    items.mapIndexed { index, it ->
+                    queueUrl.ifEmptyGetFrom(items.toAny().first(), SQSKeys.QUEUE_URL),
+                    items.toAny().mapIndexed { index, it ->
                         SendMessageBatchRequestEntry(
-                            "${index}_of_${items.size}",
+                            "${index}_of_${items.size()}",
                             it.get().toString()
                         )
                     }

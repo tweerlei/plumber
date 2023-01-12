@@ -41,7 +41,7 @@ class StringValueTest {
                 contentEquals(byteArrayOf(104, 101, 108, 108, 111)).shouldBeTrue()
             }
             with (toRecord()) {
-                size.shouldBe(1)
+                size().shouldBe(1)
                 getValue("0").toAny().shouldBe("hello")
             }
             with (toJsonNode()) {

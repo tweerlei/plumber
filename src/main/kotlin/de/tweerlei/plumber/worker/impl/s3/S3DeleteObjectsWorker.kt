@@ -23,6 +23,7 @@ import de.tweerlei.plumber.worker.impl.DelegatingWorker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.impl.ifEmptyGetFrom
 import de.tweerlei.plumber.worker.types.WorkItemList
+import de.tweerlei.plumber.worker.types.ifTypeIs
 
 class S3DeleteObjectsWorker(
     private val bucketName: String,
@@ -32,11 +33,11 @@ class S3DeleteObjectsWorker(
 ): DelegatingWorker(worker) {
 
     override fun doProcess(item: WorkItem) =
-        item.getAs<WorkItemList>(WellKnownKeys.WORK_ITEMS)
-            .let { items ->
+        item.get(WellKnownKeys.WORK_ITEMS)
+            .ifTypeIs { items: WorkItemList ->
                 deleteFiles(
-                    bucketName.ifEmptyGetFrom(items.first(), S3Keys.BUCKET_NAME),
-                    items.map { item ->
+                    bucketName.ifEmptyGetFrom(items.toAny().first(), S3Keys.BUCKET_NAME),
+                    items.toAny().map { item ->
                         item.getFirst(WellKnownKeys.NAME).toString()
                             .let { DeleteObjectsRequest.KeyVersion(it) }
                     }

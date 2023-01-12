@@ -37,16 +37,16 @@ class KeyRangeWorkerTest {
             .toList()
 
         items.size.shouldBe(10)
-        items[0].getAs<Range>(WellKnownKeys.RANGE).shouldBe(Range.of(100L, 110L))
-        items[1].getAs<Range>(WellKnownKeys.RANGE).shouldBe(Range.of(110L, 120L))
-        items[2].getAs<Range>(WellKnownKeys.RANGE).shouldBe(Range.of(120L, 130L))
-        items[3].getAs<Range>(WellKnownKeys.RANGE).shouldBe(Range.of(130L, 140L))
-        items[4].getAs<Range>(WellKnownKeys.RANGE).shouldBe(Range.of(140L, 150L))
-        items[5].getAs<Range>(WellKnownKeys.RANGE).shouldBe(Range.of(150L, 160L))
-        items[6].getAs<Range>(WellKnownKeys.RANGE).shouldBe(Range.of(160L, 170L))
-        items[7].getAs<Range>(WellKnownKeys.RANGE).shouldBe(Range.of(170L, 180L))
-        items[8].getAs<Range>(WellKnownKeys.RANGE).shouldBe(Range.of(180L, 190L))
-        items[9].getAs<Range>(WellKnownKeys.RANGE).shouldBe(Range.of(190L, 200L))
+        items[0].get(WellKnownKeys.RANGE).shouldBe(Range.of(100L, 110L))
+        items[1].get(WellKnownKeys.RANGE).shouldBe(Range.of(110L, 120L))
+        items[2].get(WellKnownKeys.RANGE).shouldBe(Range.of(120L, 130L))
+        items[3].get(WellKnownKeys.RANGE).shouldBe(Range.of(130L, 140L))
+        items[4].get(WellKnownKeys.RANGE).shouldBe(Range.of(140L, 150L))
+        items[5].get(WellKnownKeys.RANGE).shouldBe(Range.of(150L, 160L))
+        items[6].get(WellKnownKeys.RANGE).shouldBe(Range.of(160L, 170L))
+        items[7].get(WellKnownKeys.RANGE).shouldBe(Range.of(170L, 180L))
+        items[8].get(WellKnownKeys.RANGE).shouldBe(Range.of(180L, 190L))
+        items[9].get(WellKnownKeys.RANGE).shouldBe(Range.of(190L, 200L))
     }
 
     @Test
@@ -62,11 +62,11 @@ class KeyRangeWorkerTest {
             .toList()
 
         items.size.shouldBe(5)
-        items[0].getAs<Range>(WellKnownKeys.RANGE).shouldBe(Range.of(100L, 101L))
-        items[1].getAs<Range>(WellKnownKeys.RANGE).shouldBe(Range.of(101L, 102L))
-        items[2].getAs<Range>(WellKnownKeys.RANGE).shouldBe(Range.of(102L, 103L))
-        items[3].getAs<Range>(WellKnownKeys.RANGE).shouldBe(Range.of(103L, 104L))
-        items[4].getAs<Range>(WellKnownKeys.RANGE).shouldBe(Range.of(104L, 105L))
+        items[0].get(WellKnownKeys.RANGE).shouldBe(Range.of(100L, 101L))
+        items[1].get(WellKnownKeys.RANGE).shouldBe(Range.of(101L, 102L))
+        items[2].get(WellKnownKeys.RANGE).shouldBe(Range.of(102L, 103L))
+        items[3].get(WellKnownKeys.RANGE).shouldBe(Range.of(103L, 104L))
+        items[4].get(WellKnownKeys.RANGE).shouldBe(Range.of(104L, 105L))
     }
 
     @Test
@@ -82,15 +82,15 @@ class KeyRangeWorkerTest {
             .toList()
 
         items.size.shouldBe(10)
-        items[0].getAs<Range>(WellKnownKeys.RANGE).shouldBe(Range.of("abc", "b3"))
-        items[1].getAs<Range>(WellKnownKeys.RANGE).shouldBe(Range.of("b3", "bc"))
-        items[2].getAs<Range>(WellKnownKeys.RANGE).shouldBe(Range.of("bc", "c4"))
-        items[3].getAs<Range>(WellKnownKeys.RANGE).shouldBe(Range.of("c4", "cd"))
-        items[4].getAs<Range>(WellKnownKeys.RANGE).shouldBe(Range.of("cd", "d5"))
-        items[5].getAs<Range>(WellKnownKeys.RANGE).shouldBe(Range.of("d5", "de"))
-        items[6].getAs<Range>(WellKnownKeys.RANGE).shouldBe(Range.of("de", "e6"))
-        items[7].getAs<Range>(WellKnownKeys.RANGE).shouldBe(Range.of("e6", "ef"))
-        items[8].getAs<Range>(WellKnownKeys.RANGE).shouldBe(Range.of("ef", "f7"))
-        items[9].getAs<Range>(WellKnownKeys.RANGE).shouldBe(Range.of("f7", null))
+        items[0].get(WellKnownKeys.RANGE).shouldBe(Range.of("abc", "b3"))
+        items[1].get(WellKnownKeys.RANGE).shouldBe(Range.of("b3", "bc"))
+        items[2].get(WellKnownKeys.RANGE).shouldBe(Range.of("bc", "c4"))
+        items[3].get(WellKnownKeys.RANGE).shouldBe(Range.of("c4", "cd"))
+        items[4].get(WellKnownKeys.RANGE).shouldBe(Range.of("cd", "d5"))
+        items[5].get(WellKnownKeys.RANGE).shouldBe(Range.of("d5", "de"))
+        items[6].get(WellKnownKeys.RANGE).shouldBe(Range.of("de", "e6"))
+        items[7].get(WellKnownKeys.RANGE).shouldBe(Range.of("e6", "ef"))
+        items[8].get(WellKnownKeys.RANGE).shouldBe(Range.of("ef", "f7"))
+        items[9].get(WellKnownKeys.RANGE).shouldBe(Range.of("f7", null))
     }
 }

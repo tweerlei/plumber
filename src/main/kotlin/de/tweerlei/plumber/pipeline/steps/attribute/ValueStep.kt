@@ -30,6 +30,12 @@ class ValueStep: ProcessingStep {
     override val group = "Attributes"
     override val name = "Set value"
     override val description = "Sets the current value to the given value"
+    override val help = """
+        The argument can have one of these formats:
+          value::123  -  Will always result in a string (here: "123")
+          value:@name -  Will evaluate to the given attribute's value, like get:name
+          value:123   -  Will be auto-converted into a suitable type (here: long)
+    """.trimIndent()
     override fun argDescription() = "<value>"
 
     override fun requiredAttributesFor(arg: String) =
@@ -37,7 +43,6 @@ class ValueStep: ProcessingStep {
 
     override fun createWorker(
         arg: String,
-        expectedOutput: Class<*>,
         w: Worker,
         predecessorName: String,
         params: PipelineParams,

@@ -31,10 +31,9 @@ import java.io.InputStream
 import javax.xml.stream.XMLInputFactory
 import javax.xml.stream.XMLStreamConstants.START_ELEMENT
 
-class XmlReadWorker<T>(
+class XmlReadWorker(
     private val inputStreamProvider: InputStreamProvider,
     private val elementName: String,
-    private val itemType: Class<T>,
     private val xmlMapper: XmlMapper,
     limit: Long,
     worker: Worker
@@ -42,10 +41,6 @@ class XmlReadWorker<T>(
 
     companion object: KLogging()
 
-    private val valueType = when (itemType) {
-        Any::class.java -> JsonNode::class.java
-        else -> itemType
-    }
     private lateinit var stream: InputStream
 
     override fun onOpen() {
@@ -54,7 +49,6 @@ class XmlReadWorker<T>(
 
     override fun generateItems(item: WorkItem, fn: (WorkItem) -> Boolean) {
         XMLInputFactory.newInstance().createXMLStreamReader(stream)
-            .also { logger.info { "Reading XML objects as ${valueType.simpleName}" } }
             .let { reader ->
                 try {
                     val filePath = StringValue.of(inputStreamProvider.getPath())
@@ -63,7 +57,7 @@ class XmlReadWorker<T>(
                     while (keepGenerating && reader.hasNext()) {
                         reader.next()
                         if (reader.eventType == START_ELEMENT && reader.localName == elementName) {
-                            keepGenerating = xmlMapper.readValue(reader, valueType)
+                            keepGenerating = xmlMapper.readValue(reader, JsonNode::class.java)
                                 ?.toValue()
                                 ?.let { obj ->
                                     fn(obj.toWorkItem(filePath, fileName))

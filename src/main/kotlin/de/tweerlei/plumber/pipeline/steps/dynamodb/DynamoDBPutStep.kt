@@ -16,9 +16,8 @@
 package de.tweerlei.plumber.pipeline.steps.dynamodb
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
-import de.tweerlei.plumber.worker.types.Record
+import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.dynamodb.DynamoDBClientFactory
 import de.tweerlei.plumber.worker.impl.dynamodb.DynamoDBPutWorker
@@ -33,13 +32,14 @@ class DynamoDBPutStep(
     override val group = "AWS DynamoDB"
     override val name = "Put DynamoDB item"
     override val description = "Write an element to the given DynamoDB table"
+    override val help = """
+        This will write the current record, if any. Otherwise the current value will be used.
+        If the argument is omitted, the table name will be taken from a previously read DynamoDB item.
+    """.trimIndent()
     override fun argDescription() = "<table>"
-
-    override fun expectedInputFor(arg: String) = Record::class.java
 
     override fun createWorker(
         arg: String,
-        expectedOutput: Class<*>,
         w: Worker,
         predecessorName: String,
         params: PipelineParams,

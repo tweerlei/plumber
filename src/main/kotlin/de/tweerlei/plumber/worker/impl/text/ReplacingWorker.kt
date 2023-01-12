@@ -19,9 +19,9 @@ import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.WorkItemAccessor
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.DelegatingWorker
-import de.tweerlei.plumber.worker.types.AnyValue
 import de.tweerlei.plumber.worker.types.StringValue
 import de.tweerlei.plumber.worker.types.Value
+import de.tweerlei.plumber.worker.types.ifTypeIs
 
 class ReplacingWorker(
     private val replacement: WorkItemAccessor<Value>,
@@ -29,10 +29,12 @@ class ReplacingWorker(
 ): DelegatingWorker(worker) {
 
     override fun doProcess(item: WorkItem) =
-        item.getAs<AnyValue>(TextKeys.MATCH_EXPRESSION)
-            .to<Regex>()
-            .replace(item.get(TextKeys.MATCH_INPUT).toString(), replacement(item).toString())
-            .also { result ->
-                item.set(StringValue.of(result))
+        item.get(TextKeys.MATCH_EXPRESSION)
+            .toAny()
+            .ifTypeIs { regex: Regex ->
+                regex.replace(item.get(TextKeys.MATCH_INPUT).toString(), replacement(item).toString())
+                    .also { result ->
+                        item.set(StringValue.of(result))
+                    }
             }.let { true }
 }

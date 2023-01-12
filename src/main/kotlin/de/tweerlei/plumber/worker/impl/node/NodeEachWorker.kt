@@ -17,12 +17,13 @@ package de.tweerlei.plumber.worker.impl.node
 
 import com.fasterxml.jackson.core.JsonPointer
 import com.fasterxml.jackson.databind.JsonNode
-import de.tweerlei.plumber.worker.*
+import de.tweerlei.plumber.worker.WorkItem
+import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.GeneratingWorker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
-import de.tweerlei.plumber.worker.types.Node
 import de.tweerlei.plumber.worker.types.StringValue
 import de.tweerlei.plumber.worker.types.Value
+import de.tweerlei.plumber.worker.types.extractValue
 import mu.KLogging
 
 class NodeEachWorker(
@@ -36,8 +37,9 @@ class NodeEachWorker(
     }
 
     override fun generateItems(item: WorkItem, fn: (WorkItem) -> Boolean) {
-        item.getAs<Node>(WellKnownKeys.NODE)
-            .value.at(ptr).toMap().all { (key, value) ->
+        item.get(WellKnownKeys.NODE)
+            .toJsonNode()
+            .at(ptr).toMap().all { (key, value) ->
                 fn(WorkItem.of(value,
                     WellKnownKeys.NAME to key
                 ))
@@ -46,9 +48,9 @@ class NodeEachWorker(
 
     private fun JsonNode.toMap(): Map<StringValue, Value> =
         when {
-            isArray -> withIndex().associate { v -> StringValue.of(v.index.toString()) to v.value.toComparableValue() }
-            isObject -> fields().asSequence().associate { v -> StringValue.of(v.key) to v.value.toComparableValue() }
+            isArray -> withIndex().associate { v -> StringValue.of(v.index.toString()) to v.value.extractValue() }
+            isObject -> fields().asSequence().associate { v -> StringValue.of(v.key) to v.value.extractValue() }
             isEmpty -> emptyMap()
-            else -> mapOf(INDEX_ZERO to toComparableValue())
+            else -> mapOf(INDEX_ZERO to extractValue())
         }
 }

@@ -17,12 +17,11 @@ package de.tweerlei.plumber.pipeline.steps.range
 
 import de.tweerlei.plumber.pipeline.PipelineParams
 import de.tweerlei.plumber.pipeline.steps.ProcessingStep
-import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.Worker
+import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.impl.range.RangeKey
 import de.tweerlei.plumber.worker.impl.range.RangeSetWorker
 import org.springframework.stereotype.Service
-import java.lang.IllegalArgumentException
 
 @Service("range-setWorker")
 class RangeSetStep: ProcessingStep {
@@ -30,6 +29,7 @@ class RangeSetStep: ProcessingStep {
     override val group = "Ranges"
     override val name = "Set range field"
     override val description = "Set a range field, e.g. for usage with each:, one of (start, end)"
+    override val help = ""
     override fun argDescription() = rangeKeyFor("").toString()
 
     override fun producedAttributesFor(arg: String) = setOf(
@@ -38,7 +38,6 @@ class RangeSetStep: ProcessingStep {
 
     override fun createWorker(
         arg: String,
-        expectedOutput: Class<*>,
         w: Worker,
         predecessorName: String,
         params: PipelineParams,

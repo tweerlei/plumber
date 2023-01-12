@@ -15,7 +15,6 @@
  */
 package de.tweerlei.plumber.pipeline.steps.node
 
-import com.fasterxml.jackson.core.JsonPointer
 import de.tweerlei.plumber.pipeline.PipelineParams
 import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.worker.Worker
@@ -29,6 +28,9 @@ class NodeSubStep: ProcessingStep {
     override val group = "Nodes"
     override val name = "Extract JSON node"
     override val description = "Replace the current node with one of its sub nodes"
+    override val help = """
+        This is a shortcut for node-get:path set:node
+    """.trimIndent()
     override fun argDescription() = "<path>"
 
     override fun requiredAttributesFor(arg: String) = setOf(
@@ -37,7 +39,6 @@ class NodeSubStep: ProcessingStep {
 
     override fun createWorker(
         arg: String,
-        expectedOutput: Class<*>,
         w: Worker,
         predecessorName: String,
         params: PipelineParams,

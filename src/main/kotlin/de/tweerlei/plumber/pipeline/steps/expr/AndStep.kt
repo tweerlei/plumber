@@ -29,6 +29,13 @@ class AndStep: ProcessingStep {
     override val group = "Attributes"
     override val name = "Compare"
     override val description = "Logically AND the current value with the given value"
+    override val help = """
+        Both operands are evaluated as booleans. Examples:
+          value:true and:true -> true
+          value:true and:false -> false
+          value:true and:1234 -> true
+          value:true and:0 -> false
+    """.trimIndent()
     override fun argDescription() = valueFor("")
 
     override fun requiredAttributesFor(arg: String) =
@@ -36,7 +43,6 @@ class AndStep: ProcessingStep {
 
     override fun createWorker(
         arg: String,
-        expectedOutput: Class<*>,
         w: Worker,
         predecessorName: String,
         params: PipelineParams,

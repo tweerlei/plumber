@@ -15,8 +15,8 @@
  */
 package de.tweerlei.plumber.pipeline.steps.text
 
-import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
+import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.text.FormattingWorker
 import org.springframework.stereotype.Service
@@ -26,12 +26,12 @@ class FormatStep: ProcessingStep {
 
     override val group = "Text"
     override val name = "Format text"
-    override val description = "Produces the argument with all occurrences of \${name} replaced by their value"
+    override val description = "Produces the argument with all occurrences of @{name} replaced by their value"
+    override val help = ""
     override fun argDescription() = "<format>"
 
     override fun createWorker(
         arg: String,
-        expectedOutput: Class<*>,
         w: Worker,
         predecessorName: String,
         params: PipelineParams,

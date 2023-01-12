@@ -17,8 +17,8 @@ package de.tweerlei.plumber.pipeline.steps.sqs
 
 import de.tweerlei.plumber.pipeline.PipelineParams
 import de.tweerlei.plumber.pipeline.steps.ProcessingStep
-import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.Worker
+import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.impl.sqs.SQSClientFactory
 import de.tweerlei.plumber.worker.impl.sqs.SQSSendBatchWorker
 import org.springframework.stereotype.Service
@@ -31,16 +31,17 @@ class SQSBulkSendStep(
     override val group = "AWS SQS"
     override val name = "Send SQS messages"
     override val description = "Send multiple messages to the given SQS queue, use with bulk:<n>"
+    override val help = """
+        Bulked version of sqs-send.
+    """.trimIndent()
     override fun argDescription() = "<queue>"
 
-    override fun isValuePassThrough() = true
     override fun requiredAttributesFor(arg: String) = setOf(
         WellKnownKeys.WORK_ITEMS
     )
 
     override fun createWorker(
         arg: String,
-        expectedOutput: Class<*>,
         w: Worker,
         predecessorName: String,
         params: PipelineParams,

@@ -44,7 +44,7 @@ class MongoDBScanWorker(
     override fun generateItems(item: WorkItem, fn: (WorkItem) -> Boolean) {
         val actualDatabaseName = StringValue.of(databaseName)
         val actualCollectionName = StringValue.of(collectionName)
-        val range = item.getOptionalAs(WellKnownKeys.RANGE) ?: Range()
+        val range = (item.getOptional(WellKnownKeys.RANGE) ?: Range()).toRange()
         logger.info { "fetching elements from ${range.startAfter} to ${range.endWith}" }
 
         var firstKey: Any? = null
@@ -53,10 +53,10 @@ class MongoDBScanWorker(
         listDocuments(range.startAfter, range.endWith)
             .all { resultItem ->
                 resultItem.fromMongoDB(objectMapper).let { row ->
-                    if (fn(row.toWorkItem(actualDatabaseName, actualCollectionName))) {
+                    if (fn(Node(row).toWorkItem(actualDatabaseName, actualCollectionName))) {
                         itemCount++
-                        if (firstKey == null) firstKey = row.value[primaryKey]
-                        lastKey = row.value[primaryKey]
+                        if (firstKey == null) firstKey = row[primaryKey]
+                        lastKey = row[primaryKey]
                         true
                     } else {
                         false
@@ -94,7 +94,7 @@ class MongoDBScanWorker(
                 })
             }
             else -> JsonNodeFactory.instance.objectNode()
-        }.let { Node(it) }.toMongoDB(objectMapper)
+        }.toMongoDB(objectMapper)
 
     private fun fieldsToSelect() =
         selectFields.ifEmpty { null }?.fold(Document()) { doc, field ->

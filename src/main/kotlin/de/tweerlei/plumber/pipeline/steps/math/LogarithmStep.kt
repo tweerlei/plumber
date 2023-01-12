@@ -29,6 +29,11 @@ class LogarithmStep: ProcessingStep {
     override val group = "Math"
     override val name = "Logarithm"
     override val description = "Calculate the logarithm of the current value to the given base"
+    override val help = """
+        Both operands are evaluated as numbers.
+        ln of 0 will yield negative infinity.
+        ln of negative values will yield NaN. 
+    """.trimIndent()
     override fun argDescription() = baseFor("")
 
     override fun requiredAttributesFor(arg: String) =
@@ -36,7 +41,6 @@ class LogarithmStep: ProcessingStep {
 
     override fun createWorker(
         arg: String,
-        expectedOutput: Class<*>,
         w: Worker,
         predecessorName: String,
         params: PipelineParams,

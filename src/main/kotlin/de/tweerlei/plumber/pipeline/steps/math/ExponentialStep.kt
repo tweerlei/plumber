@@ -29,6 +29,11 @@ class ExponentialStep: ProcessingStep {
     override val group = "Math"
     override val name = "Exponentiate"
     override val description = "Raise the given value to the power of the current value"
+    override val help = """
+        Both operands are evaluated as numbers.
+        Division by zero (e.g. value:-1 exp:0) is possible and will yield positive or negative infinity.
+        0^0 will yield 1. 
+    """.trimIndent()
     override fun argDescription() = baseFor("")
 
     override fun requiredAttributesFor(arg: String) =
@@ -36,7 +41,6 @@ class ExponentialStep: ProcessingStep {
 
     override fun createWorker(
         arg: String,
-        expectedOutput: Class<*>,
         w: Worker,
         predecessorName: String,
         params: PipelineParams,

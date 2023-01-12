@@ -27,14 +27,13 @@ class ZipWriteStep: ProcessingStep {
     override val group = "Files"
     override val name = "Write ZIP entries"
     override val description = "Write entries to the given ZIP file"
+    override val help = ""
     override fun argDescription() = "".toOutputStreamProvider().toString()
 
-    override fun isValuePassThrough() = true
     override fun parallelDegreeFor(arg: String) = 1
 
     override fun createWorker(
         arg: String,
-        expectedOutput: Class<*>,
         w: Worker,
         predecessorName: String,
         params: PipelineParams,

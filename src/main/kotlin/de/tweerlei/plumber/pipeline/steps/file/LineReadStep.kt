@@ -29,16 +29,17 @@ class LineReadStep: ProcessingStep {
     override val group = "Files"
     override val name = "Read lines from file"
     override val description = "Read lines from the given file"
+    override val help = """
+        Lines will be converted to strings using the system locale.
+    """.trimIndent()
     override fun argDescription() = "".toInputStreamProvider().toString()
 
     override fun producedAttributesFor(arg: String) = setOf(
-        WellKnownKeys.PATH,
         WellKnownKeys.NAME
     )
 
     override fun createWorker(
         arg: String,
-        expectedOutput: Class<*>,
         w: Worker,
         predecessorName: String,
         params: PipelineParams,

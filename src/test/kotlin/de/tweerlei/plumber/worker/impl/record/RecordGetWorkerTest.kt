@@ -38,7 +38,7 @@ class RecordGetWorkerTest {
             .singleOrNull()
 
         item.shouldNotBeNull()
-        item.getAs<StringValue>().value.shouldBe("value")
+        item.get().shouldBe(StringValue.of("value"))
     }
 
     @Test
@@ -52,6 +52,6 @@ class RecordGetWorkerTest {
             .singleOrNull()
 
         item.shouldNotBeNull()
-        item.getAs<NullValue>().shouldBe(NullValue.INSTANCE)
+        item.get().shouldBe(NullValue.INSTANCE)
     }
 }

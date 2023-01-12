@@ -28,11 +28,11 @@ class NodeReplaceWorker(
 ): DelegatingWorker(worker) {
 
     override fun doProcess(item: WorkItem) =
-        item.getAs<Node>(WellKnownKeys.NODE)
-            .value.let { json ->
-                json.at(ptr)
-                    .also { value ->
-                        item.set(Node(value), WellKnownKeys.NODE)
-                    }
+        item.get(WellKnownKeys.NODE)
+            .toJsonNode()
+            .let { json ->
+                Node(json.at(ptr))
+            }.also { value ->
+                item.set(value, WellKnownKeys.NODE)
             }.let { true }
 }

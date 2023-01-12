@@ -23,22 +23,24 @@ import de.tweerlei.plumber.worker.types.*
 import java.nio.ByteBuffer
 
 fun Map<String, AttributeValue>.fromDynamoDB(objectMapper: ObjectMapper) =
-    mapValuesTo(Record()) { (_, v) ->
-        ItemUtils.toSimpleValue<Any>(v).let { map ->
-            when (map) {
-                is String,  // v.s
-                is Number,  // v.n
-                is ByteArray, // v.b
-                is Boolean, // v.bool
-                null -> map.toValue()
-                else -> objectMapper.valueToTree<JsonNode>(map)
-                    .let { node -> Node(node) }
+    Record().also {
+        mapValuesTo(it.toAny()) { (_, v) ->
+            ItemUtils.toSimpleValue<Any>(v).let { map ->
+                when (map) {
+                    is String,  // v.s
+                    is Number,  // v.n
+                    is ByteArray, // v.b
+                    is Boolean, // v.bool
+                    null -> map.toValue()
+                    else -> objectMapper.valueToTree<JsonNode>(map)
+                        .let { node -> Node(node) }
+                }
             }
         }
     }
 
 fun Record.toDynamoDB(objectMapper: ObjectMapper) =
-    mapValues { (_, v) ->
+    toAny().mapValues { (_, v) ->
         when (v) {
             is StringValue, // v.s
             is LongValue,   // v.n

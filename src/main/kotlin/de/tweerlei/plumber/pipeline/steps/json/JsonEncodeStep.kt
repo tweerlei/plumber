@@ -16,11 +16,12 @@
 package de.tweerlei.plumber.pipeline.steps.json
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
+import de.tweerlei.plumber.pipeline.options.AllPipelineOptions
+import de.tweerlei.plumber.pipeline.steps.ProcessingStep
+import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.impl.json.ToJsonWorker
-import de.tweerlei.plumber.worker.Worker
 import org.springframework.stereotype.Service
 
 @Service("json-printWorker")
@@ -31,6 +32,10 @@ class JsonEncodeStep(
     override val group = "JSON"
     override val name = "Serialize to JSON"
     override val description = "Serialize objects to JSON text"
+    override val help = """
+        This will encode the current node, if set. Otherwise the current value is encoded.
+        Use --${AllPipelineOptions.INSTANCE.prettyPrint.name} to enable pretty printing.
+    """.trimIndent()
 
     override fun producedAttributesFor(arg: String) = setOf(
         WellKnownKeys.NODE
@@ -38,7 +43,6 @@ class JsonEncodeStep(
 
     override fun createWorker(
         arg: String,
-        expectedOutput: Class<*>,
         w: Worker,
         predecessorName: String,
         params: PipelineParams,

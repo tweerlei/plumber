@@ -38,7 +38,7 @@ class RangeGetWorkerTest {
             .singleOrNull()
 
         item.shouldNotBeNull()
-        item.getAs<LongValue>().shouldBe(LongValue.of(42L))
+        item.get().shouldBe(LongValue.of(42L))
     }
 
     @Test
@@ -52,6 +52,6 @@ class RangeGetWorkerTest {
             .singleOrNull()
 
         item.shouldNotBeNull()
-        item.getAs<LongValue>().shouldBe(LongValue.of(100L))
+        item.get().shouldBe(LongValue.of(100L))
     }
 }

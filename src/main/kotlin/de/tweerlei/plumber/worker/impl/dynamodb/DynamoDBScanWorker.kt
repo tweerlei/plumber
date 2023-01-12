@@ -42,8 +42,8 @@ class DynamoDBScanWorker(
 
     override fun generateItems(item: WorkItem, fn: (WorkItem) -> Boolean) {
         val actualTableName = StringValue.of(tableName)
-        val primaryRange = item.getOptionalAs(WellKnownKeys.RANGE) ?: Range()
-        val secondaryRange = item.getOptionalAs(WellKnownKeys.SECONDARY_RANGE) ?: Range()
+        val primaryRange = (item.getOptional(WellKnownKeys.RANGE) ?: Range()).toRange()
+        val secondaryRange = (item.getOptional(WellKnownKeys.SECONDARY_RANGE) ?: Range()).toRange()
         val startAfter = keyFrom(primaryRange.startAfter, secondaryRange.startAfter)
         val endWith = keyFrom(primaryRange.endWith, secondaryRange.endWith)
         logger.info { "fetching elements from $startAfter to $endWith" }
@@ -60,8 +60,8 @@ class DynamoDBScanWorker(
                     if (row.isNotAfter(endWith)) {
                         if (fn(row.toWorkItem(actualTableName))) {
                             itemCount++
-                            if (firstKey == null) firstKey = row[partitionKey]
-                            lastKey = row[partitionKey]
+                            if (firstKey == null) firstKey = row.toAny()[partitionKey]
+                            lastKey = row.toAny()[partitionKey]
                         } else {
                             result.lastEvaluatedKey = null
                         }
@@ -100,9 +100,9 @@ class DynamoDBScanWorker(
     private fun Record.isNotAfter(maxKey: Record?) =
         when {
             maxKey == null -> true
-            this[partitionKey] as ComparableValue > maxKey[partitionKey] as ComparableValue -> false
-            rangeKey.isEmpty() || maxKey[rangeKey] == null -> true
-            this[rangeKey] as ComparableValue > maxKey[rangeKey] as ComparableValue -> false
+            this.toAny()[partitionKey] as ComparableValue > maxKey.toAny()[partitionKey] as ComparableValue -> false
+            rangeKey.isEmpty() || maxKey.toAny()[rangeKey] == null -> true
+            this.toAny()[rangeKey] as ComparableValue > maxKey.toAny()[rangeKey] as ComparableValue -> false
             else -> true
         }
 
@@ -112,6 +112,6 @@ class DynamoDBScanWorker(
             WellKnownKeys.RECORD to this,
             DynamoDBKeys.TABLE_NAME to actualTableName,
             DynamoDBKeys.PARTITION_KEY to getValue(partitionKey),
-            DynamoDBKeys.RANGE_KEY to if (rangeKey.isNotEmpty()) getValue(rangeKey) else NullValue.INSTANCE
+            DynamoDBKeys.RANGE_KEY to if (rangeKey.isEmpty()) NullValue.INSTANCE else getValue(rangeKey)
         )
 }

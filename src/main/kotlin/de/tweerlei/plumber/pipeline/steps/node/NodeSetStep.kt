@@ -28,16 +28,17 @@ class NodeSetStep: ProcessingStep {
     override val group = "Nodes"
     override val name = "Set JSON path"
     override val description = "Replace a subtree of a JSON object using the given JSONPath"
+    override val help = """
+        The current node will be modified.
+    """.trimIndent()
     override fun argDescription() = "<path>"
 
-    override fun isValuePassThrough() = true
     override fun producedAttributesFor(arg: String) = setOf(
         WellKnownKeys.NODE
     )
 
     override fun createWorker(
         arg: String,
-        expectedOutput: Class<*>,
         w: Worker,
         predecessorName: String,
         params: PipelineParams,

@@ -28,6 +28,7 @@ class ZipReadStep: ProcessingStep {
     override val group = "Files"
     override val name = "Read ZIP entries"
     override val description = "Read entries from the given ZIP file"
+    override val help = ""
     override fun argDescription() = "".toInputStreamProvider().toString()
 
     override fun producedAttributesFor(arg: String) = setOf(
@@ -38,7 +39,6 @@ class ZipReadStep: ProcessingStep {
 
     override fun createWorker(
         arg: String,
-        expectedOutput: Class<*>,
         w: Worker,
         predecessorName: String,
         params: PipelineParams,

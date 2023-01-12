@@ -28,6 +28,9 @@ class FindStep: ProcessingStep {
     override val group = "Text"
     override val name = "Find by regex"
     override val description = "Find matches of the given regular expression, use with filter: or replace:"
+    override val help = """
+        The current value will be set to the matched substring.
+    """.trimIndent()
     override fun argDescription() = "<regex>"
 
     override fun producedAttributesFor(arg: String) = setOf(
@@ -37,7 +40,6 @@ class FindStep: ProcessingStep {
 
     override fun createWorker(
         arg: String,
-        expectedOutput: Class<*>,
         w: Worker,
         predecessorName: String,
         params: PipelineParams,

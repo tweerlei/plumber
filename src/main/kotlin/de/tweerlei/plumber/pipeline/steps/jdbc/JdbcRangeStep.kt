@@ -15,10 +15,11 @@
  */
 package de.tweerlei.plumber.pipeline.steps.jdbc
 
-import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
-import de.tweerlei.plumber.worker.impl.WellKnownKeys
+import de.tweerlei.plumber.pipeline.options.AllPipelineOptions
+import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.worker.Worker
+import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.impl.jdbc.JdbcKeys
 import de.tweerlei.plumber.worker.impl.jdbc.JdbcRangeWorker
 import de.tweerlei.plumber.worker.impl.jdbc.JdbcTemplateFactory
@@ -32,6 +33,10 @@ class JdbcRangeStep(
     override val group = "JDBC"
     override val name = "JDBC key range"
     override val description = "Determine the actual range of values for the JDBC primaryKey, use with partition:n"
+    override val help = """
+        This will set the current range to the range of values in the primary key column.
+        Use --${AllPipelineOptions.INSTANCE.primaryKey.name} to specify the PK column.
+    """.trimIndent()
     override fun argDescription() = "<table>"
 
     override fun producedAttributesFor(arg: String) = setOf(
@@ -41,7 +46,6 @@ class JdbcRangeStep(
 
     override fun createWorker(
         arg: String,
-        expectedOutput: Class<*>,
         w: Worker,
         predecessorName: String,
         params: PipelineParams,

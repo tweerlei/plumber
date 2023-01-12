@@ -15,29 +15,30 @@
  */
 package de.tweerlei.plumber.pipeline.steps.record
 
-import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
-import de.tweerlei.plumber.worker.impl.WellKnownKeys
+import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.worker.Worker
+import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.impl.record.RecordSetWorker
 import org.springframework.stereotype.Service
 
-@Service("rec-setWorker")
+@Service("record-setWorker")
 class RecordSetStep: ProcessingStep {
 
     override val group = "Records"
     override val name = "Set record field"
     override val description = "Set the given record field to the current value"
+    override val help = """
+        The current record will be modified.
+    """.trimIndent()
     override fun argDescription() = "<name>"
 
-    override fun isValuePassThrough() = true
     override fun producedAttributesFor(arg: String) = setOf(
         WellKnownKeys.RECORD
     )
 
     override fun createWorker(
         arg: String,
-        expectedOutput: Class<*>,
         w: Worker,
         predecessorName: String,
         params: PipelineParams,

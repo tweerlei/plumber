@@ -16,18 +16,17 @@
 package de.tweerlei.plumber.worker.impl.xml
 
 import com.fasterxml.jackson.core.JsonPointer
-import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.dataformat.xml.XmlMapper
 import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.impl.ByteArrayInputStreamProvider
 import de.tweerlei.plumber.worker.impl.ByteArrayOutputStreamProvider
 import de.tweerlei.plumber.worker.impl.TestWorkerRunner
+import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.impl.attribute.SettingWorker
 import de.tweerlei.plumber.worker.impl.node.NodeGetWorker
 import de.tweerlei.plumber.worker.impl.record.RecordSetWorker
 import de.tweerlei.plumber.worker.types.ByteArrayValue
 import de.tweerlei.plumber.worker.types.DoubleValue
-import de.tweerlei.plumber.worker.types.StringValue
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
@@ -57,14 +56,15 @@ class XmlWorkerTest {
         val objectMapper = XmlMapper()
 
         val item = TestWorkerRunner(WorkItem.of(ByteArrayValue.of(xml.toByteArray(StandardCharsets.UTF_8))))
-            .append { w -> FromXmlWorker(JsonNode::class.java, objectMapper, w) }
+            .append { w -> FromXmlWorker(objectMapper, w) }
             .append { w -> NodeGetWorker(JsonPointer.compile("/obj"), w) }
+            .append { w -> SettingWorker(WellKnownKeys.NODE, { item -> item.get(WorkItem.DEFAULT_KEY) }, w) }
             .append { w -> ToXmlWorker("ROOT", objectMapper, false, w) }
             .run()
             .singleOrNull()
 
         item.shouldNotBeNull()
-        item.getAs<StringValue>().value.shouldBe(
+        item.get().toAny().shouldBe(
             """<ROOT><string>Hello</string><number>42</number><boolean>true</boolean><null>null</null><array><item>1</item><item>2</item><item>3</item></array></ROOT>"""
         )
     }
@@ -92,7 +92,7 @@ class XmlWorkerTest {
         val output = ByteArrayOutputStreamProvider()
 
         val items = TestWorkerRunner(WorkItem.of())
-            .append { w -> XmlReadWorker(ByteArrayInputStreamProvider(xml.toByteArray(StandardCharsets.UTF_8)), "item", JsonNode::class.java, objectMapper, 10, w) }
+            .append { w -> XmlReadWorker(ByteArrayInputStreamProvider(xml.toByteArray(StandardCharsets.UTF_8)), "item", objectMapper, 10, w) }
             .append { w -> SettingWorker(WorkItem.DEFAULT_KEY, { DoubleValue.of(3.14) }, w) }
             .append { w -> RecordSetWorker("2", w) }
             .append { w -> XmlWriteWorker(output, "item", "items", objectMapper, false, w) }

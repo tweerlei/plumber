@@ -15,4 +15,11 @@
  */
 package de.tweerlei.plumber.worker.types
 
-interface ComparableValue: Value, Comparable<ComparableValue>
+interface ComparableValue: Value, Comparable<ComparableValue> {
+
+    override fun toRange() =
+        Range(this, NullValue.INSTANCE)
+
+    override fun toRecord() =
+        Record.of(this)
+}

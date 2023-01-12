@@ -57,7 +57,7 @@ class MinusWorkerTest {
             .singleOrNull()
 
         item.shouldNotBeNull()
-        with (item.getAs<ComparableValue>()) {
+        with (item.get()) {
             shouldBe(expected)
             getName().shouldBe(expected.getName())
         }

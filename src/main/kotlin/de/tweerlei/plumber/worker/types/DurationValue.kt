@@ -20,7 +20,7 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory
 import java.time.Duration
 
 class DurationValue private constructor(
-    val value: Duration
+    private val value: Duration
 ): NumberValue {
 
     companion object {
@@ -43,17 +43,15 @@ class DurationValue private constructor(
         value.toMillis()
     override fun toDouble() =
         toLong().toDouble()
-    override fun toRecord() =
-        Record.of(this)
     override fun toJsonNode(): JsonNode =
         JsonNodeFactory.instance.numberNode(toLong())
-    override fun toString() =
-        value.toString()
 
+    override fun compareTo(other: ComparableValue) =
+        toLong().compareTo(other.toLong())
     override fun equals(other: Any?) =
         other is Value && toLong() == other.toLong()
     override fun hashCode() =
         value.hashCode()
-    override fun compareTo(other: ComparableValue) =
-        toLong().compareTo(other.toLong())
+    override fun toString() =
+        value.toString()
 }

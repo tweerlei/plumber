@@ -15,7 +15,6 @@
  */
 package de.tweerlei.plumber.pipeline.steps.node
 
-import com.fasterxml.jackson.core.JsonPointer
 import de.tweerlei.plumber.pipeline.PipelineParams
 import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.worker.Worker
@@ -29,16 +28,17 @@ class NodeDelStep: ProcessingStep {
     override val group = "Nodes"
     override val name = "Remove JSON path"
     override val description = "Remove a subtree of a JSON object using the given JSONPath"
+    override val help = """
+        The current node will be modified.
+    """.trimIndent()
     override fun argDescription() = "<path>"
 
-    override fun isValuePassThrough() = true
     override fun producedAttributesFor(arg: String) = setOf(
         WellKnownKeys.NODE
     )
 
     override fun createWorker(
         arg: String,
-        expectedOutput: Class<*>,
         w: Worker,
         predecessorName: String,
         params: PipelineParams,

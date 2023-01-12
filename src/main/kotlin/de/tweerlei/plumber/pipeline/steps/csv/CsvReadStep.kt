@@ -17,6 +17,7 @@ package de.tweerlei.plumber.pipeline.steps.csv
 
 import com.fasterxml.jackson.dataformat.csv.CsvMapper
 import de.tweerlei.plumber.pipeline.PipelineParams
+import de.tweerlei.plumber.pipeline.options.AllPipelineOptions
 import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.pipeline.steps.file.toInputStreamProvider
 import de.tweerlei.plumber.worker.Worker
@@ -32,6 +33,10 @@ class CsvReadStep(
     override val group = "CSV"
     override val name = "Read CSV lines from file"
     override val description = "Read CSV lines from the given file"
+    override val help = """
+        Use --${AllPipelineOptions.INSTANCE.separator.name} to specify the record separator character.
+        Use --${AllPipelineOptions.INSTANCE.header.name} to treat the first line as column headings.
+    """.trimIndent()
     override fun argDescription() = "".toInputStreamProvider().toString()
 
     override fun producedAttributesFor(arg: String) = setOf(
@@ -42,7 +47,6 @@ class CsvReadStep(
 
     override fun createWorker(
         arg: String,
-        expectedOutput: Class<*>,
         w: Worker,
         predecessorName: String,
         params: PipelineParams,

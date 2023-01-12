@@ -27,13 +27,11 @@ class ErrorStep: ProcessingStep {
     override val group = "Logging"
     override val name = "Throw error"
     override val description = "Throw an error every given number of items"
+    override val help = ""
     override fun argDescription() = intervalFor("").toString()
-
-    override fun isValuePassThrough() = true
 
     override fun createWorker(
         arg: String,
-        expectedOutput: Class<*>,
         w: Worker,
         predecessorName: String,
         params: PipelineParams,

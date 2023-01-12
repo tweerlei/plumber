@@ -34,8 +34,9 @@ class KeyRangeWorker(
 ): GeneratingWorker(limit, worker) {
 
     override fun generateItems(item: WorkItem, fn: (WorkItem) -> Boolean) {
-        item.getOptionalAs<Range>(WellKnownKeys.RANGE)
-            ?.let { range ->
+        item.get(WellKnownKeys.RANGE)
+            .toRange()
+            .let { range ->
                 generateRanges(range.startAfter, range.endWith, fn)
             }
     }
@@ -43,8 +44,8 @@ class KeyRangeWorker(
     private fun generateRanges(startAfter: ComparableValue, endWith: ComparableValue, fn: (WorkItem) -> Boolean) {
         when {
             startAfter is LongValue && endWith is LongValue -> generateNumberRanges(
-                startAfter.value,
-                endWith.value,
+                startAfter.toAny(),
+                endWith.toAny(),
                 fn
             )
             else -> generateStringRanges(

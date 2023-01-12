@@ -29,6 +29,13 @@ class OrStep: ProcessingStep {
     override val group = "Attributes"
     override val name = "Compare"
     override val description = "Logically OR the current value with the given value"
+    override val help = """
+        Both operands are evaluated as booleans. Examples:
+          value:false or:true -> true
+          value:false or:false -> false
+          value:false or:1234 -> true
+          value:false or:0 -> false
+    """.trimIndent()
     override fun argDescription() = valueFor("")
 
     override fun requiredAttributesFor(arg: String) =
@@ -36,7 +43,6 @@ class OrStep: ProcessingStep {
 
     override fun createWorker(
         arg: String,
-        expectedOutput: Class<*>,
         w: Worker,
         predecessorName: String,
         params: PipelineParams,

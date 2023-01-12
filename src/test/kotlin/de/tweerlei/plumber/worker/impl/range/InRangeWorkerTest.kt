@@ -77,6 +77,6 @@ class InRangeWorkerTest {
             .singleOrNull()
 
         item.shouldNotBeNull()
-        item.getAs<BooleanValue>().value.shouldBe(result)
+        item.get().toAny().shouldBe(result)
     }
 }

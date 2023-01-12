@@ -48,7 +48,7 @@ class CsvWorkerTest {
             .singleOrNull()
 
         item.shouldNotBeNull()
-        item.getAs<StringValue>().value.shouldBe("Hello,42,false,null\n")
+        item.get().toAny().shouldBe("Hello,42,false,null\n")
     }
 
     @Test

@@ -15,9 +15,9 @@
  */
 package de.tweerlei.plumber.worker.impl.record
 
-import de.tweerlei.plumber.worker.*
+import de.tweerlei.plumber.worker.WorkItem
+import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.DelegatingWorker
-import de.tweerlei.plumber.worker.types.Record
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
 
 class RecordGetWorker(
@@ -26,7 +26,8 @@ class RecordGetWorker(
 ): DelegatingWorker(worker) {
 
     override fun doProcess(item: WorkItem) =
-        item.getAs<Record>(WellKnownKeys.RECORD)
+        item.get(WellKnownKeys.RECORD)
+            .toRecord()
             .let { map ->
                 item.set(map.getValue(field))
             }.let { true }

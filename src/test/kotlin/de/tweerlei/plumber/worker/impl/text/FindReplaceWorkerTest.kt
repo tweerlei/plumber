@@ -35,7 +35,7 @@ class FindReplaceWorkerTest {
             .singleOrNull()
 
         item.shouldNotBeNull()
-        item.getAs<StringValue>().value.shouldBe("foobazbar")
+        item.get().shouldBe(StringValue.of("foobazbar"))
     }
 
     @Test
@@ -47,9 +47,9 @@ class FindReplaceWorkerTest {
             .singleOrNull()
 
         item.shouldNotBeNull()
-        item.getAs<StringValue>().value.shouldBe("baz")
-        item.getAs<StringValue>("matchedGroup0").value.shouldBe("foobazbar")
-        item.getAs<StringValue>("matchedGroup1").value.shouldBe("baz")
+        item.get().shouldBe(StringValue.of("baz"))
+        item.get("matchedGroup0").shouldBe(StringValue.of("foobazbar"))
+        item.get("matchedGroup1").shouldBe(StringValue.of("baz"))
     }
 
     @Test
@@ -74,7 +74,7 @@ class FindReplaceWorkerTest {
             .singleOrNull()
 
         item.shouldNotBeNull()
-        item.getAs<StringValue>().value.shouldBe("bar")
+        item.get().shouldBe(StringValue.of("bar"))
     }
 
     @Test
@@ -87,7 +87,7 @@ class FindReplaceWorkerTest {
             .singleOrNull()
 
         item.shouldNotBeNull()
-        item.getAs<StringValue>().value.shouldBe("0doobaz1")
+        item.get().shouldBe(StringValue.of("0doobaz1"))
     }
 
     @Test
@@ -100,7 +100,7 @@ class FindReplaceWorkerTest {
             .singleOrNull()
 
         item.shouldNotBeNull()
-        item.getAs<StringValue>().value.shouldBe("doobaz")
+        item.get().shouldBe(StringValue.of("doobaz"))
     }
 
     @Test
@@ -113,6 +113,6 @@ class FindReplaceWorkerTest {
             .singleOrNull()
 
         item.shouldNotBeNull()
-        item.getAs<StringValue>().value.shouldBe("0foobazbar1")
+        item.get().shouldBe(StringValue.of("0foobazbar1"))
     }
 }

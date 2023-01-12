@@ -41,8 +41,9 @@ class InstantValueTest {
                 size.shouldBe(8)
                 contentEquals(byteArrayOf(42, 0, 0, 0, 0, 0, 0, 0)).shouldBeTrue()
             }
+            toRange().shouldBe(Range(this, NullValue.INSTANCE))
             with (toRecord()) {
-                size.shouldBe(1)
+                size().shouldBe(1)
                 getValue("0").toAny().shouldBe(Instant.ofEpochMilli(42L))
             }
             with (toJsonNode()) {

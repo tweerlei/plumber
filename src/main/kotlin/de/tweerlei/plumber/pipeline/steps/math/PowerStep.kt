@@ -29,6 +29,11 @@ class PowerStep: ProcessingStep {
     override val group = "Math"
     override val name = "Power"
     override val description = "Raise the current value to the given power"
+    override val help = """
+        Both operands are evaluated as numbers.
+        Division by zero (e.g. value:0 power:-1) is possible and will yield positive or negative infinity.
+        0^0 will yield 1. 
+    """.trimIndent()
     override fun argDescription() = valueFor("")
 
     override fun requiredAttributesFor(arg: String) =
@@ -36,7 +41,6 @@ class PowerStep: ProcessingStep {
 
     override fun createWorker(
         arg: String,
-        expectedOutput: Class<*>,
         w: Worker,
         predecessorName: String,
         params: PipelineParams,

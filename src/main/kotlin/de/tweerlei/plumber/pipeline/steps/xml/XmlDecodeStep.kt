@@ -16,10 +16,10 @@
 package de.tweerlei.plumber.pipeline.steps.xml
 
 import com.fasterxml.jackson.dataformat.xml.XmlMapper
-import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
-import de.tweerlei.plumber.worker.impl.WellKnownKeys
+import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.worker.Worker
+import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.impl.xml.FromXmlWorker
 import org.springframework.stereotype.Service
 
@@ -31,6 +31,9 @@ class XmlDecodeStep(
     override val group = "XML"
     override val name = "Deserialize from XML"
     override val description = "Deserialize objects from XML text"
+    override val help = """
+        The current value will be set to the JSON node, which will also be available to node-* steps. 
+    """.trimIndent()
 
     override fun producedAttributesFor(arg: String) = setOf(
         WellKnownKeys.NODE
@@ -38,11 +41,10 @@ class XmlDecodeStep(
 
     override fun createWorker(
         arg: String,
-        expectedOutput: Class<*>,
         w: Worker,
         predecessorName: String,
         params: PipelineParams,
         parallelDegree: Int
     ) =
-        FromXmlWorker(expectedOutput, xmlMapper, w)
+        FromXmlWorker(xmlMapper, w)
 }

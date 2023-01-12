@@ -38,31 +38,13 @@ class WorkItem private constructor(
     fun get(key: String = DEFAULT_KEY) =
         map[key] ?: NullValue.INSTANCE
 
-    inline fun <reified T: Value> getAs(key: String = DEFAULT_KEY): T =
-        get(key) as T
-
     fun getOptional(key: String = DEFAULT_KEY) =
         map[key]
-
-    inline fun <reified T: Value> getOptionalAs(key: String = DEFAULT_KEY): T? =
-        getOptional(key) as T?
 
     fun getFirst(vararg keys: String) =
         keys.toList().plus(DEFAULT_KEY)
             .first { key -> map.containsKey(key) }
             .let { key -> map.getValue(key) }
-
-    inline fun <reified T: Value> getFirstAs(vararg keys: String): T =
-        getFirst(*keys) as T
-
-    fun getOrSet(key: String, fn: () -> Value) =
-        if (map.containsKey(key))
-            map.getValue(key)
-        else
-            fn().also { set(it, key) }
-
-    inline fun <reified T: Value> getOrSetAs(key: String, noinline fn: () -> T): T =
-        getOrSet(key, fn) as T
 
     fun set(value: Value, key: String = DEFAULT_KEY) {
         if (value is NullValue)

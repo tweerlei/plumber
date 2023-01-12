@@ -46,7 +46,7 @@ class PatternWorkerTest {
             .singleOrNull()
 
         item.shouldNotBeNull()
-        item.getAs<StringValue>().value.shouldBe("Hello")
+        item.get().shouldBe(StringValue.of("Hello"))
     }
 
     @Test
@@ -59,10 +59,10 @@ class PatternWorkerTest {
             .singleOrNull()
 
         item.shouldNotBeNull()
-        item.getAs<StringValue>().value.shouldBe("foo 1_x 23_yz bar")
-        item.getAs<StringValue>("matchedGroup0").value.shouldBe("x-1")
-        item.getAs<StringValue>("matchedGroup1").value.shouldBe("x")
-        item.getAs<StringValue>("matchedGroup2").value.shouldBe("1")
+        item.get().shouldBe(StringValue.of("foo 1_x 23_yz bar"))
+        item.get("matchedGroup0").shouldBe(StringValue.of("x-1"))
+        item.get("matchedGroup1").shouldBe(StringValue.of("x"))
+        item.get("matchedGroup2").shouldBe(StringValue.of("1"))
     }
 
     @Test
@@ -75,6 +75,6 @@ class PatternWorkerTest {
             .singleOrNull()
 
         item.shouldNotBeNull()
-        item.getAs<StringValue>().value.shouldBe("foo x_1 yz_23 bar")
+        item.get().shouldBe(StringValue.of("foo x_1 yz_23 bar"))
     }
 }

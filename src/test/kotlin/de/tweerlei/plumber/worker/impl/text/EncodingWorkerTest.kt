@@ -40,7 +40,7 @@ class EncodingWorkerTest {
             .singleOrNull()
 
         item.shouldNotBeNull()
-        item.getAs<StringValue>().value.shouldBe("KsAAIIB/")
+        item.get().shouldBe(StringValue.of("KsAAIIB/"))
     }
 
     @Test
@@ -54,7 +54,7 @@ class EncodingWorkerTest {
             .singleOrNull()
 
         item.shouldNotBeNull()
-        item.getAs<StringValue>().value.shouldBe("2ac00020807f")
+        item.get().shouldBe(StringValue.of("2ac00020807f"))
     }
 
     @Test
@@ -68,6 +68,6 @@ class EncodingWorkerTest {
             .singleOrNull()
 
         item.shouldNotBeNull()
-        item.getAs<StringValue>().value.shouldBe("bi\u00df")
+        item.get().shouldBe(StringValue.of("bi\u00df"))
     }
 }

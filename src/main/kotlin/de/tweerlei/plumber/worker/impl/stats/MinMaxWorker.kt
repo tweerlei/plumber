@@ -19,6 +19,7 @@ import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.DelegatingWorker
 import de.tweerlei.plumber.worker.types.ComparableValue
+import de.tweerlei.plumber.worker.types.toComparableValue
 import mu.KLogging
 import java.util.concurrent.atomic.AtomicLong
 import java.util.concurrent.atomic.AtomicReference
@@ -36,7 +37,8 @@ class MinMaxWorker(
     private val maxValue = AtomicReference<ComparableValue>()
 
     override fun doProcess(item: WorkItem) =
-        item.getAs<ComparableValue>()
+        item.get()
+            .toComparableValue()
             .let { value ->
                 val curMin = minValue.accumulateAndGet(value) { a, b -> minOf(a ?: b, b) }
                 val curMax = maxValue.accumulateAndGet(value) { a, b -> maxOf(a ?: b, b) }

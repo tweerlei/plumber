@@ -23,18 +23,18 @@ import de.tweerlei.plumber.worker.impl.attribute.SettingWorker
 import de.tweerlei.plumber.worker.types.Record
 import org.springframework.stereotype.Service
 
-@Service("rec-clearWorker")
+@Service("record-clearWorker")
 class RecordClearStep: ProcessingStep {
 
     override val group = "Records"
     override val name = "Clear record"
-    override val description = "Clear the curent record"
-
-    override fun isValuePassThrough() = true
+    override val description = "Clear the current record"
+    override val help = """
+        The current record will be set to an empty record.
+    """.trimIndent()
 
     override fun createWorker(
         arg: String,
-        expectedOutput: Class<*>,
         w: Worker,
         predecessorName: String,
         params: PipelineParams,

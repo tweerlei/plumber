@@ -32,6 +32,7 @@ class JsonReadStep(
     override val group = "JSON"
     override val name = "Read JSON objects from file"
     override val description = "Read JSON objects from the given file"
+    override val help = ""
     override fun argDescription() = "".toInputStreamProvider().toString()
 
     override fun producedAttributesFor(arg: String) = setOf(
@@ -42,7 +43,6 @@ class JsonReadStep(
 
     override fun createWorker(
         arg: String,
-        expectedOutput: Class<*>,
         w: Worker,
         predecessorName: String,
         params: PipelineParams,
@@ -50,7 +50,6 @@ class JsonReadStep(
     ) =
         JsonReadWorker(
             arg.toInputStreamProvider(),
-            expectedOutput,
             objectMapper,
             params.maxFilesPerThread,
             w

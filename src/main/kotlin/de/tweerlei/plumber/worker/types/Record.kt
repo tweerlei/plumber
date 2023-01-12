@@ -18,61 +18,77 @@ package de.tweerlei.plumber.worker.types
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.node.JsonNodeFactory
 
-class Record: LinkedHashMap<String, Value>(), Value {
+class Record(
+    private val map: MutableMap<String, Value> = LinkedHashMap()
+): Value {
 
     companion object {
         const val NAME = "record"
 
         fun of(vararg items: Pair<String, Value>) =
             Record().apply {
-                items.forEach { (k, v) -> this[k] = v }
+                items.forEach { (k, v) -> map[k] = v }
             }
         fun of(vararg items: Value) =
             Record().apply {
                 items.forEachIndexed { index, value ->
-                    this[index.toString()] = value
+                    map[index.toString()] = value
                 }
             }
         fun ofComparableValues(items: Array<String>) =
             Record().apply {
                 items.forEachIndexed { index, value ->
-                    this[index.toString()] = value.toComparableValue()
+                    map[index.toString()] = value.toComparableValue()
                 }
             }
         fun ofCollection(items: Collection<*>) =
             Record().also { record ->
-                items.forEachIndexed { index, value -> record[index.toString()] = value.toValue() }
+                items.forEachIndexed { index, value -> record.map[index.toString()] = value.toValue() }
             }
         fun ofMap(items: Map<*, *>) =
             Record().also { record ->
-                items.forEach { (key, value) -> record[key.toString()] = value.toValue() }
+                items.forEach { (key, value) -> record.map[key.toString()] = value.toValue() }
             }
     }
 
     override fun getName() =
         NAME
-    fun getValue(key: String) =
-        getOrDefault(key, NullValue.INSTANCE)
 
     override fun toAny() =
-        this
+        map
     override fun toBoolean() =
-        isNotEmpty()
+        map.isNotEmpty()
     override fun toLong() =
-        size.toLong()
+        map.size.toLong()
     override fun toDouble() =
-        size.toDouble()
+        map.size.toDouble()
     override fun toByteArray() =
-        toString().toByteArray()
-    override fun toRecord() =
-        this
+        map.toString().toByteArray()
     override fun toJsonNode(): JsonNode =
         JsonNodeFactory.instance.objectNode().also { node ->
-            forEach { key, value -> node.set<JsonNode>(key, value.toJsonNode()) }
+            map.forEach { (key, value) -> node.set<JsonNode>(key, value.toJsonNode()) }
         }
-    override fun size() =
-        size.toLong()
 
+    override fun toRange() =
+        Range(
+            map["0"].toComparableValue(),
+            map["1"].toComparableValue()
+        )
+    override fun toRecord() =
+        this
+
+    fun getValue(key: String) =
+        map.getOrDefault(key, NullValue.INSTANCE)
+
+    override fun size() =
+        map.size.toLong()
+    override fun equals(other: Any?) =
+        other is Record &&
+                map == other.map
+    override fun hashCode() =
+        map.hashCode()
+    override fun toString() =
+        map.toString()
     override fun dump() =
-        mapValues { (_, value) -> value.dump() }.toString()
+        map.mapValues { (_, value) -> value.dump() }.toString()
 }

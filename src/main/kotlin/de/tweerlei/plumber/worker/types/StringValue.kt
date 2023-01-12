@@ -21,7 +21,7 @@ import java.math.BigDecimal
 import java.math.BigInteger
 
 class StringValue private constructor(
-    val value: String
+    private val value: String
 ): ComparableValue {
 
     companion object {
@@ -55,19 +55,17 @@ class StringValue private constructor(
         value.toBigDecimalOrNull() ?: BigDecimal.valueOf(0.0)
     override fun toByteArray() =
         value.toByteArray()
-    override fun toRecord() =
-        Record.of(this)
     override fun toJsonNode(): JsonNode =
         JsonNodeFactory.instance.textNode(value)
+
     override fun size() =
         value.length.toLong()
-    override fun toString() =
-        value
-
+    override fun compareTo(other: ComparableValue) =
+        value.compareTo(other.toString())
     override fun equals(other: Any?) =
         other is Value && value == other.toString()
     override fun hashCode() =
         value.hashCode()
-    override fun compareTo(other: ComparableValue) =
-        value.compareTo(other.toString())
+    override fun toString() =
+        value
 }

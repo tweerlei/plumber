@@ -17,12 +17,9 @@ package de.tweerlei.plumber.pipeline.steps.attribute
 
 import de.tweerlei.plumber.pipeline.PipelineParams
 import de.tweerlei.plumber.pipeline.steps.ProcessingStep
-import de.tweerlei.plumber.pipeline.steps.toRequiredAttributes
-import de.tweerlei.plumber.pipeline.steps.toWorkItemAccessor
-import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.attribute.ConvertingWorker
-import de.tweerlei.plumber.worker.impl.attribute.SettingWorker
+import de.tweerlei.plumber.worker.types.*
 import org.springframework.stereotype.Service
 
 @Service("castWorker")
@@ -31,11 +28,25 @@ class CastStep: ProcessingStep {
     override val group = "Attributes"
     override val name = "Cast value"
     override val description = "Converts the current value to the given type"
+    override val help = """
+        Supported types are:
+          ${StringValue.NAME}
+          ${LongValue.NAME}
+          ${DoubleValue.NAME}
+          ${BooleanValue.NAME}
+          ${InstantValue.NAME}
+          ${DurationValue.NAME}
+          ${BigIntegerValue.NAME}
+          ${BigDecimalValue.NAME}
+          ${ByteArrayValue.NAME}
+          ${Range.NAME} - will also set the result as current range
+          ${Record.NAME} - will also set the result as current record
+          ${Node.NAME} - will also set the result as current node
+    """.trimIndent()
     override fun argDescription() = "<type>"
 
     override fun createWorker(
         arg: String,
-        expectedOutput: Class<*>,
         w: Worker,
         predecessorName: String,
         params: PipelineParams,

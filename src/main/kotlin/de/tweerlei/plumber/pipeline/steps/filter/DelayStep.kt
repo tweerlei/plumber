@@ -15,8 +15,8 @@
  */
 package de.tweerlei.plumber.pipeline.steps.filter
 
-import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
+import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.filter.DelayWorker
 import org.springframework.stereotype.Service
@@ -27,13 +27,13 @@ class DelayStep: ProcessingStep {
     override val group = "Flow control"
     override val name = "Delay processing"
     override val description = "Delay following steps by the given number of milliseconds"
+    override val help = """
+        Each item that passes through this step will be delayed.
+    """.trimIndent()
     override fun argDescription() = delayFor("").toString()
-
-    override fun isValuePassThrough() = true
 
     override fun createWorker(
         arg: String,
-        expectedOutput: Class<*>,
         w: Worker,
         predecessorName: String,
         params: PipelineParams,

@@ -16,10 +16,11 @@
 package de.tweerlei.plumber.pipeline.steps.dynamodb
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
-import de.tweerlei.plumber.worker.impl.WellKnownKeys
+import de.tweerlei.plumber.pipeline.options.AllPipelineOptions
+import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.worker.Worker
+import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.impl.dynamodb.DynamoDBClientFactory
 import de.tweerlei.plumber.worker.impl.dynamodb.DynamoDBKeys
 import de.tweerlei.plumber.worker.impl.dynamodb.DynamoDBScanWorker
@@ -34,6 +35,16 @@ class DynamoDBScanStep(
     override val group = "AWS DynamoDB"
     override val name = "Scan DynamoDB items"
     override val description = "List elements from the given DynamoDB table"
+    override val help = """
+        THe key range to scan can be specified by setting the current range and secondaryRange. If not set,
+        the whole table will be listed.
+        The current value will be set to the read record, which will also be available to record-* steps.
+        Values in this record will be JSON nodes to support complex data types.
+        Use --${AllPipelineOptions.INSTANCE.partitionKey.name} to specify the partition key column
+        Use --${AllPipelineOptions.INSTANCE.rangeKey.name} to specify the range key column
+        Use --${AllPipelineOptions.INSTANCE.selectFields.name} to specify columns to fetch
+        Use --${AllPipelineOptions.INSTANCE.numberOfFilesPerRequest.name} to specify how many items should be requested per backend call
+    """.trimIndent()
     override fun argDescription() = "<table>"
 
     override fun producedAttributesFor(arg: String) = setOf(
@@ -43,7 +54,6 @@ class DynamoDBScanStep(
 
     override fun createWorker(
         arg: String,
-        expectedOutput: Class<*>,
         w: Worker,
         predecessorName: String,
         params: PipelineParams,

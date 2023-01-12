@@ -28,22 +28,12 @@ class WorkItemTest {
         val item = WorkItem.of(StringValue.of("Test"))
         item.get().shouldBe(StringValue.of("Test"))
 
-        item.getAs<Value>().shouldBe(StringValue.of("Test"))
-        item.getAs<ComparableValue>().shouldBe(StringValue.of("Test"))
-        item.getAs<StringValue>().shouldBe(StringValue.of("Test"))
         item.set(LongValue.of(42))
-        item.getAs<Value>().shouldBe(LongValue.of(42L))
-        item.getAs<ComparableValue>().shouldBe(LongValue.of(42L))
-        item.getAs<NumberValue>().shouldBe(LongValue.of(42L))
-        item.getAs<LongValue>().shouldBe(LongValue.of(42L))
-
-        shouldThrow<ClassCastException> { item.getAs<StringValue>() }
+        item.get().shouldBe(LongValue.of(42L))
 
         item.getOptional().shouldBe(LongValue.of(42L))
-        item.getOptionalAs<LongValue>().shouldBe(LongValue.of(42L))
         item.set(NullValue.INSTANCE)
         item.getOptional().shouldBeNull()
-        item.getOptionalAs<LongValue>().shouldBeNull()
     }
 
     @Test
@@ -52,10 +42,10 @@ class WorkItemTest {
         item.set(StringValue.of("Test 1"), "value1")
         item.set(StringValue.of("Test 2"), "value2")
 
-        item.getAs<StringValue>().shouldBe(StringValue.of(""))
-        item.getAs<StringValue>("value1").shouldBe(StringValue.of("Test 1"))
-        item.getAs<StringValue>("value2").shouldBe(StringValue.of("Test 2"))
+        item.get().shouldBe(StringValue.of(""))
+        item.get("value1").shouldBe(StringValue.of("Test 1"))
+        item.get("value2").shouldBe(StringValue.of("Test 2"))
 
-        item.getAs<NullValue>("value3").shouldBe(NullValue.INSTANCE)
+        item.get("value3").shouldBe(NullValue.INSTANCE)
     }
 }

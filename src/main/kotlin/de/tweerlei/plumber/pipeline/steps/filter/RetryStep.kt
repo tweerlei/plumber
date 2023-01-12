@@ -15,8 +15,9 @@
  */
 package de.tweerlei.plumber.pipeline.steps.filter
 
-import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
+import de.tweerlei.plumber.pipeline.options.AllPipelineOptions
+import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.filter.RetryingWorker
 import org.springframework.stereotype.Service
@@ -27,13 +28,15 @@ class RetryStep: ProcessingStep {
     override val group = "Flow control"
     override val name = "Retry"
     override val description = "Retry the following steps a given number of times on error"
+    override val help = """
+        If one of the following steps throws an error, perform the given number of retry attempts.
+        Use --${AllPipelineOptions.INSTANCE.retryDelaySeconds} to add a delay between retries.
+        Use --${AllPipelineOptions.INSTANCE.failFast} to stop processing more items when no retry succeeded.
+    """.trimIndent()
     override fun argDescription() = retryCountFor("").toString()
-
-    override fun isValuePassThrough() = true
 
     override fun createWorker(
         arg: String,
-        expectedOutput: Class<*>,
         w: Worker,
         predecessorName: String,
         params: PipelineParams,

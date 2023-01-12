@@ -43,7 +43,8 @@ class CsvWriteWorker(
     }
 
     override fun doProcess(item: WorkItem): Boolean =
-        item.getFirstAs<Record>(WellKnownKeys.RECORD)
+        item.getFirst(WellKnownKeys.RECORD)
+            .toRecord()
             .let { obj ->
                 writerFor(obj).write(obj)
             }.let { true }
@@ -74,7 +75,7 @@ class CsvWriteWorker(
                 // withNullValue() does not apply to arrays and collections
                 .with(rec.toFormatSchema().withColumnSeparator(separator).withHeader())
                 .writeValues(stream)) {
-            it.values.mapNullTo("null")
+            it.toAny().values.mapNullTo("null")
         }
 
     private fun writerWithoutHeader(rec: Record) =
@@ -84,12 +85,12 @@ class CsvWriteWorker(
                 // withNullValue() does not apply to arrays and collections
                 .with(rec.toFormatSchema().withColumnSeparator(separator))
                 .writeValues(stream)) {
-            it.values.mapNullTo("null")
+            it.toAny().values.mapNullTo("null")
         }
 
     private fun Record.toFormatSchema() =
         CsvSchema.Builder().also { builder ->
-            forEach { k, _ -> builder.addColumn(k) }
+            toAny().forEach { (k, _) -> builder.addColumn(k) }
         }.build()
 
     private class RecordWriter<T, U>(

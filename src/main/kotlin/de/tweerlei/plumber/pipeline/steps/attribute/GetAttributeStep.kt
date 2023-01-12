@@ -17,7 +17,6 @@ package de.tweerlei.plumber.pipeline.steps.attribute
 
 import de.tweerlei.plumber.pipeline.PipelineParams
 import de.tweerlei.plumber.pipeline.steps.ProcessingStep
-import de.tweerlei.plumber.pipeline.steps.toWorkItemAccessor
 import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.attribute.SettingWorker
@@ -29,6 +28,9 @@ class GetAttributeStep: ProcessingStep {
     override val group = "Attributes"
     override val name = "Get attribute"
     override val description = "Set the current value to the given attribute"
+    override val help = """
+        get:myname is equivalent to value:@myname
+    """.trimIndent()
     override fun argDescription() = "<name>"
 
     override fun requiredAttributesFor(arg: String) = setOf(
@@ -37,7 +39,6 @@ class GetAttributeStep: ProcessingStep {
 
     override fun createWorker(
         arg: String,
-        expectedOutput: Class<*>,
         w: Worker,
         predecessorName: String,
         params: PipelineParams,

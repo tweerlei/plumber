@@ -15,10 +15,11 @@
  */
 package de.tweerlei.plumber.pipeline.steps.filter
 
-import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
-import de.tweerlei.plumber.worker.impl.WellKnownKeys
+import de.tweerlei.plumber.pipeline.options.AllPipelineOptions
+import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.worker.Worker
+import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.impl.filter.BulkWorker
 import org.springframework.stereotype.Service
 
@@ -28,6 +29,10 @@ class BulkStep: ProcessingStep {
     override val group = "Flow control"
     override val name = "Bulk execution"
     override val description = "Execute following steps using chunks of items"
+    override val help = """
+        This step will queue up incoming items until the given count (if unspecified, ${AllPipelineOptions.INSTANCE.numberOfFilesPerRequest.name})
+        is reached and pass them on wrapped as a single item. Such items can be processed by bulk-* steps.
+    """.trimIndent()
     override fun argDescription() = "<number>"
 
     override fun producedAttributesFor(arg: String) = setOf(
@@ -37,7 +42,6 @@ class BulkStep: ProcessingStep {
 
     override fun createWorker(
         arg: String,
-        expectedOutput: Class<*>,
         w: Worker,
         predecessorName: String,
         params: PipelineParams,

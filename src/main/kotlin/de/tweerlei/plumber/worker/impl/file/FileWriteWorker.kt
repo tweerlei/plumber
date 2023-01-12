@@ -20,10 +20,8 @@ import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.DelegatingWorker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.impl.ifEmptyGetFrom
-import de.tweerlei.plumber.worker.types.InstantValue
 import java.io.File
 import java.io.FileOutputStream
-import java.time.Instant
 
 class FileWriteWorker(
     private val dir: String,
@@ -42,8 +40,8 @@ class FileWriteWorker(
                                 FileOutputStream(file).use { stream ->
                                     stream.write(item.get().toByteArray())
                                 }
-                                item.getOptionalAs<InstantValue>(WellKnownKeys.LAST_MODIFIED)?.let { lastMod ->
-                                    file.setLastModified(lastMod.value.toEpochMilli())
+                                item.getOptional(WellKnownKeys.LAST_MODIFIED)?.let { lastMod ->
+                                    file.setLastModified(lastMod.toLong())
                                 }
                            }
                     }

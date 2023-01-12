@@ -21,7 +21,7 @@ import java.nio.charset.Charset
 import java.util.*
 
 class ByteArrayValue private constructor(
-    val value: ByteArray
+    private val value: ByteArray
 ): ComparableValue {
 
     companion object {
@@ -66,19 +66,17 @@ class ByteArrayValue private constructor(
         toLong().toDouble()
     override fun toByteArray() =
         value
-    override fun toRecord() =
-        Record.of(this)
     override fun toJsonNode(): JsonNode =
         JsonNodeFactory.instance.binaryNode(value)
+
     override fun size() =
         value.size.toLong()
-    override fun toString() =
-        value.toString(Charset.defaultCharset())
-
+    override fun compareTo(other: ComparableValue) =
+        Arrays.compare(value, other.toByteArray())
     override fun equals(other: Any?) =
         other is Value && value.contentEquals(other.toByteArray())
     override fun hashCode() =
         value.contentHashCode()
-    override fun compareTo(other: ComparableValue) =
-        Arrays.compare(value, other.toByteArray())
+    override fun toString() =
+        value.toString(Charset.defaultCharset())
 }

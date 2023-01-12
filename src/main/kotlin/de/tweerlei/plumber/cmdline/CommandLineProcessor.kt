@@ -18,6 +18,7 @@ package de.tweerlei.plumber.cmdline
 import de.tweerlei.plumber.pipeline.PipelineDefinition
 import de.tweerlei.plumber.pipeline.PipelineParams
 import de.tweerlei.plumber.pipeline.options.AllPipelineOptions
+import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.pipeline.steps.ProcessingStepFactory
 import mu.KLogging
 import org.springframework.boot.ApplicationArguments
@@ -34,20 +35,47 @@ class CommandLineProcessor(
         CommandLine.from(args).let { cmdline ->
             InclusionResolver().resolve(cmdline)
         }.let { cmdline ->
-            if (cmdline.isInvalid()) {
-                showHelp()
-                null
-            } else {
-                cmdline.toPipelineDefinition()
+            when (val stepName = cmdline.showHelpFor()) {
+                null -> cmdline.toPipelineDefinition()
                     .apply {
                         if (params.explain) {
                             params.showConfig()
                         }
                     }
+                else -> showHelp(stepName)
+                    .let { null }
             }
         }
 
-    private fun showHelp() {
+    private fun showHelp(stepName: String) {
+        try {
+            factory.processingStepFor(stepName)
+                .also { step -> showStepHelp(step) }
+        } catch (e: Exception) {
+            showGlobalHelp()
+        }
+    }
+
+    private fun showStepHelp(step: ProcessingStep) {
+        StringBuilder()
+            .append("\n")
+            .append("\n")
+            .append(step.description)
+            .append("\n")
+            .append(step.help)
+            .append("\n")
+            .append("\n")
+            .append("Required input attributes: ")
+            .append(step.requiredAttributesFor("").joinToString(", ").ifEmpty { "(none)" })
+            .append("\n")
+            .append("Produced output attributes: ")
+            .append(step.producedAttributesFor("").joinToString(", ").ifEmpty { "(none)" })
+            .append("\n")
+            .toString()
+            .also { message -> logger.warn(message) }
+    }
+
+    private fun showGlobalHelp() {
         StringBuilder()
             .append("""
 
@@ -76,6 +104,7 @@ class CommandLineProcessor(
                 Supported global options and their defaults (if any) are:
 
                 --help                        Show this help
+                --help=step-name              Show help for a specific step
                 --profile=default             Use 'quiet' to disable start-up banner and log only warnings and errors
                                               Use 'verbose' to increase log output
                                               Use 'debug' for full debug logging
@@ -133,8 +162,11 @@ class CommandLineProcessor(
         logger.info("XML: naming elements <$elementName> with root <$rootElementName>")
     }
 
-    private fun CommandLine.isInvalid() =
-        options.containsKey("help") || steps.isEmpty()
+    private fun CommandLine.showHelpFor() =
+        when (val stepName = options["help"]) {
+            null -> if (steps.isEmpty()) "" else null
+            else -> stepName
+        }
 
     private fun CommandLine.toPipelineDefinition() =
         PipelineDefinition(

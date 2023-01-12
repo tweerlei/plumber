@@ -39,6 +39,6 @@ class OrWorkerTest {
             .singleOrNull()
 
         item.shouldNotBeNull()
-        item.getAs<BooleanValue>().value.shouldBe(expected)
+        item.get().toAny().shouldBe(expected)
     }
 }

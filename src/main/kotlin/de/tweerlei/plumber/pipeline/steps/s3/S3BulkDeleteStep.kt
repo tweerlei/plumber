@@ -15,11 +15,12 @@
  */
 package de.tweerlei.plumber.pipeline.steps.s3
 
-import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
+import de.tweerlei.plumber.pipeline.options.AllPipelineOptions
+import de.tweerlei.plumber.pipeline.steps.ProcessingStep
+import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.impl.s3.S3ClientFactory
-import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.s3.S3DeleteObjectsWorker
 import org.springframework.stereotype.Service
 
@@ -31,16 +32,18 @@ class S3BulkDeleteStep(
     override val group = "AWS S3"
     override val name = "Delete S3 objects"
     override val description = "Deletes multiple objects from the given S3 bucket, use with bulk:<n>"
+    override val help = """
+        Bulked version of s3-delete.
+        Use --${AllPipelineOptions.INSTANCE.requesterPays.name} to accept being charged with S3 access costs.
+    """.trimIndent()
     override fun argDescription() = "<bucket>"
 
-    override fun isValuePassThrough() = true
     override fun requiredAttributesFor(arg: String) = setOf(
         WellKnownKeys.WORK_ITEMS
     )
 
     override fun createWorker(
         arg: String,
-        expectedOutput: Class<*>,
         w: Worker,
         predecessorName: String,
         params: PipelineParams,

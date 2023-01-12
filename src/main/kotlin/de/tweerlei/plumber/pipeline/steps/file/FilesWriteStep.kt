@@ -17,8 +17,8 @@ package de.tweerlei.plumber.pipeline.steps.file
 
 import de.tweerlei.plumber.pipeline.PipelineParams
 import de.tweerlei.plumber.pipeline.steps.ProcessingStep
-import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.Worker
+import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.impl.file.FileWriteWorker
 import org.springframework.stereotype.Service
 
@@ -28,16 +28,15 @@ class FilesWriteStep: ProcessingStep {
     override val group = "Files"
     override val name = "Write files"
     override val description = "Write items as files in the given directory"
+    override val help = ""
     override fun argDescription() = "<path>"
 
-    override fun isValuePassThrough() = true
     override fun requiredAttributesFor(arg: String) = setOf(
         WellKnownKeys.NAME
     )
 
     override fun createWorker(
         arg: String,
-        expectedOutput: Class<*>,
         w: Worker,
         predecessorName: String,
         params: PipelineParams,

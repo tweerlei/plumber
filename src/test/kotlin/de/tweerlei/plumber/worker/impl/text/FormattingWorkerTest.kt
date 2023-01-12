@@ -33,7 +33,7 @@ class FormattingWorkerTest {
             .singleOrNull()
 
         item.shouldNotBeNull()
-        item.getAs<StringValue>().value.shouldBe("Hello")
+        item.get().shouldBe(StringValue.of("Hello"))
     }
 
     @Test
@@ -45,7 +45,7 @@ class FormattingWorkerTest {
             .singleOrNull()
 
         item.shouldNotBeNull()
-        item.getAs<StringValue>().value.shouldBe("My @variable is {value}")
+        item.get().shouldBe(StringValue.of("My @variable is {value}"))
     }
 
     @Test
@@ -57,7 +57,7 @@ class FormattingWorkerTest {
             .singleOrNull()
 
         item.shouldNotBeNull()
-        item.getAs<StringValue>().value.shouldBe("My @ is {value}")
+        item.get().shouldBe(StringValue.of("My @ is {value}"))
     }
 
     @Test
@@ -69,6 +69,6 @@ class FormattingWorkerTest {
             .singleOrNull()
 
         item.shouldNotBeNull()
-        item.getAs<StringValue>().value.shouldBe("My @foo@1bar is {value}")
+        item.get().shouldBe(StringValue.of("My @foo@1bar is {value}"))
     }
 }

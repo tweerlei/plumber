@@ -21,7 +21,6 @@ import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.DelegatingWorker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
-import de.tweerlei.plumber.worker.types.Record
 import de.tweerlei.plumber.worker.types.StringValue
 
 class ToCsvWorker(
@@ -41,9 +40,10 @@ class ToCsvWorker(
         .with(CsvSchema.emptySchema().withColumnSeparator(separator))
 
     override fun doProcess(item: WorkItem) =
-        item.getFirstAs<Record>(WellKnownKeys.RECORD)
+        item.getFirst(WellKnownKeys.RECORD)
+            .toRecord()
             .let { obj ->
-                writer.writeValueAsString(obj.values.mapNullTo("null"))
+                writer.writeValueAsString(obj.toAny().values.mapNullTo("null"))
                     .also { str ->
                         item.set(StringValue.of(str))
                         item.set(CONTENT_TYPE_CSV, WellKnownKeys.CONTENT_TYPE)

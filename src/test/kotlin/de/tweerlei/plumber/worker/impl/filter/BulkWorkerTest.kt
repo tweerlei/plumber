@@ -32,8 +32,8 @@ class BulkWorkerTest {
             .run()
 
         items.size.shouldBe(2)
-        items.fold(0) { acc, item ->
-            acc + item.getAs<WorkItemList>(WellKnownKeys.WORK_ITEMS).size
-        }.shouldBe(19)
+        items.fold(0L) { acc, item ->
+            acc + item.get(WellKnownKeys.WORK_ITEMS).size()
+        }.shouldBe(19L)
     }
 }

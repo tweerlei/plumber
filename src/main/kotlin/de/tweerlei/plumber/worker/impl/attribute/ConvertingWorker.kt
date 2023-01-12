@@ -16,9 +16,9 @@
 package de.tweerlei.plumber.worker.impl.attribute
 
 import de.tweerlei.plumber.worker.WorkItem
-import de.tweerlei.plumber.worker.WorkItemAccessor
-import de.tweerlei.plumber.worker.impl.DelegatingWorker
 import de.tweerlei.plumber.worker.Worker
+import de.tweerlei.plumber.worker.impl.DelegatingWorker
+import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.types.*
 
 class ConvertingWorker(
@@ -39,12 +39,18 @@ class ConvertingWorker(
                     BigIntegerValue.NAME -> value.toBigInteger()
                     BigDecimalValue.NAME -> value.toBigDecimal()
                     ByteArrayValue.NAME -> value.toByteArray()
+                    Range.NAME -> value.toRange()
                     Record.NAME -> value.toRecord()
-                    Node.NAME -> value.toJsonNode()
+                    Node.NAME -> value.toNode()
                     else -> null
                 }
             }?.toValue()
             ?.also { value ->
                 item.set(value)
+                when (value) {
+                    is Range -> item.set(value, WellKnownKeys.RANGE)
+                    is Record -> item.set(value, WellKnownKeys.RECORD)
+                    is Node -> item.set(value, WellKnownKeys.NODE)
+                }
             }.let { true }
 }

@@ -16,9 +16,9 @@
 package de.tweerlei.plumber.pipeline.steps.csv
 
 import com.fasterxml.jackson.dataformat.csv.CsvMapper
-import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
-import de.tweerlei.plumber.worker.types.Record
+import de.tweerlei.plumber.pipeline.options.AllPipelineOptions
+import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.csv.ToCsvWorker
 import org.springframework.stereotype.Service
@@ -31,12 +31,13 @@ class CsvEncodeStep(
     override val group = "CSV"
     override val name = "Serialize to CSV"
     override val description = "Serialize objects to CSV text"
-
-    override fun expectedInputFor(arg: String) = Record::class.java
+    override val help = """
+        This will encode the current record, if set. Otherwise the current value is encoded.
+        Use --${AllPipelineOptions.INSTANCE.separator.name} to specify the record separator character.
+    """.trimIndent()
 
     override fun createWorker(
         arg: String,
-        expectedOutput: Class<*>,
         w: Worker,
         predecessorName: String,
         params: PipelineParams,

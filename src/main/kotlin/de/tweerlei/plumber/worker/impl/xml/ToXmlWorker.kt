@@ -37,7 +37,8 @@ class ToXmlWorker(
     private val writer = xmlMapper.writer().withRootName(elementName)
 
     override fun doProcess(item: WorkItem) =
-        item.get().toAny()
+        item.getFirst(WellKnownKeys.NODE)
+            .toJsonNode()
             .let { obj -> writeValue(obj) }
             .also { str ->
                 item.set(StringValue.of(str))

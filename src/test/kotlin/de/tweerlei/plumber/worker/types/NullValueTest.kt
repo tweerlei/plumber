@@ -36,8 +36,9 @@ class NullValueTest {
             toBigInteger().shouldBe(BigInteger.valueOf(0L))
             toBigDecimal().shouldBe(BigDecimal.valueOf(0.0))
             toByteArray().size.shouldBe(0)
+            toRange().shouldBe(Range())
             with (toRecord()) {
-                size.shouldBe(1)
+                size().shouldBe(1)
                 getValue("0").toAny().shouldBeNull()
             }
             toJsonNode().isNull.shouldBeTrue()

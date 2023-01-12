@@ -34,7 +34,8 @@ class ToJsonWorker(
     }
 
     override fun doProcess(item: WorkItem) =
-        item.get().toJsonNode()
+        item.getFirst(WellKnownKeys.NODE)
+            .toJsonNode()
             .let { obj -> writeValue(obj) }
             .also { str ->
                 item.set(StringValue.of(str))

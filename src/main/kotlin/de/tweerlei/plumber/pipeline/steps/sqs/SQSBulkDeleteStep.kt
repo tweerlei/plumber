@@ -17,8 +17,8 @@ package de.tweerlei.plumber.pipeline.steps.sqs
 
 import de.tweerlei.plumber.pipeline.PipelineParams
 import de.tweerlei.plumber.pipeline.steps.ProcessingStep
-import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.Worker
+import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.impl.sqs.SQSClientFactory
 import de.tweerlei.plumber.worker.impl.sqs.SQSDeleteBatchWorker
 import org.springframework.stereotype.Service
@@ -31,16 +31,17 @@ class SQSBulkDeleteStep(
     override val group = "AWS SQS"
     override val name = "Delete SQS messages"
     override val description = "Delete multiple messages from the given SQS queue, use with bulk:<n>"
+    override val help = """
+        Bulked version of sqs-delete.
+    """.trimIndent()
     override fun argDescription() = "<queue>"
 
-    override fun isValuePassThrough() = true
     override fun requiredAttributesFor(arg: String) = setOf(
         WellKnownKeys.WORK_ITEMS
     )
 
     override fun createWorker(
         arg: String,
-        expectedOutput: Class<*>,
         w: Worker,
         predecessorName: String,
         params: PipelineParams,

@@ -16,6 +16,7 @@
 package de.tweerlei.plumber.pipeline.steps.dynamodb
 
 import de.tweerlei.plumber.pipeline.PipelineParams
+import de.tweerlei.plumber.pipeline.options.AllPipelineOptions
 import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.pipeline.steps.toRequiredAttributes
 import de.tweerlei.plumber.pipeline.steps.toWorkItemAccessor
@@ -31,6 +32,12 @@ class DynamoDBKeyStep: ProcessingStep {
     override val group = "AWS DynamoDB"
     override val name = "Build DynamoDB key"
     override val description = "Convert item to a DynamoDB key with the specified range key"
+    override val help = """
+        To generate a partition key only, use: value:keyValue dynamodb-key
+        To generate a partition and range key, use: value:keyValue dynamodb-key:rangeKeyValue
+        Use --${AllPipelineOptions.INSTANCE.partitionKey.name} to specify the partition key column
+        Use --${AllPipelineOptions.INSTANCE.rangeKey.name} to specify the range key column
+    """.trimIndent()
     override fun argDescription() = "<value>"
 
     override fun producedAttributesFor(arg: String) = setOf(
@@ -41,7 +48,6 @@ class DynamoDBKeyStep: ProcessingStep {
 
     override fun createWorker(
         arg: String,
-        expectedOutput: Class<*>,
         w: Worker,
         predecessorName: String,
         params: PipelineParams,

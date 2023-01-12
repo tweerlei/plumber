@@ -40,7 +40,7 @@ class DecodingWorkerTest {
             .singleOrNull()
 
         item.shouldNotBeNull()
-        item.getAs<ByteArrayValue>().value.contentEquals(value).shouldBeTrue()
+        item.get().toByteArray().contentEquals(value).shouldBeTrue()
     }
 
     @Test
@@ -54,7 +54,7 @@ class DecodingWorkerTest {
             .singleOrNull()
 
         item.shouldNotBeNull()
-        item.getAs<ByteArrayValue>().value.contentEquals(value).shouldBeTrue()
+        item.get().toByteArray().contentEquals(value).shouldBeTrue()
     }
 
     @Test
@@ -68,6 +68,6 @@ class DecodingWorkerTest {
             .singleOrNull()
 
         item.shouldNotBeNull()
-        item.getAs<ByteArrayValue>().value.contentEquals(value).shouldBeTrue()
+        item.get().toByteArray().contentEquals(value).shouldBeTrue()
     }
 }

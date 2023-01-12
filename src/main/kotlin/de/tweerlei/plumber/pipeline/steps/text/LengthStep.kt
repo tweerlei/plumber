@@ -15,10 +15,10 @@
  */
 package de.tweerlei.plumber.pipeline.steps.text
 
-import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
-import de.tweerlei.plumber.worker.impl.WellKnownKeys
+import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.worker.Worker
+import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.impl.text.LengthWorker
 import org.springframework.stereotype.Service
 
@@ -28,6 +28,7 @@ class LengthStep: ProcessingStep {
     override val group = "Text"
     override val name = "Calculate length"
     override val description = "Calculate the length of the current value"
+    override val help = ""
 
     override fun producedAttributesFor(arg: String) = setOf(
         WellKnownKeys.SIZE
@@ -35,7 +36,6 @@ class LengthStep: ProcessingStep {
 
     override fun createWorker(
         arg: String,
-        expectedOutput: Class<*>,
         w: Worker,
         predecessorName: String,
         params: PipelineParams,

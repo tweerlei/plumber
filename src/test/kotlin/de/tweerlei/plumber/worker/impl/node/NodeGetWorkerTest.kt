@@ -16,7 +16,6 @@
 package de.tweerlei.plumber.worker.impl.node
 
 import com.fasterxml.jackson.core.JsonPointer
-import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.impl.TestWorkerRunner
@@ -36,13 +35,13 @@ class NodeGetWorkerTest {
         val objectMapper = ObjectMapper()
 
         val item = TestWorkerRunner(WorkItem.of(StringValue.of("""{"entry":"value"}""")))
-            .append { w -> FromJsonWorker(JsonNode::class.java, objectMapper, w) }
+            .append { w -> FromJsonWorker(objectMapper, w) }
             .append { w -> NodeGetWorker(JsonPointer.compile("/entry"), w) }
             .run()
             .singleOrNull()
 
         item.shouldNotBeNull()
-        item.getAs<StringValue>().value.shouldBe("value")
+        item.get().toAny().shouldBe("value")
     }
 
     @Test
@@ -51,13 +50,13 @@ class NodeGetWorkerTest {
         val objectMapper = ObjectMapper()
 
         val item = TestWorkerRunner(WorkItem.of(StringValue.of("""{"entry":true}""")))
-            .append { w -> FromJsonWorker(JsonNode::class.java, objectMapper, w) }
+            .append { w -> FromJsonWorker(objectMapper, w) }
             .append { w -> NodeGetWorker(JsonPointer.compile("/entry"), w) }
             .run()
             .singleOrNull()
 
         item.shouldNotBeNull()
-        item.getAs<BooleanValue>().value.shouldBeTrue()
+        item.get().toAny().shouldBe(true)
     }
 
     @Test
@@ -66,13 +65,13 @@ class NodeGetWorkerTest {
         val objectMapper = ObjectMapper()
 
         val item = TestWorkerRunner(WorkItem.of(StringValue.of("""{"entry":42}""")))
-            .append { w -> FromJsonWorker(JsonNode::class.java, objectMapper, w) }
+            .append { w -> FromJsonWorker(objectMapper, w) }
             .append { w -> NodeGetWorker(JsonPointer.compile("/entry"), w) }
             .run()
             .singleOrNull()
 
         item.shouldNotBeNull()
-        item.getAs<LongValue>().value.shouldBe(42L)
+        item.get().toAny().shouldBe(42L)
     }
 
     @Test
@@ -88,7 +87,7 @@ class NodeGetWorkerTest {
             .singleOrNull()
 
         item.shouldNotBeNull()
-        item.getAs<ByteArrayValue>().value.contentEquals(value).shouldBeTrue()
+        item.get().toByteArray().contentEquals(value).shouldBeTrue()
     }
 
     @Test
@@ -97,12 +96,12 @@ class NodeGetWorkerTest {
         val objectMapper = ObjectMapper()
 
         val item = TestWorkerRunner(WorkItem.of(StringValue.of("""{"entry2":"value"}""")))
-            .append { w -> FromJsonWorker(JsonNode::class.java, objectMapper, w) }
+            .append { w -> FromJsonWorker(objectMapper, w) }
             .append { w -> NodeGetWorker(JsonPointer.compile("/entry"), w) }
             .run()
             .singleOrNull()
 
         item.shouldNotBeNull()
-        item.getAs<NullValue>().shouldBe(NullValue.INSTANCE)
+        item.get().shouldBe(NullValue.INSTANCE)
     }
 }

@@ -28,6 +28,7 @@ class IsInRangeStep: ProcessingStep {
     override val group = "Ranges"
     override val name = "Compare"
     override val description = "Compare the current value to the current range resulting in a boolean"
+    override val help = ""
 
     override fun requiredAttributesFor(arg: String) = setOf(
         WellKnownKeys.RANGE
@@ -35,7 +36,6 @@ class IsInRangeStep: ProcessingStep {
 
     override fun createWorker(
         arg: String,
-        expectedOutput: Class<*>,
         w: Worker,
         predecessorName: String,
         params: PipelineParams,

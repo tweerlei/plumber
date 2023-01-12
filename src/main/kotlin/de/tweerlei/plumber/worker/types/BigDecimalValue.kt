@@ -21,7 +21,7 @@ import java.math.BigDecimal
 import java.math.BigInteger
 
 class BigDecimalValue private constructor(
-    val value: BigDecimal
+    private val value: BigDecimal
 ): NumberValue {
 
     companion object {
@@ -46,17 +46,15 @@ class BigDecimalValue private constructor(
         value.toBigInteger()
     override fun toBigDecimal() =
         value
-    override fun toRecord() =
-        Record.of(this)
     override fun toJsonNode(): JsonNode =
         JsonNodeFactory.instance.numberNode(value)
-    override fun toString() =
-        value.toString()
 
+    override fun compareTo(other: ComparableValue) =
+        value.compareTo(other.toBigDecimal())
     override fun equals(other: Any?) =
         other is Value && value == other.toBigDecimal()
     override fun hashCode() =
         value.hashCode()
-    override fun compareTo(other: ComparableValue) =
-        value.compareTo(other.toBigDecimal())
+    override fun toString() =
+        value.toString()
 }

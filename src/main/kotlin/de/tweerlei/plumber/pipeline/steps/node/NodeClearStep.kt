@@ -28,13 +28,13 @@ class NodeClearStep: ProcessingStep {
 
     override val group = "Nodes"
     override val name = "Clear JSON"
-    override val description = "Clear the curent JSON object"
-
-    override fun isValuePassThrough() = true
+    override val description = "Clear the current JSON object"
+    override val help = """
+        The current node will be set to an empty object.
+    """.trimIndent()
 
     override fun createWorker(
         arg: String,
-        expectedOutput: Class<*>,
         w: Worker,
         predecessorName: String,
         params: PipelineParams,

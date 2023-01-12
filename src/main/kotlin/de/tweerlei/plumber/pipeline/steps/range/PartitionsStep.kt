@@ -15,10 +15,11 @@
  */
 package de.tweerlei.plumber.pipeline.steps.range
 
-import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
-import de.tweerlei.plumber.worker.impl.WellKnownKeys
+import de.tweerlei.plumber.pipeline.options.AllPipelineOptions
+import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.worker.Worker
+import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.impl.range.KeyRangeWorker
 import org.springframework.stereotype.Service
 
@@ -28,6 +29,13 @@ class PartitionsStep: ProcessingStep {
     override val group = "Ranges"
     override val name = "Generate partitions"
     override val description = "Generate key ranges for n partitions, use with parallel:<n>"
+    override val help = """
+        This will split the current range into (at most) the given number of sub ranges
+        and pass these on to the following steps.
+        The types of the current range's bounds are important. Numeric bounds will be split into number ranges
+        while string bounds will generate key ranges.
+        Use --${AllPipelineOptions.INSTANCE.keyChars.name} to specify valid characters for key range generation.
+    """.trimIndent()
     override fun argDescription() = partitionCountFor("").toString()
 
     override fun requiredAttributesFor(arg: String) = setOf(
@@ -39,7 +47,6 @@ class PartitionsStep: ProcessingStep {
 
     override fun createWorker(
         arg: String,
-        expectedOutput: Class<*>,
         w: Worker,
         predecessorName: String,
         params: PipelineParams,

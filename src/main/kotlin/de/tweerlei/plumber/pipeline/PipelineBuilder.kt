@@ -41,9 +41,9 @@ class PipelineBuilder(
                 override val group = "No group"
                 override val name = "Nothing"
                 override val description = "Start of pipeline"
+                override val help = ""
                 override fun createWorker(
                     arg: String,
-                    expectedOutput: Class<*>,
                     w: Worker,
                     predecessorName: String,
                     params: PipelineParams,
@@ -152,35 +152,22 @@ class PipelineBuilder(
                         b,
                         step,
                         workers.getOrElse(index - 1) { VIRTUAL_START_WORKER },
-                        getExpectedOutput(workers, index),
                         params
                     )
                 }
             }.build()
-
-    private fun getExpectedOutput(
-        workers: List<WorkerDefinition>,
-        startAt: Int
-    ) =
-        workers.subList(startAt + 1, workers.size)
-            .firstOrNull { step ->
-                !step.factory.isValuePassThrough()
-            }?.let { step ->
-                step.factory.expectedInputFor(step.arg)
-            }?: Any::class.java
 
     private fun createWorker(
         index: Int,
         builder: WorkerBuilder,
         currentWorker: WorkerDefinition,
         previousWorker: WorkerDefinition,
-        expectedOutput: Class<*>,
         params: PipelineParams
     ): WorkerBuilder {
         if (params.explain) {
             logger.warn("Step ${String.format("%2d", index)}:${String.format("%4d", currentWorker.parallelDegree)}x ${currentWorker.factory.name}: ${currentWorker.arg}")
-            logger.warn("              Required input: ${currentWorker.factory.expectedInputFor(currentWorker.arg).simpleName} ${currentWorker.factory.requiredAttributesFor(currentWorker.arg)}")
-            logger.warn("              Produces output: ${expectedOutput.simpleName} ${currentWorker.factory.producedAttributesFor(currentWorker.arg)}")
+            logger.warn("              Required attributes: ${currentWorker.factory.requiredAttributesFor(currentWorker.arg)}")
+            logger.warn("              Produces attributes: ${currentWorker.factory.producedAttributesFor(currentWorker.arg)}")
         }
 
         currentWorker.factory.missingRequiredAttributesFor(previousWorker.producedAttributes, currentWorker.arg)?.also { missing ->
@@ -190,7 +177,6 @@ class PipelineBuilder(
         return builder.append { w ->
             currentWorker.factory.createWorker(
                 currentWorker.arg,
-                expectedOutput,
                 w,
                 previousWorker.factory.name,
                 params,

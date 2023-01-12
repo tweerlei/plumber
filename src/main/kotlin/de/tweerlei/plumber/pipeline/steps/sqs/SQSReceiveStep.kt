@@ -15,10 +15,11 @@
  */
 package de.tweerlei.plumber.pipeline.steps.sqs
 
-import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
-import de.tweerlei.plumber.worker.impl.WellKnownKeys
+import de.tweerlei.plumber.pipeline.options.AllPipelineOptions
+import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.worker.Worker
+import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.impl.sqs.SQSClientFactory
 import de.tweerlei.plumber.worker.impl.sqs.SQSKeys
 import de.tweerlei.plumber.worker.impl.sqs.SQSReceiveWorker
@@ -32,6 +33,11 @@ class SQSReceiveStep(
     override val group = "AWS SQS"
     override val name = "Receive SQS messages"
     override val description = "Receive messages from the given SQS queue"
+    override val help = """
+        Use --${AllPipelineOptions.INSTANCE.maxWaitTimeSeconds.name} to specify how long to wait for the next message.
+        Use --${AllPipelineOptions.INSTANCE.follow.name} to keep polling even if no message is currently available.
+        Use --${AllPipelineOptions.INSTANCE.numberOfFilesPerRequest.name} to specify how many messages to retrieve per backend call.
+    """.trimIndent()
     override fun argDescription() = "<queue>"
 
     override fun producedAttributesFor(arg: String) = setOf(
@@ -44,7 +50,6 @@ class SQSReceiveStep(
 
     override fun createWorker(
         arg: String,
-        expectedOutput: Class<*>,
         w: Worker,
         predecessorName: String,
         params: PipelineParams,

@@ -29,6 +29,13 @@ class IsEqualStep: ProcessingStep {
     override val group = "Attributes"
     override val name = "Compare"
     override val description = "Compare the current value to the given value resulting in a boolean"
+    override val help = """
+        The given value is converted to the current value's type so this operation is NOT commutative. Examples:
+          value:42 is-equal:42 -> true
+          value:42 is-equal:0 -> false
+          value:true is-equal:42 -> true
+          value:42 is-equal:true -> false
+    """.trimIndent()
     override fun argDescription() = "<value>"
 
     override fun requiredAttributesFor(arg: String) =
@@ -36,7 +43,6 @@ class IsEqualStep: ProcessingStep {
 
     override fun createWorker(
         arg: String,
-        expectedOutput: Class<*>,
         w: Worker,
         predecessorName: String,
         params: PipelineParams,

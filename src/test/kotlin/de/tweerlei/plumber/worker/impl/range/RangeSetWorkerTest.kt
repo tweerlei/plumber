@@ -37,7 +37,7 @@ class RangeSetWorkerTest {
             .singleOrNull()
 
         item.shouldNotBeNull()
-        with (item.getAs<Range>(WellKnownKeys.RANGE)) {
+        with (item.get(WellKnownKeys.RANGE).toRange()) {
             startAfter.shouldBe(StringValue.of("value"))
             endWith.shouldBe(NullValue.INSTANCE)
         }
@@ -52,7 +52,7 @@ class RangeSetWorkerTest {
             .singleOrNull()
 
         item.shouldNotBeNull()
-        with (item.getAs<Range>(WellKnownKeys.RANGE)) {
+        with (item.get(WellKnownKeys.RANGE).toRange()) {
             startAfter.shouldBe(NullValue.INSTANCE)
             endWith.shouldBe(StringValue.of("value"))
         }
@@ -69,7 +69,7 @@ class RangeSetWorkerTest {
             .singleOrNull()
 
         item.shouldNotBeNull()
-        with (item.getAs<Range>(WellKnownKeys.RANGE)) {
+        with (item.get(WellKnownKeys.RANGE).toRange()) {
             startAfter.shouldBe(StringValue.of("value"))
             endWith.shouldBe(LongValue.of(100L))
         }

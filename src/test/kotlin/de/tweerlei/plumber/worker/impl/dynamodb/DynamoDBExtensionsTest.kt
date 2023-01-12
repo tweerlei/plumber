@@ -52,21 +52,23 @@ class DynamoDBExtensionsTest {
 
         val record = dynamoDBRecord.fromDynamoDB(ObjectMapper())
 
-        record["string"].shouldBe(StringValue.of("Hello, World!"))
-        record["number"].shouldBe(BigDecimalValue.of(BigDecimal.valueOf(42L)))
-        record["bytes"].shouldBe(ByteArrayValue.of(byteArrayOf(0x01, 0x02, 0x04, 0x09)))
-        record["boolean"].shouldBe(BooleanValue.FALSE)
-        record["set"].shouldBe(JsonNodeFactory.instance.arrayNode().apply {
-            add("one")
-            add("two")
-            add("three")
-        }.let { Node(it) })
-        record["list"].shouldBe(JsonNodeFactory.instance.arrayNode().apply {
-            add("Hello, World!")
-        }.let { Node(it) })
-        record["map"].shouldBe(JsonNodeFactory.instance.objectNode().apply {
-            put("one", "Hello, World!")
-        }.let { Node(it) })
+        with (record.toAny()) {
+            this["string"].shouldBe(StringValue.of("Hello, World!"))
+            this["number"].shouldBe(BigDecimalValue.of(BigDecimal.valueOf(42L)))
+            this["bytes"].shouldBe(ByteArrayValue.of(byteArrayOf(0x01, 0x02, 0x04, 0x09)))
+            this["boolean"].shouldBe(BooleanValue.FALSE)
+            this["set"].shouldBe(JsonNodeFactory.instance.arrayNode().apply {
+                add("one")
+                add("two")
+                add("three")
+            }.let { Node(it) })
+            this["list"].shouldBe(JsonNodeFactory.instance.arrayNode().apply {
+                add("Hello, World!")
+            }.let { Node(it) })
+            this["map"].shouldBe(JsonNodeFactory.instance.objectNode().apply {
+                put("one", "Hello, World!")
+            }.let { Node(it) })
+        }
     }
 
     @Test

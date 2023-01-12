@@ -20,9 +20,6 @@ import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.DelegatingWorker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
-import de.tweerlei.plumber.worker.types.InstantValue
-import java.io.File
-import java.io.FileOutputStream
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 
@@ -41,8 +38,8 @@ class ZipWriteWorker(
         item.get(WellKnownKeys.NAME).toString()
             .let { name ->
                 ZipEntry(name).apply {
-                    item.getOptionalAs<InstantValue>(WellKnownKeys.LAST_MODIFIED)?.let { lastMod ->
-                        time = lastMod.value.toEpochMilli()
+                    item.getOptional(WellKnownKeys.LAST_MODIFIED)?.let { lastMod ->
+                        time = lastMod.toLong()
                     }
                 }.let { entry ->
                     stream.putNextEntry(entry)

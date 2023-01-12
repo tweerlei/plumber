@@ -15,10 +15,8 @@
  */
 package de.tweerlei.plumber.worker.types
 
-import com.fasterxml.jackson.databind.JsonNode
-
 class AnyValue private constructor(
-    val value: Any
+    private val value: Any
 ): Value {
 
     companion object {
@@ -33,9 +31,6 @@ class AnyValue private constructor(
     private fun toStringValue() =
         stringValue ?: StringValue.of(value.toString())
             .also { stringValue = it}
-
-    inline fun <reified T: Any> to() =
-        value as T
 
     override fun getName() =
         NAME
@@ -54,20 +49,23 @@ class AnyValue private constructor(
         toStringValue().toBigDecimal()
     override fun toByteArray() =
         toStringValue().toByteArray()
-    override fun toRecord() =
-        Record.of(this)
-    override fun toJsonNode(): JsonNode =
+    override fun toJsonNode() =
         // TODO: use ObjectMapper.valueToTree()
         toStringValue().toJsonNode()
+
+    override fun toRange() =
+        Range()
+    override fun toRecord() =
+        Record.of(this)
+
     override fun size() =
         toStringValue().size()
-    override fun toString() =
-        toStringValue().toString()
-
-    override fun dump() =
-        "${getName()}:${value::class.simpleName}:${toString()}"
     override fun equals(other: Any?) =
         other is Value && value == other.toAny()
     override fun hashCode(): Int =
         value.hashCode()
+    override fun toString() =
+        toStringValue().toString()
+    override fun dump() =
+        "${getName()}:${value::class.simpleName}:${toString()}"
 }

@@ -15,10 +15,9 @@
  */
 package de.tweerlei.plumber.pipeline.steps.mongodb
 
-import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
-import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
+import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.mongodb.MongoClientFactory
 import de.tweerlei.plumber.worker.impl.mongodb.MongoDBPutWorker
@@ -33,13 +32,14 @@ class MongoDBPutStep(
     override val group = "MongoDB"
     override val name = "Put MongoDB document"
     override val description = "Insert a document into the given MongoDB collection"
+    override val help = """
+        This will write the current node, if any. Otherwise the current value will be used.
+        If the argument is omitted, the table name will be taken from a previously read MongoDB item.
+    """.trimIndent()
     override fun argDescription() = "<collection>"
-
-    override fun expectedInputFor(arg: String) = JsonNode::class.java
 
     override fun createWorker(
         arg: String,
-        expectedOutput: Class<*>,
         w: Worker,
         predecessorName: String,
         params: PipelineParams,

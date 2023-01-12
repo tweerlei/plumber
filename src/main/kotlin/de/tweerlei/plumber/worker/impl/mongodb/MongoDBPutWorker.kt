@@ -22,7 +22,6 @@ import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.DelegatingWorker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.impl.ifEmptyGetFrom
-import de.tweerlei.plumber.worker.types.Node
 import org.bson.Document
 
 class MongoDBPutWorker(
@@ -34,7 +33,8 @@ class MongoDBPutWorker(
 ): DelegatingWorker(worker) {
 
     override fun doProcess(item: WorkItem) =
-        item.getFirstAs<Node>(WellKnownKeys.NODE)
+        item.getFirst(WellKnownKeys.NODE)
+            .toJsonNode()
             .toMongoDB(objectMapper)
             .also { attributes ->
                 putItem(

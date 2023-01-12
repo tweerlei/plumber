@@ -29,6 +29,9 @@ class PlusStep: ProcessingStep {
     override val group = "Math"
     override val name = "Add"
     override val description = "Add the given value to the current value"
+    override val help = """
+        Both operands are evaluated as numbers.
+    """.trimIndent()
     override fun argDescription() = valueFor("")
 
     override fun requiredAttributesFor(arg: String) =
@@ -36,7 +39,6 @@ class PlusStep: ProcessingStep {
 
     override fun createWorker(
         arg: String,
-        expectedOutput: Class<*>,
         w: Worker,
         predecessorName: String,
         params: PipelineParams,

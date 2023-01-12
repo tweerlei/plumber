@@ -15,11 +15,12 @@
  */
 package de.tweerlei.plumber.pipeline.steps.filter
 
-import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
+import de.tweerlei.plumber.pipeline.options.AllPipelineOptions
+import de.tweerlei.plumber.pipeline.steps.ProcessingStep
+import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.impl.filter.MultithreadedWorker
-import de.tweerlei.plumber.worker.Worker
 import org.springframework.stereotype.Service
 
 @Service("parallelWorker")
@@ -28,9 +29,13 @@ class ParallelStep: ProcessingStep {
     override val group = "Flow control"
     override val name = "Parallel execution"
     override val description = "Execute following steps using the given number of threads"
+    override val help = """
+        This will 'fan out' items to multiple worker threads such that the following steps will be executed in parallel
+        until another parallel step or a step that requires serialization (e.g. writing to a single file).
+        Use --${AllPipelineOptions.INSTANCE.queueSizePerThread.name} to control the size of the waiting queue per thread.
+    """.trimIndent()
     override fun argDescription() = parallelDegreeFor("").toString()
 
-    override fun isValuePassThrough() = true
     override fun producedAttributesFor(arg: String) = setOf(
         WellKnownKeys.WORKER_INDEX
     )
@@ -40,7 +45,6 @@ class ParallelStep: ProcessingStep {
 
     override fun createWorker(
         arg: String,
-        expectedOutput: Class<*>,
         w: Worker,
         predecessorName: String,
         params: PipelineParams,

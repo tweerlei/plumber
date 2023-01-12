@@ -16,10 +16,10 @@
 package de.tweerlei.plumber.pipeline.steps.json
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
-import de.tweerlei.plumber.worker.impl.WellKnownKeys
+import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.worker.Worker
+import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.impl.json.FromJsonWorker
 import org.springframework.stereotype.Service
 
@@ -31,6 +31,9 @@ class JsonDecodeStep(
     override val group = "JSON"
     override val name = "Deserialize from JSON"
     override val description = "Deserialize objects from JSON text"
+    override val help = """
+        The current value will be set to the JSON node, which will also be available to node-* steps. 
+    """.trimIndent()
 
     override fun producedAttributesFor(arg: String) = setOf(
         WellKnownKeys.NODE
@@ -38,11 +41,10 @@ class JsonDecodeStep(
 
     override fun createWorker(
         arg: String,
-        expectedOutput: Class<*>,
         w: Worker,
         predecessorName: String,
         params: PipelineParams,
         parallelDegree: Int
     ) =
-        FromJsonWorker(expectedOutput, objectMapper, w)
+        FromJsonWorker(objectMapper, w)
 }

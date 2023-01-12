@@ -24,6 +24,7 @@ import de.tweerlei.plumber.worker.impl.DelegatingWorker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.impl.ifEmptyGetFrom
 import de.tweerlei.plumber.worker.types.WorkItemList
+import de.tweerlei.plumber.worker.types.ifTypeIs
 
 class SQSDeleteBatchWorker(
     private val queueUrl: String,
@@ -32,11 +33,11 @@ class SQSDeleteBatchWorker(
 ): DelegatingWorker(worker) {
 
     override fun doProcess(item: WorkItem) =
-        item.getAs<WorkItemList>(WellKnownKeys.WORK_ITEMS)
-            .let { items ->
+        item.get(WellKnownKeys.WORK_ITEMS)
+            .ifTypeIs { items: WorkItemList ->
                 deleteFiles(
-                    queueUrl.ifEmptyGetFrom(items.first(), SQSKeys.QUEUE_URL),
-                    items.map {
+                    queueUrl.ifEmptyGetFrom(items.toAny().first(), SQSKeys.QUEUE_URL),
+                    items.toAny().map {
                         DeleteMessageBatchRequestEntry(
                             it.getFirst(SQSKeys.MESSAGE_ID).toString(),
                             it.getFirst(SQSKeys.DELETE_HANDLE).toString()

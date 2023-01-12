@@ -28,13 +28,13 @@ class RangeClearStep: ProcessingStep {
 
     override val group = "Ranges"
     override val name = "Clear range"
-    override val description = "Clear the curent range object"
-
-    override fun isValuePassThrough() = true
+    override val description = "Clear the current range object"
+    override val help = """
+        The current range will be set to an unbounded range.
+    """.trimIndent()
 
     override fun createWorker(
         arg: String,
-        expectedOutput: Class<*>,
         w: Worker,
         predecessorName: String,
         params: PipelineParams,

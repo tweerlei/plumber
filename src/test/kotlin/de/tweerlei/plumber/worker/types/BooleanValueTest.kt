@@ -27,8 +27,8 @@ class BooleanValueTest {
 
     @Test
     fun testCreate() {
-        BooleanValue.of(true).value.shouldBeTrue()
-        BooleanValue.of(false).value.shouldBeFalse()
+        BooleanValue.of(true).toAny().shouldBeTrue()
+        BooleanValue.of(false).toAny().shouldBeFalse()
     }
 
     @Test
@@ -45,8 +45,9 @@ class BooleanValueTest {
                 size.shouldBe(1)
                 get(0).shouldBe(1)
             }
+            toRange().shouldBe(Range(this, NullValue.INSTANCE))
             with (toRecord()) {
-                size.shouldBe(1)
+                size().shouldBe(1)
                 getValue("0").toAny().shouldBe(true)
             }
             with (toJsonNode()) {

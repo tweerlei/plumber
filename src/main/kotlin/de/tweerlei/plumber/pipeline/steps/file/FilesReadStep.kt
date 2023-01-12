@@ -28,6 +28,7 @@ class FilesReadStep: ProcessingStep {
     override val group = "Files"
     override val name = "Read files"
     override val description = "Read files from the given base directory"
+    override val help = ""
     override fun argDescription() = "<path>"
 
     override fun requiredAttributesFor(arg: String) = setOf(
@@ -41,7 +42,6 @@ class FilesReadStep: ProcessingStep {
 
     override fun createWorker(
         arg: String,
-        expectedOutput: Class<*>,
         w: Worker,
         predecessorName: String,
         params: PipelineParams,

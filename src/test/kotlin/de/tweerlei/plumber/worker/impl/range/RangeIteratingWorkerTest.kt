@@ -39,16 +39,16 @@ class RangeIteratingWorkerTest {
             .toList()
 
         items.size.shouldBe(10)
-        items[0].getAs<LongValue>().value.shouldBe(1L)
-        items[1].getAs<LongValue>().value.shouldBe(2L)
-        items[2].getAs<LongValue>().value.shouldBe(3L)
-        items[3].getAs<LongValue>().value.shouldBe(4L)
-        items[4].getAs<LongValue>().value.shouldBe(5L)
-        items[5].getAs<LongValue>().value.shouldBe(6L)
-        items[6].getAs<LongValue>().value.shouldBe(7L)
-        items[7].getAs<LongValue>().value.shouldBe(8L)
-        items[8].getAs<LongValue>().value.shouldBe(9L)
-        items[9].getAs<LongValue>().value.shouldBe(10L)
+        items[0].get().shouldBe(LongValue.of(1L))
+        items[1].get().shouldBe(LongValue.of(2L))
+        items[2].get().shouldBe(LongValue.of(3L))
+        items[3].get().shouldBe(LongValue.of(4L))
+        items[4].get().shouldBe(LongValue.of(5L))
+        items[5].get().shouldBe(LongValue.of(6L))
+        items[6].get().shouldBe(LongValue.of(7L))
+        items[7].get().shouldBe(LongValue.of(8L))
+        items[8].get().shouldBe(LongValue.of(9L))
+        items[9].get().shouldBe(LongValue.of(10L))
     }
 
     @Test
@@ -64,11 +64,11 @@ class RangeIteratingWorkerTest {
             .toList()
 
         items.size.shouldBe(5)
-        items[0].getAs<LongValue>().value.shouldBe(2L)
-        items[1].getAs<LongValue>().value.shouldBe(4L)
-        items[2].getAs<LongValue>().value.shouldBe(6L)
-        items[3].getAs<LongValue>().value.shouldBe(8L)
-        items[4].getAs<LongValue>().value.shouldBe(10L)
+        items[0].get().shouldBe(LongValue.of(2L))
+        items[1].get().shouldBe(LongValue.of(4L))
+        items[2].get().shouldBe(LongValue.of(6L))
+        items[3].get().shouldBe(LongValue.of(8L))
+        items[4].get().shouldBe(LongValue.of(10L))
     }
 
     @Test
@@ -84,11 +84,11 @@ class RangeIteratingWorkerTest {
             .toList()
 
         items.size.shouldBe(5)
-        items[0].getAs<LongValue>().value.shouldBe(8L)
-        items[1].getAs<LongValue>().value.shouldBe(6L)
-        items[2].getAs<LongValue>().value.shouldBe(4L)
-        items[3].getAs<LongValue>().value.shouldBe(2L)
-        items[4].getAs<LongValue>().value.shouldBe(0L)
+        items[0].get().shouldBe(LongValue.of(8L))
+        items[1].get().shouldBe(LongValue.of(6L))
+        items[2].get().shouldBe(LongValue.of(4L))
+        items[3].get().shouldBe(LongValue.of(2L))
+        items[4].get().shouldBe(LongValue.of(0L))
     }
 
     @Test
@@ -134,22 +134,22 @@ class RangeIteratingWorkerTest {
             .toList()
 
         items.size.shouldBe(16)
-        items[0].getAs<StringValue>().value.shouldBe("1")
-        items[1].getAs<StringValue>().value.shouldBe("2")
-        items[2].getAs<StringValue>().value.shouldBe("3")
-        items[3].getAs<StringValue>().value.shouldBe("4")
-        items[4].getAs<StringValue>().value.shouldBe("5")
-        items[5].getAs<StringValue>().value.shouldBe("6")
-        items[6].getAs<StringValue>().value.shouldBe("7")
-        items[7].getAs<StringValue>().value.shouldBe("8")
-        items[8].getAs<StringValue>().value.shouldBe("9")
-        items[9].getAs<StringValue>().value.shouldBe("a")
-        items[10].getAs<StringValue>().value.shouldBe("b")
-        items[11].getAs<StringValue>().value.shouldBe("c")
-        items[12].getAs<StringValue>().value.shouldBe("d")
-        items[13].getAs<StringValue>().value.shouldBe("e")
-        items[14].getAs<StringValue>().value.shouldBe("f")
-        items[15].getAs<StringValue>().value.shouldBe("10")
+        items[0].get().shouldBe(StringValue.of("1"))
+        items[1].get().shouldBe(StringValue.of("2"))
+        items[2].get().shouldBe(StringValue.of("3"))
+        items[3].get().shouldBe(StringValue.of("4"))
+        items[4].get().shouldBe(StringValue.of("5"))
+        items[5].get().shouldBe(StringValue.of("6"))
+        items[6].get().shouldBe(StringValue.of("7"))
+        items[7].get().shouldBe(StringValue.of("8"))
+        items[8].get().shouldBe(StringValue.of("9"))
+        items[9].get().shouldBe(StringValue.of("a"))
+        items[10].get().shouldBe(StringValue.of("b"))
+        items[11].get().shouldBe(StringValue.of("c"))
+        items[12].get().shouldBe(StringValue.of("d"))
+        items[13].get().shouldBe(StringValue.of("e"))
+        items[14].get().shouldBe(StringValue.of("f"))
+        items[15].get().shouldBe(StringValue.of("10"))
     }
 
     @Test
@@ -165,14 +165,14 @@ class RangeIteratingWorkerTest {
             .toList()
 
         items.size.shouldBe(8)
-        items[0].getAs<StringValue>().value.shouldBe("2")
-        items[1].getAs<StringValue>().value.shouldBe("4")
-        items[2].getAs<StringValue>().value.shouldBe("6")
-        items[3].getAs<StringValue>().value.shouldBe("8")
-        items[4].getAs<StringValue>().value.shouldBe("a")
-        items[5].getAs<StringValue>().value.shouldBe("c")
-        items[6].getAs<StringValue>().value.shouldBe("e")
-        items[7].getAs<StringValue>().value.shouldBe("10")
+        items[0].get().shouldBe(StringValue.of("2"))
+        items[1].get().shouldBe(StringValue.of("4"))
+        items[2].get().shouldBe(StringValue.of("6"))
+        items[3].get().shouldBe(StringValue.of("8"))
+        items[4].get().shouldBe(StringValue.of("a"))
+        items[5].get().shouldBe(StringValue.of("c"))
+        items[6].get().shouldBe(StringValue.of("e"))
+        items[7].get().shouldBe(StringValue.of("10"))
     }
 
     @Test
@@ -188,14 +188,14 @@ class RangeIteratingWorkerTest {
             .toList()
 
         items.size.shouldBe(8)
-        items[0].getAs<StringValue>().value.shouldBe("e")
-        items[1].getAs<StringValue>().value.shouldBe("c")
-        items[2].getAs<StringValue>().value.shouldBe("a")
-        items[3].getAs<StringValue>().value.shouldBe("8")
-        items[4].getAs<StringValue>().value.shouldBe("6")
-        items[5].getAs<StringValue>().value.shouldBe("4")
-        items[6].getAs<StringValue>().value.shouldBe("2")
-        items[7].getAs<StringValue>().value.shouldBe("0")
+        items[0].get().shouldBe(StringValue.of("e"))
+        items[1].get().shouldBe(StringValue.of("c"))
+        items[2].get().shouldBe(StringValue.of("a"))
+        items[3].get().shouldBe(StringValue.of("8"))
+        items[4].get().shouldBe(StringValue.of("6"))
+        items[5].get().shouldBe(StringValue.of("4"))
+        items[6].get().shouldBe(StringValue.of("2"))
+        items[7].get().shouldBe(StringValue.of("0"))
     }
 
     @Test

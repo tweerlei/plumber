@@ -15,10 +15,11 @@
  */
 package de.tweerlei.plumber.worker.impl.record
 
-import de.tweerlei.plumber.worker.*
+import de.tweerlei.plumber.worker.WorkItem
+import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.DelegatingWorker
-import de.tweerlei.plumber.worker.types.Record
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
+import de.tweerlei.plumber.worker.types.Record
 
 class RecordSetWorker(
     private val field: String,
@@ -26,9 +27,10 @@ class RecordSetWorker(
 ): DelegatingWorker(worker) {
 
     override fun doProcess(item: WorkItem) =
-        item.getOrSetAs(WellKnownKeys.RECORD) {
-            Record()
-        }.let { map ->
-            map.put(field, item.get())
-        }.let { true }
+        (item.getOptional(WellKnownKeys.RECORD) ?: Record())
+            .toRecord()
+            .let { map ->
+                map.toAny()[field] = item.get()
+                item.set(map, WellKnownKeys.RECORD)
+            }.let { true }
 }

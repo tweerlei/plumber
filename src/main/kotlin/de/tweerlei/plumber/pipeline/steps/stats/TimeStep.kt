@@ -15,10 +15,10 @@
  */
 package de.tweerlei.plumber.pipeline.steps.stats
 
-import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
-import de.tweerlei.plumber.worker.impl.stats.TimingWorker
+import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.worker.Worker
+import de.tweerlei.plumber.worker.impl.stats.TimingWorker
 import org.springframework.stereotype.Service
 
 @Service("timeWorker")
@@ -27,13 +27,11 @@ class TimeStep: ProcessingStep {
     override val group = "Logging"
     override val name = "Time item throughput"
     override val description = "Log item throughput every given number of items"
+    override val help = ""
     override fun argDescription() = intervalFor("").toString()
-
-    override fun isValuePassThrough() = true
 
     override fun createWorker(
         arg: String,
-        expectedOutput: Class<*>,
         w: Worker,
         predecessorName: String,
         params: PipelineParams,

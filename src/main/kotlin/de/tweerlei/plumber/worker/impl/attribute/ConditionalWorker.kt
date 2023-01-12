@@ -34,7 +34,7 @@ class ConditionalWorker(
             .let { BooleanValue.of(it) }
             .let { condition ->
                 item.set(condition, WellKnownKeys.TEST_RESULT)
-                if (condition.value) {
+                if (condition.toAny()) {
                     item.set(value(item))
                 }
             }.let { true }

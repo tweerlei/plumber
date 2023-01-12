@@ -15,12 +15,12 @@
  */
 package de.tweerlei.plumber.pipeline.steps.mongodb
 
-import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
-import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
-import de.tweerlei.plumber.worker.impl.WellKnownKeys
+import de.tweerlei.plumber.pipeline.options.AllPipelineOptions
+import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.worker.Worker
+import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.impl.mongodb.MongoClientFactory
 import de.tweerlei.plumber.worker.impl.mongodb.MongoDBDeleteWorker
 import org.springframework.stereotype.Service
@@ -34,16 +34,19 @@ class MongoDBDeleteStep(
     override val group = "MongoDB"
     override val name = "Delete MongoDB document"
     override val description = "Delete a document from the given MongoDB collection"
+    override val help = """
+        The item will be identified by the current node.
+        If the argument is omitted, the database and collection names will be taken from a previously read MongoDB item.
+        Use --${AllPipelineOptions.INSTANCE.primaryKey.name} to specify the primary key property.
+    """.trimIndent()
     override fun argDescription() = "<collection>"
 
-    override fun expectedInputFor(arg: String) = JsonNode::class.java
     override fun producedAttributesFor(arg: String) = setOf(
         WellKnownKeys.NODE
     )
 
     override fun createWorker(
         arg: String,
-        expectedOutput: Class<*>,
         w: Worker,
         predecessorName: String,
         params: PipelineParams,

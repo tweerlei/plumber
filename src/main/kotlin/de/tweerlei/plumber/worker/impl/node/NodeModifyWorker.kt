@@ -35,17 +35,23 @@ class NodeModifyWorker(
     private val index = p.last().matchingIndex
 
     override fun doProcess(item: WorkItem) =
-        item.getOrSetAs(WellKnownKeys.NODE) {
-            Node()
-        }
-            .value.at(ptr)
-            .let { node ->
-                when {
-                    node.isObject -> (node as ObjectNode).set<JsonNode>(key, item.get().toJsonNode())
-                        .let { true }
-                    node.isArray -> (node as ArrayNode).set(index, item.get().toJsonNode())
-                        .let { true }
-                    else -> false
-                }
+        (item.getOptional(WellKnownKeys.NODE) ?: Node())
+            .toNode()
+            .let { value ->
+                value.toAny().setTargetValue(item.get().toJsonNode())
+                    .also {
+                        item.set(value, WellKnownKeys.NODE)
+                    }
             }
+
+    private fun JsonNode.setTargetValue(value: JsonNode) =
+        this.at(ptr).let { node ->
+            when {
+                node.isObject -> (node as ObjectNode).set<JsonNode>(key, value)
+                    .let { true }
+                node.isArray -> (node as ArrayNode).set(index, value)
+                    .let { true }
+                else -> false
+            }
+        }
 }

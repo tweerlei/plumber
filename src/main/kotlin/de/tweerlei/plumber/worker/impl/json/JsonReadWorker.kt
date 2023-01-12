@@ -31,9 +31,8 @@ import de.tweerlei.plumber.worker.types.toValue
 import mu.KLogging
 import java.io.InputStream
 
-class JsonReadWorker<T>(
+class JsonReadWorker(
     private val inputStreamProvider: InputStreamProvider,
-    private val itemType: Class<T>,
     private val objectMapper: ObjectMapper,
     limit: Long,
     worker: Worker
@@ -41,10 +40,6 @@ class JsonReadWorker<T>(
 
     companion object: KLogging()
 
-    private val valueType = when (itemType) {
-        Any::class.java -> JsonNode::class.java
-        else -> itemType
-    }
     private lateinit var stream: InputStream
 
     override fun onOpen() {
@@ -53,7 +48,6 @@ class JsonReadWorker<T>(
 
     override fun generateItems(item: WorkItem, fn: (WorkItem) -> Boolean) {
         JsonFactory().createParser(stream)
-            .also { logger.info { "Reading JSON objects as ${valueType.simpleName}" } }
             .use { parser ->
                 val filePath = StringValue.of(inputStreamProvider.getPath())
                 val fileName = StringValue.of(inputStreamProvider.getName())
@@ -65,7 +59,7 @@ class JsonReadWorker<T>(
                         JsonToken.START_ARRAY -> inArray = true
                         JsonToken.END_ARRAY -> inArray = false
                         else -> if (inArray) {
-                            keepGenerating = objectMapper.readValue(parser, valueType)
+                            keepGenerating = objectMapper.readValue(parser, JsonNode::class.java)
                                 ?.toValue()
                                 ?.let { obj ->
                                     fn(obj.toWorkItem(filePath, fileName))

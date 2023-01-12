@@ -37,6 +37,6 @@ class DigestWorkerTest {
             .singleOrNull()
 
         item.shouldNotBeNull()
-        item.getAs<ByteArrayValue>().value.contentEquals(digest).shouldBeTrue()
+        item.get().toByteArray().contentEquals(digest).shouldBeTrue()
     }
 }

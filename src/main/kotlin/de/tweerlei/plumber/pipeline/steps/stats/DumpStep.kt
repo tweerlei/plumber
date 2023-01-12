@@ -15,8 +15,8 @@
  */
 package de.tweerlei.plumber.pipeline.steps.stats
 
-import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
+import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.stats.DumpingWorker
 import org.springframework.stereotype.Service
@@ -27,12 +27,10 @@ class DumpStep: ProcessingStep {
     override val group = "Logging"
     override val name = "Dump state"
     override val description = "Dump raw item contents"
-
-    override fun isValuePassThrough() = true
+    override val help = ""
 
     override fun createWorker(
         arg: String,
-        expectedOutput: Class<*>,
         w: Worker,
         predecessorName: String,
         params: PipelineParams,

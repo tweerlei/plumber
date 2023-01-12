@@ -16,7 +16,6 @@
 package de.tweerlei.plumber.worker.impl.node
 
 import com.fasterxml.jackson.core.JsonPointer
-import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.impl.TestWorkerRunner
@@ -35,7 +34,7 @@ class NodeEachWorkerTest {
         val objectMapper = ObjectMapper()
 
         val items = TestWorkerRunner(WorkItem.of(StringValue.of("""{}""")))
-            .append { w -> FromJsonWorker(JsonNode::class.java, objectMapper, w) }
+            .append { w -> FromJsonWorker(objectMapper, w) }
             .append { w -> NodeEachWorker(JsonPointer.compile(""), 10, w) }
             .run()
 
@@ -48,19 +47,19 @@ class NodeEachWorkerTest {
         val objectMapper = ObjectMapper()
 
         val items = TestWorkerRunner(WorkItem.of(StringValue.of("""{"entry0":"value0","entry1":"value1","entry2":"value2"}""")))
-            .append { w -> FromJsonWorker(JsonNode::class.java, objectMapper, w) }
+            .append { w -> FromJsonWorker(objectMapper, w) }
             .append { w -> NodeEachWorker(JsonPointer.compile(""), 2, w) }
             .run()
             .toList()
 
         items.size.shouldBe(2)
         with (items[0]) {
-            getAs<StringValue>().value.shouldBe("value0")
-            getAs<StringValue>(WellKnownKeys.NAME).value.shouldBe("entry0")
+            get().toAny().shouldBe("value0")
+            get(WellKnownKeys.NAME).toAny().shouldBe("entry0")
         }
         with (items[1]) {
-            getAs<StringValue>().value.shouldBe("value1")
-            getAs<StringValue>(WellKnownKeys.NAME).value.shouldBe("entry1")
+            get().toAny().shouldBe("value1")
+            get(WellKnownKeys.NAME).toAny().shouldBe("entry1")
         }
     }
 }

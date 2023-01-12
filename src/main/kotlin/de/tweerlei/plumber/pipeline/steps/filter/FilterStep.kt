@@ -15,8 +15,8 @@
  */
 package de.tweerlei.plumber.pipeline.steps.filter
 
-import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
+import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.filter.FilteringWorker
 import org.springframework.stereotype.Service
@@ -27,11 +27,19 @@ class FilterStep: ProcessingStep {
     override val group = "Flow control"
     override val name = "Filter items"
     override val description = "Keep only items that evaluate to the given boolean"
+    override val help = """
+        The current value will be evaluated as boolean and compared to the argument.
+        If it does not match, the item will be discarded. Examples:
+          value:false filter:false -> item will be passed on
+          value:false filter:true -> item will be discarded
+          value:true filter:true -> item will be passed on
+          value:1 filter:true -> item will be passed on
+          value:0 filter:true -> item will be discarded
+    """.trimIndent()
     override fun argDescription() = compareWithFor("").toString()
 
     override fun createWorker(
         arg: String,
-        expectedOutput: Class<*>,
         w: Worker,
         predecessorName: String,
         params: PipelineParams,

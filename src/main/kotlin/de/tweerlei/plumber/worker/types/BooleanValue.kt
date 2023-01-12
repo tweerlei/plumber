@@ -19,7 +19,7 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.node.JsonNodeFactory
 
 class BooleanValue private constructor(
-    val value: Boolean
+    private val value: Boolean
 ): ComparableValue {
 
     companion object {
@@ -48,19 +48,17 @@ class BooleanValue private constructor(
         if (value) 1.0 else 0.0
     override fun toByteArray() =
         byteArrayOf(toLong().toByte())
-    override fun toRecord() =
-        Record.of(this)
     override fun toJsonNode(): JsonNode =
         JsonNodeFactory.instance.booleanNode(value)
+
     override fun size() =
         1L
-    override fun toString() =
-        value.toString()
-
+    override fun compareTo(other: ComparableValue) =
+        value.compareTo(other.toBoolean())
     override fun equals(other: Any?) =
         other is Value && value == other.toBoolean()
     override fun hashCode() =
         value.hashCode()
-    override fun compareTo(other: ComparableValue) =
-        value.compareTo(other.toBoolean())
+    override fun toString() =
+        value.toString()
 }

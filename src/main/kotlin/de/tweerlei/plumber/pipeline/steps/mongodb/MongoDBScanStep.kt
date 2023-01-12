@@ -16,10 +16,11 @@
 package de.tweerlei.plumber.pipeline.steps.mongodb
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
-import de.tweerlei.plumber.worker.impl.WellKnownKeys
+import de.tweerlei.plumber.pipeline.options.AllPipelineOptions
+import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.worker.Worker
+import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.impl.mongodb.MongoClientFactory
 import de.tweerlei.plumber.worker.impl.mongodb.MongoDBKeys
 import de.tweerlei.plumber.worker.impl.mongodb.MongoDBScanWorker
@@ -34,6 +35,14 @@ class MongoDBScanStep(
     override val group = "MongoDB"
     override val name = "Scan MongoDB documents"
     override val description = "List documents from the given MongoDB table"
+    override val help = """
+        THe key range to scan can be specified by setting the current range. If not set,
+        the whole collection will be listed.
+        The current value will be set to the read JSON node, which will also be available to node-* steps. 
+        Use --${AllPipelineOptions.INSTANCE.primaryKey.name} to specify the primary key property.
+        Use --${AllPipelineOptions.INSTANCE.selectFields.name} to specify columns to fetch.
+        Use --${AllPipelineOptions.INSTANCE.numberOfFilesPerRequest.name} to specify how many items should be requested per backend call
+    """.trimIndent()
     override fun argDescription() = "<collection>"
 
     override fun producedAttributesFor(arg: String) = setOf(
@@ -44,7 +53,6 @@ class MongoDBScanStep(
 
     override fun createWorker(
         arg: String,
-        expectedOutput: Class<*>,
         w: Worker,
         predecessorName: String,
         params: PipelineParams,

@@ -31,6 +31,12 @@ class DigestStep(
     override val group = "Text"
     override val name = "Calculate digest"
     override val description = "Calculate a message digest using the given algorithm"
+    override val help = """
+        Supported algorithms:
+          gzip
+          gunzip
+          (any supported digest algorithm)
+    """.trimIndent()
     override fun argDescription() = algorithmFor("")
 
     override fun producedAttributesFor(arg: String) = setOf(
@@ -40,7 +46,6 @@ class DigestStep(
 
     override fun createWorker(
         arg: String,
-        expectedOutput: Class<*>,
         w: Worker,
         predecessorName: String,
         params: PipelineParams,

@@ -17,7 +17,9 @@ package de.tweerlei.plumber.pipeline.steps.text
 
 import de.tweerlei.plumber.pipeline.PipelineParams
 import de.tweerlei.plumber.pipeline.steps.ProcessingStep
+import de.tweerlei.plumber.util.codec.Base64Codec
 import de.tweerlei.plumber.util.codec.CodecFactory
+import de.tweerlei.plumber.util.codec.HexCodec
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.text.DecodingWorker
 import org.springframework.stereotype.Service
@@ -30,11 +32,16 @@ class DecodeStep(
     override val group = "Text"
     override val name = "Decode binary data"
     override val description = "Decode binary data from a string using the given algorithm"
+    override val help = """
+        Supported algorithms:
+          ${HexCodec.NAME}
+          ${Base64Codec.NAME}
+          (any supported character set)
+    """.trimIndent()
     override fun argDescription() = encodingFor("")
 
     override fun createWorker(
         arg: String,
-        expectedOutput: Class<*>,
         w: Worker,
         predecessorName: String,
         params: PipelineParams,

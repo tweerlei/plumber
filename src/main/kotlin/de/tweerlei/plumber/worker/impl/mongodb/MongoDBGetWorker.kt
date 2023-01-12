@@ -36,7 +36,8 @@ class MongoDBGetWorker(
 ): DelegatingWorker(worker) {
 
     override fun doProcess(item: WorkItem) =
-        item.getFirstAs<Node>(WellKnownKeys.NODE)
+        item.getFirst(WellKnownKeys.NODE)
+            .toJsonNode()
             .toMongoDB(objectMapper)
             .let { attributes ->
                 databaseName.ifEmptyGetFrom(item, MongoDBKeys.DATABASE_NAME)
@@ -49,6 +50,7 @@ class MongoDBGetWorker(
                                     attributes.extractKey(primaryKey)
                                 )
                                     .fromMongoDB(objectMapper)
+                                    .let { node -> Node(node) }
                                     .also { node ->
                                         item.set(node)
                                         item.set(node, WellKnownKeys.NODE)

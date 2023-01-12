@@ -15,10 +15,11 @@
  */
 package de.tweerlei.plumber.pipeline.steps.kafka
 
-import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
-import de.tweerlei.plumber.worker.impl.WellKnownKeys
+import de.tweerlei.plumber.pipeline.options.AllPipelineOptions
+import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.worker.Worker
+import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.impl.kafka.KafkaClientFactory
 import de.tweerlei.plumber.worker.impl.kafka.KafkaKeys
 import de.tweerlei.plumber.worker.impl.kafka.KafkaReceiveWorker
@@ -32,6 +33,10 @@ class KafkaReadStep(
     override val group = "Apache Kafka"
     override val name = "Receive Kafka messages"
     override val description = "Receive messages from the given Kafka topic"
+    override val help = """
+        Use --${AllPipelineOptions.INSTANCE.maxWaitTimeSeconds.name} to specify how long to wait for the next message.
+        Use --${AllPipelineOptions.INSTANCE.follow.name} to keep polling when no more messages are currently available.
+    """.trimIndent()
     override fun argDescription() = "<topic>"
 
     override fun producedAttributesFor(arg: String) = setOf(
@@ -45,7 +50,6 @@ class KafkaReadStep(
 
     override fun createWorker(
         arg: String,
-        expectedOutput: Class<*>,
         w: Worker,
         predecessorName: String,
         params: PipelineParams,

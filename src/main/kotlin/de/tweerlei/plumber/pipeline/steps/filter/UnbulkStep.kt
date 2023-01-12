@@ -15,10 +15,10 @@
  */
 package de.tweerlei.plumber.pipeline.steps.filter
 
-import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
-import de.tweerlei.plumber.worker.impl.WellKnownKeys
+import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.worker.Worker
+import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.impl.filter.UnbulkWorker
 import org.springframework.stereotype.Service
 
@@ -28,6 +28,9 @@ class UnbulkStep: ProcessingStep {
     override val group = "Flow control"
     override val name = "Un-bulk items"
     override val description = "Split bulks into separate items again"
+    override val help = """
+        Split a combined item created by the bulk step into separate items again.
+    """.trimIndent()
 
     override fun requiredAttributesFor(arg: String) = setOf(
         WellKnownKeys.WORK_ITEMS
@@ -35,7 +38,6 @@ class UnbulkStep: ProcessingStep {
 
     override fun createWorker(
         arg: String,
-        expectedOutput: Class<*>,
         w: Worker,
         predecessorName: String,
         params: PipelineParams,

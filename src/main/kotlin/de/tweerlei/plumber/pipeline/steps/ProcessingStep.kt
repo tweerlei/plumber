@@ -23,14 +23,10 @@ interface ProcessingStep {
     val group: String
     val name: String
     val description: String
+    val help: String
     fun argDescription(): String =
         ""
 
-    fun isValuePassThrough(): Boolean =
-        false
-
-    fun expectedInputFor(arg: String): Class<*> =
-        Any::class.java
     fun requiredAttributesFor(arg: String): Set<String> =
         emptySet()
     fun producedAttributesFor(arg: String): Set<String> =
@@ -43,7 +39,6 @@ interface ProcessingStep {
 
     fun createWorker(
         arg: String,
-        expectedOutput: Class<*>,
         w: Worker,
         predecessorName: String,
         params: PipelineParams,

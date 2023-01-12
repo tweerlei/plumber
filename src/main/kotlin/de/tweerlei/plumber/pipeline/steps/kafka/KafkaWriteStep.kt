@@ -15,8 +15,8 @@
  */
 package de.tweerlei.plumber.pipeline.steps.kafka
 
-import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
+import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.kafka.KafkaClientFactory
 import de.tweerlei.plumber.worker.impl.kafka.KafkaKeys
@@ -31,9 +31,9 @@ class KafkaWriteStep(
     override val group = "Apache Kafka"
     override val name = "Send Kafka message"
     override val description = "Send a message to the given Kafka topic"
+    override val help = ""
     override fun argDescription() = "<topic>"
 
-    override fun isValuePassThrough() = true
     override fun producedAttributesFor(arg: String) = setOf(
 //        KafkaKeys.KAFKA_KEY,
         KafkaKeys.PARTITION,
@@ -42,7 +42,6 @@ class KafkaWriteStep(
 
     override fun createWorker(
         arg: String,
-        expectedOutput: Class<*>,
         w: Worker,
         predecessorName: String,
         params: PipelineParams,

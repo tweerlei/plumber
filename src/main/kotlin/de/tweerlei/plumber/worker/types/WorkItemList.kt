@@ -19,34 +19,49 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.node.JsonNodeFactory
 import de.tweerlei.plumber.worker.WorkItem
 
-class WorkItemList(initialCapacity: Int): ArrayList<WorkItem>(initialCapacity), Value {
+class WorkItemList private constructor(
+    private val items: MutableList<WorkItem>
+): Value {
 
     companion object {
         const val NAME = "items"
+
+        fun ofSize(initialCapacity: Int) =
+            WorkItemList(ArrayList(initialCapacity))
     }
 
     override fun getName() =
         NAME
 
     override fun toAny() =
-        this
+        items
     override fun toBoolean() =
-        isNotEmpty()
+        items.isNotEmpty()
     override fun toLong() =
-        size.toLong()
+        items.size.toLong()
     override fun toDouble() =
-        size.toDouble()
+        items.size.toDouble()
     override fun toByteArray() =
         byteArrayOf()
-    override fun toRecord() =
-        Record.of(this)
     override fun toJsonNode(): JsonNode =
         JsonNodeFactory.instance.arrayNode().also { node ->
-            forEach { value -> node.add(value.get().toJsonNode()) }
+            items.forEach { value -> node.add(value.get().toJsonNode()) }
         }
 
-    override fun dump() =
-        map { value -> value.dump() }.toString()
+    override fun toRange() =
+        Range()
+    override fun toRecord() =
+        Record.of(this)
+
     override fun size() =
-        size.toLong()
+        items.size.toLong()
+    override fun equals(other: Any?) =
+        other is WorkItemList &&
+                items == other.items
+    override fun hashCode() =
+        items.hashCode()
+    override fun toString() =
+        items.toString()
+    override fun dump() =
+        items.map { value -> value.dump() }.toString()
 }

@@ -21,7 +21,7 @@ import java.time.Instant
 import java.util.*
 
 class InstantValue private constructor(
-    val value: Instant
+    private val value: Instant
 ): NumberValue {
 
     companion object {
@@ -46,17 +46,15 @@ class InstantValue private constructor(
         value.toEpochMilli()
     override fun toDouble() =
         toLong().toDouble()
-    override fun toRecord() =
-        Record.of(this)
     override fun toJsonNode(): JsonNode =
         JsonNodeFactory.instance.numberNode(toLong())
-    override fun toString() =
-        value.toString()
 
+    override fun compareTo(other: ComparableValue) =
+        toLong().compareTo(other.toLong())
     override fun equals(other: Any?) =
         other is Value && toLong() == other.toLong()
     override fun hashCode() =
         value.hashCode()
-    override fun compareTo(other: ComparableValue) =
-        toLong().compareTo(other.toLong())
+    override fun toString() =
+        value.toString()
 }

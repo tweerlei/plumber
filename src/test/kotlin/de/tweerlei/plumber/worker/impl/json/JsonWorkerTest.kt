@@ -16,18 +16,17 @@
 package de.tweerlei.plumber.worker.impl.json
 
 import com.fasterxml.jackson.core.JsonPointer
-import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.impl.ByteArrayInputStreamProvider
 import de.tweerlei.plumber.worker.impl.ByteArrayOutputStreamProvider
 import de.tweerlei.plumber.worker.impl.TestWorkerRunner
+import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.impl.attribute.SettingWorker
 import de.tweerlei.plumber.worker.impl.node.NodeGetWorker
 import de.tweerlei.plumber.worker.impl.record.RecordSetWorker
 import de.tweerlei.plumber.worker.types.ByteArrayValue
 import de.tweerlei.plumber.worker.types.DoubleValue
-import de.tweerlei.plumber.worker.types.StringValue
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
@@ -53,14 +52,17 @@ class JsonWorkerTest {
         val objectMapper = ObjectMapper()
 
         val item = TestWorkerRunner(WorkItem.of(ByteArrayValue.of(json.toByteArray(StandardCharsets.UTF_8))))
-            .append { w -> FromJsonWorker(JsonNode::class.java, objectMapper, w) }
+            .append { w -> FromJsonWorker(objectMapper, w) }
             .append { w -> NodeGetWorker(JsonPointer.compile("/obj"), w) }
+            .append { w -> SettingWorker(WellKnownKeys.NODE, { item -> item.get(WorkItem.DEFAULT_KEY) }, w) }
             .append { w -> ToJsonWorker(objectMapper, false, w) }
             .run()
             .singleOrNull()
 
         item.shouldNotBeNull()
-        item.getAs<StringValue>().value.shouldBe("""{"string":"Hello","number":42,"boolean":true,"null":null,"array":[1,2,3]}""")
+        with (item) {
+            get().toAny().shouldBe("""{"string":"Hello","number":42,"boolean":true,"null":null,"array":[1,2,3]}""")
+        }
     }
 
     @Test
@@ -82,7 +84,7 @@ class JsonWorkerTest {
         val output = ByteArrayOutputStreamProvider()
 
         val items = TestWorkerRunner(WorkItem.of())
-            .append { w -> JsonReadWorker(ByteArrayInputStreamProvider(xml.toByteArray(StandardCharsets.UTF_8)), JsonNode::class.java, objectMapper, 10, w) }
+            .append { w -> JsonReadWorker(ByteArrayInputStreamProvider(xml.toByteArray(StandardCharsets.UTF_8)), objectMapper, 10, w) }
             .append { w -> SettingWorker(WorkItem.DEFAULT_KEY, { DoubleValue.of(3.14) }, w) }
             .append { w -> RecordSetWorker("2", w) }
             .append { w -> JsonWriteWorker(output, objectMapper, null, false, w) }
@@ -113,7 +115,7 @@ class JsonWorkerTest {
         val output = ByteArrayOutputStreamProvider()
 
         val items = TestWorkerRunner(WorkItem.of())
-            .append { w -> JsonReadWorker(ByteArrayInputStreamProvider(xml.toByteArray(StandardCharsets.UTF_8)), JsonNode::class.java, objectMapper, 10, w) }
+            .append { w -> JsonReadWorker(ByteArrayInputStreamProvider(xml.toByteArray(StandardCharsets.UTF_8)), objectMapper, 10, w) }
             .append { w -> SettingWorker(WorkItem.DEFAULT_KEY, { DoubleValue.of(3.14) }, w) }
             .append { w -> RecordSetWorker("2", w) }
             .append { w -> JsonWriteWorker(output, objectMapper, "items", false, w) }

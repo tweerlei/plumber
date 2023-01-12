@@ -32,6 +32,7 @@ class XmlReadStep(
     override val group = "XML"
     override val name = "Read XML objects from file"
     override val description = "Read XML objects from the given file"
+    override val help = ""
     override fun argDescription() = "".toInputStreamProvider().toString()
 
     override fun producedAttributesFor(arg: String) = setOf(
@@ -42,7 +43,6 @@ class XmlReadStep(
 
     override fun createWorker(
         arg: String,
-        expectedOutput: Class<*>,
         w: Worker,
         predecessorName: String,
         params: PipelineParams,
@@ -51,7 +51,6 @@ class XmlReadStep(
         XmlReadWorker(
             arg.toInputStreamProvider(),
             params.elementName,
-            expectedOutput,
             xmlMapper,
             params.maxFilesPerThread,
             w

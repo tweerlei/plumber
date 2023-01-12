@@ -15,10 +15,10 @@
  */
 package de.tweerlei.plumber.pipeline.steps.stats
 
-import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.pipeline.PipelineParams
-import de.tweerlei.plumber.worker.impl.WellKnownKeys
+import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.worker.Worker
+import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.impl.stats.GroupingWorker
 import org.springframework.stereotype.Service
 
@@ -28,16 +28,15 @@ class GroupStep: ProcessingStep {
     override val group = "Logging"
     override val name = "Group items"
     override val description = "Log item counts per value at every given number of items"
+    override val help = ""
     override fun argDescription() = intervalFor("").toString()
 
-    override fun isValuePassThrough() = true
     override fun producedAttributesFor(arg: String) = setOf(
         WellKnownKeys.COUNT
     )
 
     override fun createWorker(
         arg: String,
-        expectedOutput: Class<*>,
         w: Worker,
         predecessorName: String,
         params: PipelineParams,

@@ -55,12 +55,12 @@ class RecordEachWorkerTest {
 
         items.size.shouldBe(2)
         with (items[0]) {
-            getAs<StringValue>().value.shouldBe("value0")
-            getAs<StringValue>(WellKnownKeys.NAME).value.shouldBe("entry0")
+            get().shouldBe(StringValue.of("value0"))
+            get(WellKnownKeys.NAME).shouldBe(StringValue.of("entry0"))
         }
         with (items[1]) {
-            getAs<StringValue>().value.shouldBe("value1")
-            getAs<StringValue>(WellKnownKeys.NAME).value.shouldBe("entry1")
+            get().shouldBe(StringValue.of("value1"))
+            get(WellKnownKeys.NAME).shouldBe(StringValue.of("entry1"))
         }
     }
 }
