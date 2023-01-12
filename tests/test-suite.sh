@@ -78,7 +78,7 @@ run-test \
 
 run-test \
 	value:2 set:two \
-	value:0,1,2,3,4 csv-parse rec-each \
+	value:0,1,2,3,4 csv-parse record-each \
 	set:value \
 	is-equal:@two \
 	filter:false \
@@ -101,9 +101,9 @@ run-test \
 10'
 
 run-test \
-	value:"Hello" rec-set:greeting \
-	value:"world" rec-set:name \
-	value:"beautiful" rec-set:attr \
+	value:"Hello" record-set:greeting \
+	value:"world" record-set:name \
+	value:"beautiful" record-set:attr \
 	get:record csv-print \
 	lines-write \
 	'Hello,world,beautiful'
