@@ -17,7 +17,7 @@ package de.tweerlei.plumber.worker.impl.math
 
 import de.tweerlei.plumber.worker.WorkItemAccessor
 import de.tweerlei.plumber.worker.Worker
-import de.tweerlei.plumber.worker.types.Value
+import de.tweerlei.plumber.worker.types.*
 import java.math.BigDecimal
 import java.math.BigInteger
 import kotlin.math.pow
@@ -28,11 +28,11 @@ class RootWorker(
 ): ArithmeticWorker(value, worker) {
 
     override fun calc(left: Long, right: Long) =
-        left.toDouble().pow(1.0 / right.toDouble()).toLong()
+        LongValue.of(left.toDouble().pow(1.0 / right.toDouble()).toLong())
     override fun calc(left: Double, right: Double) =
-        left.pow(1.0 / right)
-    override fun calc(left: BigInteger, right: BigInteger): BigInteger =
-        left.pow(BigInteger.ONE.divide(right).toInt())
-    override fun calc(left: BigDecimal, right: BigDecimal): BigDecimal =
-        left.pow(BigDecimal.ONE.div(right).toInt())
+        DoubleValue.ofRounded(left.pow(1.0 / right))
+    override fun calc(left: BigInteger, right: BigInteger) =
+        BigIntegerValue.of(left.pow(BigInteger.ONE.divide(right).toInt()))
+    override fun calc(left: BigDecimal, right: BigDecimal) =
+        BigDecimalValue.of(left.pow(BigDecimal.ONE.div(right).toInt()))
 }

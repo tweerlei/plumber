@@ -34,9 +34,9 @@ class DivideWorkerTest {
         test(LongValue.of(1001L), LongValue.of(1L), LongValue.of(1001L))
         test(LongValue.of(1002001L), LongValue.of(1001L), LongValue.of(1001L))
 
-        test(LongValue.of(1L), LongValue.of(0L), LongValue.of(Long.MAX_VALUE))
-        test(LongValue.of(-1L), LongValue.of(0L), LongValue.of(Long.MIN_VALUE))
-        test(LongValue.of(0L), LongValue.of(0L), LongValue.of(0L))
+        test(LongValue.of(1L), LongValue.of(0L), DoubleValue.POSITIVE_INFINITY)
+        test(LongValue.of(-1L), LongValue.of(0L), DoubleValue.NEGATIVE_INFINITY)
+        test(LongValue.of(0L), LongValue.of(0L), DoubleValue.NAN)
     }
 
     @Test
@@ -46,9 +46,9 @@ class DivideWorkerTest {
         test(DoubleValue.of(-1001.12), DoubleValue.of(-0.5), DoubleValue.of(2002.24))
         test(DoubleValue.of(1001.12), DoubleValue.of(500.56), DoubleValue.of(2.0))
 
-        test(DoubleValue.of(1.0), DoubleValue.of(0.0), DoubleValue.of(Double.POSITIVE_INFINITY))
-        test(DoubleValue.of(-1.0), DoubleValue.of(0.0), DoubleValue.of(Double.NEGATIVE_INFINITY))
-        test(DoubleValue.of(0.0), DoubleValue.of(0.0), DoubleValue.of(Double.NaN))
+        test(DoubleValue.of(1.0), DoubleValue.of(0.0), DoubleValue.POSITIVE_INFINITY)
+        test(DoubleValue.of(-1.0), DoubleValue.of(0.0), DoubleValue.NEGATIVE_INFINITY)
+        test(DoubleValue.of(0.0), DoubleValue.of(0.0), DoubleValue.NAN)
     }
 
     @Test
@@ -58,9 +58,9 @@ class DivideWorkerTest {
         test(LongValue.of(-1001L), DoubleValue.of(-2.5), DoubleValue.of(400.4))
         test(DoubleValue.of(1001.12), LongValue.of(2L), DoubleValue.of(500.56))
 
-        test(LongValue.of(1L), DoubleValue.of(0.0), DoubleValue.of(Double.POSITIVE_INFINITY))
-        test(DoubleValue.of(-1.0), LongValue.of(0L), DoubleValue.of(Double.NEGATIVE_INFINITY))
-        test(DoubleValue.of(0.0), LongValue.of(0L), DoubleValue.of(Double.NaN))
+        test(LongValue.of(1L), DoubleValue.of(0.0), DoubleValue.POSITIVE_INFINITY)
+        test(DoubleValue.of(-1.0), LongValue.of(0L), DoubleValue.NEGATIVE_INFINITY)
+        test(DoubleValue.of(0.0), LongValue.of(0L), DoubleValue.NAN)
     }
 
     private fun test(current: ComparableValue, other: ComparableValue, expected: ComparableValue) {

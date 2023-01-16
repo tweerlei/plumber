@@ -36,28 +36,27 @@ abstract class ArithmeticWorker(
                         left is NullValue || right is NullValue ->
                             NullValue.INSTANCE
                         left is BigDecimalValue || right is BigDecimalValue ->
-                            BigDecimalValue.of(calc(left.toBigDecimal(), right.toBigDecimal()))
+                            calc(left.toBigDecimal(), right.toBigDecimal())
                         left is BigIntegerValue || right is BigIntegerValue ->
-                            BigIntegerValue.of(calc(left.toBigInteger(), right.toBigInteger()))
+                            calc(left.toBigInteger(), right.toBigInteger())
                         left is DoubleValue || right is DoubleValue ->
-                            DoubleValue.of(calc(left.toDouble(), right.toDouble()).safeTruncate())
+                            calc(left.toDouble(), right.toDouble())
                         left is InstantValue && right is InstantValue ->
-                            DurationValue.ofMillis(calc(left.toLong(), right.toLong()))
+                            calc(left.toLong(), right.toLong())
                         left is InstantValue || right is InstantValue ->
-                            InstantValue.ofEpochMilli(calc(left.toLong(), right.toLong()))
+                            calc(left.toLong(), right.toLong())
                         left is DurationValue || right is DurationValue ->
-                            DurationValue.ofMillis(calc(left.toLong(), right.toLong()))
+                            calc(left.toLong(), right.toLong())
                         else ->
-                            LongValue.of(calc(left.toLong(), right.toLong()))
+                            calc(left.toLong(), right.toLong())
                     }
                 }
-            }.toValue()
-            .also {
+            }.also {
                 item.set(it)
             }.let { true }
 
-    protected abstract fun calc(left: Long, right: Long): Long
-    protected abstract fun calc(left: Double, right: Double): Double
-    protected abstract fun calc(left: BigInteger, right: BigInteger): BigInteger
-    protected abstract fun calc(left: BigDecimal, right: BigDecimal): BigDecimal
+    protected abstract fun calc(left: Long, right: Long): ComparableValue
+    protected abstract fun calc(left: Double, right: Double): ComparableValue
+    protected abstract fun calc(left: BigInteger, right: BigInteger): ComparableValue
+    protected abstract fun calc(left: BigDecimal, right: BigDecimal): ComparableValue
 }

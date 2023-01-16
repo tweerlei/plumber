@@ -17,7 +17,7 @@ package de.tweerlei.plumber.worker.impl.math
 
 import de.tweerlei.plumber.worker.WorkItemAccessor
 import de.tweerlei.plumber.worker.Worker
-import de.tweerlei.plumber.worker.types.Value
+import de.tweerlei.plumber.worker.types.*
 import java.math.BigDecimal
 import java.math.BigInteger
 import kotlin.math.log
@@ -28,11 +28,11 @@ class LogarithmWorker(
 ): ArithmeticWorker(value, worker) {
 
     override fun calc(left: Long, right: Long) =
-        log(left.toDouble(), right.toDouble()).toLong()
+        LongValue.of(log(left.toDouble(), right.toDouble()).toLong())
     override fun calc(left: Double, right: Double) =
-        log(left, right)
-    override fun calc(left: BigInteger, right: BigInteger): BigInteger =
-        log(left.toDouble(), right.toDouble()).toLong().toBigInteger()
-    override fun calc(left: BigDecimal, right: BigDecimal): BigDecimal =
-        log(left.toDouble(), right.toDouble()).toBigDecimal()
+        DoubleValue.ofRounded(log(left, right))
+    override fun calc(left: BigInteger, right: BigInteger) =
+        BigIntegerValue.of(log(left.toDouble(), right.toDouble()).toLong().toBigInteger())
+    override fun calc(left: BigDecimal, right: BigDecimal) =
+        BigDecimalValue.of(log(left.toDouble(), right.toDouble()).toBigDecimal())
 }

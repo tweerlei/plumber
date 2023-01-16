@@ -17,6 +17,7 @@ package de.tweerlei.plumber.worker.types
 
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.node.JsonNodeFactory
+import kotlin.math.round
 
 class DoubleValue private constructor(
     private val value: Double
@@ -26,6 +27,11 @@ class DoubleValue private constructor(
         const val NAME = "double"
 
         val ZERO = DoubleValue(0.0)
+        val POSITIVE_INFINITY = DoubleValue(Double.POSITIVE_INFINITY)
+        val NEGATIVE_INFINITY = DoubleValue(Double.NEGATIVE_INFINITY)
+        val NAN = DoubleValue(Double.NaN)
+
+        private const val PRECISION = 1_000_000_000_000.0
 
         fun of(value: Double) =
             when (value) {
@@ -37,6 +43,11 @@ class DoubleValue private constructor(
                 0f -> ZERO
                 else -> DoubleValue(value.toDouble())
             }
+        fun ofRounded(value: Double) =
+            when {
+                value.isFinite() -> round(value *  PRECISION).div(PRECISION)
+                else -> value
+            }.let { of(it)}
     }
 
     override fun getName() =

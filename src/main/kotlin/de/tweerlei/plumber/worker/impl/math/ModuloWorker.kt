@@ -17,7 +17,7 @@ package de.tweerlei.plumber.worker.impl.math
 
 import de.tweerlei.plumber.worker.WorkItemAccessor
 import de.tweerlei.plumber.worker.Worker
-import de.tweerlei.plumber.worker.types.Value
+import de.tweerlei.plumber.worker.types.*
 import java.math.BigDecimal
 import java.math.BigInteger
 
@@ -27,14 +27,15 @@ class ModuloWorker(
 ): ArithmeticWorker(value, worker) {
 
     override fun calc(left: Long, right: Long) =
-        if (right == 0L)
-            0
-        else
-            left % right
+        if (right == 0L) {
+            // Upgrade to Double to return meaningful results
+            DoubleValue.NAN
+        } else
+            LongValue.of(left % right)
     override fun calc(left: Double, right: Double) =
-        left % right
+        DoubleValue.ofRounded(left % right)
     override fun calc(left: BigInteger, right: BigInteger) =
-        left % right
+        BigIntegerValue.of(left % right)
     override fun calc(left: BigDecimal, right: BigDecimal) =
-        left % right
+        BigDecimalValue.of(left % right)
 }

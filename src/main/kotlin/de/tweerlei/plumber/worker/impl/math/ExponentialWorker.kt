@@ -17,7 +17,7 @@ package de.tweerlei.plumber.worker.impl.math
 
 import de.tweerlei.plumber.worker.WorkItemAccessor
 import de.tweerlei.plumber.worker.Worker
-import de.tweerlei.plumber.worker.types.Value
+import de.tweerlei.plumber.worker.types.*
 import java.math.BigDecimal
 import java.math.BigInteger
 import kotlin.math.pow
@@ -28,11 +28,11 @@ class ExponentialWorker(
 ): ArithmeticWorker(value, worker) {
 
     override fun calc(left: Long, right: Long) =
-        right.toDouble().pow(left.toDouble()).toLong()
+        LongValue.of(right.toDouble().pow(left.toDouble()).toLong())
     override fun calc(left: Double, right: Double) =
-        right.pow(left)
-    override fun calc(left: BigInteger, right: BigInteger): BigInteger =
-        right.pow(left.toInt())
-    override fun calc(left: BigDecimal, right: BigDecimal): BigDecimal =
-        right.pow(left.toInt())
+        DoubleValue.ofRounded(right.pow(left))
+    override fun calc(left: BigInteger, right: BigInteger) =
+        BigIntegerValue.of(right.pow(left.toInt()))
+    override fun calc(left: BigDecimal, right: BigDecimal) =
+        BigDecimalValue.of(right.pow(left.toInt()))
 }

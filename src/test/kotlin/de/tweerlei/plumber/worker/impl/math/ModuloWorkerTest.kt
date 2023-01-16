@@ -34,9 +34,9 @@ class ModuloWorkerTest {
         test(LongValue.of(1001L), LongValue.of(3L), LongValue.of(2L))
         test(LongValue.of(0L), LongValue.of(1L), LongValue.of(0L))
 
-        test(LongValue.of(1L), LongValue.of(0L), LongValue.of(0L))
-        test(LongValue.of(-1L), LongValue.of(0L), LongValue.of(0L))
-        test(LongValue.of(0L), LongValue.of(0L), LongValue.of(0L))
+        test(LongValue.of(1L), LongValue.of(0L), DoubleValue.NAN)
+        test(LongValue.of(-1L), LongValue.of(0L), DoubleValue.NAN)
+        test(LongValue.of(0L), LongValue.of(0L), DoubleValue.NAN)
     }
 
     @Test
@@ -46,9 +46,9 @@ class ModuloWorkerTest {
         test(DoubleValue.of(-1001.12), DoubleValue.of(-0.5), DoubleValue.of(-0.12))
         test(DoubleValue.of(1001.12), DoubleValue.of(500.56), DoubleValue.of(0.0))
 
-        test(DoubleValue.of(1.0), DoubleValue.of(0.0), DoubleValue.of(Double.NaN))
-        test(DoubleValue.of(-1.0), DoubleValue.of(0.0), DoubleValue.of(Double.NaN))
-        test(DoubleValue.of(0.0), DoubleValue.of(0.0), DoubleValue.of(Double.NaN))
+        test(DoubleValue.of(1.0), DoubleValue.of(0.0), DoubleValue.NAN)
+        test(DoubleValue.of(-1.0), DoubleValue.of(0.0), DoubleValue.NAN)
+        test(DoubleValue.of(0.0), DoubleValue.of(0.0), DoubleValue.NAN)
     }
 
     @Test
@@ -58,9 +58,9 @@ class ModuloWorkerTest {
         test(LongValue.of(-1001L), DoubleValue.of(-2.5), DoubleValue.of(-1.0))
         test(DoubleValue.of(1001.12), LongValue.of(2L), DoubleValue.of(1.12))
 
-        test(LongValue.of(1L), DoubleValue.of(0.0), DoubleValue.of(Double.NaN))
-        test(DoubleValue.of(-1.0), LongValue.of(0L), DoubleValue.of(Double.NaN))
-        test(DoubleValue.of(0.0), LongValue.of(0L), DoubleValue.of(Double.NaN))
+        test(LongValue.of(1L), DoubleValue.of(0.0), DoubleValue.NAN)
+        test(DoubleValue.of(-1.0), LongValue.of(0L), DoubleValue.NAN)
+        test(DoubleValue.of(0.0), LongValue.of(0L), DoubleValue.NAN)
     }
 
     private fun test(current: ComparableValue, other: ComparableValue, expected: ComparableValue) {
