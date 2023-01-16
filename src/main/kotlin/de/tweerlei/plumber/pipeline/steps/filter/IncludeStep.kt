@@ -13,36 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.tweerlei.plumber.pipeline.steps.record
+package de.tweerlei.plumber.pipeline.steps.filter
 
 import de.tweerlei.plumber.pipeline.PipelineParams
 import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.worker.Worker
-import de.tweerlei.plumber.worker.impl.WellKnownKeys
-import de.tweerlei.plumber.worker.impl.record.RecordGetWorker
 import org.springframework.stereotype.Service
 
-@Service("record-getWorker")
-class RecordGetStep: ProcessingStep {
+@Service("includeWorker")
+class IncludeStep: ProcessingStep {
 
-    override val group = "Records"
-    override val name = "Get record field"
-    override val description = "Set the given record field as current value"
+    override val group = "Meta"
+    override val name = "Include steps"
+    override val description = "Read step definitions from a file"
     override val help = """
-        The current value will be set to the extracted value.
+        You can put your whole pipeline or parts of it into a file.
+        Such files are expected to contain each step or option on a separate line. Empty lines and lines starting with a # will be ignored.
+
+        While the included steps are inserted in place of the include: step, options specified on higher levels (topmost being the command line)
+        override options in included files. This also applies to options specified AFTER the include: step.
     """.trimIndent()
     override val options = ""
     override val example = """
-        value::alice,bob,charlie
-        csv-parse
-        record-get:1
-        lines-write  # result: bob
+        include:steps.txt
     """.trimIndent()
-    override val argDescription = "<name>"
-
-    override fun requiredAttributesFor(arg: String) = setOf(
-        WellKnownKeys.RECORD
-    )
+    override val argDescription = "<file>"
 
     override fun createWorker(
         arg: String,
@@ -51,5 +46,5 @@ class RecordGetStep: ProcessingStep {
         params: PipelineParams,
         parallelDegree: Int
     ) =
-        RecordGetWorker(arg, w)
+        throw IllegalStateException("This step exists only for showing the help text")
 }

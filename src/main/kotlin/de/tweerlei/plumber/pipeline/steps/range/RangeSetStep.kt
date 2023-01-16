@@ -30,7 +30,15 @@ class RangeSetStep: ProcessingStep {
     override val name = "Set range field"
     override val description = "Set a range field, e.g. for usage with each:, one of (start, end)"
     override val help = ""
-    override fun argDescription() = rangeKeyFor("").toString()
+    override val options = ""
+    override val example = """
+        value:10 range-set:start
+        value:20 range-set:end
+        value:15 is-inrange
+        lines-print  # result: true
+    """.trimIndent()
+    override val argDescription
+        get() = rangeKeyFor("").toString()
 
     override fun producedAttributesFor(arg: String) = setOf(
         WellKnownKeys.RANGE

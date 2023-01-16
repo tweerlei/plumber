@@ -29,7 +29,12 @@ class GroupStep: ProcessingStep {
     override val name = "Group items"
     override val description = "Log item counts per value at every given number of items"
     override val help = ""
-    override fun argDescription() = intervalFor("").toString()
+    override val options = ""
+    override val example = """
+        group:10
+    """.trimIndent()
+    override val argDescription
+        get() = intervalFor("").toString()
 
     override fun producedAttributesFor(arg: String) = setOf(
         WellKnownKeys.COUNT

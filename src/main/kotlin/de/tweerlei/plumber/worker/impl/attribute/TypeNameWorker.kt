@@ -13,29 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.tweerlei.plumber.worker.impl.stats
+package de.tweerlei.plumber.worker.impl.attribute
 
 import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.DelegatingWorker
-import mu.KLogging
-import java.util.concurrent.atomic.AtomicLong
+import de.tweerlei.plumber.worker.types.toValue
 
-class ErrorWorker(
-    private val name: String,
-    private val interval: Long,
+class TypeNameWorker(
     worker: Worker
 ): DelegatingWorker(worker) {
 
-    companion object: KLogging()
-
-    private val sentFiles = AtomicLong()
-
     override fun doProcess(item: WorkItem) =
-        sentFiles.incrementAndGet()
-            .also { counter ->
-                if (counter % interval == 0L) {
-                    throw RuntimeException("Triggered error after $counter items")
-                }
+        item.get().getName()
+            .toValue()
+            .also { value ->
+                item.set(value)
             }.let { true }
 }

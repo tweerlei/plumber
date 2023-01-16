@@ -34,12 +34,33 @@ class XmlWriteStep(
     override val description = "Write current value as XML object to the given file"
     override val help = """
         This will encode the current node, if set. Otherwise the current value is encoded.
-        Use --${AllPipelineOptions.INSTANCE.prettyPrint.name} to enable pretty printing.
-        Use --${AllPipelineOptions.INSTANCE.elementName.name} to specify the wrapping element name per item.
-        Use --${AllPipelineOptions.INSTANCE.rootElementName} to specify the document root element name.
-        as a single property of an outer JSON object.
+        All items will we wrapped in a root XML element.
+        Use xml-pring lines-write to just concatenate XML elements.
     """.trimIndent()
-    override fun argDescription() = "".toOutputStreamProvider().toString()
+    override val options = """
+        --${AllPipelineOptions.INSTANCE.prettyPrint.name} enables pretty printing.
+        --${AllPipelineOptions.INSTANCE.elementName.name} specifies the wrapping element name per item.
+        --${AllPipelineOptions.INSTANCE.rootElementName.name} specifies the document root element name.
+    """.trimIndent()
+    override val example = """
+        uuid --limit=2
+        node-set:uuid
+        xml-write  # result: <items><item><uuid>3170d9fc-6e75-4b76-8d9a-e33cc93a160d</uuid></item>
+                             <item><uuid>368cf6d6-120a-4e31-a717-c52ed08ce7cd</uuid></item></items>
+        
+        uuid --limit=2
+        node-set:uuid
+        xml-write --pretty-print  # result: <items>
+                                              <item>
+                                                <uuid>3170d9fc-6e75-4b76-8d9a-e33cc93a160d</uuid>
+                                              </item>
+                                              <item>
+                                                <uuid>368cf6d6-120a-4e31-a717-c52ed08ce7cd</uuid>
+                                              </item>
+                                            </items>
+    """.trimIndent()
+    override val argDescription
+        get() = "".toOutputStreamProvider().toString()
 
     override fun parallelDegreeFor(arg: String) = 1
 

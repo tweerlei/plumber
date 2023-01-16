@@ -29,7 +29,12 @@ class CountStep: ProcessingStep {
     override val name = "Count items"
     override val description = "Log item counts at every given number of items"
     override val help = ""
-    override fun argDescription() = intervalFor("").toString()
+    override val options = ""
+    override val example = """
+        count:10
+    """.trimIndent()
+    override val argDescription
+        get() = intervalFor("").toString()
 
     override fun producedAttributesFor(arg: String) = setOf(
         WellKnownKeys.COUNT

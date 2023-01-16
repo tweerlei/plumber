@@ -29,6 +29,15 @@ class IsInRangeStep: ProcessingStep {
     override val name = "Compare"
     override val description = "Compare the current value to the current range resulting in a boolean"
     override val help = ""
+    override val options = ""
+    override val example = """
+        range-reset --start-after=10 --stop-after=20
+        value:10 is-inrange -> false
+        value:11 is-inrange -> true
+        value:20 is-inrange -> true
+        value:21 is-inrange -> false
+    """.trimIndent()
+    override val argDescription = ""
 
     override fun requiredAttributesFor(arg: String) = setOf(
         WellKnownKeys.RANGE

@@ -32,6 +32,11 @@ class NodeClearStep: ProcessingStep {
     override val help = """
         The current node will be set to an empty object.
     """.trimIndent()
+    override val options = ""
+    override val example = """
+        node-clear
+    """.trimIndent()
+    override val argDescription = ""
 
     override fun createWorker(
         arg: String,

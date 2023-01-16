@@ -34,8 +34,20 @@ class JsonEncodeStep(
     override val description = "Serialize objects to JSON text"
     override val help = """
         This will encode the current node, if set. Otherwise the current value is encoded.
-        Use --${AllPipelineOptions.INSTANCE.prettyPrint.name} to enable pretty printing.
     """.trimIndent()
+    override val options = """
+        --${AllPipelineOptions.INSTANCE.prettyPrint.name} enables pretty printing.
+    """.trimIndent()
+    override val example = """
+        value::'{"foo":42,"bar":true}'
+        json-parse
+        json-print --pretty-print
+        lines-write  # result: {
+                                 "foo" : 42,
+                                 "bar" : true
+                               }
+    """.trimIndent()
+    override val argDescription = ""
 
     override fun producedAttributesFor(arg: String) = setOf(
         WellKnownKeys.NODE

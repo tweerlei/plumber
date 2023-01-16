@@ -36,7 +36,20 @@ class ValueStep: ProcessingStep {
           value:@name -  Will evaluate to the given attribute's value, like get:name
           value:123   -  Will be auto-converted into a suitable type (here: long)
     """.trimIndent()
-    override fun argDescription() = "<value>"
+    override val options = ""
+    override val example = """
+        value:0123
+        lines-write  # result: 123
+        
+        value::0123
+        length
+        lines-write  # result: 4
+        
+        files-list
+        value:@size
+        lines-write  # result: size of each file
+    """.trimIndent()
+    override val argDescription = "<value>"
 
     override fun requiredAttributesFor(arg: String) =
         arg.toRequiredAttributes()

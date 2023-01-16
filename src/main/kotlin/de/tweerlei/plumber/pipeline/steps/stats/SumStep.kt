@@ -29,7 +29,12 @@ class SumStep: ProcessingStep {
     override val name = "Calculate size sum"
     override val description = "Log item sum of item sizes every given number of bytes"
     override val help = ""
-    override fun argDescription() = intervalFor("").toString()
+    override val options = ""
+    override val example = """
+        sum:10
+    """.trimIndent()
+    override val argDescription
+        get() = intervalFor("").toString()
 
     override fun producedAttributesFor(arg: String) = setOf(
         WellKnownKeys.SUM

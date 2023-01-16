@@ -30,7 +30,12 @@ class DelayStep: ProcessingStep {
     override val help = """
         Each item that passes through this step will be delayed.
     """.trimIndent()
-    override fun argDescription() = delayFor("").toString()
+    override val options = ""
+    override val example = """
+        delay:1
+    """.trimIndent()
+    override val argDescription
+        get() = delayFor("").toString()
 
     override fun createWorker(
         arg: String,

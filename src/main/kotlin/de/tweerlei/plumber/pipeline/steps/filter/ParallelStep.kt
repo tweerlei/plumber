@@ -32,9 +32,17 @@ class ParallelStep: ProcessingStep {
     override val help = """
         This will 'fan out' items to multiple worker threads such that the following steps will be executed in parallel
         until another parallel step or a step that requires serialization (e.g. writing to a single file).
-        Use --${AllPipelineOptions.INSTANCE.queueSizePerThread.name} to control the size of the waiting queue per thread.
     """.trimIndent()
-    override fun argDescription() = parallelDegreeFor("").toString()
+    override val options = """
+        --${AllPipelineOptions.INSTANCE.queueSizePerThread.name} specifies the size of the waiting queue per thread.
+    """.trimIndent()
+    override val example = """
+        uuid
+        parallel:8
+        sqs-send:myQueue
+    """.trimIndent()
+    override val argDescription
+        get() = parallelDegreeFor("").toString()
 
     override fun producedAttributesFor(arg: String) = setOf(
         WellKnownKeys.WORKER_INDEX

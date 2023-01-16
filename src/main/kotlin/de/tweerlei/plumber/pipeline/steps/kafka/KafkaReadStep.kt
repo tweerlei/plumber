@@ -33,11 +33,16 @@ class KafkaReadStep(
     override val group = "Apache Kafka"
     override val name = "Receive Kafka messages"
     override val description = "Receive messages from the given Kafka topic"
-    override val help = """
-        Use --${AllPipelineOptions.INSTANCE.maxWaitTimeSeconds.name} to specify how long to wait for the next message.
-        Use --${AllPipelineOptions.INSTANCE.follow.name} to keep polling when no more messages are currently available.
+    override val help = ""
+    override val options = """
+        --${AllPipelineOptions.INSTANCE.maxWaitTimeSeconds.name} specifies how long to wait for the next message.
+        --${AllPipelineOptions.INSTANCE.follow.name} keeps polling when no more messages are currently available.
     """.trimIndent()
-    override fun argDescription() = "<topic>"
+    override val example = """
+        kafka-read:myTopic
+        sqs-send:myQueue
+    """.trimIndent()
+    override val argDescription = "<topic>"
 
     override fun producedAttributesFor(arg: String) = setOf(
 //        WellKnownKeys.NAME,

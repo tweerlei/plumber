@@ -31,10 +31,18 @@ class DivideStep: ProcessingStep {
     override val description = "Divide the current value by the given value"
     override val help = """
         Both operands are evaluated as numbers.
-        Division by zero is possible and will yield positive or negative infinity.
-        0/0 will yield NaN.
+        If the dividend is a long, the division will yield a long result, rounded down.
     """.trimIndent()
-    override fun argDescription() = valueFor("")
+    override val options = ""
+    override val example = """
+        value:1 divide:2 -> 0
+        value:1.0 divide:2 -> 0.5
+        value:1 divide:0 -> Infinity
+        value:-1 divide:0 -> -Infinity
+        value:0 divide:0 -> NaN
+    """.trimIndent()
+    override val argDescription
+        get() = valueFor("")
 
     override fun requiredAttributesFor(arg: String) =
         arg.toRequiredAttributes()

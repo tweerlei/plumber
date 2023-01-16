@@ -32,8 +32,18 @@ class JsonReadStep(
     override val group = "JSON"
     override val name = "Read JSON objects from file"
     override val description = "Read JSON objects from the given file"
-    override val help = ""
-    override fun argDescription() = "".toInputStreamProvider().toString()
+    override val help = """
+        The file can contain multiple JSON objects in concatenation.
+        JSON arrays will NOT be split into separate items.
+    """.trimIndent()
+    override val options = ""
+    override val example = """
+        json-read:items.json
+        node-get:id
+        lines-write  # result: id value of each JSON object
+    """.trimIndent()
+    override val argDescription
+        get() = "".toInputStreamProvider().toString()
 
     override fun producedAttributesFor(arg: String) = setOf(
         WellKnownKeys.PATH,

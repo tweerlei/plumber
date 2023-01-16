@@ -31,6 +31,12 @@ class STSGetIdStep(
     override val name = "Get account ID"
     override val description = "Get the effective AWS account ID"
     override val help = ""
+    override val options = ""
+    override val example = """
+        sts-accountid
+        lines-write  # result: AWS account ID
+    """.trimIndent()
+    override val argDescription = ""
 
     override fun createWorker(
         arg: String,

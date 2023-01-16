@@ -31,7 +31,14 @@ class ReplaceStep: ProcessingStep {
     override val name = "Replace text"
     override val description = "Replace all matches of a previous find: with the given replacement"
     override val help = ""
-    override fun argDescription() = "<value>"
+    override val options = ""
+    override val example = """
+        value::'Hello, World!'
+        find:'\w+'
+        replace:Woot
+        lines-write  # result: Woot, Woot!
+    """.trimIndent()
+    override val argDescription = "<value>"
 
     override fun requiredAttributesFor(arg: String) = setOf(
         TextKeys.MATCH_EXPRESSION,

@@ -15,27 +15,24 @@
  */
 package de.tweerlei.plumber.worker.impl.math
 
-import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.WorkItemAccessor
 import de.tweerlei.plumber.worker.Worker
-import de.tweerlei.plumber.worker.impl.DelegatingWorker
 import de.tweerlei.plumber.worker.types.Value
-import de.tweerlei.plumber.worker.types.toValue
+import java.math.BigDecimal
+import java.math.BigInteger
 import kotlin.math.log
 
 class LogarithmWorker(
     private val value: WorkItemAccessor<Value>,
     worker: Worker
-): DelegatingWorker(worker) {
+): ArithmeticWorker(value, worker) {
 
-    override fun doProcess(item: WorkItem) =
-        item.get()
-            .let { left ->
-                value(item).let { right ->
-                    log(left.toDouble(), right.toDouble()).safeTruncate()
-                }
-            }.toValue()
-            .also {
-                item.set(it)
-            }.let { true }
+    override fun calc(left: Long, right: Long) =
+        log(left.toDouble(), right.toDouble()).toLong()
+    override fun calc(left: Double, right: Double) =
+        log(left, right)
+    override fun calc(left: BigInteger, right: BigInteger): BigInteger =
+        log(left.toDouble(), right.toDouble()).toLong().toBigInteger()
+    override fun calc(left: BigDecimal, right: BigDecimal): BigDecimal =
+        log(left.toDouble(), right.toDouble()).toBigDecimal()
 }

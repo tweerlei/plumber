@@ -31,7 +31,15 @@ class RecordSetStep: ProcessingStep {
     override val help = """
         The current record will be modified.
     """.trimIndent()
-    override fun argDescription() = "<name>"
+    override val options = ""
+    override val example = """
+        value::alice,bob,charlie
+        csv-parse
+        value::babs
+        record-set:1
+        csv-write  # result: alice,babs,charlie
+    """.trimIndent()
+    override val argDescription = "<name>"
 
     override fun producedAttributesFor(arg: String) = setOf(
         WellKnownKeys.RECORD

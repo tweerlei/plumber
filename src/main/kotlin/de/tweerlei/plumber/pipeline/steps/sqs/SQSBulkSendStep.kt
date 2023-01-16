@@ -34,7 +34,14 @@ class SQSBulkSendStep(
     override val help = """
         Bulked version of sqs-send.
     """.trimIndent()
-    override fun argDescription() = "<queue>"
+    override val options = ""
+    override val example = """
+        files-list:/messages
+        files-read
+        bulk:10
+        sqs-bulkwrite:myQueue
+    """.trimIndent()
+    override val argDescription = "<queue>"
 
     override fun requiredAttributesFor(arg: String) = setOf(
         WellKnownKeys.WORK_ITEMS

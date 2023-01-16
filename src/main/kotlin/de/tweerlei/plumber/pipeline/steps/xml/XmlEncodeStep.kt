@@ -34,9 +34,20 @@ class XmlEncodeStep(
     override val description = "Serialize objects to XML text"
     override val help = """
         This will encode the current node, if set. Otherwise the current value is encoded.
-        Use --${AllPipelineOptions.INSTANCE.elementName.name} to specify the wrapping element name.
-        Use --${AllPipelineOptions.INSTANCE.prettyPrint.name} to enable pretty printing.
     """.trimIndent()
+    override val options = """
+        --${AllPipelineOptions.INSTANCE.elementName.name} specifies the wrapping element name.
+        --${AllPipelineOptions.INSTANCE.prettyPrint.name} enables pretty printing.
+    """.trimIndent()
+    override val example = """
+        value::'<root><foo>42</foo></root>'
+        xml-parse
+        xml-print --pretty-print
+        lines-write  # result: <item>
+                                 <foo>42</foo>
+                               </item>
+    """.trimIndent()
+    override val argDescription = ""
 
     override fun producedAttributesFor(arg: String) = setOf(
         WellKnownKeys.NODE

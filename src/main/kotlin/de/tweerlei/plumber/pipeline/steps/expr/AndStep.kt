@@ -30,13 +30,17 @@ class AndStep: ProcessingStep {
     override val name = "Compare"
     override val description = "Logically AND the current value with the given value"
     override val help = """
-        Both operands are evaluated as booleans. Examples:
-          value:true and:true -> true
-          value:true and:false -> false
-          value:true and:1234 -> true
-          value:true and:0 -> false
+        Both operands are evaluated as booleans.
     """.trimIndent()
-    override fun argDescription() = valueFor("")
+    override val options = ""
+    override val example = """
+        value:true and:true -> true
+        value:true and:false -> false
+        value:true and:1234 -> true
+        value:true and:0 -> false
+    """.trimIndent()
+    override val argDescription
+        get() = valueFor("")
 
     override fun requiredAttributesFor(arg: String) =
         arg.toRequiredAttributes()

@@ -28,6 +28,12 @@ class UuidStep: ProcessingStep {
     override val name = "Generate UUIDs"
     override val description = "Generate random UUIDs"
     override val help = ""
+    override val options = ""
+    override val example = """
+        uuid --limit=1
+        lines-write  # result: 563de642-9a29-4804-b13c-1d5b129b47f6
+    """.trimIndent()
+    override val argDescription = ""
 
     override fun createWorker(
         arg: String,

@@ -34,6 +34,14 @@ class XmlDecodeStep(
     override val help = """
         The current value will be set to the JSON node, which will also be available to node-* steps. 
     """.trimIndent()
+    override val options = ""
+    override val example = """
+        value::'<item><foo>42</foo></item>'
+        json-parse
+        node-get:foo
+        lines-write  # result: 42
+    """.trimIndent()
+    override val argDescription = ""
 
     override fun producedAttributesFor(arg: String) = setOf(
         WellKnownKeys.NODE

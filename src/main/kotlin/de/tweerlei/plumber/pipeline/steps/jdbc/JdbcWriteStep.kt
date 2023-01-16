@@ -34,7 +34,16 @@ class JdbcWriteStep(
         This will write the current record, if any. Otherwise the current value will be used.
         If the argument is omitted, the table name will be taken from a previously read JDBC item.
     """.trimIndent()
-    override fun argDescription() = "<table>"
+    override val options = ""
+    override val example = """
+        value:42
+        record-set:id
+        jdbc-read:myTable --primary-key=id
+        value:Joe
+        record-set:name
+        jdbc-write  # update name to 'Joe'
+    """.trimIndent()
+    override val argDescription = "<table>"
 
     override fun createWorker(
         arg: String,

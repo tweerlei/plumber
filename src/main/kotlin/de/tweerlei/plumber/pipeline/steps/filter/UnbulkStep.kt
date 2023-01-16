@@ -29,8 +29,17 @@ class UnbulkStep: ProcessingStep {
     override val name = "Un-bulk items"
     override val description = "Split bulks into separate items again"
     override val help = """
-        Split a combined item created by the bulk step into separate items again.
+        Split a combined item created by the bulk: step into separate items again.
     """.trimIndent()
+    override val options = ""
+    override val example = """
+        uuid --limit=100
+        bulk:10
+        count
+        unbulk
+        count
+    """.trimIndent()
+    override val argDescription = ""
 
     override fun requiredAttributesFor(arg: String) = setOf(
         WellKnownKeys.WORK_ITEMS

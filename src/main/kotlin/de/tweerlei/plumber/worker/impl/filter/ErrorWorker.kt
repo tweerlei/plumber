@@ -13,25 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.tweerlei.plumber.worker.impl.math
+package de.tweerlei.plumber.worker.impl.filter
 
-import de.tweerlei.plumber.worker.WorkItemAccessor
+import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.Worker
-import de.tweerlei.plumber.worker.types.Value
-import java.math.BigDecimal
-import java.math.BigInteger
+import de.tweerlei.plumber.worker.impl.DelegatingWorker
+import mu.KLogging
+import java.util.concurrent.atomic.AtomicLong
 
-class MinusWorker(
-    private val value: WorkItemAccessor<Value>,
+class ErrorWorker(
+    private val name: String,
+    private val interval: Long,
     worker: Worker
-): ArithmeticWorker(value, worker) {
+): DelegatingWorker(worker) {
 
-    override fun calc(left: Long, right: Long) =
-        left - right
-    override fun calc(left: Double, right: Double) =
-        left - right
-    override fun calc(left: BigInteger, right: BigInteger) =
-        left - right
-    override fun calc(left: BigDecimal, right: BigDecimal) =
-        left - right
+    companion object: KLogging()
+
+    private val sentFiles = AtomicLong()
+
+    override fun doProcess(item: WorkItem) =
+        sentFiles.incrementAndGet()
+            .also { counter ->
+                if (counter % interval == 0L) {
+                    throw RuntimeException("Triggered error after $counter items")
+                }
+            }.let { true }
 }

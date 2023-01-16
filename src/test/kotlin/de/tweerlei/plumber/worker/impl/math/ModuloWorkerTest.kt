@@ -34,9 +34,9 @@ class ModuloWorkerTest {
         test(LongValue.of(1001L), LongValue.of(3L), LongValue.of(2L))
         test(LongValue.of(0L), LongValue.of(1L), LongValue.of(0L))
 
-        test(LongValue.of(1L), LongValue.of(0L), DoubleValue.of(Double.NaN))
-        test(LongValue.of(-1L), LongValue.of(0L), DoubleValue.of(Double.NaN))
-        test(LongValue.of(0L), LongValue.of(0L), DoubleValue.of(Double.NaN))
+        test(LongValue.of(1L), LongValue.of(0L), LongValue.of(0L))
+        test(LongValue.of(-1L), LongValue.of(0L), LongValue.of(0L))
+        test(LongValue.of(0L), LongValue.of(0L), LongValue.of(0L))
     }
 
     @Test

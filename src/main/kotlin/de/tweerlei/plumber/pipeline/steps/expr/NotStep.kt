@@ -29,11 +29,15 @@ class NotStep: ProcessingStep {
     override val description = "Logically negate the current value"
     override val help = """
         The current value is evaluated as boolean. Examples:
-          value:false not -> true
-          value:true not -> false
-          value:0 not -> true
-          value:123 not -> false
     """.trimIndent()
+    override val options = ""
+    override val example = """
+        value:false not -> true
+        value:true not -> false
+        value:0 not -> true
+        value:123 not -> false
+    """.trimIndent()
+    override val argDescription = ""
 
     override fun createWorker(
         arg: String,

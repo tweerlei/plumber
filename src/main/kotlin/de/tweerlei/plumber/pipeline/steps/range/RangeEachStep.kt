@@ -32,9 +32,25 @@ class RangeEachStep: ProcessingStep {
     override val help = """
         The types of the current range's bounds are important. Numeric bounds will generate numbers
         while string bounds will generate strings.
-        Use --${AllPipelineOptions.INSTANCE.keyChars.name} to specify valid characters for key range generation.
     """.trimIndent()
-    override fun argDescription() = stepCountFor("").toString()
+    override val options = """
+        --${AllPipelineOptions.INSTANCE.keyChars.name} specifies valid characters for key range generation.
+    """.trimIndent()
+    override val example = """
+        range-reset --start-after=10 --stop-after=13
+        range-each
+        lines-write  # result: 11
+                               12
+                               13
+
+        range-reset --start-after=a --stop-after=g
+        range-each --key-chars=aceg
+        lines-write  # result: c
+                               e
+                               g
+    """.trimIndent()
+    override val argDescription
+        get() = stepCountFor("").toString()
 
     override fun requiredAttributesFor(arg: String) = setOf(
         WellKnownKeys.RANGE

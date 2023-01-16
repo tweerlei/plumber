@@ -36,12 +36,19 @@ class MongoDBGetStep(
     override val name = "Fetch MongoDB document"
     override val description = "Read a document from the given MongoDB collection"
     override val help = """
-        The item will be identified by the current node.
+        The item key will be derived from the current node.
         If the argument is omitted, the database and collection names will be taken from a previously read MongoDB item.
         The current value will be set to the read JSON node, which will also be available to node-* steps. 
-        Use --${AllPipelineOptions.INSTANCE.primaryKey.name} to specify the primary key property.
     """.trimIndent()
-    override fun argDescription() = "<collection>"
+    override val options = """
+        --${AllPipelineOptions.INSTANCE.primaryKey.name} specifies the primary key property.
+    """.trimIndent()
+    override val example = """
+        value:123
+        node-set:_id
+        mongodb-get:myTable
+    """.trimIndent()
+    override var argDescription = "<collection>"
 
     override fun producedAttributesFor(arg: String) = setOf(
         WellKnownKeys.NODE,

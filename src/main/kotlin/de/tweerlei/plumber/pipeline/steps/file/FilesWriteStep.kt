@@ -28,8 +28,16 @@ class FilesWriteStep: ProcessingStep {
     override val group = "Files"
     override val name = "Write files"
     override val description = "Write items as files in the given directory"
-    override val help = ""
-    override fun argDescription() = "<path>"
+    override val help = """
+        The ${WellKnownKeys.NAME} attribute is evaluated relative to the given directory (default to the current one).
+    """.trimIndent()
+    override val options = ""
+    override val example = """
+        files-list:/source
+        files-read
+        files-write:/destination
+    """.trimIndent()
+    override val argDescription = "<path>"
 
     override fun requiredAttributesFor(arg: String) = setOf(
         WellKnownKeys.NAME

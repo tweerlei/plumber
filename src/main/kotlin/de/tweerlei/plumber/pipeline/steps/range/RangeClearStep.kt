@@ -16,6 +16,7 @@
 package de.tweerlei.plumber.pipeline.steps.range
 
 import de.tweerlei.plumber.pipeline.PipelineParams
+import de.tweerlei.plumber.pipeline.options.AllPipelineOptions
 import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
@@ -32,6 +33,11 @@ class RangeClearStep: ProcessingStep {
     override val help = """
         The current range will be set to an unbounded range.
     """.trimIndent()
+    override val options = ""
+    override val example = """
+        range-clear
+    """.trimIndent()
+    override val argDescription = ""
 
     override fun createWorker(
         arg: String,

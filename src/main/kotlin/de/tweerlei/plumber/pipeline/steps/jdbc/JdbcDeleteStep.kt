@@ -33,10 +33,17 @@ class JdbcDeleteStep(
     override val description = "Delete a row from the given JDBC table"
     override val help = """
         The primary key to delete will be taken from the current record.
-        Use --${AllPipelineOptions.INSTANCE.primaryKey.name} to specify the PK column.
         Combined primary keys are not supported.
     """.trimIndent()
-    override fun argDescription() = "<table>"
+    override val options = """
+        --${AllPipelineOptions.INSTANCE.primaryKey.name} specifies the PK column.
+    """.trimIndent()
+    override val example = """
+        value:42
+        record-set:id
+        jdbc-delete:myTable --primary-key=id
+    """.trimIndent()
+    override val argDescription = "<table>"
 
     override fun createWorker(
         arg: String,

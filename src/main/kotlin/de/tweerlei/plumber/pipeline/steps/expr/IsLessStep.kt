@@ -30,13 +30,16 @@ class IsLessStep: ProcessingStep {
     override val name = "Compare"
     override val description = "Compare the current value to the given value resulting in a boolean"
     override val help = """
-        The given value is converted to the current value's type so this operation is NOT commutative. Examples:
-          value:42 is-less:43 -> true
-          value:42 is-less:42 -> false
-          value:false is-less:0 -> false
-          value:false is-less:1 -> true
+        The given value is converted to the current value's type so this operation is NOT commutative.
     """.trimIndent()
-    override fun argDescription() = "<value>"
+    override val options = ""
+    override val example = """
+        value:42 is-less:43 -> true
+        value:42 is-less:42 -> false
+        value:false is-less:0 -> false
+        value:false is-less:1 -> true
+    """.trimIndent()
+    override val argDescription = "<value>"
 
     override fun requiredAttributesFor(arg: String) =
         arg.toRequiredAttributes()

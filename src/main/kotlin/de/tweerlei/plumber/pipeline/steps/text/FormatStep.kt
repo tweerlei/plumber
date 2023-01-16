@@ -28,7 +28,14 @@ class FormatStep: ProcessingStep {
     override val name = "Format text"
     override val description = "Produces the argument with all occurrences of @{name} replaced by their value"
     override val help = ""
-    override fun argDescription() = "<format>"
+    override val options = ""
+    override val example = """
+        value::water set:itemName
+        value:3 set:itemCount
+        format:'You ordered @{itemCount} bottles of @{itemName}'
+        lines-write  # result: You ordered 3 bottles of water
+    """.trimIndent()
+    override val argDescription = "<format>"
 
     override fun createWorker(
         arg: String,

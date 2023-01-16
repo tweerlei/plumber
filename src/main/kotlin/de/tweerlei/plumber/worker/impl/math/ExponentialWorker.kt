@@ -15,27 +15,24 @@
  */
 package de.tweerlei.plumber.worker.impl.math
 
-import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.WorkItemAccessor
 import de.tweerlei.plumber.worker.Worker
-import de.tweerlei.plumber.worker.impl.DelegatingWorker
 import de.tweerlei.plumber.worker.types.Value
-import de.tweerlei.plumber.worker.types.toValue
+import java.math.BigDecimal
+import java.math.BigInteger
 import kotlin.math.pow
 
 class ExponentialWorker(
     private val value: WorkItemAccessor<Value>,
     worker: Worker
-): DelegatingWorker(worker) {
+): ArithmeticWorker(value, worker) {
 
-    override fun doProcess(item: WorkItem) =
-        item.get()
-            .let { left ->
-                value(item).let { right ->
-                    right.toDouble().pow(left.toDouble()).safeTruncate()
-                }
-            }.toValue()
-            .also {
-                item.set(it)
-            }.let { true }
+    override fun calc(left: Long, right: Long) =
+        right.toDouble().pow(left.toDouble()).toLong()
+    override fun calc(left: Double, right: Double) =
+        right.pow(left)
+    override fun calc(left: BigInteger, right: BigInteger): BigInteger =
+        right.pow(left.toInt())
+    override fun calc(left: BigDecimal, right: BigDecimal): BigDecimal =
+        right.pow(left.toInt())
 }

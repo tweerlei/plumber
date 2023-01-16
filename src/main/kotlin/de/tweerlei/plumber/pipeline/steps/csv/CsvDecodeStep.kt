@@ -34,8 +34,17 @@ class CsvDecodeStep(
     override val description = "Deserialize objects from CSV text"
     override val help = """
         The current value will be set to the read record, which will also be available to record-* steps. 
-        Use --${AllPipelineOptions.INSTANCE.separator.name} to specify the record separator character.
     """.trimIndent()
+    override val options = """
+        --${AllPipelineOptions.INSTANCE.separator.name} sets the record separator character.
+    """.trimIndent()
+    override val example = """
+        value::foo,123,true
+        csv-parse
+        record-get:1
+        lines-write  # result: 123
+    """.trimIndent()
+    override val argDescription = ""
 
     override fun producedAttributesFor(arg: String) = setOf(
         WellKnownKeys.RECORD

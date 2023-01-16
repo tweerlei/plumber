@@ -34,11 +34,20 @@ class SQSReceiveStep(
     override val name = "Receive SQS messages"
     override val description = "Receive messages from the given SQS queue"
     override val help = """
-        Use --${AllPipelineOptions.INSTANCE.maxWaitTimeSeconds.name} to specify how long to wait for the next message.
-        Use --${AllPipelineOptions.INSTANCE.follow.name} to keep polling even if no message is currently available.
-        Use --${AllPipelineOptions.INSTANCE.numberOfFilesPerRequest.name} to specify how many messages to retrieve per backend call.
+        Receives messages from SQS. The ${WellKnownKeys.NAME} of each item will be set to the message ID.
+        Messages have to be deleted after reception, otherwise they will be delivered again.
     """.trimIndent()
-    override fun argDescription() = "<queue>"
+    override val options = """
+        --${AllPipelineOptions.INSTANCE.maxWaitTimeSeconds.name} specifies how long to wait for the next message.
+        --${AllPipelineOptions.INSTANCE.follow.name} keeps polling even if no message is currently available.
+        --${AllPipelineOptions.INSTANCE.numberOfFilesPerRequest.name} specifies how many messages to retrieve per backend call.
+    """.trimIndent()
+    override val example = """
+        sqs-read:myQueue
+        files-write:/messages
+        sqs-delete
+    """.trimIndent()
+    override val argDescription = "<queue>"
 
     override fun producedAttributesFor(arg: String) = setOf(
         WellKnownKeys.NAME,

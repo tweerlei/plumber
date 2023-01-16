@@ -30,13 +30,16 @@ class ThenStep: ProcessingStep {
     override val name = "Conditionally set value"
     override val description = "Sets the current value to the given value if current value is truthy"
     override val help = """
-        The current value is evaluated as boolean. Examples:
-          value:true then:yes -> yes
-          value:false then:yes -> false
-          value:123 then:yes -> yes
-          value:0 then:yes -> 0
+        The current value is evaluated as boolean.
     """.trimIndent()
-    override fun argDescription() = "<value>"
+    override val options = ""
+    override val example = """
+        value:true then:yes -> yes
+        value:false then:yes -> false
+        value:123 then:yes -> yes
+        value:0 then:yes -> 0
+    """.trimIndent()
+    override val argDescription = "<value>"
 
     override fun requiredAttributesFor(arg: String) =
         arg.toRequiredAttributes()

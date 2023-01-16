@@ -29,7 +29,13 @@ class ZipReadStep: ProcessingStep {
     override val name = "Read ZIP entries"
     override val description = "Read entries from the given ZIP file"
     override val help = ""
-    override fun argDescription() = "".toInputStreamProvider().toString()
+    override val options = ""
+    override val example = """
+        zip-read:files.zip
+        files-write:/unpacked
+    """.trimIndent()
+    override val argDescription
+        get() = "".toInputStreamProvider().toString()
 
     override fun producedAttributesFor(arg: String) = setOf(
         WellKnownKeys.NAME,

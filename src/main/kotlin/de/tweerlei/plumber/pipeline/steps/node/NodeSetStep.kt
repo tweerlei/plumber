@@ -31,7 +31,15 @@ class NodeSetStep: ProcessingStep {
     override val help = """
         The current node will be modified.
     """.trimIndent()
-    override fun argDescription() = "<path>"
+    override val options = ""
+    override val example = """
+        value:'{"numbers":[1,2,3]}'
+        json-parse
+        value:4
+        node-set:numbers/1
+        json-write  # result: {"numbers":[1,4,3]}
+    """.trimIndent()
+    override val argDescription = "<path>"
 
     override fun producedAttributesFor(arg: String) = setOf(
         WellKnownKeys.NODE

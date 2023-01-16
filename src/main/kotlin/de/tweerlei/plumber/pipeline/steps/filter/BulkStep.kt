@@ -30,10 +30,18 @@ class BulkStep: ProcessingStep {
     override val name = "Bulk execution"
     override val description = "Execute following steps using chunks of items"
     override val help = """
-        This step will queue up incoming items until the given count (if unspecified, ${AllPipelineOptions.INSTANCE.numberOfFilesPerRequest.name})
-        is reached and pass them on wrapped as a single item. Such items can be processed by bulk-* steps.
+        This step will queue up incoming items until the given count is reached
+        and pass them on wrapped as a single item. Such items can be processed by bulk-* steps.
     """.trimIndent()
-    override fun argDescription() = "<number>"
+    override val options = """
+        --${AllPipelineOptions.INSTANCE.numberOfFilesPerRequest.name} specifies the default bulk size
+    """.trimIndent()
+    override val example = """
+        s3-list:mybucket --bulk-size:1000
+        bulk
+        s3-bulkdelete
+    """.trimIndent()
+    override val argDescription = "<number>"
 
     override fun producedAttributesFor(arg: String) = setOf(
         WellKnownKeys.WORK_ITEMS,

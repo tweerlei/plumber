@@ -29,14 +29,18 @@ class FilterStep: ProcessingStep {
     override val description = "Keep only items that evaluate to the given boolean"
     override val help = """
         The current value will be evaluated as boolean and compared to the argument.
-        If it does not match, the item will be discarded. Examples:
-          value:false filter:false -> item will be passed on
-          value:false filter:true -> item will be discarded
-          value:true filter:true -> item will be passed on
-          value:1 filter:true -> item will be passed on
-          value:0 filter:true -> item will be discarded
+        If it does not match, the item will be discarded.
     """.trimIndent()
-    override fun argDescription() = compareWithFor("").toString()
+    override val options = ""
+    override val example = """
+        value:false filter:false -> item will be passed on
+        value:false filter:true -> item will be discarded
+        value:true filter:true -> item will be passed on
+        value:1 filter:true -> item will be passed on
+        value:0 filter:true -> item will be discarded
+    """.trimIndent()
+    override val argDescription
+        get() = compareWithFor("").toString()
 
     override fun createWorker(
         arg: String,

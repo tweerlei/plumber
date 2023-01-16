@@ -33,8 +33,21 @@ class CsvEncodeStep(
     override val description = "Serialize objects to CSV text"
     override val help = """
         This will encode the current record, if set. Otherwise the current value is encoded.
-        Use --${AllPipelineOptions.INSTANCE.separator.name} to specify the record separator character.
     """.trimIndent()
+    override val options = """
+        --${AllPipelineOptions.INSTANCE.separator.name} sets the record separator character.
+    """.trimIndent()
+    override val example = """
+        value:foo
+        record-set:0
+        value:123
+        record-set:1
+        value:true
+        record-set:2
+        csv-print
+        lines-write  # result: foo,123,true
+    """.trimIndent()
+    override val argDescription = ""
 
     override fun createWorker(
         arg: String,

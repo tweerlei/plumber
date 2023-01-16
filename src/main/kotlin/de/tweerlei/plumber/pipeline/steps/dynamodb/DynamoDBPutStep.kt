@@ -36,7 +36,17 @@ class DynamoDBPutStep(
         This will write the current record, if any. Otherwise the current value will be used.
         If the argument is omitted, the table name will be taken from a previously read DynamoDB item.
     """.trimIndent()
-    override fun argDescription() = "<table>"
+    override val options = ""
+    override val example = """
+        value:123
+        record-set:ItemID
+        value:foo
+        record-set:Name
+        value:true
+        record-set:InStock
+        dynamodb-write:myTable
+    """.trimIndent()
+    override val argDescription = "<table>"
 
     override fun createWorker(
         arg: String,

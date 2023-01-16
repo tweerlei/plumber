@@ -31,7 +31,16 @@ class NodeEachStep: ProcessingStep {
     override val help = """
         The current value will be set to each extracted element.
     """.trimIndent()
-    override fun argDescription() = "<path>"
+    override val options = ""
+    override val example = """
+        value:'{"numbers":[1,2,3]}'
+        json-parse
+        node-foreach:numbers
+        lines-write  # result: 1
+                               2
+                               3
+    """.trimIndent()
+    override val argDescription = "<path>"
 
     override fun requiredAttributesFor(arg: String) = setOf(
         WellKnownKeys.NODE

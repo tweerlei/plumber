@@ -28,7 +28,12 @@ class TimeStep: ProcessingStep {
     override val name = "Time item throughput"
     override val description = "Log item throughput every given number of items"
     override val help = ""
-    override fun argDescription() = intervalFor("").toString()
+    override val options = ""
+    override val example = """
+        time:10
+    """.trimIndent()
+    override val argDescription
+        get() = intervalFor("").toString()
 
     override fun createWorker(
         arg: String,

@@ -31,6 +31,17 @@ class RangeResetStep: ProcessingStep {
     override val name = "Reset range"
     override val description = "Reset the given range to default given by --${AllPipelineOptions.INSTANCE.startAfterKey.name}/--${AllPipelineOptions.INSTANCE.stopAfterKey}"
     override val help = ""
+    override val options = ""
+    override val example = """
+        range-reset --start-after=10 --stop-after=20
+        range-get:start
+        lines-write  # result: 10
+        
+        range-reset --start-after=10 --stop-after=20
+        range-get:end
+        lines-write  # result: 20
+    """.trimIndent()
+    override val argDescription = ""
 
     override fun producedAttributesFor(arg: String) = setOf(
         arg

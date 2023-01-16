@@ -33,7 +33,14 @@ class XmlReadStep(
     override val name = "Read XML objects from file"
     override val description = "Read XML objects from the given file"
     override val help = ""
-    override fun argDescription() = "".toInputStreamProvider().toString()
+    override val options = ""
+    override val example = """
+        xml-read:items.xml
+        node-get:id
+        lines-write  # result: id value of each XML object
+    """.trimIndent()
+    override val argDescription
+        get() = "".toInputStreamProvider().toString()
 
     override fun producedAttributesFor(arg: String) = setOf(
         WellKnownKeys.PATH,

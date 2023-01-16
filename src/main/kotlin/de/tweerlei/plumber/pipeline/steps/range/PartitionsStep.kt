@@ -34,9 +34,17 @@ class PartitionsStep: ProcessingStep {
         and pass these on to the following steps.
         The types of the current range's bounds are important. Numeric bounds will be split into number ranges
         while string bounds will generate key ranges.
-        Use --${AllPipelineOptions.INSTANCE.keyChars.name} to specify valid characters for key range generation.
     """.trimIndent()
-    override fun argDescription() = partitionCountFor("").toString()
+    override val options = """
+        --${AllPipelineOptions.INSTANCE.keyChars.name} specifies valid characters for key range generation.
+    """.trimIndent()
+    override val example = """
+        range-reset --start-after=10 --stop-after=20
+        partitions:2  # result: [10 .. 15]
+                                [15 .. 20]
+    """.trimIndent()
+    override val argDescription
+        get() = partitionCountFor("").toString()
 
     override fun requiredAttributesFor(arg: String) = setOf(
         WellKnownKeys.RANGE

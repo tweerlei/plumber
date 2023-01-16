@@ -28,8 +28,15 @@ class FilesDeleteStep: ProcessingStep {
     override val group = "Files"
     override val name = "Delete files"
     override val description = "Delete files from the given directory"
-    override val help = ""
-    override fun argDescription() = "<path>"
+    override val help = """
+        The ${WellKnownKeys.NAME} attribute is evaluated relative to the given directory (default to the current one).
+    """.trimIndent()
+    override val options = ""
+    override val example = """
+        files-list:/originals
+        files-delete:/duplicates
+    """.trimIndent()
+    override val argDescription = "<path>"
 
     override fun requiredAttributesFor(arg: String) = setOf(
         WellKnownKeys.NAME

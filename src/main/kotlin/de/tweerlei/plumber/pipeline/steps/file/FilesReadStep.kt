@@ -28,8 +28,18 @@ class FilesReadStep: ProcessingStep {
     override val group = "Files"
     override val name = "Read files"
     override val description = "Read files from the given base directory"
-    override val help = ""
-    override fun argDescription() = "<path>"
+    override val help = """
+        The ${WellKnownKeys.NAME} attribute is evaluated relative to the given directory (default to the current one).
+    """.trimIndent()
+    override val options = ""
+    override val example = """
+        files-list:/tmp
+        files-read
+        digest:sha1
+        text-write:hex
+        lines-write  # all file content hashes
+    """.trimIndent()
+    override val argDescription = "<path>"
 
     override fun requiredAttributesFor(arg: String) = setOf(
         WellKnownKeys.NAME

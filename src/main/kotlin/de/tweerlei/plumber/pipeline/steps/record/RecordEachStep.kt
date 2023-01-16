@@ -30,7 +30,18 @@ class RecordEachStep: ProcessingStep {
     override val description = "Extract record elements to individual items"
     override val help = """
         The current value will be set to each extracted element.
+        The key will be available as ${WellKnownKeys.NAME} attribute.
     """.trimIndent()
+    override val options = ""
+    override val example = """
+        value::alice,bob,charlie
+        csv-parse
+        record-foreach
+        lines-write  # result: alice
+                               bob
+                               charlie
+    """.trimIndent()
+    override val argDescription = ""
 
     override fun requiredAttributesFor(arg: String) = setOf(
         WellKnownKeys.RECORD

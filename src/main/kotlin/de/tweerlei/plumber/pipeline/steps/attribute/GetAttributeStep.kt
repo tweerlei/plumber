@@ -31,7 +31,13 @@ class GetAttributeStep: ProcessingStep {
     override val help = """
         get:myname is equivalent to value:@myname
     """.trimIndent()
-    override fun argDescription() = "<name>"
+    override val options = ""
+    override val example = """
+        files-list
+        get:size
+        lines-write  # result: size of each file
+    """.trimIndent()
+    override val argDescription = "<name>"
 
     override fun requiredAttributesFor(arg: String) = setOf(
         arg

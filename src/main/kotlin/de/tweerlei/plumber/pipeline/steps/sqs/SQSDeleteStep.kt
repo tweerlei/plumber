@@ -34,7 +34,12 @@ class SQSDeleteStep(
     override val help = """
         The required delete handle is usually acquired by reading the message from the SQS queue first.
     """.trimIndent()
-    override fun argDescription() = "<queue>"
+    override val options = ""
+    override val example = """
+        sqs-read:myQueue
+        sqs-delete
+    """.trimIndent()
+    override val argDescription = "<queue>"
 
     override fun requiredAttributesFor(arg: String) = setOf(
         SQSKeys.DELETE_HANDLE

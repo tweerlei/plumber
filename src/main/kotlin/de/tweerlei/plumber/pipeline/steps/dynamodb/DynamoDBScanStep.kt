@@ -40,12 +40,21 @@ class DynamoDBScanStep(
         the whole table will be listed.
         The current value will be set to the read record, which will also be available to record-* steps.
         Values in this record will be JSON nodes to support complex data types.
-        Use --${AllPipelineOptions.INSTANCE.partitionKey.name} to specify the partition key column
-        Use --${AllPipelineOptions.INSTANCE.rangeKey.name} to specify the range key column
-        Use --${AllPipelineOptions.INSTANCE.selectFields.name} to specify columns to fetch
-        Use --${AllPipelineOptions.INSTANCE.numberOfFilesPerRequest.name} to specify how many items should be requested per backend call
     """.trimIndent()
-    override fun argDescription() = "<table>"
+    override val options = """
+        --${AllPipelineOptions.INSTANCE.partitionKey.name} specifies the partition key column
+        --${AllPipelineOptions.INSTANCE.rangeKey.name} specifies the range key column
+        --${AllPipelineOptions.INSTANCE.selectFields.name} specifies columns to fetch
+        --${AllPipelineOptions.INSTANCE.numberOfFilesPerRequest.name} specifies how many items should be requested per backend call
+    """.trimIndent()
+    override val example = """
+        value:100
+        range-set:start
+        value:200
+        range-set:end
+        dynamodb-list:myTable --partition-key=ItemID
+    """.trimIndent()
+    override val argDescription = "<table>"
 
     override fun producedAttributesFor(arg: String) = setOf(
         WellKnownKeys.RECORD,

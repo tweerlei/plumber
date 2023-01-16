@@ -34,9 +34,16 @@ class S3BulkDeleteStep(
     override val description = "Deletes multiple objects from the given S3 bucket, use with bulk:<n>"
     override val help = """
         Bulked version of s3-delete.
-        Use --${AllPipelineOptions.INSTANCE.requesterPays.name} to accept being charged with S3 access costs.
     """.trimIndent()
-    override fun argDescription() = "<bucket>"
+    override val options = """
+        --${AllPipelineOptions.INSTANCE.requesterPays.name} accepts being charged with S3 access costs.
+    """.trimIndent()
+    override val example = """
+        s3-list:mybucket --bulk-size:1000
+        bulk
+        s3-bulkdelete
+    """.trimIndent()
+    override val argDescription = "<bucket>"
 
     override fun requiredAttributesFor(arg: String) = setOf(
         WellKnownKeys.WORK_ITEMS

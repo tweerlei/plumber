@@ -30,13 +30,18 @@ class ElseStep: ProcessingStep {
     override val name = "Conditionally set value"
     override val description = "Sets the current value to the given value if a previous then: did not match"
     override val help = """
-        Examples:
-          value:true then:yes else:no -> yes
-          value:false then:yes else:no -> no
-          value:123 then:yes else:no -> yes
-          value:0 then:yes else:no -> no
+        Requires a preceding then:
     """.trimIndent()
-    override fun argDescription() = "<value>"
+    override val options = """
+        value:true then:yes else:no -> yes
+        value:false then:yes else:no -> no
+        value:123 then:yes else:no -> yes
+        value:0 then:yes else:no -> no
+    """.trimIndent()
+    override val example = """
+        
+    """.trimIndent()
+    override val argDescription = "<value>"
 
     override fun requiredAttributesFor(arg: String) = setOf(
         WellKnownKeys.TEST_RESULT,

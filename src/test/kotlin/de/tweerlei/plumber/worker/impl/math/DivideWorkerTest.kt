@@ -34,9 +34,9 @@ class DivideWorkerTest {
         test(LongValue.of(1001L), LongValue.of(1L), LongValue.of(1001L))
         test(LongValue.of(1002001L), LongValue.of(1001L), LongValue.of(1001L))
 
-        test(LongValue.of(1L), LongValue.of(0L), DoubleValue.of(Double.POSITIVE_INFINITY))
-        test(LongValue.of(-1L), LongValue.of(0L), DoubleValue.of(Double.NEGATIVE_INFINITY))
-        test(LongValue.of(0L), LongValue.of(0L), DoubleValue.of(Double.NaN))
+        test(LongValue.of(1L), LongValue.of(0L), LongValue.of(Long.MAX_VALUE))
+        test(LongValue.of(-1L), LongValue.of(0L), LongValue.of(Long.MIN_VALUE))
+        test(LongValue.of(0L), LongValue.of(0L), LongValue.of(0L))
     }
 
     @Test

@@ -16,6 +16,7 @@
 package de.tweerlei.plumber.pipeline.steps.sqs
 
 import de.tweerlei.plumber.pipeline.PipelineParams
+import de.tweerlei.plumber.pipeline.options.AllPipelineOptions
 import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
@@ -34,7 +35,13 @@ class SQSBulkDeleteStep(
     override val help = """
         Bulked version of sqs-delete.
     """.trimIndent()
-    override fun argDescription() = "<queue>"
+    override val options = ""
+    override val example = """
+        sqs-read:myQueue --bulk-size:10
+        bulk
+        sqs-bulkdelete
+    """.trimIndent()
+    override val argDescription = "<queue>"
 
     override fun requiredAttributesFor(arg: String) = setOf(
         WellKnownKeys.WORK_ITEMS

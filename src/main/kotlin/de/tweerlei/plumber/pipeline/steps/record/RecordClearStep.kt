@@ -32,6 +32,11 @@ class RecordClearStep: ProcessingStep {
     override val help = """
         The current record will be set to an empty record.
     """.trimIndent()
+    override val options = ""
+    override val example = """
+        record-clear
+    """.trimIndent()
+    override val argDescription = ""
 
     override fun createWorker(
         arg: String,

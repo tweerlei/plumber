@@ -28,7 +28,12 @@ class BoundsStep: ProcessingStep {
     override val name = "Calculate bounds"
     override val description = "Log smallest and largest value at every given number of items"
     override val help = ""
-    override fun argDescription() = intervalFor("").toString()
+    override val options = ""
+    override val example = """
+        bounds:10
+    """.trimIndent()
+    override val argDescription
+        get() = intervalFor("").toString()
 
     @Suppress("UNCHECKED_CAST")
     override fun createWorker(

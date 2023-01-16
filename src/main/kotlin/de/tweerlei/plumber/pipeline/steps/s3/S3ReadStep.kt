@@ -33,10 +33,16 @@ class S3ReadStep(
     override val group = "AWS S3"
     override val name = "Fetch S3 object"
     override val description = "Get an object from the given S3 bucket"
-    override val help = """
-        Use --${AllPipelineOptions.INSTANCE.requesterPays.name} to accept being charged with S3 access costs.
+    override val help = ""
+    override val options = """
+        --${AllPipelineOptions.INSTANCE.requesterPays.name} accepts being charged with S3 access costs.
     """.trimIndent()
-    override fun argDescription() = "<bucket>"
+    override val example = """
+        s3-list:mybucket
+        s3-read
+        files-write:/s3dump
+    """.trimIndent()
+    override val argDescription = "<bucket>"
 
     override fun requiredAttributesFor(arg: String) = setOf(
         WellKnownKeys.NAME

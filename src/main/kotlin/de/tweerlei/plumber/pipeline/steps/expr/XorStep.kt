@@ -30,13 +30,17 @@ class XorStep: ProcessingStep {
     override val name = "Compare"
     override val description = "Logically XOR the current value with the given value"
     override val help = """
-        Both operands are evaluated as booleans. Examples:
-          value:false xor:true -> true
-          value:false xor:false -> false
-          value:false xor:1234 -> true
-          value:false xor:0 -> false
+        Both operands are evaluated as booleans.
     """.trimIndent()
-    override fun argDescription() = valueFor("")
+    override val options = ""
+    override val example = """
+        value:false xor:true -> true
+        value:false xor:false -> false
+        value:false xor:1234 -> true
+        value:false xor:0 -> false
+    """.trimIndent()
+    override val argDescription
+        get() = valueFor("")
 
     override fun requiredAttributesFor(arg: String) =
         arg.toRequiredAttributes()

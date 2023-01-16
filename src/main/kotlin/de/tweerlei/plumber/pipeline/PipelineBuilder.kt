@@ -42,6 +42,9 @@ class PipelineBuilder(
                 override val name = "Nothing"
                 override val description = "Start of pipeline"
                 override val help = ""
+                override val options = ""
+                override val example = ""
+                override val argDescription = ""
                 override fun createWorker(
                     arg: String,
                     w: Worker,

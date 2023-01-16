@@ -29,6 +29,13 @@ class LengthStep: ProcessingStep {
     override val name = "Calculate length"
     override val description = "Calculate the length of the current value"
     override val help = ""
+    override val options = ""
+    override val example = """
+        value::'Hello, World!'
+        length
+        lines-write  # result: 13
+    """.trimIndent()
+    override val argDescription = ""
 
     override fun producedAttributesFor(arg: String) = setOf(
         WellKnownKeys.SIZE

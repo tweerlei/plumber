@@ -31,7 +31,14 @@ class RecordDelStep: ProcessingStep {
     override val help = """
         The current record will be modified.
     """.trimIndent()
-    override fun argDescription() = "<name>"
+    override val options = ""
+    override val example = """
+        value::alice,bob,charlie
+        csv-parse
+        record-del:1
+        csv-write  # result: alice,bob
+    """.trimIndent()
+    override val argDescription = "<name>"
 
     override fun requiredAttributesFor(arg: String) = setOf(
         WellKnownKeys.RECORD

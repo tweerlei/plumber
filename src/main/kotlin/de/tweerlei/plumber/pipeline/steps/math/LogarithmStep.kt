@@ -31,10 +31,15 @@ class LogarithmStep: ProcessingStep {
     override val description = "Calculate the logarithm of the current value to the given base"
     override val help = """
         Both operands are evaluated as numbers.
-        ln of 0 will yield negative infinity.
-        ln of negative values will yield NaN. 
     """.trimIndent()
-    override fun argDescription() = baseFor("")
+    override val options = ""
+    override val example = """
+        value:100 ln:10 -> 2.0
+        value:0 ln:10 -> -Infinity
+        value:-100 ln:10 -> NaN
+    """.trimIndent()
+    override val argDescription
+        get() = baseFor("")
 
     override fun requiredAttributesFor(arg: String) =
         arg.toRequiredAttributes()

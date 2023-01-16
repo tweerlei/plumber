@@ -32,10 +32,16 @@ class S3WriteStep(
     override val group = "AWS S3"
     override val name = "Write S3 object"
     override val description = "Put an object into the given S3 bucket"
-    override val help = """
-        Use --${AllPipelineOptions.INSTANCE.requesterPays.name} to accept being charged with S3 access costs.
+    override val help = ""
+    override val options = """
+        --${AllPipelineOptions.INSTANCE.requesterPays.name} accepts being charged with S3 access costs.
     """.trimIndent()
-    override fun argDescription() = "<bucket>"
+    override val example = """
+        files-list:/s3dump
+        files-read
+        s3-write:mybucket
+    """.trimIndent()
+    override val argDescription = "<bucket>"
 
     override fun requiredAttributesFor(arg: String) = setOf(
         WellKnownKeys.NAME

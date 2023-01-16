@@ -24,8 +24,9 @@ interface ProcessingStep {
     val name: String
     val description: String
     val help: String
-    fun argDescription(): String =
-        ""
+    val options: String
+    val example: String
+    val argDescription: String
 
     fun requiredAttributesFor(arg: String): Set<String> =
         emptySet()

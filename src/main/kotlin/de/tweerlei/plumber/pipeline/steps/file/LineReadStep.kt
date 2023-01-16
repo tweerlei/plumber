@@ -32,7 +32,14 @@ class LineReadStep: ProcessingStep {
     override val help = """
         Lines will be converted to strings using the system locale.
     """.trimIndent()
-    override fun argDescription() = "".toInputStreamProvider().toString()
+    override val options = ""
+    override val example = """
+        lines-read:filenames.txt
+        set:name
+        files-delete:/files-to-delete
+    """.trimIndent()
+    override val argDescription
+        get() = "".toInputStreamProvider().toString()
 
     override fun producedAttributesFor(arg: String) = setOf(
         WellKnownKeys.NAME

@@ -6,8 +6,6 @@ A processing pipeline is built from command line arguments.
 
 Supported steps and default arguments (if any) are:
 
-Meta
-  include:<path>              Read step definitions and options from the given file
 AWS DynamoDB
   dynamodb-delete:<table>     Delete an element from the given DynamoDB table
   dynamodb-key:<value>        Convert item to a DynamoDB key with the specified range key
@@ -32,23 +30,21 @@ Apache Kafka
   kafka-read:<topic>          Receive messages from the given Kafka topic
   kafka-write:<topic>         Send a message to the given Kafka topic
 Attributes
-  and:<value>                 Logically AND the current value with the given attribute's value
-  divide:<value>              Divide the current value by the given attribute's value
-  else:<value>                Sets the current value to the given attribute's value if a previous then: did not match
+  and:true                    Logically AND the current value with the given value
+  cast:<type>                 Converts the current value to the given type
+  else:<value>                Sets the current value to the given value if a previous then: did not match
   get:<name>                  Set the current value to the given attribute
-  is-equal:<value>            Compare the current value to the given attribute's value resulting in a boolean
-  is-greater:<value>          Compare the current value to the given attribute's value resulting in a boolean
-  is-less:<value>             Compare the current value to the given attribute's value resulting in a boolean
-  minus:<value>               Subtract the given attribute's value to the current value
-  modulo:<value>              Calculate the remainder of dividing the current value by the given attribute's value
+  is-equal:<value>            Compare the current value to the given value resulting in a boolean
+  is-greater:<value>          Compare the current value to the given value resulting in a boolean
+  is-less:<value>             Compare the current value to the given value resulting in a boolean
   not                         Logically negate the current value
-  or:<value>                  Logically OR the current value with the given attribute's value
-  plus:<value>                Add the given attribute's value to the current value
-  range-reset                 Reset range to default given by --start-after/--stop-after
+  or:false                    Logically OR the current value with the given value
+  range-reset                 Reset the given range to default given by --start-after/--de.tweerlei.plumber.pipeline.options.CustomPipelineOption@1a69561c
   set:<name>                  Set the given attribute to the current value
-  then:<value>                Sets the current value to the given attribute's value if current value is truthy
+  then:<value>                Sets the current value to the given value if current value is truthy
+  type                        Converts the current value to the name of its type
   value:<value>               Sets the current value to the given value
-  xor:<value>                 Logically XOR the current value with the given attribute's value
+  xor:false                   Logically XOR the current value with the given value
 CSV
   csv-parse                   Deserialize objects from CSV text
   csv-print                   Serialize objects to CSV text
@@ -92,13 +88,25 @@ Logging
   log                         Log the current value
   sum:9223372036854775807     Log item sum of item sizes every given number of bytes
   time:9223372036854775807    Log item throughput every given number of items
+Math
+  divide:1                    Divide the current value by the given value
+  exp:2.718281828459045       Raise the given value to the power of the current value
+  ln:2.718281828459045        Calculate the logarithm of the current value to the given base
+  minus:0                     Subtract the given value from the current value
+  modulo:1                    Calculate the remainder of dividing the current value by the given value
+  multiply:1                  Multiply the current value with the given value
+  plus:0                      Add the given value to the current value
+  power:1                     Raise the current value to the given power
+  root:1                      Calculate the given root of the current value
+Meta
+  include:<file>              Read step definitions from a file
 MongoDB
   mongodb-delete:<collection> Delete a document from the given MongoDB collection
   mongodb-list:<collection>   List documents from the given MongoDB table
   mongodb-read:<collection>   Read a document from the given MongoDB collection
   mongodb-write:<collection>  Insert a document into the given MongoDB collection
 Nodes
-  node-clear                  Clear the curent JSON object
+  node-clear                  Clear the current JSON object
   node-del:<path>             Remove a subtree of a JSON object using the given JSONPath
   node-each:<path>            Extract elements from a subtree of a JSON object using the given JSONPath
   node-get:<path>             Extract a subtree of a JSON object using the given JSONPath
@@ -107,20 +115,20 @@ Nodes
 Ranges
   is-inrange                  Compare the current value to the current range resulting in a boolean
   partitions:8                Generate key ranges for n partitions, use with parallel:<n>
-  range-clear                 Clear the curent range object
+  range-clear                 Clear the current range object
   range-each:1                Generate items with the values of the input item's range using the given increment
   range-get:start             Get a range field, one of (start, end)
   range-set:start             Set a range field, e.g. for usage with each:, one of (start, end)
 Records
-  rec-clear                   Clear the curent record
-  rec-del:<name>              Remove the given field from the current record
-  rec-each                    Extract record elements to individual items
-  rec-get:<name>              Set the given record field as current value
-  rec-set:<name>              Set the given record field to the current value
+  record-clear                Clear the current record
+  record-del:<name>           Remove the given field from the current record
+  record-each                 Extract record elements to individual items
+  record-get:<name>           Set the given record field as current value
+  record-set:<name>           Set the given record field to the current value
 Text
   digest:sha1                 Calculate a message digest using the given algorithm
-  find:<regex>                Find matches of the given regular expression, use with notnull: or replace:
-  format:<format>             Produces the argument with all occurrences of ${name} replaced by their value
+  find:<regex>                Find matches of the given regular expression, use with filter: or replace:
+  format:<format>             Produces the argument with all occurrences of @{name} replaced by their value
   length                      Calculate the length of the current value
   replace:<value>             Replace all matches of a previous find: with the given replacement
   text-read:hex               Decode binary data from a string using the given algorithm
@@ -135,6 +143,7 @@ XML
 Supported global options and their defaults (if any) are:
 
 --help                        Show this help
+--help=step-name              Show help for a specific step
 --profile=default             Use 'quiet' to disable start-up banner and log only warnings and errors
                               Use 'verbose' to increase log output
                               Use 'debug' for full debug logging
@@ -165,6 +174,7 @@ Supported global options and their defaults (if any) are:
 --pretty-print                Pretty print JSON and XML output
 --element-name=item           XML: Element name to read/write
 --root-element-name=items     XML: Root element name to wrap output in
+--wrap-root                   JSON: Wrap output array in an object with a single property (root-element-name)
 
 Credentials can be passed via environment variables:
 

@@ -39,11 +39,20 @@ class MongoDBScanStep(
         THe key range to scan can be specified by setting the current range. If not set,
         the whole collection will be listed.
         The current value will be set to the read JSON node, which will also be available to node-* steps. 
-        Use --${AllPipelineOptions.INSTANCE.primaryKey.name} to specify the primary key property.
-        Use --${AllPipelineOptions.INSTANCE.selectFields.name} to specify columns to fetch.
-        Use --${AllPipelineOptions.INSTANCE.numberOfFilesPerRequest.name} to specify how many items should be requested per backend call
     """.trimIndent()
-    override fun argDescription() = "<collection>"
+    override val options = """
+        --${AllPipelineOptions.INSTANCE.primaryKey.name} specifies the primary key property.
+        --${AllPipelineOptions.INSTANCE.selectFields.name} specifies columns to fetch.
+        --${AllPipelineOptions.INSTANCE.numberOfFilesPerRequest.name} specifies how many items should be requested per backend call
+    """.trimIndent()
+    override val example = """
+        value:100
+        range-set:start
+        value:200
+        range-set:end
+        mongodb-list:myTable
+    """.trimIndent()
+    override val argDescription = "<collection>"
 
     override fun producedAttributesFor(arg: String) = setOf(
         WellKnownKeys.NODE,

@@ -31,10 +31,16 @@ class ExponentialStep: ProcessingStep {
     override val description = "Raise the given value to the power of the current value"
     override val help = """
         Both operands are evaluated as numbers.
-        Division by zero (e.g. value:-1 exp:0) is possible and will yield positive or negative infinity.
-        0^0 will yield 1. 
     """.trimIndent()
-    override fun argDescription() = baseFor("")
+    override val options = ""
+    override val example = """
+        value:2 exp:10 -> 100.0
+        value:-1 exp:10 -> 0.01
+        value:-1 exp:0 -> Infinity
+        value:0 exp:0 -> 1.0
+    """.trimIndent()
+    override val argDescription
+        get() = baseFor("")
 
     override fun requiredAttributesFor(arg: String) =
         arg.toRequiredAttributes()

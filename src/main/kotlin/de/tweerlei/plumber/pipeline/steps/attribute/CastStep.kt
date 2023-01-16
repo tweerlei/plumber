@@ -43,7 +43,13 @@ class CastStep: ProcessingStep {
           ${Record.NAME} - will also set the result as current record
           ${Node.NAME} - will also set the result as current node
     """.trimIndent()
-    override fun argDescription() = "<type>"
+    override val options = ""
+    override val example = """
+        value:1.23
+        cast:long
+        lines-write  # result: 1
+    """.trimIndent()
+    override val argDescription = "<type>"
 
     override fun createWorker(
         arg: String,

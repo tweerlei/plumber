@@ -38,7 +38,14 @@ class EncodeStep(
           ${Base64Codec.NAME}
           (any supported character set)
     """.trimIndent()
-    override fun argDescription() = encodingFor("")
+    override val options = ""
+    override val example = """
+        value::Hello
+        text-write:base64
+        lines-write  # result: SGVsbG8=
+    """.trimIndent()
+    override val argDescription
+        get() = encodingFor("")
 
     override fun createWorker(
         arg: String,

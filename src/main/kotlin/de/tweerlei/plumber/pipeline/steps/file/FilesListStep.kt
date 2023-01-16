@@ -30,9 +30,17 @@ class FilesListStep: ProcessingStep {
     override val name = "List files"
     override val description = "Read file names from the given directory"
     override val help = """
-        Use --${AllPipelineOptions.INSTANCE.recursive.name} to enable descending into subdirectories
+        File contents are not read, use files-read:
     """.trimIndent()
-    override fun argDescription() = "<path>"
+    override val options = """
+        --${AllPipelineOptions.INSTANCE.recursive.name} enables descending into subdirectories
+    """.trimIndent()
+    override val example = """
+        files-list:/tmp
+        get:size
+        lines-write  # print sizes of all files
+    """.trimIndent()
+    override val argDescription = "<path>"
 
     override fun producedAttributesFor(arg: String) = setOf(
         WellKnownKeys.PATH,

@@ -35,10 +35,17 @@ class DynamoDBKeyStep: ProcessingStep {
     override val help = """
         To generate a partition key only, use: value:keyValue dynamodb-key
         To generate a partition and range key, use: value:keyValue dynamodb-key:rangeKeyValue
-        Use --${AllPipelineOptions.INSTANCE.partitionKey.name} to specify the partition key column
-        Use --${AllPipelineOptions.INSTANCE.rangeKey.name} to specify the range key column
     """.trimIndent()
-    override fun argDescription() = "<value>"
+    override val options = """
+        --${AllPipelineOptions.INSTANCE.partitionKey.name} specifies the partition key column
+        --${AllPipelineOptions.INSTANCE.rangeKey.name} specifies the range key column
+    """.trimIndent()
+    override val example = """
+        value:123
+        dynamodb-key:2022-07-28T12:34:56Z --partition-key=ItemID --range-key=UpdatedAt
+        dynamodb-get:myTable
+    """.trimIndent()
+    override val argDescription = "<value>"
 
     override fun producedAttributesFor(arg: String) = setOf(
         WellKnownKeys.RECORD,

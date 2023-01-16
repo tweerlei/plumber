@@ -38,7 +38,14 @@ class DecodeStep(
           ${Base64Codec.NAME}
           (any supported character set)
     """.trimIndent()
-    override fun argDescription() = encodingFor("")
+    override val options = ""
+    override val example = """
+        value::SGVsbG8=
+        text-read:base64
+        lines-write  # result: Hello
+    """.trimIndent()
+    override val argDescription
+        get() = encodingFor("")
 
     override fun createWorker(
         arg: String,

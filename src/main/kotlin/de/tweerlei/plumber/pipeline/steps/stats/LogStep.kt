@@ -28,6 +28,11 @@ class LogStep: ProcessingStep {
     override val name = "Log value"
     override val description = "Log the current value"
     override val help = ""
+    override val options = ""
+    override val example = """
+        log
+    """.trimIndent()
+    override val argDescription = ""
 
     override fun createWorker(
         arg: String,

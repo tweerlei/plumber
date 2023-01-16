@@ -35,11 +35,17 @@ class MongoDBDeleteStep(
     override val name = "Delete MongoDB document"
     override val description = "Delete a document from the given MongoDB collection"
     override val help = """
-        The item will be identified by the current node.
+        The item key will be derived from the current node.
         If the argument is omitted, the database and collection names will be taken from a previously read MongoDB item.
-        Use --${AllPipelineOptions.INSTANCE.primaryKey.name} to specify the primary key property.
     """.trimIndent()
-    override fun argDescription() = "<collection>"
+    override val options = """
+        --${AllPipelineOptions.INSTANCE.primaryKey.name} specifies the primary key property.
+    """.trimIndent()
+    override val example = """
+        mongodb-list:myTable
+        mongodb-delete
+    """.trimIndent()
+    override val argDescription = "<collection>"
 
     override fun producedAttributesFor(arg: String) = setOf(
         WellKnownKeys.NODE

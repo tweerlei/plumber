@@ -31,7 +31,15 @@ class NodeSubStep: ProcessingStep {
     override val help = """
         This is a shortcut for node-get:path set:node
     """.trimIndent()
-    override fun argDescription() = "<path>"
+    override val options = ""
+    override val example = """
+        value:'{"numbers":[1,2,3]}'
+        json-parse
+        value:4
+        node-sub:numbers
+        json-write  # result: [1,2,3]
+    """.trimIndent()
+    override val argDescription = "<path>"
 
     override fun requiredAttributesFor(arg: String) = setOf(
         WellKnownKeys.NODE

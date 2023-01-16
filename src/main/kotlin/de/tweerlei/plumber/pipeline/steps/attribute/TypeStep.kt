@@ -13,36 +13,44 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.tweerlei.plumber.pipeline.steps.record
+package de.tweerlei.plumber.pipeline.steps.attribute
 
 import de.tweerlei.plumber.pipeline.PipelineParams
 import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.worker.Worker
-import de.tweerlei.plumber.worker.impl.WellKnownKeys
-import de.tweerlei.plumber.worker.impl.record.RecordGetWorker
+import de.tweerlei.plumber.worker.impl.attribute.TypeNameWorker
+import de.tweerlei.plumber.worker.types.*
 import org.springframework.stereotype.Service
 
-@Service("record-getWorker")
-class RecordGetStep: ProcessingStep {
+@Service("typeWorker")
+class TypeStep: ProcessingStep {
 
-    override val group = "Records"
-    override val name = "Get record field"
-    override val description = "Set the given record field as current value"
+    override val group = "Attributes"
+    override val name = "Value type"
+    override val description = "Converts the current value to the name of its type"
     override val help = """
-        The current value will be set to the extracted value.
+        Supported types are:
+          ${StringValue.NAME}
+          ${LongValue.NAME}
+          ${DoubleValue.NAME}
+          ${BooleanValue.NAME}
+          ${InstantValue.NAME}
+          ${DurationValue.NAME}
+          ${BigIntegerValue.NAME}
+          ${BigDecimalValue.NAME}
+          ${ByteArrayValue.NAME}
+          ${Range.NAME}
+          ${Record.NAME}
+          ${Node.NAME}
+          ${NullValue.NAME}
     """.trimIndent()
     override val options = ""
     override val example = """
-        value::alice,bob,charlie
-        csv-parse
-        record-get:1
-        lines-write  # result: bob
+        value:1.23
+        type
+        lines-write  # result: double
     """.trimIndent()
-    override val argDescription = "<name>"
-
-    override fun requiredAttributesFor(arg: String) = setOf(
-        WellKnownKeys.RECORD
-    )
+    override val argDescription = ""
 
     override fun createWorker(
         arg: String,
@@ -51,5 +59,5 @@ class RecordGetStep: ProcessingStep {
         params: PipelineParams,
         parallelDegree: Int
     ) =
-        RecordGetWorker(arg, w)
+        TypeNameWorker(w)
 }

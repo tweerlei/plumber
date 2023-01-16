@@ -32,7 +32,14 @@ class NodeGetStep: ProcessingStep {
         The current value will be set to the extracted value.
         If it is an array or object, this will be a JSON node. Otherwise it will be converted to a simple value.
     """.trimIndent()
-    override fun argDescription() = "<path>"
+    override val options = ""
+    override val example = """
+        value:'{"numbers":[1,2,3]}'
+        json-parse
+        node-get:numbers/1
+        lines-write  # result: 2
+    """.trimIndent()
+    override val argDescription = "<path>"
 
     override fun requiredAttributesFor(arg: String) = setOf(
         WellKnownKeys.NODE

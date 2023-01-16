@@ -16,6 +16,7 @@
 package de.tweerlei.plumber.pipeline.steps.range
 
 import de.tweerlei.plumber.pipeline.PipelineParams
+import de.tweerlei.plumber.pipeline.options.AllPipelineOptions
 import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
@@ -30,7 +31,18 @@ class RangeGetStep: ProcessingStep {
     override val name = "Get range field"
     override val description = "Get a range field, one of (start, end)"
     override val help = ""
-    override fun argDescription() = rangeKeyFor("").toString()
+    override val options = ""
+    override val example = """
+        range-reset --start-after=10 --stop-after=20
+        range-get:start
+        lines-write  # result: 10
+        
+        range-reset --start-after=10 --stop-after=20
+        range-get:end
+        lines-write  # result: 20
+    """.trimIndent()
+    override val argDescription
+        get() = rangeKeyFor("").toString()
 
     override fun requiredAttributesFor(arg: String) = setOf(
         WellKnownKeys.RANGE

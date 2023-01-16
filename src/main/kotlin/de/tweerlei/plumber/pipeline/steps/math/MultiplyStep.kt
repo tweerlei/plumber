@@ -32,7 +32,12 @@ class MultiplyStep: ProcessingStep {
     override val help = """
         Both operands are evaluated as numbers.
     """.trimIndent()
-    override fun argDescription() = valueFor("")
+    override val options = ""
+    override val example = """
+        value:10 multiply:2.5 -> 25.0
+    """.trimIndent()
+    override val argDescription
+        get() = valueFor("")
 
     override fun requiredAttributesFor(arg: String) =
         arg.toRequiredAttributes()

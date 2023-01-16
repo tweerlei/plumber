@@ -33,11 +33,26 @@ class CsvWriteStep(
     override val name = "Write value as CSV"
     override val description = "Write current value as CSV object to the given file"
     override val help = """
+        This is not only a shorthand for csv-print lines-write, but also has the capability to write a header line.
+        Header field names will be taken from the first item received.
         This will encode the current record, if set. Otherwise the current value is encoded.
-        Use --${AllPipelineOptions.INSTANCE.separator.name} to specify the record separator character.
-        Use --${AllPipelineOptions.INSTANCE.header.name} to write column headings as first line (those will be generated from the first item received).
     """.trimIndent()
-    override fun argDescription() = "".toOutputStreamProvider().toString()
+    override val options = """
+        --${AllPipelineOptions.INSTANCE.separator.name} sets the record separator character.
+        --${AllPipelineOptions.INSTANCE.header.name} will write column headings as first line
+    """.trimIndent()
+    override val example = """
+        value:foo
+        record-set:Name
+        value:123
+        record-set:Amount
+        value:true
+        record-set:InStock
+        csv-write  # result: Name,Amount,InStock
+                             foo,123,true
+    """.trimIndent()
+    override val argDescription
+        get() = "".toOutputStreamProvider().toString()
 
     override fun parallelDegreeFor(arg: String) = 1
 

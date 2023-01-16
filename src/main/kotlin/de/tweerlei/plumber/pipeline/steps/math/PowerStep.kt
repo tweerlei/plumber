@@ -31,10 +31,16 @@ class PowerStep: ProcessingStep {
     override val description = "Raise the current value to the given power"
     override val help = """
         Both operands are evaluated as numbers.
-        Division by zero (e.g. value:0 power:-1) is possible and will yield positive or negative infinity.
-        0^0 will yield 1. 
     """.trimIndent()
-    override fun argDescription() = valueFor("")
+    override val options = ""
+    override val example = """
+        value:10 power:2 -> 100.0
+        value:10 power:-1 -> 0.01
+        value:0 power:-1 -> Infinity
+        value:0 power:0 -> 1.0
+    """.trimIndent()
+    override val argDescription
+        get() = valueFor("")
 
     override fun requiredAttributesFor(arg: String) =
         arg.toRequiredAttributes()

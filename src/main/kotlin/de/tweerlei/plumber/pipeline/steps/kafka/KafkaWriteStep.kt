@@ -32,7 +32,13 @@ class KafkaWriteStep(
     override val name = "Send Kafka message"
     override val description = "Send a message to the given Kafka topic"
     override val help = ""
-    override fun argDescription() = "<topic>"
+    override val options = ""
+    override val example = """
+        sqs-read:myQueue
+        kafka-write:myTopic
+        sqs-delete
+    """.trimIndent()
+    override val argDescription = "<topic>"
 
     override fun producedAttributesFor(arg: String) = setOf(
 //        KafkaKeys.KAFKA_KEY,

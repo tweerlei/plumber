@@ -34,11 +34,37 @@ class JsonWriteStep(
     override val description = "Write current value as JSON object to the given file"
     override val help = """
         This will encode the current node, if set. Otherwise the current value is encoded.
-        Use --${AllPipelineOptions.INSTANCE.prettyPrint.name} to enable pretty printing.
-        Use --${AllPipelineOptions.INSTANCE.wrapRoot} and --${AllPipelineOptions.INSTANCE.rootElementName} to wrap the result
-        as a single property of an outer JSON object.
+        A plain JSON array of items will be written to the output file.
+        Use json-print lines-write to just concatenate JSON objects.
     """.trimIndent()
-    override fun argDescription() = "".toOutputStreamProvider().toString()
+    override val options = """
+        --${AllPipelineOptions.INSTANCE.prettyPrint.name} enables pretty printing.
+        --${AllPipelineOptions.INSTANCE.wrapRoot.name} enable wrapping the JSON object in an outer object
+        --${AllPipelineOptions.INSTANCE.rootElementName.name} specifies the property name to create in the outer object
+    """.trimIndent()
+    override val example = """
+        uuid --limit=2
+        node-set:uuid
+        json-write  # result: [{"uuid":"3170d9fc-6e75-4b76-8d9a-e33cc93a160d"}, {"uuid":"368cf6d6-120a-4e31-a717-c52ed08ce7cd"}]
+        
+        uuid --limit=2
+        node-set:uuid
+        json-write --pretty-print  # result: [{
+                                               "uuid":"3170d9fc-6e75-4b76-8d9a-e33cc93a160d"
+                                             }, {
+                                               "uuid":"368cf6d6-120a-4e31-a717-c52ed08ce7cd"}
+                                             ]
+        
+        uuid --limit=2
+        node-set:uuid
+        json-write --pretty-print --wrap-root  # result: {"items":[{
+                                                           "uuid":"3170d9fc-6e75-4b76-8d9a-e33cc93a160d"
+                                                         }, {
+                                                           "uuid":"368cf6d6-120a-4e31-a717-c52ed08ce7cd"}
+                                                         }]}
+    """.trimIndent()
+    override val argDescription
+        get() = "".toOutputStreamProvider().toString()
 
     override fun parallelDegreeFor(arg: String) = 1
 

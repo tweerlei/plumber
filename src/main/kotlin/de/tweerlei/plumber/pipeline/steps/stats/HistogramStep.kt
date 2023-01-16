@@ -28,7 +28,12 @@ class HistogramStep: ProcessingStep {
     override val name = "Histogram"
     override val description = "Build a histogram with the given number of buckets"
     override val help = ""
-    override fun argDescription() = bucketCountFor("").toString()
+    override val options = ""
+    override val example = """
+        histogram:10
+    """.trimIndent()
+    override val argDescription
+        get() = bucketCountFor("").toString()
 
     override fun parallelDegreeFor(arg: String) = 1
 

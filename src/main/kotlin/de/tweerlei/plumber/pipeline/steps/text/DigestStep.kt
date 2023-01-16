@@ -37,7 +37,15 @@ class DigestStep(
           gunzip
           (any supported digest algorithm)
     """.trimIndent()
-    override fun argDescription() = algorithmFor("")
+    override val options = ""
+    override val example = """
+        value::Hello
+        digest:sha1
+        text-write:hex
+        lines-write  # result: f7ff9e8b7bb2e09b70935a5d785e0cc5d9d0abf0
+    """.trimIndent()
+    override val argDescription
+        get() = algorithmFor("")
 
     override fun producedAttributesFor(arg: String) = setOf(
         WellKnownKeys.DIGEST,

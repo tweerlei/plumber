@@ -35,9 +35,19 @@ class JdbcRangeStep(
     override val description = "Determine the actual range of values for the JDBC primaryKey, use with partition:n"
     override val help = """
         This will set the current range to the range of values in the primary key column.
-        Use --${AllPipelineOptions.INSTANCE.primaryKey.name} to specify the PK column.
     """.trimIndent()
-    override fun argDescription() = "<table>"
+    override val options = """
+        --${AllPipelineOptions.INSTANCE.primaryKey.name} specifies the PK column.
+    """.trimIndent()
+    override val example = """
+        jdbc-range:myTable --primary-key=id
+        jdbc-delete  # delete all items
+        
+        jdbc-range:myTable --primary-key=id
+        parallel:8
+        jdbc-delete  # delete in parallel
+    """.trimIndent()
+    override val argDescription = "<table>"
 
     override fun producedAttributesFor(arg: String) = setOf(
         WellKnownKeys.RANGE,

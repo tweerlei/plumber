@@ -50,27 +50,29 @@ class CommandLineProcessor(
     private fun showHelp(stepName: String) {
         try {
             factory.processingStepFor(stepName)
-                .also { step -> showStepHelp(step) }
+                .also { step -> showStepHelp(stepName, step) }
         } catch (e: Exception) {
             showGlobalHelp()
         }
     }
 
-    private fun showStepHelp(step: ProcessingStep) {
+    private fun showStepHelp(stepName: String, step: ProcessingStep) {
         StringBuilder()
-            .append("\n")
-            .append("\n")
-            .append(step.description)
-            .append("\n")
-            .append(step.help)
-            .append("\n")
-            .append("\n")
-            .append("Required input attributes: ")
-            .append(step.requiredAttributesFor("").joinToString(", ").ifEmpty { "(none)" })
-            .append("\n")
-            .append("Produced output attributes: ")
-            .append(step.producedAttributesFor("").joinToString(", ").ifEmpty { "(none)" })
-            .append("\n")
+            .append("\n\nNAME\n  ")
+            .append(stepName).append(" - ").append(step.description).append("\n")
+            .append("\nUSAGE\n  ")
+            .append(stepName).append(":").append(step.argDescription).append("\n")
+            .append("\nDESCRIPTION\n  ")
+            .append(step.help.replace("\n", "\n  ")).append("\n")
+            .append("\nOPTIONS\n  ")
+            .append(step.options.ifEmpty { "None." }.replace("\n", "\n  ")).append("\n")
+            .append("\nEXAMPLES\n  ")
+            .append(step.example.replace("\n", "\n  ")).append("\n")
+            .append("\nINPUTS AND OUTPUTS\n")
+            .append("  Required input attributes: ")
+            .append(step.requiredAttributesFor("").joinToString(", ").ifEmpty { "<none>" }).append("\n")
+            .append("  Produced output attributes: ")
+            .append(step.producedAttributesFor("").joinToString(", ").ifEmpty { "<none>" }).append("\n")
             .toString()
             .also { message -> logger.warn(message) }
     }
@@ -85,8 +87,6 @@ class CommandLineProcessor(
 
                 Supported steps and default arguments (if any) are:
 
-                Meta
-                  include:<path>              Read step definitions and options from the given file
 
             """.trimIndent())
             .apply {

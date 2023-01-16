@@ -28,7 +28,13 @@ class ZipWriteStep: ProcessingStep {
     override val name = "Write ZIP entries"
     override val description = "Write entries to the given ZIP file"
     override val help = ""
-    override fun argDescription() = "".toOutputStreamProvider().toString()
+    override val options = ""
+    override val example = """
+        files-read:/toArchive
+        zip-write:archive.zip
+    """.trimIndent()
+    override val argDescription
+        get() = "".toOutputStreamProvider().toString()
 
     override fun parallelDegreeFor(arg: String) = 1
 

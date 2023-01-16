@@ -31,9 +31,18 @@ class ModuloStep: ProcessingStep {
     override val description = "Calculate the remainder of dividing the current value by the given value"
     override val help = """
         Both operands are evaluated as numbers.
-        The remainder of dividing by zero will be NaN.
     """.trimIndent()
-    override fun argDescription() = valueFor("")
+    override val options = ""
+    override val example = """
+        value:10 modulo:3 -> 1        
+        value:10 modulo:3.1 -> 0.7        
+        value:-10 modulo:3.1 -> -0.7        
+        value:10 modulo:-3.1 -> 0.7        
+        value:-10 modulo:-3.1 -> -0.7        
+        value:10 modulo:0 -> NaN        
+    """.trimIndent()
+    override val argDescription
+        get() = valueFor("")
 
     override fun requiredAttributesFor(arg: String) =
         arg.toRequiredAttributes()

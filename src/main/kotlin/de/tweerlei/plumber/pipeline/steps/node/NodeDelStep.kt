@@ -31,7 +31,13 @@ class NodeDelStep: ProcessingStep {
     override val help = """
         The current node will be modified.
     """.trimIndent()
-    override fun argDescription() = "<path>"
+    override val options = ""
+    override val example = """
+        json-read:items.json
+        node-del:password
+        json-write:public-items.json
+    """.trimIndent()
+    override val argDescription = "<path>"
 
     override fun producedAttributesFor(arg: String) = setOf(
         WellKnownKeys.NODE

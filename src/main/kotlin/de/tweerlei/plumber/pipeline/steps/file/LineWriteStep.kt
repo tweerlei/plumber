@@ -31,7 +31,13 @@ class LineWriteStep: ProcessingStep {
     override val help = """
         Lines will be converted to strings using the system locale.
     """.trimIndent()
-    override fun argDescription() = "".toOutputStreamProvider().toString()
+    override val options = ""
+    override val example = """
+        uuid --limit=10
+        lines-write  # print 10 random UUIDs
+    """.trimIndent()
+    override val argDescription
+        get() = "".toOutputStreamProvider().toString()
 
     override fun parallelDegreeFor(arg: String) = 1
 

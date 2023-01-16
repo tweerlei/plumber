@@ -29,13 +29,31 @@ class FindStep: ProcessingStep {
     override val name = "Find by regex"
     override val description = "Find matches of the given regular expression, use with filter: or replace:"
     override val help = """
-        The current value will be set to the matched substring.
+        The current value will be set to the matched substring. Each matched capturing group will be stored in its
+        own attribute.
     """.trimIndent()
-    override fun argDescription() = "<regex>"
+    override val options = ""
+    override val example = """
+        value::'Hello, World!'
+        find:'(\w+), (\w+)'
+        get:matchedGroup2
+        lines-write  # result: World
+    """.trimIndent()
+    override val argDescription = "<regex>"
 
     override fun producedAttributesFor(arg: String) = setOf(
         TextKeys.MATCH_EXPRESSION,
-        TextKeys.MATCH_INPUT
+        TextKeys.MATCH_INPUT,
+        "${TextKeys.MATCHED_GROUP}0",
+        "${TextKeys.MATCHED_GROUP}1",
+        "${TextKeys.MATCHED_GROUP}2",
+        "${TextKeys.MATCHED_GROUP}3",
+        "${TextKeys.MATCHED_GROUP}4",
+        "${TextKeys.MATCHED_GROUP}5",
+        "${TextKeys.MATCHED_GROUP}6",
+        "${TextKeys.MATCHED_GROUP}7",
+        "${TextKeys.MATCHED_GROUP}8",
+        "${TextKeys.MATCHED_GROUP}9"
     )
 
     override fun createWorker(

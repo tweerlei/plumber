@@ -35,10 +35,18 @@ class JdbcReadStep(
     override val description = "Retrieve a row from the given JDBC table"
     override val help = """
         The primary key to fetch will be taken from the current record.
-        Use --${AllPipelineOptions.INSTANCE.primaryKey.name} to specify the PK column.
         Combined primary keys are not supported.
     """.trimIndent()
-    override fun argDescription() = "<table>"
+    override val options = """
+        --${AllPipelineOptions.INSTANCE.primaryKey.name} specifies the PK column.
+    """.trimIndent()
+    override val example = """
+        value:42
+        record-set:id
+        jdbc-read:myTable --primary-key=id
+        csv-write  # print row 42 as CSV
+    """.trimIndent()
+    override val argDescription = "<table>"
 
     override fun producedAttributesFor(arg: String) = setOf(
         WellKnownKeys.RECORD,

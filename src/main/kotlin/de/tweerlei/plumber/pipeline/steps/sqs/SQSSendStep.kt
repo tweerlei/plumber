@@ -16,6 +16,7 @@
 package de.tweerlei.plumber.pipeline.steps.sqs
 
 import de.tweerlei.plumber.pipeline.PipelineParams
+import de.tweerlei.plumber.pipeline.options.AllPipelineOptions
 import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.sqs.SQSClientFactory
@@ -31,7 +32,13 @@ class SQSSendStep(
     override val name = "Send SQS message"
     override val description = "Send a message to the given SQS queue"
     override val help = ""
-    override fun argDescription() = "<queue>"
+    override val options = ""
+    override val example = """
+        files-list:/messages
+        files-read
+        sqs-write:myQueue
+    """.trimIndent()
+    override val argDescription = "<queue>"
 
     override fun createWorker(
         arg: String,

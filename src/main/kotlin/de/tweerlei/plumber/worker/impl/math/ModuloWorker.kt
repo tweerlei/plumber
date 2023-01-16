@@ -15,42 +15,26 @@
  */
 package de.tweerlei.plumber.worker.impl.math
 
-import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.WorkItemAccessor
 import de.tweerlei.plumber.worker.Worker
-import de.tweerlei.plumber.worker.impl.DelegatingWorker
-import de.tweerlei.plumber.worker.types.*
+import de.tweerlei.plumber.worker.types.Value
 import java.math.BigDecimal
 import java.math.BigInteger
 
 class ModuloWorker(
     private val value: WorkItemAccessor<Value>,
     worker: Worker
-): DelegatingWorker(worker) {
+): ArithmeticWorker(value, worker) {
 
-    override fun doProcess(item: WorkItem) =
-        item.get()
-            .let { left ->
-                value(item).let { right ->
-                    when {
-                        left is BigDecimalValue ||
-                                right is BigDecimalValue ||
-                                (left is BigIntegerValue && right is DoubleValue) ||
-                                (left is DoubleValue && right is BigIntegerValue) ->
-                            (left.toBigDecimal() % right.toBigDecimal())
-                        left is DoubleValue || right is DoubleValue -> (left.toDouble() % right.toDouble()).safeTruncate()
-                        left is BigIntegerValue || right is BigIntegerValue -> when (val divisor = right.toBigInteger()) {
-                            BigInteger.ZERO -> left.toBigDecimal() % BigDecimal.ZERO
-                            else -> left.toBigInteger() % divisor
-                        }
-                        else -> when (val divisor = right.toLong()) {
-                            0L -> left.toDouble() % 0.0
-                            else -> left.toLong() % divisor
-                        }
-                    }
-                }
-            }.toValue()
-            .also {
-                item.set(it)
-            }.let { true }
+    override fun calc(left: Long, right: Long) =
+        if (right == 0L)
+            0
+        else
+            left % right
+    override fun calc(left: Double, right: Double) =
+        left % right
+    override fun calc(left: BigInteger, right: BigInteger) =
+        left % right
+    override fun calc(left: BigDecimal, right: BigDecimal) =
+        left % right
 }

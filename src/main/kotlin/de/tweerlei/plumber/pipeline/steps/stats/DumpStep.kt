@@ -28,6 +28,11 @@ class DumpStep: ProcessingStep {
     override val name = "Dump state"
     override val description = "Dump raw item contents"
     override val help = ""
+    override val options = ""
+    override val example = """
+        dump
+    """.trimIndent()
+    override val argDescription = ""
 
     override fun createWorker(
         arg: String,

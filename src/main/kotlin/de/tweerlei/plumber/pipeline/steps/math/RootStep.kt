@@ -31,10 +31,16 @@ class RootStep: ProcessingStep {
     override val description = "Calculate the given root of the current value"
     override val help = """
         Both operands are evaluated as numbers.
-        The zeroth root will be infinity.
-        Roots of negative values will yield NaN. 
     """.trimIndent()
-    override fun argDescription() = valueFor("")
+    override val options = ""
+    override val example = """
+        value:100 root:2 -> 10
+        value:100 root:-2 -> 0.1
+        value:100 root:0 -> Infinity
+        value:-100 root:2 -> NaN
+    """.trimIndent()
+    override val argDescription
+        get() = valueFor("")
 
     override fun requiredAttributesFor(arg: String) =
         arg.toRequiredAttributes()

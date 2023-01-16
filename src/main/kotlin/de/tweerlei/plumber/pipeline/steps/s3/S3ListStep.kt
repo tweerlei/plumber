@@ -34,10 +34,23 @@ class S3ListStep(
     override val name = "List S3 object keys"
     override val description = "List objects from the given S3 bucket"
     override val help = """
-        Use --${AllPipelineOptions.INSTANCE.numberOfFilesPerRequest.name} to specify the number of objects to retrieve per backend call.
-        Use --${AllPipelineOptions.INSTANCE.requesterPays.name} to accept being charged with S3 access costs.
+        The key range to scan can be specified by setting the current range. If not set,
+        the whole bucket will be listed.
+        This will NOT fetch object contents. Use s3-read:
     """.trimIndent()
-    override fun argDescription() = "<bucket>"
+    override val options = """
+        --${AllPipelineOptions.INSTANCE.numberOfFilesPerRequest.name} specifies the number of objects to retrieve per backend call.
+        --${AllPipelineOptions.INSTANCE.requesterPays.name} accepts being charged with S3 access costs.
+    """.trimIndent()
+    override val example = """
+        range-reset --start-after=00000000 --end-after=FFFFFFFF
+        partitions:256 --key-chars=0123456789ABCDEF
+        parallel:16
+        s3-list:mybucket
+        bulk
+        s3-bulkdelete  # list and delete with 16 parallel workers
+    """.trimIndent()
+    override val argDescription = "<bucket>"
 
     override fun producedAttributesFor(arg: String) = setOf(
         WellKnownKeys.NAME,

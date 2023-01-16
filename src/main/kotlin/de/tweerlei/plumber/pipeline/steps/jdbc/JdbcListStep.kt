@@ -34,13 +34,20 @@ class JdbcListStep(
     override val name = "Fetch JDBC rows"
     override val description = "Retrieve rows from the given JDBC table"
     override val help = """
-        THe key range to scan can be specified by setting the current range. If not set,
+        The key range to scan can be specified by setting the current range. If not set,
         the whole table will be listed.
         The current value will be set to the read record, which will also be available to record-* steps. 
-        Use --${AllPipelineOptions.INSTANCE.primaryKey.name} to specify the PK column.
-        Use --${AllPipelineOptions.INSTANCE.selectFields.name} to specify columns to fetch
     """.trimIndent()
-    override fun argDescription() = "<table>"
+    override val options = """
+        --${AllPipelineOptions.INSTANCE.primaryKey.name} specifies the PK column.
+        --${AllPipelineOptions.INSTANCE.selectFields.name} specifies columns to fetch
+    """.trimIndent()
+    override val example = """
+        jdbc-list:myTable --start-after=100 --end-after=200
+        record-get:id
+        lines-write  # result: IDs of records between 100 (excl.) and 200 (incl.)
+    """.trimIndent()
+    override val argDescription = "<table>"
 
     override fun producedAttributesFor(arg: String) = setOf(
         WellKnownKeys.RECORD,

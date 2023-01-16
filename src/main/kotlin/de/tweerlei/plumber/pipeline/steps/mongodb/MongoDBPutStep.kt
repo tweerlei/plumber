@@ -36,7 +36,17 @@ class MongoDBPutStep(
         This will write the current node, if any. Otherwise the current value will be used.
         If the argument is omitted, the table name will be taken from a previously read MongoDB item.
     """.trimIndent()
-    override fun argDescription() = "<collection>"
+    override val options = ""
+    override val example = """
+        value:123
+        node-set:ItemID
+        value:foo
+        node-set:Name
+        value:true
+        node-set:InStock
+        mongodb-write:myTable
+    """.trimIndent()
+    override val argDescription = "<collection>"
 
     override fun createWorker(
         arg: String,

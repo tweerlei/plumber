@@ -30,10 +30,19 @@ class RetryStep: ProcessingStep {
     override val description = "Retry the following steps a given number of times on error"
     override val help = """
         If one of the following steps throws an error, perform the given number of retry attempts.
-        Use --${AllPipelineOptions.INSTANCE.retryDelaySeconds} to add a delay between retries.
-        Use --${AllPipelineOptions.INSTANCE.failFast} to stop processing more items when no retry succeeded.
     """.trimIndent()
-    override fun argDescription() = retryCountFor("").toString()
+    override val options = """
+        --${AllPipelineOptions.INSTANCE.retryDelaySeconds} adds a delay between retries.
+        --${AllPipelineOptions.INSTANCE.failFast} stops processing more items when no retry succeeded.
+    """.trimIndent()
+    override val example = """
+        uuid --limit=10
+        retry:2
+        error:2
+        lines-write
+    """.trimIndent()
+    override val argDescription
+        get() = retryCountFor("").toString()
 
     override fun createWorker(
         arg: String,

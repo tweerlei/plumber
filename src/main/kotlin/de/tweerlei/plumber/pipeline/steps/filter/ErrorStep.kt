@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.tweerlei.plumber.pipeline.steps.stats
+package de.tweerlei.plumber.pipeline.steps.filter
 
 import de.tweerlei.plumber.pipeline.PipelineParams
 import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.worker.Worker
-import de.tweerlei.plumber.worker.impl.stats.ErrorWorker
+import de.tweerlei.plumber.worker.impl.filter.ErrorWorker
 import org.springframework.stereotype.Service
 
 @Service("errorWorker")
@@ -28,7 +28,12 @@ class ErrorStep: ProcessingStep {
     override val name = "Throw error"
     override val description = "Throw an error every given number of items"
     override val help = ""
-    override fun argDescription() = intervalFor("").toString()
+    override val options = ""
+    override val example = """
+        error:2
+    """.trimIndent()
+    override val argDescription
+        get() = intervalFor("").toString()
 
     override fun createWorker(
         arg: String,

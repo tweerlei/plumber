@@ -30,7 +30,15 @@ class RepeatStep: ProcessingStep {
     override val help = """
         Each received item will be passed along the given number of times.
     """.trimIndent()
-    override fun argDescription() = repeatCountFor("").toString()
+    override val options = ""
+    override val example = """
+        value:Hello
+        repeat:2
+        lines-write  # result: Hello
+                               Hello
+    """.trimIndent()
+    override val argDescription
+        get() = repeatCountFor("").toString()
 
     override fun createWorker(
         arg: String,

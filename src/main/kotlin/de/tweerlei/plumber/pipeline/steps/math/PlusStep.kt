@@ -32,7 +32,12 @@ class PlusStep: ProcessingStep {
     override val help = """
         Both operands are evaluated as numbers.
     """.trimIndent()
-    override fun argDescription() = valueFor("")
+    override val options = ""
+    override val example = """
+        value:10 plus:2.5 -> 12.5
+    """.trimIndent()
+    override val argDescription
+        get() = valueFor("")
 
     override fun requiredAttributesFor(arg: String) =
         arg.toRequiredAttributes()

@@ -34,10 +34,20 @@ class CsvReadStep(
     override val name = "Read CSV lines from file"
     override val description = "Read CSV lines from the given file"
     override val help = """
-        Use --${AllPipelineOptions.INSTANCE.separator.name} to specify the record separator character.
-        Use --${AllPipelineOptions.INSTANCE.header.name} to treat the first line as column headings.
+        This is not only a shortcut for lines-read csv-parse, but also has the capability to read a header line
+        and apply the field names to all read records.
     """.trimIndent()
-    override fun argDescription() = "".toInputStreamProvider().toString()
+    override val options = """
+        --${AllPipelineOptions.INSTANCE.separator.name} sets the record separator character.
+        --${AllPipelineOptions.INSTANCE.header.name} will read the first line as column headings.
+    """.trimIndent()
+    override val example = """
+        csv-read:products.csv --header
+        record-get:Price
+        lines-write  # result: all values in the "Price" column
+    """.trimIndent()
+    override val argDescription
+        get() = "".toInputStreamProvider().toString()
 
     override fun producedAttributesFor(arg: String) = setOf(
         WellKnownKeys.PATH,

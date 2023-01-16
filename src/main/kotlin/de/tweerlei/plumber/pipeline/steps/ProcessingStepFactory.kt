@@ -34,7 +34,7 @@ class ProcessingStepFactory(
         TreeMap<String, TreeMap<String, String>>().also { map ->
             processingSteps.entries.forEach { (key, value) ->
                 beanNameToStepName(key).let { stepName ->
-                    when (val d = value.argDescription()) {
+                    when (val d = value.argDescription) {
                         "" -> stepName
                         else -> "$stepName:$d"
                     }

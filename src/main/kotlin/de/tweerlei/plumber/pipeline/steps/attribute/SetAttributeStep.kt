@@ -31,7 +31,17 @@ class SetAttributeStep: ProcessingStep {
     override val help = """
         Will not change the current value.
     """.trimIndent()
-    override fun argDescription() = "<name>"
+    override val options = ""
+    override val example = """
+        value:2
+        set:two
+        plus:@two
+        lines-write  # result: 4
+        plus:@two
+        lines-write  # result: 6
+        ...
+    """.trimIndent()
+    override val argDescription = "<name>"
 
     override fun producedAttributesFor(arg: String) = setOf(
         arg
