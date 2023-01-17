@@ -13,24 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.tweerlei.plumber.worker.impl.record
+package de.tweerlei.plumber.worker.impl.filter
 
 import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.DelegatingWorker
-import de.tweerlei.plumber.worker.impl.WellKnownKeys
-import de.tweerlei.plumber.worker.types.Record
+import java.util.concurrent.atomic.AtomicReference
 
-class RecordSetWorker(
-    private val field: String,
+class LastWorker(
     worker: Worker
 ): DelegatingWorker(worker) {
 
+    private val current = AtomicReference<WorkItem>()
+
     override fun doProcess(item: WorkItem) =
-        (item.getOptional(WellKnownKeys.RECORD) ?: Record())
-            .toRecord()
-            .let { map ->
-                map.setValue(field, item.get())
-                item.set(map, WellKnownKeys.RECORD)
-            }.let { true }
+        current.set(item)
+            .let { false }
+
+    override fun onClose() {
+        current.get()?.let {
+            passOn(it)
+        }
+    }
 }

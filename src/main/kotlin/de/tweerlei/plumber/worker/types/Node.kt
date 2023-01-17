@@ -66,10 +66,10 @@ class Node(
     override fun toRecord() =
         when (value) {
             is ObjectNode -> Record().also { record ->
-                value.fields().forEach { (k, v) -> record.toAny()[k] = Node(v) }
+                value.fields().forEach { (k, v) -> record.setValue(k, Node(v)) }
             }
             is ArrayNode -> Record().also { record ->
-                value.elements().asSequence().forEachIndexed { k, v -> record.toAny()[k.toString()] = Node(v) }
+                value.elements().asSequence().forEachIndexed { k, v -> record.setValue(k.toString(), Node(v)) }
             }
             else -> Record.of(this)
         }

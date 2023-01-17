@@ -61,7 +61,7 @@ class JdbcSelectOneWorker(
     private fun ResultSet.toRecord() =
         Record().also { map ->
             for (i in 1..metaData.columnCount) {
-                map.toAny()[metaData.getColumnName(i)] = getObject(i).toValue()
+                map.setValue(metaData.getColumnName(i), getObject(i).toValue())
             }
         }
 }

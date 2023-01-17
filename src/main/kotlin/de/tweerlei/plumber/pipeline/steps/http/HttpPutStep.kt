@@ -13,38 +13,39 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.tweerlei.plumber.pipeline.steps.range
+package de.tweerlei.plumber.pipeline.steps.http
 
 import de.tweerlei.plumber.pipeline.PipelineParams
-import de.tweerlei.plumber.pipeline.options.AllPipelineOptions
 import de.tweerlei.plumber.pipeline.steps.ProcessingStep
+import de.tweerlei.plumber.pipeline.steps.toWorkItemAccessor
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
-import de.tweerlei.plumber.worker.impl.attribute.SettingWorker
-import de.tweerlei.plumber.worker.types.Range
+import de.tweerlei.plumber.worker.impl.http.HttpKeys
+import de.tweerlei.plumber.worker.impl.http.HttpPutWorker
 import org.springframework.stereotype.Service
 
-@Service("range-resetWorker")
-class RangeResetStep: ProcessingStep {
+@Service("http-putWorker")
+class HttpPutStep: ProcessingStep {
 
-    override val group = "Attributes"
-    override val name = "Reset range"
-    override val description = "Reset the given range to default given by --${AllPipelineOptions.INSTANCE.startAfterKey.name}/--${AllPipelineOptions.INSTANCE.stopAfterKey.name}"
+    override val group = "HTTP"
+    override val name = "PUT URL"
+    override val description = "Put an object to the given URL"
     override val help = ""
     override val options = ""
     override val example = """
-        range-reset --start-after=10 --stop-after=20
-        range-get:start
-        lines-write  # result: 10
-        
-        range-reset --start-after=10 --stop-after=20
-        range-get:end
-        lines-write  # result: 20
+        files-read:/dump
+        http-put:"https://example.org/upload"
     """.trimIndent()
-    override val argDescription = ""
+    override val argDescription = "<url>"
 
     override fun producedAttributesFor(arg: String) = setOf(
-        arg
+        WellKnownKeys.NAME,
+        WellKnownKeys.SIZE,
+        WellKnownKeys.LAST_MODIFIED,
+        WellKnownKeys.CONTENT_TYPE,
+        HttpKeys.METHOD,
+        HttpKeys.URL,
+        HttpKeys.HEADERS
     )
 
     override fun createWorker(
@@ -54,10 +55,8 @@ class RangeResetStep: ProcessingStep {
         params: PipelineParams,
         parallelDegree: Int
     ) =
-        when (arg) {
-            WellKnownKeys.SECONDARY_RANGE -> Range(params.startAfterRangeKey, params.stopAfterRangeKey)
-            else -> Range(params.startAfterKey, params.stopAfterKey)
-        }.let { range ->
-            SettingWorker(arg, { range }, w)
-        }
+        HttpPutWorker(
+            arg.toWorkItemAccessor(),
+            w
+        )
 }

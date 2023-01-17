@@ -49,8 +49,8 @@ class DynamoDBScanWorker(
         logger.info { "fetching elements from $startAfter to $endWith" }
 
         var result: ScanResult? = null
-        var firstKey: Any? = null
-        var lastKey: Any? = null
+        var firstKey: Value? = null
+        var lastKey: Value? = null
         var itemCount = 0
         do {
             result = listFilenames(startAfter?.toDynamoDB(objectMapper), result?.lastEvaluatedKey)
@@ -60,8 +60,8 @@ class DynamoDBScanWorker(
                     if (row.isNotAfter(endWith)) {
                         if (fn(row.toWorkItem(actualTableName))) {
                             itemCount++
-                            if (firstKey == null) firstKey = row.toAny()[partitionKey]
-                            lastKey = row.toAny()[partitionKey]
+                            if (firstKey == null) firstKey = row.getValue(partitionKey)
+                            lastKey = row.getValue(partitionKey)
                         } else {
                             result.lastEvaluatedKey = null
                         }

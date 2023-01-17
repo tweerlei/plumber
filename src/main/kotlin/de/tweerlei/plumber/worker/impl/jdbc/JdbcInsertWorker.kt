@@ -73,7 +73,7 @@ class JdbcInsertWorker(
         fun process(map: Record, jdbcTemplate: JdbcTemplate) =
             arrayOfNulls<Any>(columns.size).also { arr ->
                 columns.forEachIndexed { index, columnName ->
-                    arr[index] = map.toAny()[columnName]
+                    arr[index] = map.getValue(columnName).toAny()
                 }
             }.let { values ->
                 jdbcTemplate.update(sql, *values)

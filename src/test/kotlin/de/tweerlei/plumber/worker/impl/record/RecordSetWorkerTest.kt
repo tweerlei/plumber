@@ -21,6 +21,7 @@ import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.types.NullValue
 import de.tweerlei.plumber.worker.types.Record
 import de.tweerlei.plumber.worker.types.StringValue
+import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
@@ -64,6 +65,6 @@ class RecordSetWorkerTest {
             .singleOrNull()
 
         item.shouldNotBeNull()
-        item.get(WellKnownKeys.RECORD).toRecord().toAny()["entry"].shouldBe(NullValue.INSTANCE)
+        item.get(WellKnownKeys.RECORD).toRecord().toAny()["entry"].shouldBeNull()
     }
 }

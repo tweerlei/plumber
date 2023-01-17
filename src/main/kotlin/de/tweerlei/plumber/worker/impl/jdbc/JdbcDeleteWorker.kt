@@ -63,6 +63,6 @@ class JdbcDeleteWorker(
         }
 
         fun process(map: Record, jdbcTemplate: JdbcTemplate) =
-            jdbcTemplate.update(sql, map.toAny()[primaryKey])
+            jdbcTemplate.update(sql, map.getValue(primaryKey).toAny())
     }
 }

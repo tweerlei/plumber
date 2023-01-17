@@ -13,24 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.tweerlei.plumber.worker.impl.record
+package de.tweerlei.plumber.worker.impl.http
 
 import de.tweerlei.plumber.worker.WorkItem
+import de.tweerlei.plumber.worker.WorkItemAccessor
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.DelegatingWorker
-import de.tweerlei.plumber.worker.impl.WellKnownKeys
-import de.tweerlei.plumber.worker.types.Record
+import de.tweerlei.plumber.worker.types.Value
 
-class RecordSetWorker(
-    private val field: String,
+class HttpPutWorker(
+    private val url: WorkItemAccessor<Value>,
     worker: Worker
 ): DelegatingWorker(worker) {
 
     override fun doProcess(item: WorkItem) =
-        (item.getOptional(WellKnownKeys.RECORD) ?: Record())
-            .toRecord()
-            .let { map ->
-                map.setValue(field, item.get())
-                item.set(map, WellKnownKeys.RECORD)
-            }.let { true }
+        url(item).toString()
+            .let { url -> HttpEntity.from("PUT", url, item) }
+            .let { requestEntity -> SimpleHttpClient.interact(requestEntity) }
+            .let { responseEntity -> responseEntity.applyTo(item) }
+            .let { true}
 }

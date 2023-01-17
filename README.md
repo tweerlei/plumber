@@ -39,7 +39,7 @@ Attributes
   is-less:<value>             Compare the current value to the given value resulting in a boolean
   not                         Logically negate the current value
   or:false                    Logically OR the current value with the given value
-  range-reset                 Reset the given range to default given by --start-after/--de.tweerlei.plumber.pipeline.options.CustomPipelineOption@1a69561c
+  range-reset                 Reset the given range to default given by --start-after/--stop-after
   set:<name>                  Set the given attribute to the current value
   then:<value>                Sets the current value to the given value if current value is truthy
   type                        Converts the current value to the name of its type
@@ -63,10 +63,16 @@ Flow control
   bulk:<number>               Execute following steps using chunks of items
   delay:0                     Delay following steps by the given number of milliseconds
   filter:true                 Keep only items that evaluate to the given boolean
+  last                        Pass only the very last item on to next steps
   parallel:8                  Execute following steps using the given number of threads
   repeat:9223372036854775807  Repeat the following steps a given number of times
   retry:9223372036854775807   Retry the following steps a given number of times on error
   unbulk                      Split bulks into separate items again
+HTTP
+  http-delete:<url>           Delete an object from the given URL
+  http-put:<url>              Put an object to the given URL
+  http-read:<url>             Get an object from the given URL
+  http-write:<url>            Post an object to the given URL
 JDBC
   jdbc-delete:<table>         Delete a row from the given JDBC table
   jdbc-list:<table>           Retrieve rows from the given JDBC table

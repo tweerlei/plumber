@@ -79,6 +79,11 @@ class Record(
 
     fun getValue(key: String) =
         map.getOrDefault(key, NullValue.INSTANCE)
+    fun setValue(key: String, value: Value) =
+        when (value) {
+            is NullValue -> map.remove(key)
+            else -> map.put(key, value)
+        } ?: NullValue.INSTANCE
 
     override fun size() =
         map.size.toLong()

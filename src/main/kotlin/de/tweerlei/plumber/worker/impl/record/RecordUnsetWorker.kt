@@ -19,6 +19,7 @@ import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.DelegatingWorker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
+import de.tweerlei.plumber.worker.types.NullValue
 
 class RecordUnsetWorker(
     private val field: String,
@@ -29,7 +30,7 @@ class RecordUnsetWorker(
         item.get(WellKnownKeys.RECORD)
             .toRecord()
             .let { map ->
-                map.toAny().remove(field)
+                map.setValue(field, NullValue.INSTANCE)
                 item.set(map, WellKnownKeys.RECORD)
             }.let { true }
 }
