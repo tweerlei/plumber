@@ -29,6 +29,7 @@ dependencies {
     implementation("com.amazonaws:aws-java-sdk-sts:1.12.302")
     implementation("com.amazonaws:aws-java-sdk-s3:1.12.302")
     implementation("com.amazonaws:aws-java-sdk-sqs:1.12.302")
+    implementation("com.amazonaws:aws-java-sdk-sns:1.12.302")
     implementation("com.amazonaws:aws-java-sdk-dynamodb:1.12.302")
 
     implementation("org.apache.kafka:kafka-clients:3.0.0")

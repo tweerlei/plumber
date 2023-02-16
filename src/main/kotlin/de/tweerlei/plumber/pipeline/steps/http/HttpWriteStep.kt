@@ -30,11 +30,18 @@ class HttpWriteStep: ProcessingStep {
     override val group = "HTTP"
     override val name = "POST URL"
     override val description = "Post an object to the given URL"
-    override val help = ""
+    override val help = "Headers are set and returned in the ${HttpKeys.HEADERS} record."
     override val options = ""
     override val example = """
         files-read:/dump
         http-write:"https://example.org/upload"
+        
+        value::application/json
+        record-set:Content-Type
+        get:record set:httpHeaders
+        value::'{"filter": { "maxSize": 1234 } }'
+        http-write:"https://example.org/find"
+        lines-write  # print fetched results
     """.trimIndent()
     override val argDescription = "<url>"
 

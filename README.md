@@ -18,6 +18,9 @@ AWS S3
   s3-list:<bucket>            List objects from the given S3 bucket
   s3-read:<bucket>            Get an object from the given S3 bucket
   s3-write:<bucket>           Put an object into the given S3 bucket
+AWS SNS
+  sns-bulkwrite:<topicArn>    Send multiple messages to the given SNS topic, use with bulk:<n>
+  sns-write:<topicArn>        Send a message to the given SNS topic
 AWS SQS
   sqs-bulkdelete:<queue>      Delete multiple messages from the given SQS queue, use with bulk:<n>
   sqs-bulkwrite:<queue>       Send multiple messages to the given SQS queue, use with bulk:<n>

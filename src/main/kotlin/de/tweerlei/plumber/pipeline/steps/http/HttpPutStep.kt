@@ -30,11 +30,18 @@ class HttpPutStep: ProcessingStep {
     override val group = "HTTP"
     override val name = "PUT URL"
     override val description = "Put an object to the given URL"
-    override val help = ""
+    override val help = "Headers are set and returned in the ${HttpKeys.HEADERS} record."
     override val options = ""
     override val example = """
         files-read:/dump
         http-put:"https://example.org/upload"
+        
+        value::image/png
+        record-set:Content-Type
+        get:record set:httpHeaders
+        value::image.png
+        files-read:images
+        http-put:"https://example.org/uploads/"
     """.trimIndent()
     override val argDescription = "<url>"
 

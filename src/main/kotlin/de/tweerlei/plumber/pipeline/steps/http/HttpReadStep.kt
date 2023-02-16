@@ -30,11 +30,19 @@ class HttpReadStep: ProcessingStep {
     override val group = "HTTP"
     override val name = "Fetch URL"
     override val description = "Get an object from the given URL"
-    override val help = ""
+    override val help = "Headers are set and returned in the ${HttpKeys.HEADERS} record."
     override val options = ""
     override val example = """
         http-read:"https://example.org/some/file"
         files-write:/dump
+        
+        value::username:password
+        text-write:base64
+        format:'basic @{}'
+        record-set:Authorization
+        get:record set:httpHeaders
+        http-read:"https://example.org/private/file"
+        lines-write  # Contents of private file
     """.trimIndent()
     override val argDescription = "<url>"
 

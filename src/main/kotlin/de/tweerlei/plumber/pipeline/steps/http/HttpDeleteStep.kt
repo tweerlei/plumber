@@ -31,12 +31,19 @@ class HttpDeleteStep: ProcessingStep {
     override val group = "HTTP"
     override val name = "Delete URL"
     override val description = "Delete an object from the given URL"
-    override val help = ""
+    override val help = "Headers are set and returned in the ${HttpKeys.HEADERS} record."
     override val options = ""
     override val example = """
         lines-read:ids.txt
         format:'https://example.org/files/@{}'
         http-delete:@
+        
+        value::username:password
+        text-write:base64
+        format:'basic @{}'
+        record-set:Authorization
+        get:record set:httpHeaders
+        http-delete:"https://example.org/private/file"
     """.trimIndent()
     override val argDescription = "<url>"
 
