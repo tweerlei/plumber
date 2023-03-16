@@ -28,13 +28,18 @@ class SNSPublishWorker(
     worker: Worker
 ): DelegatingWorker(worker) {
 
+    companion object {
+        // AWS limit for subject is 100 characters
+        const val MAX_SUBJECT_LENGTH = 100
+    }
+
     override fun doProcess(item: WorkItem) =
         item.get().toString()
             .let { body ->
                 sendFile(
                     topicArn,
                     body,
-                    item.get(WellKnownKeys.NAME).toString()
+                    item.get(WellKnownKeys.NAME).toString().take(MAX_SUBJECT_LENGTH)
                 )
             }.let { true }
 

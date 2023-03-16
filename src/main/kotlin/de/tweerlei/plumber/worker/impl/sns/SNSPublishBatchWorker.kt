@@ -39,7 +39,7 @@ class SNSPublishBatchWorker(
                     items.toAny().mapIndexed { index, it ->
                         PublishBatchRequestEntry()
                             .withId("${index}_of_${items.size()}")
-                            .withSubject(it.get(WellKnownKeys.NAME).toString())
+                            .withSubject(it.get(WellKnownKeys.NAME).toString().take(SNSPublishWorker.MAX_SUBJECT_LENGTH))
                             .withMessage(it.get().toString())
                     }
                 )
