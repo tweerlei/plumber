@@ -37,6 +37,8 @@ dependencies {
 
     runtimeOnly("org.postgresql:postgresql")
     runtimeOnly("mysql:mysql-connector-java")
+    runtimeOnly("com.microsoft.sqlserver:mssql-jdbc")
+    runtimeOnly("com.oracle.database.jdbc:ojdbc8")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("io.kotest:kotest-assertions-core:4.4.0")
