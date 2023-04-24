@@ -34,10 +34,16 @@ class WellKnownKeys {
         /** digest algorithm used (String) */
         const val DIGEST_ALGORITHM = "digestAlgorithm"
 
+        /** item group (String) */
+        const val GROUP = "group"
         /** item count (Long) */
         const val COUNT = "count"
         /** sum of item sizes (Long) */
         const val SUM = "sum"
+        /** min value */
+        const val MIN = "min"
+        /** max value */
+        const val MAX = "max"
 
         /** last test result (Boolean) */
         const val TEST_RESULT = "testResult"

@@ -13,29 +13,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.tweerlei.plumber.pipeline.steps.stats
+package de.tweerlei.plumber.pipeline.steps.aggregate
 
 import de.tweerlei.plumber.pipeline.PipelineParams
 import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.worker.Worker
-import de.tweerlei.plumber.worker.impl.stats.MinMaxWorker
+import de.tweerlei.plumber.worker.impl.aggregate.LastWorker
 import org.springframework.stereotype.Service
 
-@Service("boundsWorker")
-class BoundsStep: ProcessingStep {
+@Service("lastWorker")
+class LastStep: ProcessingStep {
 
-    override val group = "Logging"
-    override val name = "Calculate bounds"
-    override val description = "Log smallest and largest value at every given number of items"
+    override val group = "Aggregation"
+    override val name = "Take last item"
+    override val description = "Pass only the very last item on to next steps"
     override val help = ""
     override val options = ""
     override val example = """
-        bounds:10
+        files-list
+        count
+        sum
+        last
+        get:sum
+        divide:@count
+        lines-write  # result: average file size
     """.trimIndent()
-    override val argDescription
-        get() = intervalFor("").toString()
+    override val argDescription = ""
 
-    @Suppress("UNCHECKED_CAST")
+    override fun parallelDegreeFor(arg: String) = 1
+
     override fun createWorker(
         arg: String,
         w: Worker,
@@ -43,12 +49,5 @@ class BoundsStep: ProcessingStep {
         params: PipelineParams,
         parallelDegree: Int
     ) =
-        MinMaxWorker(
-            predecessorName,
-            intervalFor(arg),
-            w
-        )
-
-    private fun intervalFor(arg: String) =
-        arg.toLongOrNull() ?: Long.MAX_VALUE
+        LastWorker(w)
 }

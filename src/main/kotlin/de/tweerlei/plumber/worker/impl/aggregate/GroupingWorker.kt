@@ -13,49 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.tweerlei.plumber.worker.impl.stats
+package de.tweerlei.plumber.worker.impl.aggregate
 
 import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.DelegatingWorker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
-import de.tweerlei.plumber.worker.types.LongValue
+import de.tweerlei.plumber.worker.types.StringValue
 import mu.KLogging
-import java.util.concurrent.ConcurrentHashMap
-import java.util.concurrent.atomic.AtomicLong
 
 class GroupingWorker(
-    private val name: String,
-    private val interval: Long,
     worker: Worker
 ): DelegatingWorker(worker) {
 
     companion object: KLogging()
 
-    private val counters = ConcurrentHashMap<String, AtomicLong>()
-
     override fun doProcess(item: WorkItem) =
         item.get().toString()
             .let { value ->
-                counterFor(value)
-                    .incrementAndGet()
-                    .also { counter ->
-                        if (counter % interval == 0L) {
-                            logger.info { "$name: $value: $counter" }
-                        }
-                        item.set(LongValue.of(counter), WellKnownKeys.COUNT)
-                    }
+                item.set(StringValue.of(value), WellKnownKeys.GROUP)
             }.let { true }
-
-    private fun counterFor(value: String) =
-        counters[value]
-            ?: AtomicLong().let {
-                counters.putIfAbsent(value, it) ?: it
-            }
-
-    override fun onClose() {
-        counters.forEach { (k, v) ->
-            logger.info { "$name: $k: ${v.get()}" }
-        }
-    }
 }

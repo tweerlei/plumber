@@ -13,35 +13,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.tweerlei.plumber.pipeline.steps.filter
+package de.tweerlei.plumber.pipeline.steps.aggregate
 
 import de.tweerlei.plumber.pipeline.PipelineParams
 import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.worker.Worker
-import de.tweerlei.plumber.worker.impl.filter.LastWorker
+import de.tweerlei.plumber.worker.impl.WellKnownKeys
+import de.tweerlei.plumber.worker.impl.aggregate.SummingWorker
 import org.springframework.stereotype.Service
 
-@Service("lastWorker")
-class LastStep: ProcessingStep {
+@Service("sumWorker")
+class SumStep: ProcessingStep {
 
-    override val group = "Flow control"
-    override val name = "Take last item"
-    override val description = "Pass only the very last item on to next steps"
+    override val group = "Aggregation"
+    override val name = "Calculate size sum"
+    override val description = "Log item sum of item sizes every given number of bytes"
     override val help = ""
     override val options = ""
     override val example = """
-        files-list
-        count
-        sum
-        last
-        get:sum
-        divide:@count
-        lines-write  # result: average file size
+        sum:10
     """.trimIndent()
-    override val argDescription = ""
+    override val argDescription
+        get() = intervalFor("").toString()
 
-    override fun parallelDegreeFor(arg: String) = 1
+    override fun producedAttributesFor(arg: String) = setOf(
+        WellKnownKeys.SUM
+    )
 
+    @Suppress("UNCHECKED_CAST")
     override fun createWorker(
         arg: String,
         w: Worker,
@@ -49,7 +48,12 @@ class LastStep: ProcessingStep {
         params: PipelineParams,
         parallelDegree: Int
     ) =
-        LastWorker(
+        SummingWorker(
+            predecessorName,
+            intervalFor(arg),
             w
         )
+
+    private fun intervalFor(arg: String) =
+        arg.toLongOrNull() ?: Long.MAX_VALUE
 }

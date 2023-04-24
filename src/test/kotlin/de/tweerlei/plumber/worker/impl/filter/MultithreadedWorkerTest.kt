@@ -16,7 +16,7 @@
 package de.tweerlei.plumber.worker.impl.filter
 
 import de.tweerlei.plumber.worker.impl.TestWorkerRunner
-import de.tweerlei.plumber.worker.impl.stats.CountingWorker
+import de.tweerlei.plumber.worker.impl.aggregate.CountingWorker
 import de.tweerlei.plumber.worker.impl.text.UUIDWorker
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test

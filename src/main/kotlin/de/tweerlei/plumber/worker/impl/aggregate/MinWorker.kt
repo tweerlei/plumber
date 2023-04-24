@@ -13,44 +13,47 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.tweerlei.plumber.worker.impl.stats
+package de.tweerlei.plumber.worker.impl.aggregate
 
 import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.Worker
-import de.tweerlei.plumber.worker.impl.DelegatingWorker
+import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.types.ComparableValue
 import de.tweerlei.plumber.worker.types.toComparableValue
 import mu.KLogging
 import java.util.concurrent.atomic.AtomicLong
 import java.util.concurrent.atomic.AtomicReference
 
-class MinMaxWorker(
+class MinWorker(
     private val name: String,
     private val interval: Long,
     worker: Worker
-): DelegatingWorker(worker) {
+): AggregateWorker<AtomicReference<ComparableValue>>(worker) {
 
     companion object: KLogging()
 
     private val sentFiles = AtomicLong()
-    private val minValue = AtomicReference<ComparableValue>()
-    private val maxValue = AtomicReference<ComparableValue>()
 
-    override fun doProcess(item: WorkItem) =
+    override fun createAggregate(key: String) =
+        AtomicReference<ComparableValue>()
+
+    override fun updateGroupState(item: WorkItem, key: String, aggregate: AtomicReference<ComparableValue>) =
         item.get()
             .toComparableValue()
             .let { value ->
-                val curMin = minValue.accumulateAndGet(value) { a, b -> minOf(a ?: b, b) }
-                val curMax = maxValue.accumulateAndGet(value) { a, b -> maxOf(a ?: b, b) }
-                sentFiles.incrementAndGet()
-                    .also { counter ->
-                        if (counter % interval == 0L) {
-                            logger.info { "$name: Items processed: $counter, Min. item: $curMin, max. item: $curMax" }
-                        }
+                aggregate.accumulateAndGet(value) { a, b -> minOf(a ?: b, b) }
+                    .let { current ->
+                        sentFiles.incrementAndGet()
+                            .also { counter ->
+                                if (counter % interval == 0L) {
+                                    logger.info { "$name[$key]: Items processed: $counter, Min. item: $current" }
+                                }
+                            }
+                        item.set(value, WellKnownKeys.MIN)
                     }
             }.let { true }
 
-    override fun onClose() {
-        logger.info { "$name: Min. item: ${minValue.get()}, max. item: ${maxValue.get()}" }
+    override fun groupStateOnClose(key: String, aggregate: AtomicReference<ComparableValue>) {
+        logger.info { "$name[$key]: Min. item: ${aggregate.get()}" }
     }
 }

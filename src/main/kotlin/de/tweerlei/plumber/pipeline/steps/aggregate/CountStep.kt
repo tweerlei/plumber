@@ -13,19 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.tweerlei.plumber.pipeline.steps.stats
+package de.tweerlei.plumber.pipeline.steps.aggregate
 
 import de.tweerlei.plumber.pipeline.PipelineParams
 import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
-import de.tweerlei.plumber.worker.impl.stats.CountingWorker
+import de.tweerlei.plumber.worker.impl.aggregate.CountingWorker
 import org.springframework.stereotype.Service
 
 @Service("countWorker")
 class CountStep: ProcessingStep {
 
-    override val group = "Logging"
+    override val group = "Aggregation"
     override val name = "Count items"
     override val description = "Log item counts at every given number of items"
     override val help = ""

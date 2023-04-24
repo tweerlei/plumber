@@ -13,34 +13,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.tweerlei.plumber.pipeline.steps.stats
+package de.tweerlei.plumber.pipeline.steps.aggregate
 
 import de.tweerlei.plumber.pipeline.PipelineParams
 import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
-import de.tweerlei.plumber.worker.impl.stats.SummingWorker
+import de.tweerlei.plumber.worker.impl.aggregate.GroupingWorker
 import org.springframework.stereotype.Service
 
-@Service("sumWorker")
-class SumStep: ProcessingStep {
+@Service("groupWorker")
+class GroupStep: ProcessingStep {
 
-    override val group = "Logging"
-    override val name = "Calculate size sum"
-    override val description = "Log item sum of item sizes every given number of bytes"
+    override val group = "Aggregation"
+    override val name = "Group items"
+    override val description = "Assign items to groups, subsequent aggregate steps will apply to that group"
     override val help = ""
     override val options = ""
     override val example = """
-        sum:10
+        group
+        get:amount
+        sum
+        last
     """.trimIndent()
-    override val argDescription
-        get() = intervalFor("").toString()
+    override val argDescription = ""
 
     override fun producedAttributesFor(arg: String) = setOf(
-        WellKnownKeys.SUM
+        WellKnownKeys.GROUP
     )
 
-    @Suppress("UNCHECKED_CAST")
     override fun createWorker(
         arg: String,
         w: Worker,
@@ -48,12 +49,5 @@ class SumStep: ProcessingStep {
         params: PipelineParams,
         parallelDegree: Int
     ) =
-        SummingWorker(
-            predecessorName,
-            intervalFor(arg),
-            w
-        )
-
-    private fun intervalFor(arg: String) =
-        arg.toLongOrNull() ?: Long.MAX_VALUE
+        GroupingWorker(w)
 }

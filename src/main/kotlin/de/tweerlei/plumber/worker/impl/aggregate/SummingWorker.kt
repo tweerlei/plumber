@@ -13,13 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.tweerlei.plumber.worker.impl.stats
+package de.tweerlei.plumber.worker.impl.aggregate
 
 import de.tweerlei.plumber.util.Stopwatch
 import de.tweerlei.plumber.util.humanReadable
 import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.Worker
-import de.tweerlei.plumber.worker.impl.DelegatingWorker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.types.LongValue
 import mu.KLogging
@@ -30,11 +29,10 @@ class SummingWorker(
     private val name: String,
     private val interval: Long,
     worker: Worker
-): DelegatingWorker(worker) {
+): AggregateWorker<AtomicLong>(worker) {
 
     companion object: KLogging()
 
-    private val sum = AtomicLong()
     private lateinit var stopwatch: Stopwatch
     private val current = AtomicReference<Stopwatch>()
 
@@ -43,24 +41,27 @@ class SummingWorker(
         current.set(stopwatch)
     }
 
-    override fun doProcess(item: WorkItem) =
+    override fun createAggregate(key: String) =
+        AtomicLong()
+
+    override fun updateGroupState(item: WorkItem, key: String, aggregate: AtomicLong) =
         (item.getOptional(WellKnownKeys.SIZE)?.toLong() ?: item.get().size())
             .let { size ->
-                sum.addAndGet(size)
+                aggregate.addAndGet(size)
                     .also { counter ->
                         if (counter / interval > (counter - size) / interval) {
                             val last = current.getAndSet(Stopwatch())
                             val bytes = interval * (counter / interval - (counter - size) / interval)
                             val perSecond = last.itemsPerSecond(bytes.toDouble())
-                            logger.info { "$name: Item sum: $counter @ ${perSecond.humanReadable()} byte/s" }
+                            logger.info { "$name[$key]: Item sum: $counter @ ${perSecond.humanReadable()} byte/s" }
                         }
                         item.set(LongValue.of(counter), WellKnownKeys.SUM)
                     }
             }.let { true }
 
-    override fun onClose() {
-        val perSecond = stopwatch.itemsPerSecond(sum.get().toDouble())
-        logger.info { "$name: Item sum: ${sum.get()}" }
-        logger.info { "$name: Throughput: ${perSecond.humanReadable()} byte/s" }
+    override fun groupStateOnClose(key: String, aggregate: AtomicLong) {
+        val perSecond = stopwatch.itemsPerSecond(aggregate.get().toDouble())
+        logger.info { "$name[$key]: Item sum: ${aggregate.get()}" }
+        logger.info { "$name[$key]: Throughput: ${perSecond.humanReadable()} byte/s" }
     }
 }

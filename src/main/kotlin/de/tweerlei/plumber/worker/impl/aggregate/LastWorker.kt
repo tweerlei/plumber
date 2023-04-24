@@ -13,25 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.tweerlei.plumber.worker.impl.filter
+package de.tweerlei.plumber.worker.impl.aggregate
 
 import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.Worker
-import de.tweerlei.plumber.worker.impl.DelegatingWorker
 import java.util.concurrent.atomic.AtomicReference
 
 class LastWorker(
     worker: Worker
-): DelegatingWorker(worker) {
+): AggregateWorker<AtomicReference<WorkItem>>(worker) {
 
-    private val current = AtomicReference<WorkItem>()
+    override fun createAggregate(key: String) =
+        AtomicReference<WorkItem>()
 
-    override fun doProcess(item: WorkItem) =
-        current.set(item)
+    override fun updateGroupState(item: WorkItem, key: String, aggregate: AtomicReference<WorkItem>) =
+        aggregate.set(item)
             .let { false }
 
-    override fun onClose() {
-        current.get()?.let {
+    override fun groupStateOnClose(key: String, aggregate: AtomicReference<WorkItem>) {
+        aggregate.get()?.let {
             passOn(it)
         }
     }

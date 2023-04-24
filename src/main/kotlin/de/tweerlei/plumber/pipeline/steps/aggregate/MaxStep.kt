@@ -13,33 +13,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.tweerlei.plumber.pipeline.steps.stats
+package de.tweerlei.plumber.pipeline.steps.aggregate
 
 import de.tweerlei.plumber.pipeline.PipelineParams
 import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
-import de.tweerlei.plumber.worker.impl.stats.GroupingWorker
+import de.tweerlei.plumber.worker.impl.aggregate.MaxWorker
 import org.springframework.stereotype.Service
 
-@Service("groupWorker")
-class GroupStep: ProcessingStep {
+@Service("maxWorker")
+class MaxStep: ProcessingStep {
 
-    override val group = "Logging"
-    override val name = "Group items"
-    override val description = "Log item counts per value at every given number of items"
+    override val group = "Aggregation"
+    override val name = "Calculate maximum"
+    override val description = "Log largest value at every given number of items"
     override val help = ""
     override val options = ""
     override val example = """
-        group:10
+        max:10
     """.trimIndent()
     override val argDescription
         get() = intervalFor("").toString()
 
     override fun producedAttributesFor(arg: String) = setOf(
-        WellKnownKeys.COUNT
+        WellKnownKeys.MAX
     )
 
+    @Suppress("UNCHECKED_CAST")
     override fun createWorker(
         arg: String,
         w: Worker,
@@ -47,7 +48,7 @@ class GroupStep: ProcessingStep {
         params: PipelineParams,
         parallelDegree: Int
     ) =
-        GroupingWorker(
+        MaxWorker(
             predecessorName,
             intervalFor(arg),
             w

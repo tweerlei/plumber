@@ -13,13 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.tweerlei.plumber.worker.impl.stats
+package de.tweerlei.plumber.worker.impl.aggregate
 
 import de.tweerlei.plumber.util.Stopwatch
 import de.tweerlei.plumber.util.humanReadable
 import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.Worker
-import de.tweerlei.plumber.worker.impl.DelegatingWorker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.types.LongValue
 import mu.KLogging
@@ -30,11 +29,10 @@ class CountingWorker(
     private val name: String,
     private val interval: Long,
     worker: Worker
-): DelegatingWorker(worker) {
+): AggregateWorker<AtomicLong>(worker) {
 
     companion object: KLogging()
 
-    private val sentFiles = AtomicLong()
     private lateinit var stopwatch: Stopwatch
     private val current = AtomicReference<Stopwatch>()
 
@@ -43,20 +41,23 @@ class CountingWorker(
         current.set(stopwatch)
     }
 
-    override fun doProcess(item: WorkItem) =
-        sentFiles.incrementAndGet()
+    override fun createAggregate(key: String) =
+        AtomicLong()
+
+    override fun updateGroupState(item: WorkItem, key: String, aggregate: AtomicLong) =
+        aggregate.incrementAndGet()
             .also { counter ->
                 if (counter % interval == 0L) {
                     val last = current.getAndSet(Stopwatch())
                     val perSecond = last.itemsPerSecond(interval.toDouble())
-                    logger.info { "$name: Items processed: $counter @ ${perSecond.humanReadable()} items/s" }
+                    logger.info { "$name[$key]: Items processed: $counter @ ${perSecond.humanReadable()} items/s" }
                 }
                 item.set(LongValue.of(counter), WellKnownKeys.COUNT)
             }.let { true }
 
-    override fun onClose() {
-        val perSecond = stopwatch.itemsPerSecond(sentFiles.get().toDouble())
-        logger.info { "$name: Items processed: ${sentFiles.get()}" }
-        logger.info { "$name: Throughput: ${perSecond.humanReadable()} items/s" }
+    override fun groupStateOnClose(key: String, aggregate: AtomicLong) {
+        val perSecond = stopwatch.itemsPerSecond(aggregate.get().toDouble())
+        logger.info { "$name[$key]: Items processed: ${aggregate.get()}" }
+        logger.info { "$name[$key]: Throughput: ${perSecond.humanReadable()} items/s" }
     }
 }
