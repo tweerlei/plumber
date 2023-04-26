@@ -40,6 +40,7 @@ class FindStep: ProcessingStep {
         lines-write  # result: World
     """.trimIndent()
     override val argDescription = "<regex>"
+    override val argInterpolated = false
 
     override fun producedAttributesFor(arg: String) = setOf(
         TextKeys.MATCH_EXPRESSION,

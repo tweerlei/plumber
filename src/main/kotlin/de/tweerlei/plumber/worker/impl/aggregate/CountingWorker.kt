@@ -22,42 +22,43 @@ import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.types.LongValue
 import mu.KLogging
-import java.util.concurrent.atomic.AtomicLong
-import java.util.concurrent.atomic.AtomicReference
 
 class CountingWorker(
     private val name: String,
     private val interval: Long,
     worker: Worker
-): AggregateWorker<AtomicLong>(worker) {
+): AggregateWorker<Pair<Long, Stopwatch>>(worker) {
 
     companion object: KLogging()
 
     private lateinit var stopwatch: Stopwatch
-    private val current = AtomicReference<Stopwatch>()
 
     override fun onOpen() {
         stopwatch = Stopwatch()
-        current.set(stopwatch)
     }
 
     override fun createAggregate(key: String) =
-        AtomicLong()
+        Pair(0L, stopwatch)
 
-    override fun updateGroupState(item: WorkItem, key: String, aggregate: AtomicLong) =
-        aggregate.incrementAndGet()
-            .also { counter ->
-                if (counter % interval == 0L) {
-                    val last = current.getAndSet(Stopwatch())
-                    val perSecond = last.itemsPerSecond(interval.toDouble())
-                    logger.info { "$name[$key]: Items processed: $counter @ ${perSecond.humanReadable()} items/s" }
-                }
-                item.set(LongValue.of(counter), WellKnownKeys.COUNT)
-            }.let { true }
+    override fun updateGroupState(item: WorkItem, key: String, aggregate: Pair<Long, Stopwatch>) =
+        (aggregate.first + 1L).let { incremented ->
+            if (incremented % interval == 0L) {
+                val perSecond = aggregate.second.itemsPerSecond(interval.toDouble())
+                logger.info { "$name: Items processed [$key]: $incremented @ ${perSecond.humanReadable()} items/s" }
+                Pair(incremented, Stopwatch())
+            } else {
+                Pair(incremented, aggregate.second)
+            }
+        }
 
-    override fun groupStateOnClose(key: String, aggregate: AtomicLong) {
-        val perSecond = stopwatch.itemsPerSecond(aggregate.get().toDouble())
-        logger.info { "$name[$key]: Items processed: ${aggregate.get()}" }
-        logger.info { "$name[$key]: Throughput: ${perSecond.humanReadable()} items/s" }
+    override fun shouldPassOn(item: WorkItem, key: String, aggregate: Pair<Long, Stopwatch>): Boolean {
+        item.set(LongValue.of(aggregate.first), WellKnownKeys.COUNT)
+        return true
+    }
+
+    override fun groupStateOnClose(key: String, aggregate: Pair<Long, Stopwatch>) {
+        val perSecond = stopwatch.itemsPerSecond(aggregate.first.toDouble())
+        logger.info { "$name: Items processed [$key]: ${aggregate.first}" }
+        logger.info { "$name: Throughput [$key]: ${perSecond.humanReadable()} items/s" }
     }
 }

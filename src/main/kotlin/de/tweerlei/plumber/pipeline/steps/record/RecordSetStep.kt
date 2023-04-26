@@ -40,6 +40,7 @@ class RecordSetStep: ProcessingStep {
         csv-write  # result: alice,babs,charlie
     """.trimIndent()
     override val argDescription = "<name>"
+    override val argInterpolated = false
 
     override fun producedAttributesFor(arg: String) = setOf(
         WellKnownKeys.RECORD

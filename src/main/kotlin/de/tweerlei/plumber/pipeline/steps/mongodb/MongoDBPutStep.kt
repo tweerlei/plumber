@@ -18,6 +18,7 @@ package de.tweerlei.plumber.pipeline.steps.mongodb
 import com.fasterxml.jackson.databind.ObjectMapper
 import de.tweerlei.plumber.pipeline.PipelineParams
 import de.tweerlei.plumber.pipeline.steps.ProcessingStep
+import de.tweerlei.plumber.pipeline.steps.toWorkItemStringAccessor
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.mongodb.MongoClientFactory
 import de.tweerlei.plumber.worker.impl.mongodb.MongoDBPutWorker
@@ -47,6 +48,7 @@ class MongoDBPutStep(
         mongodb-write:myTable
     """.trimIndent()
     override val argDescription = "<collection>"
+    override val argInterpolated = true
 
     override fun createWorker(
         arg: String,
@@ -59,7 +61,7 @@ class MongoDBPutStep(
             .let { client ->
                 MongoDBPutWorker(
                     mongoClientFactory.getDefaultDatabase(),
-                    arg,
+                    arg.toWorkItemStringAccessor(),
                     client,
                     objectMapper,
                     w

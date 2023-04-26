@@ -37,6 +37,7 @@ class STSGetIdStep(
         lines-write  # result: AWS account ID
     """.trimIndent()
     override val argDescription = ""
+    override val argInterpolated = false
 
     override fun createWorker(
         arg: String,

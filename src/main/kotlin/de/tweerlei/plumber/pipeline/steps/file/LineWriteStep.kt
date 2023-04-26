@@ -38,6 +38,7 @@ class LineWriteStep: ProcessingStep {
     """.trimIndent()
     override val argDescription
         get() = "".toOutputStreamProvider().toString()
+    override val argInterpolated = false
 
     override fun parallelDegreeFor(arg: String) = 1
 

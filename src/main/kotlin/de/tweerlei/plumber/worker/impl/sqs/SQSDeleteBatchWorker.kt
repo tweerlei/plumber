@@ -19,6 +19,7 @@ import com.amazonaws.services.sqs.AmazonSQS
 import com.amazonaws.services.sqs.model.DeleteMessageBatchRequest
 import com.amazonaws.services.sqs.model.DeleteMessageBatchRequestEntry
 import de.tweerlei.plumber.worker.WorkItem
+import de.tweerlei.plumber.worker.WorkItemAccessor
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.DelegatingWorker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
@@ -27,7 +28,7 @@ import de.tweerlei.plumber.worker.types.WorkItemList
 import de.tweerlei.plumber.worker.types.ifTypeIs
 
 class SQSDeleteBatchWorker(
-    private val queueUrl: String,
+    private val queueUrl: WorkItemAccessor<String>,
     private val amazonSQSClient: AmazonSQS,
     worker: Worker
 ): DelegatingWorker(worker) {
@@ -36,7 +37,7 @@ class SQSDeleteBatchWorker(
         item.get(WellKnownKeys.WORK_ITEMS)
             .ifTypeIs { items: WorkItemList ->
                 deleteFiles(
-                    queueUrl.ifEmptyGetFrom(items.toAny().first(), SQSKeys.QUEUE_URL),
+                    queueUrl(item).ifEmptyGetFrom(items.toAny().first(), SQSKeys.QUEUE_URL),
                     items.toAny().map {
                         DeleteMessageBatchRequestEntry(
                             it.getFirst(SQSKeys.MESSAGE_ID).toString(),

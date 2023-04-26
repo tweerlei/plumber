@@ -17,7 +17,6 @@ package de.tweerlei.plumber.pipeline.steps.math
 
 import de.tweerlei.plumber.pipeline.PipelineParams
 import de.tweerlei.plumber.pipeline.steps.ProcessingStep
-import de.tweerlei.plumber.pipeline.steps.toRequiredAttributes
 import de.tweerlei.plumber.pipeline.steps.toWorkItemAccessor
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.math.ExponentialWorker
@@ -41,9 +40,7 @@ class ExponentialStep: ProcessingStep {
     """.trimIndent()
     override val argDescription
         get() = baseFor("")
-
-    override fun requiredAttributesFor(arg: String) =
-        arg.toRequiredAttributes()
+    override val argInterpolated = true
 
     override fun createWorker(
         arg: String,

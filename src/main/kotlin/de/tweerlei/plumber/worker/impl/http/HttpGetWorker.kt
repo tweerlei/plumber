@@ -19,15 +19,14 @@ import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.WorkItemAccessor
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.DelegatingWorker
-import de.tweerlei.plumber.worker.types.Value
 
 class HttpGetWorker(
-    private val url: WorkItemAccessor<Value>,
+    private val url: WorkItemAccessor<String>,
     worker: Worker
 ): DelegatingWorker(worker) {
 
     override fun doProcess(item: WorkItem) =
-        url(item).toString()
+        url(item)
             .let { url -> HttpEntity.fromEmpty("GET", url, item) }
             .let { requestEntity -> SimpleHttpClient.interact(requestEntity) }
             .let { responseEntity -> responseEntity.applyTo(item) }

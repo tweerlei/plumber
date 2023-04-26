@@ -18,6 +18,8 @@ package de.tweerlei.plumber.pipeline.steps.sqs
 import de.tweerlei.plumber.pipeline.PipelineParams
 import de.tweerlei.plumber.pipeline.options.AllPipelineOptions
 import de.tweerlei.plumber.pipeline.steps.ProcessingStep
+import de.tweerlei.plumber.pipeline.steps.toWorkItemAccessor
+import de.tweerlei.plumber.pipeline.steps.toWorkItemStringAccessor
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.sqs.SQSClientFactory
 import de.tweerlei.plumber.worker.impl.sqs.SQSSendWorker
@@ -39,6 +41,7 @@ class SQSSendStep(
         sqs-write:myQueue
     """.trimIndent()
     override val argDescription = "<queue>"
+    override val argInterpolated = true
 
     override fun createWorker(
         arg: String,
@@ -50,7 +53,7 @@ class SQSSendStep(
         sqsClientFactory.createAmazonSQSClient(parallelDegree, params.assumeRoleArn)
             .let { client ->
                 SQSSendWorker(
-                    arg,
+                    arg.toWorkItemStringAccessor(),
                     client,
                     w
                 )

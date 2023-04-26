@@ -42,6 +42,7 @@ class JsonDecodeStep(
         lines-write  # result: 42
     """.trimIndent()
     override val argDescription = ""
+    override val argInterpolated = false
 
     override fun producedAttributesFor(arg: String) = setOf(
         WellKnownKeys.NODE

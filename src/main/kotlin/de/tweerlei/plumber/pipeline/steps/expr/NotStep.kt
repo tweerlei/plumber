@@ -38,6 +38,7 @@ class NotStep: ProcessingStep {
         value:123 not -> false
     """.trimIndent()
     override val argDescription = ""
+    override val argInterpolated = false
 
     override fun createWorker(
         arg: String,

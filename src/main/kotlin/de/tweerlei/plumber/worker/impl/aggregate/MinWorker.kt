@@ -21,39 +21,37 @@ import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.types.ComparableValue
 import de.tweerlei.plumber.worker.types.toComparableValue
 import mu.KLogging
-import java.util.concurrent.atomic.AtomicLong
-import java.util.concurrent.atomic.AtomicReference
 
 class MinWorker(
     private val name: String,
     private val interval: Long,
     worker: Worker
-): AggregateWorker<AtomicReference<ComparableValue>>(worker) {
+): AggregateWorker<Pair<Long, ComparableValue?>>(worker) {
 
     companion object: KLogging()
 
-    private val sentFiles = AtomicLong()
-
     override fun createAggregate(key: String) =
-        AtomicReference<ComparableValue>()
+        Pair(0L, null)
 
-    override fun updateGroupState(item: WorkItem, key: String, aggregate: AtomicReference<ComparableValue>) =
+    override fun updateGroupState(item: WorkItem, key: String, aggregate: Pair<Long, ComparableValue?>) =
         item.get()
             .toComparableValue()
             .let { value ->
-                aggregate.accumulateAndGet(value) { a, b -> minOf(a ?: b, b) }
-                    .let { current ->
-                        sentFiles.incrementAndGet()
-                            .also { counter ->
-                                if (counter % interval == 0L) {
-                                    logger.info { "$name[$key]: Items processed: $counter, Min. item: $current" }
-                                }
-                            }
-                        item.set(value, WellKnownKeys.MIN)
-                    }
-            }.let { true }
+                Pair(aggregate.first + 1L, minOf(aggregate.second ?: value, value))
+            }.also { incremented ->
+                if (incremented.first % interval == 0L) {
+                    logger.info { "$name: Items processed [$key]: ${incremented.first}, Min. item: ${incremented.second}" }
+                }
+            }
 
-    override fun groupStateOnClose(key: String, aggregate: AtomicReference<ComparableValue>) {
-        logger.info { "$name[$key]: Min. item: ${aggregate.get()}" }
+    override fun shouldPassOn(item: WorkItem, key: String, aggregate: Pair<Long, ComparableValue?>): Boolean {
+        aggregate.second?.let { minimum ->
+            item.set(minimum, WellKnownKeys.MIN)
+        }
+        return true
+    }
+
+    override fun groupStateOnClose(key: String, aggregate: Pair<Long, ComparableValue?>) {
+        logger.info { "$name: Min. item [$key]: ${aggregate.second}" }
     }
 }

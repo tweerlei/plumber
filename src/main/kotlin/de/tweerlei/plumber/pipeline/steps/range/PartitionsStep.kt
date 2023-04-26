@@ -45,6 +45,7 @@ class PartitionsStep: ProcessingStep {
     """.trimIndent()
     override val argDescription
         get() = partitionCountFor("").toString()
+    override val argInterpolated = false
 
     override fun requiredAttributesFor(arg: String) = setOf(
         WellKnownKeys.RANGE

@@ -37,6 +37,7 @@ class GroupStep: ProcessingStep {
         last
     """.trimIndent()
     override val argDescription = ""
+    override val argInterpolated = false
 
     override fun producedAttributesFor(arg: String) = setOf(
         WellKnownKeys.GROUP

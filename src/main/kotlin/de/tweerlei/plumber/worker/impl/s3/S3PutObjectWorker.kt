@@ -19,6 +19,7 @@ import com.amazonaws.services.s3.AmazonS3
 import com.amazonaws.services.s3.model.ObjectMetadata
 import com.amazonaws.services.s3.model.PutObjectRequest
 import de.tweerlei.plumber.worker.WorkItem
+import de.tweerlei.plumber.worker.WorkItemAccessor
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.DelegatingWorker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
@@ -26,7 +27,7 @@ import de.tweerlei.plumber.worker.impl.ifEmptyGetFrom
 import java.io.ByteArrayInputStream
 
 class S3PutObjectWorker(
-    private val bucketName: String,
+    private val bucketName: WorkItemAccessor<String>,
     private val requesterPays: Boolean,
     private val amazonS3Client: AmazonS3,
     worker: Worker
@@ -36,7 +37,7 @@ class S3PutObjectWorker(
         item.get(WellKnownKeys.NAME).toString()
             .let { name ->
                 putFile(
-                    bucketName.ifEmptyGetFrom(item, S3Keys.BUCKET_NAME),
+                    bucketName(item).ifEmptyGetFrom(item, S3Keys.BUCKET_NAME),
                     name,
                     item.get().toByteArray()
                 )

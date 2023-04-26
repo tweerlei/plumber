@@ -17,7 +17,7 @@ package de.tweerlei.plumber.pipeline.steps.http
 
 import de.tweerlei.plumber.pipeline.PipelineParams
 import de.tweerlei.plumber.pipeline.steps.ProcessingStep
-import de.tweerlei.plumber.pipeline.steps.toWorkItemAccessor
+import de.tweerlei.plumber.pipeline.steps.toWorkItemStringAccessor
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.impl.http.HttpKeys
@@ -44,6 +44,7 @@ class HttpPutStep: ProcessingStep {
         http-put:"https://example.org/uploads/"
     """.trimIndent()
     override val argDescription = "<url>"
+    override val argInterpolated = true
 
     override fun producedAttributesFor(arg: String) = setOf(
         WellKnownKeys.NAME,
@@ -63,7 +64,7 @@ class HttpPutStep: ProcessingStep {
         parallelDegree: Int
     ) =
         HttpPutWorker(
-            arg.toWorkItemAccessor(),
+            arg.toWorkItemStringAccessor(),
             w
         )
 }

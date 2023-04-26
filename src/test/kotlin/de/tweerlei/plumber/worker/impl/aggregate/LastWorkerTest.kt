@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.tweerlei.plumber.worker.impl.filter
+package de.tweerlei.plumber.worker.impl.aggregate
 
 import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.impl.TestWorkerRunner
-import de.tweerlei.plumber.worker.impl.aggregate.LastWorker
+import de.tweerlei.plumber.worker.impl.filter.CollectionWorker
 import de.tweerlei.plumber.worker.types.StringValue
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test

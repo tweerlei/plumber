@@ -17,6 +17,7 @@ package de.tweerlei.plumber.pipeline.steps.file
 
 import de.tweerlei.plumber.pipeline.PipelineParams
 import de.tweerlei.plumber.pipeline.steps.ProcessingStep
+import de.tweerlei.plumber.pipeline.steps.toWorkItemStringAccessor
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.impl.file.FileReadWorker
@@ -40,6 +41,7 @@ class FilesReadStep: ProcessingStep {
         lines-write  # all file content hashes
     """.trimIndent()
     override val argDescription = "<path>"
+    override val argInterpolated = true
 
     override fun requiredAttributesFor(arg: String) = setOf(
         WellKnownKeys.NAME
@@ -58,7 +60,7 @@ class FilesReadStep: ProcessingStep {
         parallelDegree: Int
     ) =
         FileReadWorker(
-            arg,
+            arg.toWorkItemStringAccessor(),
             w
         )
 }

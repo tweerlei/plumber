@@ -41,6 +41,7 @@ class NodeEachStep: ProcessingStep {
                                3
     """.trimIndent()
     override val argDescription = "<path>"
+    override val argInterpolated = false
 
     override fun requiredAttributesFor(arg: String) = setOf(
         WellKnownKeys.NODE

@@ -39,6 +39,7 @@ class LastStep: ProcessingStep {
         lines-write  # result: average file size
     """.trimIndent()
     override val argDescription = ""
+    override val argInterpolated = false
 
     override fun parallelDegreeFor(arg: String) = 1
 

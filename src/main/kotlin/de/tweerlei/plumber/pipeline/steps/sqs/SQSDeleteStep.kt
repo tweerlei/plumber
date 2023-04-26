@@ -17,6 +17,7 @@ package de.tweerlei.plumber.pipeline.steps.sqs
 
 import de.tweerlei.plumber.pipeline.PipelineParams
 import de.tweerlei.plumber.pipeline.steps.ProcessingStep
+import de.tweerlei.plumber.pipeline.steps.toWorkItemStringAccessor
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.sqs.SQSClientFactory
 import de.tweerlei.plumber.worker.impl.sqs.SQSDeleteWorker
@@ -40,6 +41,7 @@ class SQSDeleteStep(
         sqs-delete
     """.trimIndent()
     override val argDescription = "<queue>"
+    override val argInterpolated = true
 
     override fun requiredAttributesFor(arg: String) = setOf(
         SQSKeys.DELETE_HANDLE
@@ -55,7 +57,7 @@ class SQSDeleteStep(
         sqsClientFactory.createAmazonSQSClient(parallelDegree, params.assumeRoleArn)
             .let { client ->
                 SQSDeleteWorker(
-                    arg,
+                    arg.toWorkItemStringAccessor(),
                     client,
                     w
                 )

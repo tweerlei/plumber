@@ -18,6 +18,7 @@ package de.tweerlei.plumber.pipeline.steps.file
 import de.tweerlei.plumber.pipeline.PipelineParams
 import de.tweerlei.plumber.pipeline.options.AllPipelineOptions
 import de.tweerlei.plumber.pipeline.steps.ProcessingStep
+import de.tweerlei.plumber.pipeline.steps.toWorkItemStringAccessor
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.impl.file.FileListWorker
@@ -41,6 +42,7 @@ class FilesListStep: ProcessingStep {
         lines-write  # print sizes of all files
     """.trimIndent()
     override val argDescription = "<path>"
+    override val argInterpolated = true
 
     override fun producedAttributesFor(arg: String) = setOf(
         WellKnownKeys.PATH,
@@ -57,7 +59,7 @@ class FilesListStep: ProcessingStep {
         parallelDegree: Int
     ) =
         FileListWorker(
-            arg,
+            arg.toWorkItemStringAccessor(),
             params.recursive,
             params.maxFilesPerThread,
             w

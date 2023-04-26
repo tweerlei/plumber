@@ -42,6 +42,7 @@ class SetAttributeStep: ProcessingStep {
         ...
     """.trimIndent()
     override val argDescription = "<name>"
+    override val argInterpolated = false
 
     override fun producedAttributesFor(arg: String) = setOf(
         arg

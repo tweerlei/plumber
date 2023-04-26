@@ -17,11 +17,10 @@ package de.tweerlei.plumber.pipeline.steps.http
 
 import de.tweerlei.plumber.pipeline.PipelineParams
 import de.tweerlei.plumber.pipeline.steps.ProcessingStep
-import de.tweerlei.plumber.pipeline.steps.toWorkItemAccessor
+import de.tweerlei.plumber.pipeline.steps.toWorkItemStringAccessor
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.impl.http.HttpDeleteWorker
-import de.tweerlei.plumber.worker.impl.http.HttpGetWorker
 import de.tweerlei.plumber.worker.impl.http.HttpKeys
 import org.springframework.stereotype.Service
 
@@ -46,6 +45,7 @@ class HttpDeleteStep: ProcessingStep {
         http-delete:"https://example.org/private/file"
     """.trimIndent()
     override val argDescription = "<url>"
+    override val argInterpolated = true
 
     override fun producedAttributesFor(arg: String) = setOf(
         WellKnownKeys.NAME,
@@ -65,7 +65,7 @@ class HttpDeleteStep: ProcessingStep {
         parallelDegree: Int
     ) =
         HttpDeleteWorker(
-            arg.toWorkItemAccessor(),
+            arg.toWorkItemStringAccessor(),
             w
         )
 }

@@ -17,7 +17,6 @@ package de.tweerlei.plumber.pipeline.steps.text
 
 import de.tweerlei.plumber.pipeline.PipelineParams
 import de.tweerlei.plumber.pipeline.steps.ProcessingStep
-import de.tweerlei.plumber.pipeline.steps.toRequiredAttributes
 import de.tweerlei.plumber.pipeline.steps.toWorkItemAccessor
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.text.ReplacingWorker
@@ -39,11 +38,12 @@ class ReplaceStep: ProcessingStep {
         lines-write  # result: Woot, Woot!
     """.trimIndent()
     override val argDescription = "<value>"
+    override val argInterpolated = true
 
     override fun requiredAttributesFor(arg: String) = setOf(
         TextKeys.MATCH_EXPRESSION,
         TextKeys.MATCH_INPUT
-    ).plus(arg.toRequiredAttributes())
+    )
 
     override fun createWorker(
         arg: String,

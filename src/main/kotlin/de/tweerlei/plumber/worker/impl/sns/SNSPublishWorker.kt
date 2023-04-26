@@ -18,12 +18,14 @@ package de.tweerlei.plumber.worker.impl.sns
 import com.amazonaws.services.sns.AmazonSNS
 import com.amazonaws.services.sns.model.PublishRequest
 import de.tweerlei.plumber.worker.WorkItem
+import de.tweerlei.plumber.worker.WorkItemAccessor
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.DelegatingWorker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
+import de.tweerlei.plumber.worker.types.Value
 
 class SNSPublishWorker(
-    private val topicArn: String,
+    private val topicArn: WorkItemAccessor<Value>,
     private val amazonSNSClient: AmazonSNS,
     worker: Worker
 ): DelegatingWorker(worker) {
@@ -37,7 +39,7 @@ class SNSPublishWorker(
         item.get().toString()
             .let { body ->
                 sendFile(
-                    topicArn,
+                    topicArn(item).toString(),
                     body,
                     item.get(WellKnownKeys.NAME).toString().take(MAX_SUBJECT_LENGTH)
                 )

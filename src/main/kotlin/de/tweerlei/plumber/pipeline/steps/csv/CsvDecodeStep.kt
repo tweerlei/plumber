@@ -45,6 +45,7 @@ class CsvDecodeStep(
         lines-write  # result: 123
     """.trimIndent()
     override val argDescription = ""
+    override val argInterpolated = false
 
     override fun producedAttributesFor(arg: String) = setOf(
         WellKnownKeys.RECORD

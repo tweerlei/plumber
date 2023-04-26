@@ -17,6 +17,7 @@ package de.tweerlei.plumber.pipeline.steps.sns
 
 import de.tweerlei.plumber.pipeline.PipelineParams
 import de.tweerlei.plumber.pipeline.steps.ProcessingStep
+import de.tweerlei.plumber.pipeline.steps.toWorkItemAccessor
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.sns.SNSClientFactory
 import de.tweerlei.plumber.worker.impl.sns.SNSPublishWorker
@@ -38,6 +39,7 @@ class SNSSendStep(
         sns-write:myTopic
     """.trimIndent()
     override val argDescription = "<topicArn>"
+    override val argInterpolated = true
 
     override fun createWorker(
         arg: String,
@@ -49,7 +51,7 @@ class SNSSendStep(
         snsClientFactory.createAmazonSNSClient(parallelDegree, params.assumeRoleArn)
             .let { client ->
                 SNSPublishWorker(
-                    arg,
+                    arg.toWorkItemAccessor(),
                     client,
                     w
                 )

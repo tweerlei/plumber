@@ -19,6 +19,7 @@ import com.amazonaws.services.sqs.AmazonSQS
 import com.amazonaws.services.sqs.model.Message
 import com.amazonaws.services.sqs.model.ReceiveMessageRequest
 import de.tweerlei.plumber.worker.WorkItem
+import de.tweerlei.plumber.worker.WorkItemAccessor
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.GeneratingWorker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
@@ -28,7 +29,7 @@ import de.tweerlei.plumber.worker.types.StringValue
 import mu.KLogging
 
 class SQSReceiveWorker(
-    private val queueUrl: String,
+    private val queueUrl: WorkItemAccessor<String>,
     private val numberOfFilesPerRequest: Int,
     private val waitSeconds: Int,
     private val follow: Boolean,
@@ -48,11 +49,11 @@ class SQSReceiveWorker(
 
     override fun generateItems(item: WorkItem, fn: (WorkItem) -> Boolean) {
         logger.info { "waiting $waitSeconds seconds for next message in $queueUrl" }
-        val actualQueueUrl = StringValue.of(queueUrl)
+        val actualQueueUrl = StringValue.of(queueUrl(item))
         var keepGenerating = true
         var itemCount = 0
         while (keepGenerating) {
-            receiveFiles()
+            receiveFiles(actualQueueUrl.toAny())
                 .also {
                     keepGenerating = follow || it.isNotEmpty()
                 }.forEach { message ->
@@ -66,8 +67,8 @@ class SQSReceiveWorker(
         logger.info { "received $itemCount messages" }
     }
 
-    private fun receiveFiles() =
-        ReceiveMessageRequest(queueUrl)
+    private fun receiveFiles(queue: String) =
+        ReceiveMessageRequest(queue)
             .withWaitTimeSeconds(waitSeconds.coerceAtMost(MAX_WAIT_SECONDS))
             .withMaxNumberOfMessages(numberOfFilesPerRequest.coerceAtMost(MAX_NUMBER_OF_MESSAGES))
             .withAttributeNames(SENT_TIMESTAMP)

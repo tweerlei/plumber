@@ -17,7 +17,7 @@ package de.tweerlei.plumber.pipeline.steps.http
 
 import de.tweerlei.plumber.pipeline.PipelineParams
 import de.tweerlei.plumber.pipeline.steps.ProcessingStep
-import de.tweerlei.plumber.pipeline.steps.toWorkItemAccessor
+import de.tweerlei.plumber.pipeline.steps.toWorkItemStringAccessor
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.impl.http.HttpGetWorker
@@ -45,6 +45,7 @@ class HttpReadStep: ProcessingStep {
         lines-write  # Contents of private file
     """.trimIndent()
     override val argDescription = "<url>"
+    override val argInterpolated = true
 
     override fun producedAttributesFor(arg: String) = setOf(
         WellKnownKeys.NAME,
@@ -64,7 +65,7 @@ class HttpReadStep: ProcessingStep {
         parallelDegree: Int
     ) =
         HttpGetWorker(
-            arg.toWorkItemAccessor(),
+            arg.toWorkItemStringAccessor(),
             w
         )
 }

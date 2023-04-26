@@ -20,6 +20,7 @@ import com.amazonaws.services.dynamodbv2.model.AttributeValue
 import com.amazonaws.services.dynamodbv2.model.GetItemRequest
 import com.fasterxml.jackson.databind.ObjectMapper
 import de.tweerlei.plumber.worker.WorkItem
+import de.tweerlei.plumber.worker.WorkItemAccessor
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.DelegatingWorker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
@@ -27,7 +28,7 @@ import de.tweerlei.plumber.worker.impl.ifEmptyGetFrom
 import de.tweerlei.plumber.worker.types.StringValue
 
 class DynamoDBGetWorker(
-    private val tableName: String,
+    private val tableName: WorkItemAccessor<String>,
     private val partitionKey: String,
     private val rangeKey: String?,
     private val amazonDynamoDBClient: AmazonDynamoDB,
@@ -40,7 +41,7 @@ class DynamoDBGetWorker(
             .toRecord()
             .toDynamoDB(objectMapper)
             .let { attributes ->
-                tableName.ifEmptyGetFrom(item, DynamoDBKeys.TABLE_NAME)
+                tableName(item).ifEmptyGetFrom(item, DynamoDBKeys.TABLE_NAME)
                     .let { StringValue.of(it) }
                     .let { actualTableName ->
                         getItem(

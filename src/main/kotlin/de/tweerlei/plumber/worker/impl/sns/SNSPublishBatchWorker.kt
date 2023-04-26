@@ -19,14 +19,16 @@ import com.amazonaws.services.sns.AmazonSNS
 import com.amazonaws.services.sns.model.PublishBatchRequest
 import com.amazonaws.services.sns.model.PublishBatchRequestEntry
 import de.tweerlei.plumber.worker.WorkItem
+import de.tweerlei.plumber.worker.WorkItemAccessor
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.DelegatingWorker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
+import de.tweerlei.plumber.worker.types.Value
 import de.tweerlei.plumber.worker.types.WorkItemList
 import de.tweerlei.plumber.worker.types.ifTypeIs
 
 class SNSPublishBatchWorker(
-    private val topicArn: String,
+    private val topicArn: WorkItemAccessor<Value>,
     private val amazonSNSClient: AmazonSNS,
     worker: Worker
 ): DelegatingWorker(worker) {
@@ -35,7 +37,7 @@ class SNSPublishBatchWorker(
         item.get(WellKnownKeys.WORK_ITEMS)
             .ifTypeIs { items: WorkItemList ->
                 sendFiles(
-                    topicArn,
+                    topicArn(item).toString(),
                     items.toAny().mapIndexed { index, it ->
                         PublishBatchRequestEntry()
                             .withId("${index}_of_${items.size()}")

@@ -38,6 +38,7 @@ class GetAttributeStep: ProcessingStep {
         lines-write  # result: size of each file
     """.trimIndent()
     override val argDescription = "<name>"
+    override val argInterpolated = false
 
     override fun requiredAttributesFor(arg: String) = setOf(
         arg

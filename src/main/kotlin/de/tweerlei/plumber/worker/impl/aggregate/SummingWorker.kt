@@ -22,46 +22,47 @@ import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.types.LongValue
 import mu.KLogging
-import java.util.concurrent.atomic.AtomicLong
-import java.util.concurrent.atomic.AtomicReference
 
 class SummingWorker(
     private val name: String,
     private val interval: Long,
     worker: Worker
-): AggregateWorker<AtomicLong>(worker) {
+): AggregateWorker<Pair<Long, Stopwatch>>(worker) {
 
     companion object: KLogging()
 
     private lateinit var stopwatch: Stopwatch
-    private val current = AtomicReference<Stopwatch>()
 
     override fun onOpen() {
         stopwatch = Stopwatch()
-        current.set(stopwatch)
     }
 
     override fun createAggregate(key: String) =
-        AtomicLong()
+        Pair(0L, stopwatch)
 
-    override fun updateGroupState(item: WorkItem, key: String, aggregate: AtomicLong) =
-        (item.getOptional(WellKnownKeys.SIZE)?.toLong() ?: item.get().size())
+    override fun updateGroupState(item: WorkItem, key: String, aggregate: Pair<Long, Stopwatch>) =
+        (item.getOptional(WellKnownKeys.SIZE)?.toLong() ?: item.get().toLong())
             .let { size ->
-                aggregate.addAndGet(size)
-                    .also { counter ->
-                        if (counter / interval > (counter - size) / interval) {
-                            val last = current.getAndSet(Stopwatch())
-                            val bytes = interval * (counter / interval - (counter - size) / interval)
-                            val perSecond = last.itemsPerSecond(bytes.toDouble())
-                            logger.info { "$name[$key]: Item sum: $counter @ ${perSecond.humanReadable()} byte/s" }
-                        }
-                        item.set(LongValue.of(counter), WellKnownKeys.SUM)
+                (aggregate.first + size).let { incremented ->
+                    if (incremented / interval > aggregate.first / interval) {
+                        val bytes = interval * (incremented / interval - aggregate.first / interval)
+                        val perSecond = aggregate.second.itemsPerSecond(bytes.toDouble())
+                        logger.info { "$name: Item sum [$key]: $incremented @ ${perSecond.humanReadable()} byte/s" }
+                        Pair(incremented, Stopwatch())
+                    } else {
+                        Pair(incremented, aggregate.second)
                     }
-            }.let { true }
+                }
+            }
 
-    override fun groupStateOnClose(key: String, aggregate: AtomicLong) {
-        val perSecond = stopwatch.itemsPerSecond(aggregate.get().toDouble())
-        logger.info { "$name[$key]: Item sum: ${aggregate.get()}" }
-        logger.info { "$name[$key]: Throughput: ${perSecond.humanReadable()} byte/s" }
+    override fun shouldPassOn(item: WorkItem, key: String, aggregate: Pair<Long, Stopwatch>): Boolean {
+        item.set(LongValue.of(aggregate.first), WellKnownKeys.SUM)
+        return true
+    }
+
+    override fun groupStateOnClose(key: String, aggregate: Pair<Long, Stopwatch>) {
+        val perSecond = stopwatch.itemsPerSecond(aggregate.first.toDouble())
+        logger.info { "$name: Item sum [$key]: ${aggregate.first}" }
+        logger.info { "$name: Throughput [$key]: ${perSecond.humanReadable()} byte/s" }
     }
 }

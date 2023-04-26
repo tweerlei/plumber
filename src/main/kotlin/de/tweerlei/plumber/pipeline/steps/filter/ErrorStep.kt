@@ -34,6 +34,7 @@ class ErrorStep: ProcessingStep {
     """.trimIndent()
     override val argDescription
         get() = intervalFor("").toString()
+    override val argInterpolated = false
 
     override fun createWorker(
         arg: String,

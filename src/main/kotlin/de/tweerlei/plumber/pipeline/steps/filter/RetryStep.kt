@@ -43,6 +43,7 @@ class RetryStep: ProcessingStep {
     """.trimIndent()
     override val argDescription
         get() = retryCountFor("").toString()
+    override val argInterpolated = false
 
     override fun createWorker(
         arg: String,

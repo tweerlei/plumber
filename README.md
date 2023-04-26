@@ -29,6 +29,13 @@ AWS SQS
   sqs-write:<queue>           Send a message to the given SQS queue
 AWS STS
   sts-accountid               Get the effective AWS account ID
+Aggregation
+  count:9223372036854775807   Log item counts at every given number of items
+  group                       Assign items to groups, subsequent aggregate steps will apply to that group
+  last                        Pass only the very last item on to next steps
+  max:9223372036854775807     Log largest value at every given number of items
+  min:9223372036854775807     Log smallest value at every given number of items
+  sum:9223372036854775807     Log item sum of item sizes every given number of bytes
 Apache Kafka
   kafka-read:<topic>          Receive messages from the given Kafka topic
   kafka-write:<topic>         Send a message to the given Kafka topic
@@ -66,7 +73,6 @@ Flow control
   bulk:<number>               Execute following steps using chunks of items
   delay:0                     Delay following steps by the given number of milliseconds
   filter:true                 Keep only items that evaluate to the given boolean
-  last                        Pass only the very last item on to next steps
   parallel:8                  Execute following steps using the given number of threads
   repeat:9223372036854775807  Repeat the following steps a given number of times
   retry:9223372036854775807   Retry the following steps a given number of times on error
@@ -88,14 +94,10 @@ JSON
   json-read:/dev/stdin        Read JSON objects from the given file
   json-write:/dev/stdout      Write current value as JSON object to the given file
 Logging
-  bounds:9223372036854775807  Log smallest and largest value at every given number of items
-  count:9223372036854775807   Log item counts at every given number of items
   dump                        Dump raw item contents
   error:1                     Throw an error every given number of items
-  group:9223372036854775807   Log item counts per value at every given number of items
   histogram:10                Build a histogram with the given number of buckets
   log                         Log the current value
-  sum:9223372036854775807     Log item sum of item sizes every given number of bytes
   time:9223372036854775807    Log item throughput every given number of items
 Math
   divide:1                    Divide the current value by the given value
@@ -426,6 +428,30 @@ If you want to evaluate 'false' to false, use an explicit `is-equal:`.
     is-equal:@two \
     filter:false \
     get:value \
+    log
+```
+
+## Aggregation
+
+You can do database-like aggregation using the `group` step.
+This step itself does not actually group items but merely tags them as belonging to a group corresponding to their current value.
+This affects any subsequent `count`, `sum`, `avg`, `min`, `max` or `last` step which will then act per group.
+
+Note that the calculating steps will add intermediate results to each item as a corresponding attribute (e.g. `sum`).
+If you are interested in the total sum only, employ `last`. If you have multiple steps of the same type (e.g. sums of more than one attribute), be sure so copy each sum to a dedicated attribute.
+
+Here is the equivalent of a `SELECT COUNT(*), SUM(column2), MAX(column3) FROM mytable GROUP BY column1`:
+
+```bash
+./plumber \
+    value:'[[1,1,2],[1,3,4],[2,2,1],[2,3,4]]' json-parse \
+    node-each set:node \
+    node-get:0 group \
+    count get:count set:count_star \
+    node-get:1 sum get:sum set:sum_column2 \
+    node-get:2 max get:max set:max_column3 \
+    last \
+    format:'@{group}: @{count_star} @{sum_b} @{max_c}' \
     log
 ```
 

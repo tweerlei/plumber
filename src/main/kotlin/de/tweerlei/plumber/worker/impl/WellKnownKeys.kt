@@ -44,6 +44,8 @@ class WellKnownKeys {
         const val MIN = "min"
         /** max value */
         const val MAX = "max"
+        /** average value (Double) */
+        const val AVG = "avg"
 
         /** last test result (Boolean) */
         const val TEST_RESULT = "testResult"

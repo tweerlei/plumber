@@ -68,7 +68,7 @@ class CsvReadWorker(
                 .with(CsvParser.Feature.IGNORE_TRAILING_UNMAPPABLE)
                 .with(CsvSchema.emptySchema().withColumnSeparator(separator).withHeader())
                 .readValues<Map<String, String>>(stream)) {
-            Record.ofMap(it)
+            Record.ofComparableValues(it)
         }
 
     private fun generateItemsWithoutHeader() =

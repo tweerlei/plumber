@@ -18,12 +18,13 @@ package de.tweerlei.plumber.worker.impl.sqs
 import com.amazonaws.services.sqs.AmazonSQS
 import com.amazonaws.services.sqs.model.SendMessageRequest
 import de.tweerlei.plumber.worker.WorkItem
+import de.tweerlei.plumber.worker.WorkItemAccessor
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.DelegatingWorker
 import de.tweerlei.plumber.worker.impl.ifEmptyGetFrom
 
 class SQSSendWorker(
-    private val queueUrl: String,
+    private val queueUrl: WorkItemAccessor<String>,
     private val amazonSQSClient: AmazonSQS,
     worker: Worker
 ): DelegatingWorker(worker) {
@@ -32,7 +33,7 @@ class SQSSendWorker(
         item.get().toString()
             .let { body ->
                 sendFile(
-                    queueUrl.ifEmptyGetFrom(item, SQSKeys.QUEUE_URL),
+                    queueUrl(item).ifEmptyGetFrom(item, SQSKeys.QUEUE_URL),
                     body
                 )
             }.let { true }

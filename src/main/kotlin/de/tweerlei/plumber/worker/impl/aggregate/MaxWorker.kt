@@ -21,39 +21,37 @@ import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.types.ComparableValue
 import de.tweerlei.plumber.worker.types.toComparableValue
 import mu.KLogging
-import java.util.concurrent.atomic.AtomicLong
-import java.util.concurrent.atomic.AtomicReference
 
 class MaxWorker(
     private val name: String,
     private val interval: Long,
     worker: Worker
-): AggregateWorker<AtomicReference<ComparableValue>>(worker) {
+): AggregateWorker<Pair<Long, ComparableValue?>>(worker) {
 
     companion object: KLogging()
 
-    private val sentFiles = AtomicLong()
-
     override fun createAggregate(key: String) =
-        AtomicReference<ComparableValue>()
+        Pair(0L, null)
 
-    override fun updateGroupState(item: WorkItem, key: String, aggregate: AtomicReference<ComparableValue>) =
+    override fun updateGroupState(item: WorkItem, key: String, aggregate: Pair<Long, ComparableValue?>) =
         item.get()
             .toComparableValue()
             .let { value ->
-                aggregate.accumulateAndGet(value) { a, b -> maxOf(a ?: b, b) }
-                    .let { current ->
-                        sentFiles.incrementAndGet()
-                            .also { counter ->
-                                if (counter % interval == 0L) {
-                                    logger.info { "$name[$key]: Items processed: $counter, Max. item: $current" }
-                                }
-                            }
-                        item.set(value, WellKnownKeys.MAX)
-                    }
-            }.let { true }
+                Pair(aggregate.first + 1L, maxOf(aggregate.second ?: value, value))
+            }.also { incremented ->
+                if (incremented.first % interval == 0L) {
+                    logger.info { "$name: Items processed [$key]: ${incremented.first}, Max. item: ${incremented.second}" }
+                }
+            }
 
-    override fun groupStateOnClose(key: String, aggregate: AtomicReference<ComparableValue>) {
-        logger.info { "$name[$key]: Max. item: ${aggregate.get()}" }
+    override fun shouldPassOn(item: WorkItem, key: String, aggregate: Pair<Long, ComparableValue?>): Boolean {
+        aggregate.second?.let { maximum ->
+            item.set(maximum, WellKnownKeys.MAX)
+        }
+        return true
+    }
+
+    override fun groupStateOnClose(key: String, aggregate: Pair<Long, ComparableValue?>) {
+        logger.info { "$name: Max. item [$key]: ${aggregate.second}" }
     }
 }

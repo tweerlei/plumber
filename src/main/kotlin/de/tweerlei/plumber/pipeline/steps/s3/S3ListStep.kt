@@ -18,6 +18,7 @@ package de.tweerlei.plumber.pipeline.steps.s3
 import de.tweerlei.plumber.pipeline.PipelineParams
 import de.tweerlei.plumber.pipeline.options.AllPipelineOptions
 import de.tweerlei.plumber.pipeline.steps.ProcessingStep
+import de.tweerlei.plumber.pipeline.steps.toWorkItemStringAccessor
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.impl.s3.S3ClientFactory
@@ -51,6 +52,7 @@ class S3ListStep(
         s3-bulkdelete  # list and delete with 16 parallel workers
     """.trimIndent()
     override val argDescription = "<bucket>"
+    override val argInterpolated = true
 
     override fun producedAttributesFor(arg: String) = setOf(
         WellKnownKeys.NAME,
@@ -70,7 +72,7 @@ class S3ListStep(
         s3ClientFactory.createAmazonS3Client(parallelDegree, params.assumeRoleArn)
             .let { client ->
                 S3ListObjectsWorker(
-                    arg,
+                    arg.toWorkItemStringAccessor(),
                     params.requesterPays,
                     params.numberOfFilesPerRequest,
                     client,

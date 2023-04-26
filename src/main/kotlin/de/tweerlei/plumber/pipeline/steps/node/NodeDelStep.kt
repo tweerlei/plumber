@@ -38,6 +38,7 @@ class NodeDelStep: ProcessingStep {
         json-write:public-items.json
     """.trimIndent()
     override val argDescription = "<path>"
+    override val argInterpolated = false
 
     override fun producedAttributesFor(arg: String) = setOf(
         WellKnownKeys.NODE

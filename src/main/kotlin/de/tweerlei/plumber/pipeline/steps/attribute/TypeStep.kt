@@ -51,6 +51,7 @@ class TypeStep: ProcessingStep {
         lines-write  # result: double
     """.trimIndent()
     override val argDescription = ""
+    override val argInterpolated = false
 
     override fun createWorker(
         arg: String,

@@ -17,22 +17,22 @@ package de.tweerlei.plumber.worker.impl.aggregate
 
 import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.Worker
-import java.util.concurrent.atomic.AtomicReference
 
 class LastWorker(
     worker: Worker
-): AggregateWorker<AtomicReference<WorkItem>>(worker) {
+): AggregateWorker<WorkItem?>(worker) {
 
     override fun createAggregate(key: String) =
-        AtomicReference<WorkItem>()
+        null
 
-    override fun updateGroupState(item: WorkItem, key: String, aggregate: AtomicReference<WorkItem>) =
-        aggregate.set(item)
-            .let { false }
+    override fun updateGroupState(item: WorkItem, key: String, aggregate: WorkItem?) =
+        item
 
-    override fun groupStateOnClose(key: String, aggregate: AtomicReference<WorkItem>) {
-        aggregate.get()?.let {
-            passOn(it)
-        }
+    override fun shouldPassOn(item: WorkItem, key: String, aggregate: WorkItem?): Boolean =
+        false
+
+    override fun groupStateOnClose(key: String, aggregate: WorkItem?) {
+        if (aggregate != null)
+            passOn(aggregate)
     }
 }

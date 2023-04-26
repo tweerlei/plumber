@@ -20,6 +20,7 @@ import com.amazonaws.services.s3.model.ListObjectsV2Request
 import com.amazonaws.services.s3.model.ListObjectsV2Result
 import com.amazonaws.services.s3.model.S3ObjectSummary
 import de.tweerlei.plumber.worker.WorkItem
+import de.tweerlei.plumber.worker.WorkItemAccessor
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.GeneratingWorker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
@@ -30,7 +31,7 @@ import de.tweerlei.plumber.worker.types.StringValue
 import mu.KLogging
 
 class S3ListObjectsWorker(
-    private val bucketName: String,
+    private val bucketName: WorkItemAccessor<String>,
     private val requesterPays: Boolean,
     private val numberOfFilesPerRequest: Int,
     private val amazonS3Client: AmazonS3,
@@ -44,7 +45,7 @@ class S3ListObjectsWorker(
     }
 
     override fun generateItems(item: WorkItem, fn: (WorkItem) -> Boolean) {
-        val actualBucketName = StringValue.of(bucketName)
+        val actualBucketName = StringValue.of(bucketName(item))
         val range = (item.getOptional(WellKnownKeys.RANGE) ?: Range()).toRange()
         val startAfter = range.startAfter.asOptional()?.toString()
         val endWith = range.endWith.asOptional()?.toString()
@@ -55,7 +56,7 @@ class S3ListObjectsWorker(
         var lastKey: String? = null
         var itemCount = 0
         do {
-            result = listFilenames(startAfter, result?.nextContinuationToken)
+            result = listFilenames(actualBucketName.toAny(), startAfter, result?.nextContinuationToken)
             logger.debug { "fetched ${result.objectSummaries.size} items" }
             result.objectSummaries.forEach { objectSummary ->
                 if (endWith == null || objectSummary.key <= endWith) {
@@ -78,9 +79,9 @@ class S3ListObjectsWorker(
         logger.info { "fetched $itemCount filenames from $startAfter to $endWith, first key: $firstKey, last key: $lastKey" }
     }
 
-    private fun listFilenames(startWith: String?, continueWith: String?) =
+    private fun listFilenames(bucket: String, startWith: String?, continueWith: String?) =
         ListObjectsV2Request()
-            .withBucketName(bucketName)
+            .withBucketName(bucket)
             .withMaxKeys(numberOfFilesPerRequest.coerceAtMost(MAX_NUMBER_OF_KEYS))
             .withRequesterPays(requesterPays)
             .apply {

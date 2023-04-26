@@ -36,6 +36,7 @@ class DelayStep: ProcessingStep {
     """.trimIndent()
     override val argDescription
         get() = delayFor("").toString()
+    override val argInterpolated = false
 
     override fun createWorker(
         arg: String,

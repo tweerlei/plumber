@@ -17,6 +17,7 @@ package de.tweerlei.plumber.pipeline.steps.jdbc
 
 import de.tweerlei.plumber.pipeline.PipelineParams
 import de.tweerlei.plumber.pipeline.steps.ProcessingStep
+import de.tweerlei.plumber.pipeline.steps.toWorkItemStringAccessor
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.jdbc.JdbcInsertWorker
 import de.tweerlei.plumber.worker.impl.jdbc.JdbcTemplateFactory
@@ -44,6 +45,7 @@ class JdbcWriteStep(
         jdbc-write  # update name to 'Joe'
     """.trimIndent()
     override val argDescription = "<table>"
+    override val argInterpolated = true
 
     override fun createWorker(
         arg: String,
@@ -55,7 +57,7 @@ class JdbcWriteStep(
         jdbcTemplateFactory.createJdbcTemplate(parallelDegree)
             .let { client ->
                 JdbcInsertWorker(
-                    arg,
+                    arg.toWorkItemStringAccessor(),
                     client,
                     w
                 )

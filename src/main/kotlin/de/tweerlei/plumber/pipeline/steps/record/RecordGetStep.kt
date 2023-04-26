@@ -39,6 +39,7 @@ class RecordGetStep: ProcessingStep {
         lines-write  # result: bob
     """.trimIndent()
     override val argDescription = "<name>"
+    override val argInterpolated = false
 
     override fun requiredAttributesFor(arg: String) = setOf(
         WellKnownKeys.RECORD

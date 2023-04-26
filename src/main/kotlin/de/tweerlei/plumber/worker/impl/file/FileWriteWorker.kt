@@ -16,6 +16,7 @@
 package de.tweerlei.plumber.worker.impl.file
 
 import de.tweerlei.plumber.worker.WorkItem
+import de.tweerlei.plumber.worker.WorkItemAccessor
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.DelegatingWorker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
@@ -24,7 +25,7 @@ import java.io.File
 import java.io.FileOutputStream
 
 class FileWriteWorker(
-    private val dir: String,
+    private val dir: WorkItemAccessor<String>,
     private val recursive: Boolean,
     worker: Worker
 ): DelegatingWorker(worker) {
@@ -32,7 +33,7 @@ class FileWriteWorker(
     override fun doProcess(item: WorkItem) =
         item.get(WellKnownKeys.NAME).toString()
             .let { name ->
-                File(dir.ifEmptyGetFrom(item, WellKnownKeys.PATH).ifEmpty { "." })
+                File(dir(item).ifEmptyGetFrom(item, WellKnownKeys.PATH).ifEmpty { "." })
                     .let { directory ->
                         if (recursive) directory.mkdirs()
                         File(directory, name)

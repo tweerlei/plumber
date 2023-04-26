@@ -39,6 +39,7 @@ class RangeSetStep: ProcessingStep {
     """.trimIndent()
     override val argDescription
         get() = rangeKeyFor("").toString()
+    override val argInterpolated = false
 
     override fun producedAttributesFor(arg: String) = setOf(
         WellKnownKeys.RANGE

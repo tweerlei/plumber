@@ -33,6 +33,7 @@ class DumpStep: ProcessingStep {
         dump
     """.trimIndent()
     override val argDescription = ""
+    override val argInterpolated = false
 
     override fun createWorker(
         arg: String,

@@ -36,8 +36,7 @@ class LineWriteWorker(
     }
 
     override fun doProcess(item: WorkItem) =
-        item.get()
-            .toString()
+        item.get().toString()
             .also { bytes -> writer.write(bytes) }
             .also { writer.write(separator) }
             .let { true }

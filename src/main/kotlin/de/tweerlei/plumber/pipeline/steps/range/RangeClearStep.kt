@@ -38,6 +38,7 @@ class RangeClearStep: ProcessingStep {
         range-clear
     """.trimIndent()
     override val argDescription = ""
+    override val argInterpolated = false
 
     override fun createWorker(
         arg: String,

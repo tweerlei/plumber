@@ -17,6 +17,7 @@ package de.tweerlei.plumber.pipeline.steps.sqs
 
 import de.tweerlei.plumber.pipeline.PipelineParams
 import de.tweerlei.plumber.pipeline.steps.ProcessingStep
+import de.tweerlei.plumber.pipeline.steps.toWorkItemStringAccessor
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.impl.sqs.SQSClientFactory
@@ -42,6 +43,7 @@ class SQSBulkSendStep(
         sqs-bulkwrite:myQueue
     """.trimIndent()
     override val argDescription = "<queue>"
+    override val argInterpolated = true
 
     override fun requiredAttributesFor(arg: String) = setOf(
         WellKnownKeys.WORK_ITEMS
@@ -57,7 +59,7 @@ class SQSBulkSendStep(
         sqsClientFactory.createAmazonSQSClient(parallelDegree, params.assumeRoleArn)
             .let { client ->
                 SQSSendBatchWorker(
-                    arg,
+                    arg.toWorkItemStringAccessor(),
                     client,
                     w
                 )

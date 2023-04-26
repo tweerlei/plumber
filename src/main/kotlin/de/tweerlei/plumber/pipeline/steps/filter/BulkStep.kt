@@ -42,6 +42,7 @@ class BulkStep: ProcessingStep {
         s3-bulkdelete
     """.trimIndent()
     override val argDescription = "<number>"
+    override val argInterpolated = false
 
     override fun producedAttributesFor(arg: String) = setOf(
         WellKnownKeys.WORK_ITEMS,

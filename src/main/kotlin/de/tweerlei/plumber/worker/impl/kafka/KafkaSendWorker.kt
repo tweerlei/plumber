@@ -16,6 +16,7 @@
 package de.tweerlei.plumber.worker.impl.kafka
 
 import de.tweerlei.plumber.worker.WorkItem
+import de.tweerlei.plumber.worker.WorkItemAccessor
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.DelegatingWorker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
@@ -24,7 +25,7 @@ import org.apache.kafka.clients.producer.KafkaProducer
 import org.apache.kafka.clients.producer.ProducerRecord
 
 class KafkaSendWorker(
-    private val topicName: String,
+    private val topicName: WorkItemAccessor<String>,
     private val producer: KafkaProducer<ByteArray, ByteArray>,
     worker: Worker
 ): DelegatingWorker(worker) {
@@ -40,7 +41,7 @@ class KafkaSendWorker(
 
     private fun WorkItem.toProducerRecord() =
         when (val name = getOptional(WellKnownKeys.NAME)) {
-            null -> ProducerRecord<ByteArray, ByteArray>(topicName, get().toByteArray())
-            else -> ProducerRecord<ByteArray, ByteArray>(topicName, name.toByteArray(), get().toByteArray())
+            null -> ProducerRecord<ByteArray, ByteArray>(topicName(this), get().toByteArray())
+            else -> ProducerRecord<ByteArray, ByteArray>(topicName(this), name.toByteArray(), get().toByteArray())
         }
 }

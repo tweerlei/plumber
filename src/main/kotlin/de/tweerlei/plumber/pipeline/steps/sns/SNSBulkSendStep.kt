@@ -17,6 +17,7 @@ package de.tweerlei.plumber.pipeline.steps.sns
 
 import de.tweerlei.plumber.pipeline.PipelineParams
 import de.tweerlei.plumber.pipeline.steps.ProcessingStep
+import de.tweerlei.plumber.pipeline.steps.toWorkItemAccessor
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.impl.sns.SNSClientFactory
@@ -42,6 +43,7 @@ class SNSBulkSendStep(
         sns-bulkwrite:myTopic
     """.trimIndent()
     override val argDescription = "<topicArn>"
+    override val argInterpolated = true
 
     override fun requiredAttributesFor(arg: String) = setOf(
         WellKnownKeys.WORK_ITEMS
@@ -57,7 +59,7 @@ class SNSBulkSendStep(
         snsClientFactory.createAmazonSNSClient(parallelDegree, params.assumeRoleArn)
             .let { client ->
                 SNSPublishBatchWorker(
-                    arg,
+                    arg.toWorkItemAccessor(),
                     client,
                     w
                 )

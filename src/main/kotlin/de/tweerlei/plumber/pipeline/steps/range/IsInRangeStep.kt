@@ -38,6 +38,7 @@ class IsInRangeStep: ProcessingStep {
         value:21 is-inrange -> false
     """.trimIndent()
     override val argDescription = ""
+    override val argInterpolated = false
 
     override fun requiredAttributesFor(arg: String) = setOf(
         WellKnownKeys.RANGE

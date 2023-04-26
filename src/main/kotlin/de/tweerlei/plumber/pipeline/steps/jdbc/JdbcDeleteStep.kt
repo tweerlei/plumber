@@ -18,6 +18,7 @@ package de.tweerlei.plumber.pipeline.steps.jdbc
 import de.tweerlei.plumber.pipeline.PipelineParams
 import de.tweerlei.plumber.pipeline.options.AllPipelineOptions
 import de.tweerlei.plumber.pipeline.steps.ProcessingStep
+import de.tweerlei.plumber.pipeline.steps.toWorkItemStringAccessor
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.jdbc.JdbcDeleteWorker
 import de.tweerlei.plumber.worker.impl.jdbc.JdbcTemplateFactory
@@ -44,6 +45,7 @@ class JdbcDeleteStep(
         jdbc-delete:myTable --primary-key=id
     """.trimIndent()
     override val argDescription = "<table>"
+    override val argInterpolated = true
 
     override fun createWorker(
         arg: String,
@@ -55,7 +57,7 @@ class JdbcDeleteStep(
         jdbcTemplateFactory.createJdbcTemplate(parallelDegree)
             .let { client ->
                 JdbcDeleteWorker(
-                    arg,
+                    arg.toWorkItemStringAccessor(),
                     params.primaryKey.toJdbcPrimaryKey(),
                     client,
                     w

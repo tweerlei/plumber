@@ -15,15 +15,17 @@
  */
 package de.tweerlei.plumber.worker.impl.jdbc
 
-import de.tweerlei.plumber.worker.*
+import de.tweerlei.plumber.worker.WorkItem
+import de.tweerlei.plumber.worker.WorkItemAccessor
+import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.DelegatingWorker
-import de.tweerlei.plumber.worker.types.Record
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.impl.ifEmptyGetFrom
+import de.tweerlei.plumber.worker.types.Record
 import org.springframework.jdbc.core.JdbcTemplate
 
 class JdbcInsertWorker(
-    private val tableName: String,
+    private val tableName: WorkItemAccessor<String>,
     private val jdbcTemplate: JdbcTemplate,
     worker: Worker
 ): DelegatingWorker(worker) {
@@ -40,7 +42,7 @@ class JdbcInsertWorker(
     private fun updaterFor(item: WorkItem, map: Record) =
         when (val v = updater) {
             null -> Updater.from(
-                    tableName.ifEmptyGetFrom(item, JdbcKeys.TABLE_NAME),
+                    tableName(item).ifEmptyGetFrom(item, JdbcKeys.TABLE_NAME),
                     map
                 ).also { updater = it }
             else -> v

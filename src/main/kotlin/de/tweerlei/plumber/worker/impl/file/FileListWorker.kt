@@ -16,6 +16,7 @@
 package de.tweerlei.plumber.worker.impl.file
 
 import de.tweerlei.plumber.worker.WorkItem
+import de.tweerlei.plumber.worker.WorkItemAccessor
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.GeneratingWorker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
@@ -25,14 +26,14 @@ import de.tweerlei.plumber.worker.types.StringValue
 import java.io.File
 
 class FileListWorker(
-    private val dir: String,
+    private val dir: WorkItemAccessor<String>,
     private val recursive: Boolean,
     limit: Long,
     worker: Worker
 ): GeneratingWorker(limit, worker) {
 
     override fun generateItems(item: WorkItem, fn: (WorkItem) -> Boolean) {
-        File(dir.ifEmpty { "." })
+        File(dir(item).ifEmpty { "." })
             .let { directory ->
                 val path = StringValue.of(directory.absolutePath)
                 directory.listRecursively()

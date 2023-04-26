@@ -18,6 +18,7 @@ package de.tweerlei.plumber.pipeline.steps.kafka
 import de.tweerlei.plumber.pipeline.PipelineParams
 import de.tweerlei.plumber.pipeline.options.AllPipelineOptions
 import de.tweerlei.plumber.pipeline.steps.ProcessingStep
+import de.tweerlei.plumber.pipeline.steps.toWorkItemAccessor
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.impl.kafka.KafkaClientFactory
@@ -43,6 +44,7 @@ class KafkaReadStep(
         sqs-send:myQueue
     """.trimIndent()
     override val argDescription = "<topic>"
+    override val argInterpolated = false
 
     override fun producedAttributesFor(arg: String) = setOf(
 //        WellKnownKeys.NAME,

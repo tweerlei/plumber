@@ -45,6 +45,7 @@ class PipelineBuilder(
                 override val options = ""
                 override val example = ""
                 override val argDescription = ""
+                override val argInterpolated = false
                 override fun createWorker(
                     arg: String,
                     w: Worker,

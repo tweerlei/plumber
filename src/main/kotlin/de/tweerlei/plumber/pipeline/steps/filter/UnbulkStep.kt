@@ -40,6 +40,7 @@ class UnbulkStep: ProcessingStep {
         count
     """.trimIndent()
     override val argDescription = ""
+    override val argInterpolated = false
 
     override fun requiredAttributesFor(arg: String) = setOf(
         WellKnownKeys.WORK_ITEMS

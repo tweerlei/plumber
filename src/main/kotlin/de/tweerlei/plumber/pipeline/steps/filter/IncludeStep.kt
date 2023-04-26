@@ -38,6 +38,7 @@ class IncludeStep: ProcessingStep {
         include:steps.txt
     """.trimIndent()
     override val argDescription = "<file>"
+    override val argInterpolated = false
 
     override fun createWorker(
         arg: String,

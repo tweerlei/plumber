@@ -42,6 +42,7 @@ class RecordEachStep: ProcessingStep {
                                charlie
     """.trimIndent()
     override val argDescription = ""
+    override val argInterpolated = false
 
     override fun requiredAttributesFor(arg: String) = setOf(
         WellKnownKeys.RECORD

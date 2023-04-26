@@ -41,6 +41,7 @@ class FilterStep: ProcessingStep {
     """.trimIndent()
     override val argDescription
         get() = compareWithFor("").toString()
+    override val argInterpolated = false
 
     override fun createWorker(
         arg: String,

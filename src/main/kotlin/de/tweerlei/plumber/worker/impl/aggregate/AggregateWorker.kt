@@ -30,21 +30,25 @@ abstract class AggregateWorker<V>(
     override final fun doProcess(item: WorkItem) =
         (item.getOptional(WellKnownKeys.GROUP)?.toString() ?: "")
             .let { key ->
-                aggregateFor(key)
-                    .let { counter ->
-                        updateGroupState(item, key, counter)
+                update(key, item)
+                    .let { updatedCounter ->
+                        shouldPassOn(item, key, updatedCounter)
                     }
             }
 
-    abstract fun updateGroupState(item: WorkItem, key: String, aggregate: V): Boolean
-
-    private fun aggregateFor(value: String) =
-        aggregates[value]
-            ?: createAggregate(value).let {
-                aggregates.putIfAbsent(value, it) ?: it
+    private fun update(key: String, item: WorkItem) =
+        aggregates.computeIfAbsent(key, ::createAggregate)
+            .let { currentValue ->
+                aggregates.compute(key) { key, counter ->
+                    updateGroupState(item, key, counter ?: currentValue)
+                } ?: currentValue
             }
 
+    abstract fun updateGroupState(item: WorkItem, key: String, aggregate: V): V
+
     abstract fun createAggregate(key: String): V
+
+    abstract fun shouldPassOn(item: WorkItem, key: String, aggregate: V): Boolean
 
     override final fun onClose() {
         aggregates.forEach { (k, v) ->

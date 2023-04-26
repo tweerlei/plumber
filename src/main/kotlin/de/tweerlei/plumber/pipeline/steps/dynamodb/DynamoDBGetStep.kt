@@ -19,6 +19,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import de.tweerlei.plumber.pipeline.PipelineParams
 import de.tweerlei.plumber.pipeline.options.AllPipelineOptions
 import de.tweerlei.plumber.pipeline.steps.ProcessingStep
+import de.tweerlei.plumber.pipeline.steps.toWorkItemStringAccessor
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.impl.dynamodb.DynamoDBClientFactory
@@ -52,6 +53,7 @@ class DynamoDBGetStep(
         dynamodb-get:myTable
     """.trimIndent()
     override val argDescription = "<table>"
+    override val argInterpolated = true
 
     override fun producedAttributesFor(arg: String) = setOf(
         WellKnownKeys.RECORD,
@@ -68,7 +70,7 @@ class DynamoDBGetStep(
         dynamoDBClientFactory.createAmazonDynamoDBClient(parallelDegree, params.assumeRoleArn)
             .let { client ->
                 DynamoDBGetWorker(
-                    arg,
+                    arg.toWorkItemStringAccessor(),
                     params.partitionKey.ifEmpty { throw IllegalArgumentException("No partition key specified") },
                     params.rangeKey,
                     client,

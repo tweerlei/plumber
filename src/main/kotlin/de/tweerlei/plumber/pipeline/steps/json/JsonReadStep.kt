@@ -44,6 +44,7 @@ class JsonReadStep(
     """.trimIndent()
     override val argDescription
         get() = "".toInputStreamProvider().toString()
+    override val argInterpolated = false
 
     override fun producedAttributesFor(arg: String) = setOf(
         WellKnownKeys.PATH,

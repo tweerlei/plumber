@@ -51,6 +51,7 @@ class RangeEachStep: ProcessingStep {
     """.trimIndent()
     override val argDescription
         get() = stepCountFor("").toString()
+    override val argInterpolated = false
 
     override fun requiredAttributesFor(arg: String) = setOf(
         WellKnownKeys.RANGE

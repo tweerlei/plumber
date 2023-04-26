@@ -37,6 +37,7 @@ class NodeClearStep: ProcessingStep {
         node-clear
     """.trimIndent()
     override val argDescription = ""
+    override val argInterpolated = false
 
     override fun createWorker(
         arg: String,

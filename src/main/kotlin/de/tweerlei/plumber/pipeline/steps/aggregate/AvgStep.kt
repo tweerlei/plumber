@@ -13,45 +13,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.tweerlei.plumber.pipeline.steps.attribute
+package de.tweerlei.plumber.pipeline.steps.aggregate
 
 import de.tweerlei.plumber.pipeline.PipelineParams
 import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.worker.Worker
-import de.tweerlei.plumber.worker.impl.attribute.ConvertingWorker
-import de.tweerlei.plumber.worker.types.*
+import de.tweerlei.plumber.worker.impl.WellKnownKeys
+import de.tweerlei.plumber.worker.impl.aggregate.AveragingWorker
 import org.springframework.stereotype.Service
 
-@Service("castWorker")
-class CastStep: ProcessingStep {
+@Service("avgWorker")
+class AvgStep: ProcessingStep {
 
-    override val group = "Attributes"
-    override val name = "Cast value"
-    override val description = "Converts the current value to the given type"
-    override val help = """
-        Supported types are:
-          ${StringValue.NAME}
-          ${LongValue.NAME}
-          ${DoubleValue.NAME}
-          ${BooleanValue.NAME}
-          ${InstantValue.NAME}
-          ${DurationValue.NAME}
-          ${BigIntegerValue.NAME}
-          ${BigDecimalValue.NAME}
-          ${ByteArrayValue.NAME}
-          ${Range.NAME} - will also set the result as current range
-          ${Record.NAME} - will also set the result as current record
-          ${Node.NAME} - will also set the result as current node
-    """.trimIndent()
+    override val group = "Aggregation"
+    override val name = "Calculate average"
+    override val description = "Log average value at every given number of items"
+    override val help = ""
     override val options = ""
     override val example = """
-        value:1.23
-        cast:long
-        lines-write  # result: 1
+        avg:10
     """.trimIndent()
-    override val argDescription = "<type>"
+    override val argDescription
+        get() = intervalFor("").toString()
     override val argInterpolated = false
 
+    override fun producedAttributesFor(arg: String) = setOf(
+        WellKnownKeys.AVG
+    )
+
+    @Suppress("UNCHECKED_CAST")
     override fun createWorker(
         arg: String,
         w: Worker,
@@ -59,5 +49,12 @@ class CastStep: ProcessingStep {
         params: PipelineParams,
         parallelDegree: Int
     ) =
-        ConvertingWorker(arg, w)
+        AveragingWorker(
+            predecessorName,
+            intervalFor(arg),
+            w
+        )
+
+    private fun intervalFor(arg: String) =
+        arg.toLongOrNull() ?: Long.MAX_VALUE
 }

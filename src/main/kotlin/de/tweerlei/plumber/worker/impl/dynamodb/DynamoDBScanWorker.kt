@@ -20,14 +20,16 @@ import com.amazonaws.services.dynamodbv2.model.AttributeValue
 import com.amazonaws.services.dynamodbv2.model.ScanRequest
 import com.amazonaws.services.dynamodbv2.model.ScanResult
 import com.fasterxml.jackson.databind.ObjectMapper
-import de.tweerlei.plumber.worker.*
+import de.tweerlei.plumber.worker.WorkItem
+import de.tweerlei.plumber.worker.WorkItemAccessor
+import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.GeneratingWorker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.types.*
 import mu.KLogging
 
 class DynamoDBScanWorker(
-    private val tableName: String,
+    private val tableName: WorkItemAccessor<String>,
     private val partitionKey: String,
     private val rangeKey: String,
     private val selectFields: Set<String>,
@@ -41,7 +43,7 @@ class DynamoDBScanWorker(
     companion object : KLogging()
 
     override fun generateItems(item: WorkItem, fn: (WorkItem) -> Boolean) {
-        val actualTableName = StringValue.of(tableName)
+        val actualTableName = StringValue.of(tableName(item))
         val primaryRange = (item.getOptional(WellKnownKeys.RANGE) ?: Range()).toRange()
         val secondaryRange = (item.getOptional(WellKnownKeys.SECONDARY_RANGE) ?: Range()).toRange()
         val startAfter = keyFrom(primaryRange.startAfter, secondaryRange.startAfter)
@@ -53,7 +55,7 @@ class DynamoDBScanWorker(
         var lastKey: Value? = null
         var itemCount = 0
         do {
-            result = listFilenames(startAfter?.toDynamoDB(objectMapper), result?.lastEvaluatedKey)
+            result = listFilenames(actualTableName.toAny(), startAfter?.toDynamoDB(objectMapper), result?.lastEvaluatedKey)
             logger.debug { "fetched ${result.items.size} items" }
             result.items.forEach { resultItem ->
                 resultItem.fromDynamoDB(objectMapper).let { row ->
@@ -75,9 +77,9 @@ class DynamoDBScanWorker(
         logger.info { "fetched $itemCount filenames from $startAfter to $endWith, first key: $firstKey, last key: $lastKey" }
     }
 
-    private fun listFilenames(startAfter: Map<String, AttributeValue>?, continueAfter: Map<String, AttributeValue>?) =
+    private fun listFilenames(table: String, startAfter: Map<String, AttributeValue>?, continueAfter: Map<String, AttributeValue>?) =
         ScanRequest()
-            .withTableName(tableName)
+            .withTableName(table)
             .withLimit(numberOfFilesPerRequest)
             .withExclusiveStartKey(continueAfter ?: startAfter)
             .withProjectionExpression(selectFields.ifEmpty { null }?.joinToString(","))

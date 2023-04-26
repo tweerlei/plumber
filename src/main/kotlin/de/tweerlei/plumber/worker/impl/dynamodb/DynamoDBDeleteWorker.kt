@@ -20,13 +20,14 @@ import com.amazonaws.services.dynamodbv2.model.AttributeValue
 import com.amazonaws.services.dynamodbv2.model.DeleteItemRequest
 import com.fasterxml.jackson.databind.ObjectMapper
 import de.tweerlei.plumber.worker.WorkItem
+import de.tweerlei.plumber.worker.WorkItemAccessor
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.DelegatingWorker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.impl.ifEmptyGetFrom
 
 class DynamoDBDeleteWorker(
-    private val tableName: String,
+    private val tableName: WorkItemAccessor<String>,
     private val partitionKey: String,
     private val rangeKey: String?,
     private val amazonDynamoDBClient: AmazonDynamoDB,
@@ -40,7 +41,7 @@ class DynamoDBDeleteWorker(
             .toDynamoDB(objectMapper)
             .let { attributes ->
                 deleteItem(
-                    tableName.ifEmptyGetFrom(item, DynamoDBKeys.TABLE_NAME),
+                    tableName(item).ifEmptyGetFrom(item, DynamoDBKeys.TABLE_NAME),
                     attributes.extractKey(partitionKey, rangeKey)
                 )
             }.let { true }

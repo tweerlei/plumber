@@ -20,13 +20,14 @@ import com.amazonaws.services.dynamodbv2.model.AttributeValue
 import com.amazonaws.services.dynamodbv2.model.PutItemRequest
 import com.fasterxml.jackson.databind.ObjectMapper
 import de.tweerlei.plumber.worker.WorkItem
+import de.tweerlei.plumber.worker.WorkItemAccessor
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.DelegatingWorker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.impl.ifEmptyGetFrom
 
 class DynamoDBPutWorker(
-    private val tableName: String,
+    private val tableName: WorkItemAccessor<String>,
     private val amazonDynamoDBClient: AmazonDynamoDB,
     private val objectMapper: ObjectMapper,
     worker: Worker
@@ -38,7 +39,7 @@ class DynamoDBPutWorker(
             .toDynamoDB(objectMapper)
             .also { attributes ->
                 putItem(
-                    tableName.ifEmptyGetFrom(item, DynamoDBKeys.TABLE_NAME),
+                    tableName(item).ifEmptyGetFrom(item, DynamoDBKeys.TABLE_NAME),
                     attributes
                 )
             }.let { true }

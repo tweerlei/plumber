@@ -17,7 +17,6 @@ package de.tweerlei.plumber.pipeline.steps.attribute
 
 import de.tweerlei.plumber.pipeline.PipelineParams
 import de.tweerlei.plumber.pipeline.steps.ProcessingStep
-import de.tweerlei.plumber.pipeline.steps.toRequiredAttributes
 import de.tweerlei.plumber.pipeline.steps.toWorkItemAccessor
 import de.tweerlei.plumber.worker.WorkItem
 import de.tweerlei.plumber.worker.Worker
@@ -50,9 +49,7 @@ class ValueStep: ProcessingStep {
         lines-write  # result: size of each file
     """.trimIndent()
     override val argDescription = "<value>"
-
-    override fun requiredAttributesFor(arg: String) =
-        arg.toRequiredAttributes()
+    override val argInterpolated = true
 
     override fun createWorker(
         arg: String,

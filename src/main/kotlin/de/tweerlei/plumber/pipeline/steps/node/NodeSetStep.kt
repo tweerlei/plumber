@@ -40,6 +40,7 @@ class NodeSetStep: ProcessingStep {
         json-write  # result: {"numbers":[1,4,3]}
     """.trimIndent()
     override val argDescription = "<path>"
+    override val argInterpolated = false
 
     override fun producedAttributesFor(arg: String) = setOf(
         WellKnownKeys.NODE

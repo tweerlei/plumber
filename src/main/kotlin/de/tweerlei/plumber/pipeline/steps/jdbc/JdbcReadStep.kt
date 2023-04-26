@@ -18,6 +18,7 @@ package de.tweerlei.plumber.pipeline.steps.jdbc
 import de.tweerlei.plumber.pipeline.PipelineParams
 import de.tweerlei.plumber.pipeline.options.AllPipelineOptions
 import de.tweerlei.plumber.pipeline.steps.ProcessingStep
+import de.tweerlei.plumber.pipeline.steps.toWorkItemStringAccessor
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.impl.jdbc.JdbcKeys
@@ -47,6 +48,7 @@ class JdbcReadStep(
         csv-write  # print row 42 as CSV
     """.trimIndent()
     override val argDescription = "<table>"
+    override val argInterpolated = true
 
     override fun producedAttributesFor(arg: String) = setOf(
         WellKnownKeys.RECORD,
@@ -63,7 +65,7 @@ class JdbcReadStep(
         jdbcTemplateFactory.createJdbcTemplate(parallelDegree)
             .let { client ->
                 JdbcSelectOneWorker(
-                    arg,
+                    arg.toWorkItemStringAccessor(),
                     params.primaryKey.toJdbcPrimaryKey(),
                     client,
                     w

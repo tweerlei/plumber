@@ -46,6 +46,7 @@ class DecodeStep(
     """.trimIndent()
     override val argDescription
         get() = encodingFor("")
+    override val argInterpolated = false
 
     override fun createWorker(
         arg: String,

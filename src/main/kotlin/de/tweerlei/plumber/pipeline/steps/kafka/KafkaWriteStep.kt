@@ -17,6 +17,7 @@ package de.tweerlei.plumber.pipeline.steps.kafka
 
 import de.tweerlei.plumber.pipeline.PipelineParams
 import de.tweerlei.plumber.pipeline.steps.ProcessingStep
+import de.tweerlei.plumber.pipeline.steps.toWorkItemStringAccessor
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.kafka.KafkaClientFactory
 import de.tweerlei.plumber.worker.impl.kafka.KafkaKeys
@@ -39,6 +40,7 @@ class KafkaWriteStep(
         sqs-delete
     """.trimIndent()
     override val argDescription = "<topic>"
+    override val argInterpolated = true
 
     override fun producedAttributesFor(arg: String) = setOf(
 //        KafkaKeys.KAFKA_KEY,
@@ -56,7 +58,7 @@ class KafkaWriteStep(
         kafkaClientFactory.createProducer()
             .let { client ->
                 KafkaSendWorker(
-                    arg,
+                    arg.toWorkItemStringAccessor(),
                     client,
                     w
                 )

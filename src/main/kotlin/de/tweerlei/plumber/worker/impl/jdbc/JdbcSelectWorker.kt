@@ -15,7 +15,9 @@
  */
 package de.tweerlei.plumber.worker.impl.jdbc
 
-import de.tweerlei.plumber.worker.*
+import de.tweerlei.plumber.worker.WorkItem
+import de.tweerlei.plumber.worker.WorkItemAccessor
+import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.GeneratingWorker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.impl.ifEmptyGetFrom
@@ -25,7 +27,7 @@ import org.springframework.jdbc.core.ResultSetExtractor
 import java.sql.ResultSet
 
 class JdbcSelectWorker(
-    private val tableName: String,
+    private val tableName: WorkItemAccessor<String>,
     private val primaryKey: String,
     private val selectFields: Set<String>,
     private val jdbcTemplate: JdbcTemplate,
@@ -35,7 +37,7 @@ class JdbcSelectWorker(
 
     override fun generateItems(item: WorkItem, fn: (WorkItem) -> Boolean) {
         val range = (item.getOptional(WellKnownKeys.RANGE) ?: Range()).toRange()
-        val table = StringValue.of(tableName.ifEmptyGetFrom(item, JdbcKeys.TABLE_NAME))
+        val table = StringValue.of(tableName(item).ifEmptyGetFrom(item, JdbcKeys.TABLE_NAME))
         logger.info { "fetching elements from ${range.startAfter} to ${range.endWith}" }
 
         val extractRows = ResultSetExtractor<Int> { rs ->

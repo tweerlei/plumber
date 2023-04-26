@@ -20,6 +20,7 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory
 import com.fasterxml.jackson.databind.node.ObjectNode
 import com.mongodb.client.MongoClient
 import de.tweerlei.plumber.worker.WorkItem
+import de.tweerlei.plumber.worker.WorkItemAccessor
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.GeneratingWorker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
@@ -29,7 +30,7 @@ import org.bson.Document
 
 class MongoDBScanWorker(
     private val databaseName: String,
-    private val collectionName: String,
+    private val collectionName: WorkItemAccessor<String>,
     private val primaryKey: String,
     private val selectFields: Set<String>,
     private val numberOfFilesPerRequest: Int,
@@ -43,14 +44,14 @@ class MongoDBScanWorker(
 
     override fun generateItems(item: WorkItem, fn: (WorkItem) -> Boolean) {
         val actualDatabaseName = StringValue.of(databaseName)
-        val actualCollectionName = StringValue.of(collectionName)
+        val actualCollectionName = StringValue.of(collectionName(item))
         val range = (item.getOptional(WellKnownKeys.RANGE) ?: Range()).toRange()
         logger.info { "fetching elements from ${range.startAfter} to ${range.endWith}" }
 
         var firstKey: Any? = null
         var lastKey: Any? = null
         var itemCount = 0
-        listDocuments(range.startAfter, range.endWith)
+        listDocuments(actualCollectionName.toAny(), range.startAfter, range.endWith)
             .all { resultItem ->
                 resultItem.fromMongoDB(objectMapper).let { row ->
                     if (fn(Node(row).toWorkItem(actualDatabaseName, actualCollectionName))) {
@@ -67,9 +68,9 @@ class MongoDBScanWorker(
         logger.info { "fetched $itemCount documents from ${range.startAfter} to ${range.endWith}, first key: $firstKey, last key: $lastKey" }
     }
 
-    private fun listDocuments(startAfter: ComparableValue, endWith: ComparableValue) =
+    private fun listDocuments(collection: String, startAfter: ComparableValue, endWith: ComparableValue) =
         filterFor(startAfter, endWith).let { filter ->
-            mongoClient.getDatabase(databaseName).getCollection(collectionName)
+            mongoClient.getDatabase(databaseName).getCollection(collection)
                 .find(filter)
                 .batchSize(numberOfFilesPerRequest)
                 .projection(fieldsToSelect())

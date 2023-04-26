@@ -36,6 +36,7 @@ class FormatStep: ProcessingStep {
         lines-write  # result: You ordered 3 bottles of water
     """.trimIndent()
     override val argDescription = "<format>"
+    override val argInterpolated = false
 
     override fun createWorker(
         arg: String,

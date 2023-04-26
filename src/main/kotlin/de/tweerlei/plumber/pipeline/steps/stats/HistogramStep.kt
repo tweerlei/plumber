@@ -34,6 +34,7 @@ class HistogramStep: ProcessingStep {
     """.trimIndent()
     override val argDescription
         get() = bucketCountFor("").toString()
+    override val argInterpolated = false
 
     override fun parallelDegreeFor(arg: String) = 1
 

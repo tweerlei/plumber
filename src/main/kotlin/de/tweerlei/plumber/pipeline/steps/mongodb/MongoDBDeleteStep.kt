@@ -19,6 +19,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import de.tweerlei.plumber.pipeline.PipelineParams
 import de.tweerlei.plumber.pipeline.options.AllPipelineOptions
 import de.tweerlei.plumber.pipeline.steps.ProcessingStep
+import de.tweerlei.plumber.pipeline.steps.toWorkItemStringAccessor
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.impl.mongodb.MongoClientFactory
@@ -46,6 +47,7 @@ class MongoDBDeleteStep(
         mongodb-delete
     """.trimIndent()
     override val argDescription = "<collection>"
+    override val argInterpolated = true
 
     override fun producedAttributesFor(arg: String) = setOf(
         WellKnownKeys.NODE
@@ -62,7 +64,7 @@ class MongoDBDeleteStep(
             .let { client ->
                 MongoDBDeleteWorker(
                     mongoClientFactory.getDefaultDatabase(),
-                    arg,
+                    arg.toWorkItemStringAccessor(),
                     params.primaryKey.toMongoDBPrimaryKey(),
                     client,
                     objectMapper,

@@ -18,6 +18,7 @@ package de.tweerlei.plumber.worker.impl.mongodb
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.mongodb.client.MongoClient
 import de.tweerlei.plumber.worker.WorkItem
+import de.tweerlei.plumber.worker.WorkItemAccessor
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.DelegatingWorker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
@@ -28,7 +29,7 @@ import org.bson.Document
 
 class MongoDBGetWorker(
     private val databaseName: String,
-    private val collectionName: String,
+    private val collectionName: WorkItemAccessor<String>,
     private val primaryKey: String,
     private val mongoClient: MongoClient,
     private val objectMapper: ObjectMapper,
@@ -42,7 +43,7 @@ class MongoDBGetWorker(
             .let { attributes ->
                 databaseName.ifEmptyGetFrom(item, MongoDBKeys.DATABASE_NAME)
                     .let { actualDatabaseName ->
-                        collectionName.ifEmptyGetFrom(item, MongoDBKeys.COLLECTION_NAME)
+                        collectionName(item).ifEmptyGetFrom(item, MongoDBKeys.COLLECTION_NAME)
                             .let { actualCollectionName ->
                                 fetchDocument(
                                     actualDatabaseName,

@@ -17,7 +17,6 @@ package de.tweerlei.plumber.pipeline.steps.expr
 
 import de.tweerlei.plumber.pipeline.PipelineParams
 import de.tweerlei.plumber.pipeline.steps.ProcessingStep
-import de.tweerlei.plumber.pipeline.steps.toRequiredAttributes
 import de.tweerlei.plumber.pipeline.steps.toWorkItemAccessor
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
@@ -42,10 +41,11 @@ class ElseStep: ProcessingStep {
         
     """.trimIndent()
     override val argDescription = "<value>"
+    override val argInterpolated = true
 
     override fun requiredAttributesFor(arg: String) = setOf(
         WellKnownKeys.TEST_RESULT,
-    ).plus(arg.toRequiredAttributes())
+    )
 
     override fun createWorker(
         arg: String,

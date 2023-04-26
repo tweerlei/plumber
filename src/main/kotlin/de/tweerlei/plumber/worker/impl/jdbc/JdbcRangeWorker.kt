@@ -16,6 +16,7 @@
 package de.tweerlei.plumber.worker.impl.jdbc
 
 import de.tweerlei.plumber.worker.WorkItem
+import de.tweerlei.plumber.worker.WorkItemAccessor
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.DelegatingWorker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
@@ -25,7 +26,7 @@ import mu.KLogging
 import org.springframework.jdbc.core.JdbcTemplate
 
 class JdbcRangeWorker(
-    private val tableName: String,
+    private val tableName: WorkItemAccessor<String>,
     private val primaryKey: String,
     private val jdbcTemplate: JdbcTemplate,
     worker: Worker
@@ -43,7 +44,7 @@ class JdbcRangeWorker(
             if (minValue is Number && maxValue is Number) {
                 logger.info { "Key range for $primaryKey is $minValue .. $maxValue" }
                 item.set(Range.of(minValue.toLong() - 1, maxValue.toLong()), WellKnownKeys.RANGE)
-                item.set(StringValue.of(tableName), JdbcKeys.TABLE_NAME)
+                item.set(StringValue.of(tableName(item)), JdbcKeys.TABLE_NAME)
                 item.set(StringValue.of(primaryKey), JdbcKeys.PRIMARY_KEY)
                 true
             } else {

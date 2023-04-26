@@ -18,6 +18,7 @@ package de.tweerlei.plumber.pipeline.steps.jdbc
 import de.tweerlei.plumber.pipeline.PipelineParams
 import de.tweerlei.plumber.pipeline.options.AllPipelineOptions
 import de.tweerlei.plumber.pipeline.steps.ProcessingStep
+import de.tweerlei.plumber.pipeline.steps.toWorkItemStringAccessor
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
 import de.tweerlei.plumber.worker.impl.jdbc.JdbcKeys
@@ -48,6 +49,7 @@ class JdbcListStep(
         lines-write  # result: IDs of records between 100 (excl.) and 200 (incl.)
     """.trimIndent()
     override val argDescription = "<table>"
+    override val argInterpolated = true
 
     override fun producedAttributesFor(arg: String) = setOf(
         WellKnownKeys.RECORD,
@@ -64,7 +66,7 @@ class JdbcListStep(
         jdbcTemplateFactory.createJdbcTemplate(parallelDegree)
             .let { client ->
                 JdbcSelectWorker(
-                    arg,
+                    arg.toWorkItemStringAccessor(),
                     params.primaryKey.toJdbcPrimaryKey(),
                     params.selectFields,
                     client,

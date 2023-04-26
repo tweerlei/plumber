@@ -43,6 +43,7 @@ class ParallelStep: ProcessingStep {
     """.trimIndent()
     override val argDescription
         get() = parallelDegreeFor("").toString()
+    override val argInterpolated = false
 
     override fun producedAttributesFor(arg: String) = setOf(
         WellKnownKeys.WORKER_INDEX

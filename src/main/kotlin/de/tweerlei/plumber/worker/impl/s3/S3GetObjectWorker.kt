@@ -18,6 +18,7 @@ package de.tweerlei.plumber.worker.impl.s3
 import com.amazonaws.services.s3.AmazonS3
 import com.amazonaws.services.s3.model.GetObjectRequest
 import de.tweerlei.plumber.worker.WorkItem
+import de.tweerlei.plumber.worker.WorkItemAccessor
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.DelegatingWorker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
@@ -28,7 +29,7 @@ import de.tweerlei.plumber.worker.types.LongValue
 import de.tweerlei.plumber.worker.types.StringValue
 
 class S3GetObjectWorker(
-    private val bucketName: String,
+    private val bucketName: WorkItemAccessor<String>,
     private val requesterPays: Boolean,
     private val amazonS3Client: AmazonS3,
     worker: Worker
@@ -37,7 +38,7 @@ class S3GetObjectWorker(
     override fun doProcess(item: WorkItem) =
         item.getFirst(WellKnownKeys.NAME).toString()
             .let { fileName ->
-                bucketName.ifEmptyGetFrom(item, S3Keys.BUCKET_NAME)
+                bucketName(item).ifEmptyGetFrom(item, S3Keys.BUCKET_NAME)
                     .let { actualBucketName ->
                         getFile(actualBucketName, fileName)
                             .also { file ->

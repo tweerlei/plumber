@@ -35,6 +35,7 @@ class CountStep: ProcessingStep {
     """.trimIndent()
     override val argDescription
         get() = intervalFor("").toString()
+    override val argInterpolated = false
 
     override fun producedAttributesFor(arg: String) = setOf(
         WellKnownKeys.COUNT

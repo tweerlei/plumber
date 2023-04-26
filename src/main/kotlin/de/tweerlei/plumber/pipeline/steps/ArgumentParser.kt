@@ -10,6 +10,13 @@ fun String.toWorkItemAccessor(): WorkItemAccessor<Value> =
         else -> { _ -> toComparableValue() }
     }
 
+fun String.toWorkItemStringAccessor(): WorkItemAccessor<String> =
+    when {
+        startsWith(":") -> { _ -> substring(1) }
+        startsWith("@") -> { item -> item.get(substring(1)).toString() }
+        else -> { _ -> this }
+    }
+
 fun String.toRequiredAttributes(): Set<String> =
     when {
         startsWith("@") -> setOf(substring(1))

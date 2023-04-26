@@ -18,6 +18,7 @@ package de.tweerlei.plumber.pipeline.steps.dynamodb
 import com.fasterxml.jackson.databind.ObjectMapper
 import de.tweerlei.plumber.pipeline.PipelineParams
 import de.tweerlei.plumber.pipeline.steps.ProcessingStep
+import de.tweerlei.plumber.pipeline.steps.toWorkItemStringAccessor
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.dynamodb.DynamoDBClientFactory
 import de.tweerlei.plumber.worker.impl.dynamodb.DynamoDBPutWorker
@@ -47,6 +48,7 @@ class DynamoDBPutStep(
         dynamodb-write:myTable
     """.trimIndent()
     override val argDescription = "<table>"
+    override val argInterpolated = true
 
     override fun createWorker(
         arg: String,
@@ -58,7 +60,7 @@ class DynamoDBPutStep(
         dynamoDBClientFactory.createAmazonDynamoDBClient(parallelDegree, params.assumeRoleArn)
             .let { client ->
                 DynamoDBPutWorker(
-                    arg,
+                    arg.toWorkItemStringAccessor(),
                     client,
                     objectMapper,
                     w

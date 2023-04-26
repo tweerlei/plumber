@@ -27,6 +27,7 @@ interface ProcessingStep {
     val options: String
     val example: String
     val argDescription: String
+    val argInterpolated: Boolean
 
     fun requiredAttributesFor(arg: String): Set<String> =
         emptySet()
@@ -36,7 +37,10 @@ interface ProcessingStep {
         null
 
     fun missingRequiredAttributesFor(availableAttributes: Set<String>, arg: String): Set<String>? =
-        (requiredAttributesFor(arg) - availableAttributes).ifEmpty { null }
+        (requiredAttributesFor(arg)
+                + (if (argInterpolated) arg.toRequiredAttributes() else emptySet())
+                - availableAttributes)
+            .ifEmpty { null }
 
     fun createWorker(
         arg: String,

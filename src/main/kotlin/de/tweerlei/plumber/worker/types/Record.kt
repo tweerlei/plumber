@@ -41,13 +41,19 @@ class Record(
                     map[index.toString()] = value.toComparableValue()
                 }
             }
+        fun ofComparableValues(items: Map<String, String>) =
+            Record().apply {
+                items.forEach { (key, value) ->
+                    map[key] = value.toComparableValue()
+                }
+            }
         fun ofCollection(items: Collection<*>) =
-            Record().also { record ->
-                items.forEachIndexed { index, value -> record.map[index.toString()] = value.toValue() }
+            Record().apply {
+                items.forEachIndexed { index, value -> map[index.toString()] = value.toValue() }
             }
         fun ofMap(items: Map<*, *>) =
-            Record().also { record ->
-                items.forEach { (key, value) -> record.map[key.toString()] = value.toValue() }
+            Record().apply {
+                items.forEach { (key, value) -> map[key.toString()] = value.toValue() }
             }
     }
 

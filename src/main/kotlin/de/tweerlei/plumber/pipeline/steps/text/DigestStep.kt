@@ -46,6 +46,7 @@ class DigestStep(
     """.trimIndent()
     override val argDescription
         get() = algorithmFor("")
+    override val argInterpolated = false
 
     override fun producedAttributesFor(arg: String) = setOf(
         WellKnownKeys.DIGEST,
