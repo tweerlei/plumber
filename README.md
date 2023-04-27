@@ -30,7 +30,9 @@ AWS SQS
 AWS STS
   sts-accountid               Get the effective AWS account ID
 Aggregation
+  avg:9223372036854775807     Log average value at every given number of items
   count:9223372036854775807   Log item counts at every given number of items
+  first                       Pass only the very first item on to next steps
   group                       Assign items to groups, subsequent aggregate steps will apply to that group
   last                        Pass only the very last item on to next steps
   max:9223372036854775807     Log largest value at every given number of items
@@ -435,7 +437,7 @@ If you want to evaluate 'false' to false, use an explicit `is-equal:`.
 
 You can do database-like aggregation using the `group` step.
 This step itself does not actually group items but merely tags them as belonging to a group corresponding to their current value.
-This affects any subsequent `count`, `sum`, `avg`, `min`, `max` or `last` step which will then act per group.
+This affects any subsequent `count`, `sum`, `avg`, `min`, `max`, `first` or `last` step which will then act per group.
 
 Note that the calculating steps will add intermediate results to each item as a corresponding attribute (e.g. `sum`).
 If you are interested in the total sum only, employ `last`. If you have multiple steps of the same type (e.g. sums of more than one attribute), be sure so copy each sum to a dedicated attribute.

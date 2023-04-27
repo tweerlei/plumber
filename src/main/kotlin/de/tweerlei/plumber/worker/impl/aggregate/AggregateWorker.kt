@@ -44,11 +44,11 @@ abstract class AggregateWorker<V>(
                 } ?: currentValue
             }
 
-    abstract fun updateGroupState(item: WorkItem, key: String, aggregate: V): V
+    protected abstract fun updateGroupState(item: WorkItem, key: String, aggregate: V): V
 
-    abstract fun createAggregate(key: String): V
+    protected abstract fun createAggregate(key: String): V
 
-    abstract fun shouldPassOn(item: WorkItem, key: String, aggregate: V): Boolean
+    protected abstract fun shouldPassOn(item: WorkItem, key: String, aggregate: V): Boolean
 
     override final fun onClose() {
         aggregates.forEach { (k, v) ->
@@ -56,5 +56,5 @@ abstract class AggregateWorker<V>(
         }
     }
 
-    abstract fun groupStateOnClose(key: String, aggregate: V)
+    protected open fun groupStateOnClose(key: String, aggregate: V) {}
 }
