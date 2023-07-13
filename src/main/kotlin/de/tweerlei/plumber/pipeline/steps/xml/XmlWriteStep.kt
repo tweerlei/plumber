@@ -43,14 +43,14 @@ class XmlWriteStep(
         --${AllPipelineOptions.INSTANCE.rootElementName.name} specifies the document root element name.
     """.trimIndent()
     override val example = """
-        uuid --limit=2
+        uuid --${AllPipelineOptions.INSTANCE.maxFilesPerThread.name}=2
         node-set:uuid
         xml-write  # result: <items><item><uuid>3170d9fc-6e75-4b76-8d9a-e33cc93a160d</uuid></item>
                              <item><uuid>368cf6d6-120a-4e31-a717-c52ed08ce7cd</uuid></item></items>
         
-        uuid --limit=2
+        uuid --${AllPipelineOptions.INSTANCE.maxFilesPerThread.name}=2
         node-set:uuid
-        xml-write --pretty-print  # result: <items>
+        xml-write --${AllPipelineOptions.INSTANCE.prettyPrint.name}  # result: <items>
                                               <item>
                                                 <uuid>3170d9fc-6e75-4b76-8d9a-e33cc93a160d</uuid>
                                               </item>

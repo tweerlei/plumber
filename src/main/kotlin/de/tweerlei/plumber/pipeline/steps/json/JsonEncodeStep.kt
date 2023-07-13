@@ -41,7 +41,7 @@ class JsonEncodeStep(
     override val example = """
         value::'{"foo":42,"bar":true}'
         json-parse
-        json-print --pretty-print
+        json-print --${AllPipelineOptions.INSTANCE.prettyPrint.name}
         lines-write  # result: {
                                  "foo" : 42,
                                  "bar" : true

@@ -39,7 +39,7 @@ class PartitionsStep: ProcessingStep {
         --${AllPipelineOptions.INSTANCE.keyChars.name} specifies valid characters for key range generation.
     """.trimIndent()
     override val example = """
-        range-reset --start-after=10 --stop-after=20
+        range-reset --${AllPipelineOptions.INSTANCE.startAfterKey.name}=10 --${AllPipelineOptions.INSTANCE.stopAfterKey.name}=20
         partitions:2  # result: [10 .. 15]
                                 [15 .. 20]
     """.trimIndent()

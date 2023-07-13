@@ -44,7 +44,7 @@ class JdbcReadStep(
     override val example = """
         value:42
         record-set:id
-        jdbc-read:myTable --primary-key=id
+        jdbc-read:myTable --${AllPipelineOptions.INSTANCE.primaryKey.name}=id
         csv-write  # print row 42 as CSV
     """.trimIndent()
     override val argDescription = "<table>"

@@ -31,6 +31,7 @@ class FilesReadStep: ProcessingStep {
     override val description = "Read files from the given base directory"
     override val help = """
         The ${WellKnownKeys.NAME} attribute is evaluated relative to the given directory (default to the current one).
+        Use e.g. files-list: to generate a list of file names.
     """.trimIndent()
     override val options = ""
     override val example = """

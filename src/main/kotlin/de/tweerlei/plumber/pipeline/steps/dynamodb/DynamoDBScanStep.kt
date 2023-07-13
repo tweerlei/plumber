@@ -53,7 +53,7 @@ class DynamoDBScanStep(
         range-set:start
         value:200
         range-set:end
-        dynamodb-list:myTable --partition-key=ItemID
+        dynamodb-list:myTable --${AllPipelineOptions.INSTANCE.partitionKey.name}=ItemID
     """.trimIndent()
     override val argDescription = "<table>"
     override val argInterpolated = true

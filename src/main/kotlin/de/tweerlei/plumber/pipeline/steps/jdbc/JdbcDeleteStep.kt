@@ -42,7 +42,7 @@ class JdbcDeleteStep(
     override val example = """
         value:42
         record-set:id
-        jdbc-delete:myTable --primary-key=id
+        jdbc-delete:myTable --${AllPipelineOptions.INSTANCE.primaryKey.name}=id
     """.trimIndent()
     override val argDescription = "<table>"
     override val argInterpolated = true

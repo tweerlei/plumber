@@ -28,12 +28,12 @@ class RangeSetStep: ProcessingStep {
 
     override val group = "Ranges"
     override val name = "Set range field"
-    override val description = "Set a range field, e.g. for usage with each:, one of (start, end)"
+    override val description = "Set a range field, e.g. for usage with each:, one of (${RangeKey.start.name}, ${RangeKey.end.name})"
     override val help = ""
     override val options = ""
     override val example = """
-        value:10 range-set:start
-        value:20 range-set:end
+        value:10 range-set:${RangeKey.start.name}
+        value:20 range-set:${RangeKey.end.name}
         value:15 is-inrange
         lines-print  # result: true
     """.trimIndent()

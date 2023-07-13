@@ -44,8 +44,7 @@ class S3ListStep(
         --${AllPipelineOptions.INSTANCE.requesterPays.name} accepts being charged with S3 access costs.
     """.trimIndent()
     override val example = """
-        range-reset --start-after=00000000 --end-after=FFFFFFFF
-        partitions:256 --key-chars=0123456789ABCDEF
+        partitions:256 --${AllPipelineOptions.INSTANCE.startAfterKey.name}=00000000 --${AllPipelineOptions.INSTANCE.stopAfterKey.name}=FFFFFFFF --${AllPipelineOptions.INSTANCE.keyChars.name}=0123456789ABCDEF
         parallel:16
         s3-list:mybucket
         bulk

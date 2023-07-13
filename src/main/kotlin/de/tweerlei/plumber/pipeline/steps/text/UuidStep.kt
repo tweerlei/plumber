@@ -16,6 +16,7 @@
 package de.tweerlei.plumber.pipeline.steps.text
 
 import de.tweerlei.plumber.pipeline.PipelineParams
+import de.tweerlei.plumber.pipeline.options.AllPipelineOptions
 import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.text.UUIDWorker
@@ -30,7 +31,7 @@ class UuidStep: ProcessingStep {
     override val help = ""
     override val options = ""
     override val example = """
-        uuid --limit=1
+        uuid --${AllPipelineOptions.INSTANCE.maxFilesPerThread.name}=1
         lines-write  # result: 563de642-9a29-4804-b13c-1d5b129b47f6
     """.trimIndent()
     override val argDescription = ""

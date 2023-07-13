@@ -222,7 +222,11 @@ How do you find out about the types and attributes handled by each step? Use the
 
 * This tool is designed to process *many* items rather than *large* items, so at the moment each item is expected to fit into memory (no streaming).
 
+* For the same reason, there is no option to sort items.
+
 * Options are global, so you can't e.g. use different CSV separators for reading and writing.
+
+* Only one set of credentials per type is supported, so you can't read from one Database/Kafka/AWS account and write to another.
 
 * Due to limitations in the used AWS SDK, SSO credentials can not be used directly (https://github.com/aws/aws-sdk-java/issues/2434).
 
@@ -356,19 +360,8 @@ If you don't want interpretation but plain text, use two colons:
     log
 ```
 
-Values can be stored as named attributes and retrieved later:
-
-```bash
-./plumber \
-    value:John set:firstname \
-    value:Doe set:lastname \
-    format:'Full name: @{firstname} @{lastname}' \
-    log \
-    get:firstname \
-    log
-```
-
-where `get:firstname` is actually equivalent to `value:@firstname`.
+The form `step:@name` allows step arguments to vary for each item to be processed and thus only applies to steps that support it -
+and yes, `value:@firstname` is actually equivalent to `get:firstname`.
 
 ## Find and replace
 

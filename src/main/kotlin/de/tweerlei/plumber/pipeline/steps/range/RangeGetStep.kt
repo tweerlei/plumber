@@ -29,16 +29,16 @@ class RangeGetStep: ProcessingStep {
 
     override val group = "Ranges"
     override val name = "Get range field"
-    override val description = "Get a range field, one of (start, end)"
+    override val description = "Get a range field, one of (${RangeKey.start.name}, ${RangeKey.end.name})"
     override val help = ""
     override val options = ""
     override val example = """
-        range-reset --start-after=10 --stop-after=20
-        range-get:start
+        range-reset --${AllPipelineOptions.INSTANCE.startAfterKey.name}=10 --${AllPipelineOptions.INSTANCE.stopAfterKey.name}=20
+        range-get:${RangeKey.start.name}
         lines-write  # result: 10
         
-        range-reset --start-after=10 --stop-after=20
-        range-get:end
+        range-reset --${AllPipelineOptions.INSTANCE.startAfterKey.name}=10 --${AllPipelineOptions.INSTANCE.stopAfterKey.name}=20
+        range-get:${RangeKey.end.name}
         lines-write  # result: 20
     """.trimIndent()
     override val argDescription

@@ -16,6 +16,7 @@
 package de.tweerlei.plumber.pipeline.steps.filter
 
 import de.tweerlei.plumber.pipeline.PipelineParams
+import de.tweerlei.plumber.pipeline.options.AllPipelineOptions
 import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
@@ -33,7 +34,7 @@ class UnbulkStep: ProcessingStep {
     """.trimIndent()
     override val options = ""
     override val example = """
-        uuid --limit=100
+        uuid --${AllPipelineOptions.INSTANCE.maxFilesPerThread.name}=100
         bulk:10
         count
         unbulk

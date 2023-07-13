@@ -16,6 +16,7 @@
 package de.tweerlei.plumber.pipeline.steps.sqs
 
 import de.tweerlei.plumber.pipeline.PipelineParams
+import de.tweerlei.plumber.pipeline.options.AllPipelineOptions
 import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.pipeline.steps.toWorkItemStringAccessor
 import de.tweerlei.plumber.worker.Worker
@@ -37,7 +38,7 @@ class SQSBulkDeleteStep(
     """.trimIndent()
     override val options = ""
     override val example = """
-        sqs-read:myQueue --bulk-size:10
+        sqs-read:myQueue --${AllPipelineOptions.INSTANCE.numberOfFilesPerRequest.name}:10
         bulk
         sqs-bulkdelete
     """.trimIndent()

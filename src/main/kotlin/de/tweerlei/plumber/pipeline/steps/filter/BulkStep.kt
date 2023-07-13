@@ -37,7 +37,7 @@ class BulkStep: ProcessingStep {
         --${AllPipelineOptions.INSTANCE.numberOfFilesPerRequest.name} specifies the default bulk size
     """.trimIndent()
     override val example = """
-        s3-list:mybucket --bulk-size:1000
+        s3-list:mybucket --${AllPipelineOptions.INSTANCE.numberOfFilesPerRequest.name}=1000
         bulk
         s3-bulkdelete
     """.trimIndent()

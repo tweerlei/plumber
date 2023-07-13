@@ -42,7 +42,7 @@ class XmlEncodeStep(
     override val example = """
         value::'<root><foo>42</foo></root>'
         xml-parse
-        xml-print --pretty-print
+        xml-print --${AllPipelineOptions.INSTANCE.prettyPrint.name}
         lines-write  # result: <item>
                                  <foo>42</foo>
                                </item>

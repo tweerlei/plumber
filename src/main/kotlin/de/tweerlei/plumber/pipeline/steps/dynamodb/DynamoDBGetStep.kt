@@ -49,7 +49,7 @@ class DynamoDBGetStep(
     """.trimIndent()
     override val example = """
         value:123
-        dynamodb-key:2022-07-28T12:34:56Z --partition-key=ItemID --range-key=UpdatedAt
+        dynamodb-key:2022-07-28T12:34:56Z --${AllPipelineOptions.INSTANCE.partitionKey.name}=ItemID --${AllPipelineOptions.INSTANCE.rangeKey.name}=UpdatedAt
         dynamodb-get:myTable
     """.trimIndent()
     override val argDescription = "<table>"

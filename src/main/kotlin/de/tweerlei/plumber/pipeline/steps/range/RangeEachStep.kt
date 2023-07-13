@@ -37,14 +37,12 @@ class RangeEachStep: ProcessingStep {
         --${AllPipelineOptions.INSTANCE.keyChars.name} specifies valid characters for key range generation.
     """.trimIndent()
     override val example = """
-        range-reset --start-after=10 --stop-after=13
-        range-each
+        range-each --${AllPipelineOptions.INSTANCE.startAfterKey.name}=10 --${AllPipelineOptions.INSTANCE.stopAfterKey.name}=13
         lines-write  # result: 11
                                12
                                13
 
-        range-reset --start-after=a --stop-after=g
-        range-each --key-chars=aceg
+        range-each --${AllPipelineOptions.INSTANCE.startAfterKey.name}=a --${AllPipelineOptions.INSTANCE.stopAfterKey.name}=g --${AllPipelineOptions.INSTANCE.keyChars.name}=aceg
         lines-write  # result: c
                                e
                                g

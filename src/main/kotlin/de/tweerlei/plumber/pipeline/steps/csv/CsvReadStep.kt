@@ -42,7 +42,7 @@ class CsvReadStep(
         --${AllPipelineOptions.INSTANCE.header.name} will read the first line as column headings.
     """.trimIndent()
     override val example = """
-        csv-read:products.csv --header
+        csv-read:products.csv --${AllPipelineOptions.INSTANCE.header.name}
         record-get:Price
         lines-write  # result: all values in the "Price" column
     """.trimIndent()

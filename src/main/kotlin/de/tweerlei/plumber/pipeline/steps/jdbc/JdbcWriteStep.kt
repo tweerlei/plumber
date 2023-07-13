@@ -16,6 +16,7 @@
 package de.tweerlei.plumber.pipeline.steps.jdbc
 
 import de.tweerlei.plumber.pipeline.PipelineParams
+import de.tweerlei.plumber.pipeline.options.AllPipelineOptions
 import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.pipeline.steps.toWorkItemStringAccessor
 import de.tweerlei.plumber.worker.Worker
@@ -39,7 +40,7 @@ class JdbcWriteStep(
     override val example = """
         value:42
         record-set:id
-        jdbc-read:myTable --primary-key=id
+        jdbc-read:myTable --${AllPipelineOptions.INSTANCE.primaryKey.name}=id
         value:Joe
         record-set:name
         jdbc-write  # update name to 'Joe'

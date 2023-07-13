@@ -41,10 +41,10 @@ class JdbcRangeStep(
         --${AllPipelineOptions.INSTANCE.primaryKey.name} specifies the PK column.
     """.trimIndent()
     override val example = """
-        jdbc-range:myTable --primary-key=id
+        jdbc-range:myTable --${AllPipelineOptions.INSTANCE.primaryKey.name}=id
         jdbc-delete  # delete all items
         
-        jdbc-range:myTable --primary-key=id
+        jdbc-range:myTable --${AllPipelineOptions.INSTANCE.primaryKey.name}=id
         parallel:8
         jdbc-delete  # delete in parallel
     """.trimIndent()

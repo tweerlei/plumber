@@ -36,7 +36,7 @@ class RetryStep: ProcessingStep {
         --${AllPipelineOptions.INSTANCE.failFast} stops processing more items when no retry succeeded.
     """.trimIndent()
     override val example = """
-        uuid --limit=10
+        uuid --${AllPipelineOptions.INSTANCE.maxFilesPerThread.name}=10
         retry:2
         error:2
         lines-write

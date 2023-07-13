@@ -44,7 +44,7 @@ class JdbcListStep(
         --${AllPipelineOptions.INSTANCE.selectFields.name} specifies columns to fetch
     """.trimIndent()
     override val example = """
-        jdbc-list:myTable --start-after=100 --end-after=200
+        jdbc-list:myTable --${AllPipelineOptions.INSTANCE.startAfterKey.name}=100 --${AllPipelineOptions.INSTANCE.stopAfterKey.name}=200
         record-get:id
         lines-write  # result: IDs of records between 100 (excl.) and 200 (incl.)
     """.trimIndent()

@@ -16,6 +16,7 @@
 package de.tweerlei.plumber.pipeline.steps.range
 
 import de.tweerlei.plumber.pipeline.PipelineParams
+import de.tweerlei.plumber.pipeline.options.AllPipelineOptions
 import de.tweerlei.plumber.pipeline.steps.ProcessingStep
 import de.tweerlei.plumber.worker.Worker
 import de.tweerlei.plumber.worker.impl.WellKnownKeys
@@ -31,7 +32,7 @@ class IsInRangeStep: ProcessingStep {
     override val help = ""
     override val options = ""
     override val example = """
-        range-reset --start-after=10 --stop-after=20
+        range-reset --${AllPipelineOptions.INSTANCE.startAfterKey.name}=10 --${AllPipelineOptions.INSTANCE.stopAfterKey.name}=20
         value:10 is-inrange -> false
         value:11 is-inrange -> true
         value:20 is-inrange -> true

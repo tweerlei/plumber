@@ -45,7 +45,7 @@ class DynamoDBDeleteStep(
         --${AllPipelineOptions.INSTANCE.rangeKey.name} specifies the range key column
     """.trimIndent()
     override val example = """
-        dynamodb-list:myTable --partition-key=ItemID
+        dynamodb-list:myTable --${AllPipelineOptions.INSTANCE.partitionKey.name}=ItemID
         dynamodb-delete
     """.trimIndent()
     override val argDescription = "<table>"

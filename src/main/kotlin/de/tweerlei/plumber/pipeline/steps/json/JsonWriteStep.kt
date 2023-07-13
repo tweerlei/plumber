@@ -43,21 +43,21 @@ class JsonWriteStep(
         --${AllPipelineOptions.INSTANCE.rootElementName.name} specifies the property name to create in the outer object
     """.trimIndent()
     override val example = """
-        uuid --limit=2
+        uuid --${AllPipelineOptions.INSTANCE.maxFilesPerThread.name}=2
         node-set:uuid
         json-write  # result: [{"uuid":"3170d9fc-6e75-4b76-8d9a-e33cc93a160d"}, {"uuid":"368cf6d6-120a-4e31-a717-c52ed08ce7cd"}]
         
-        uuid --limit=2
+        uuid --${AllPipelineOptions.INSTANCE.maxFilesPerThread.name}=2
         node-set:uuid
-        json-write --pretty-print  # result: [{
+        json-write --${AllPipelineOptions.INSTANCE.prettyPrint.name}  # result: [{
                                                "uuid":"3170d9fc-6e75-4b76-8d9a-e33cc93a160d"
                                              }, {
                                                "uuid":"368cf6d6-120a-4e31-a717-c52ed08ce7cd"}
                                              ]
         
-        uuid --limit=2
+        uuid --${AllPipelineOptions.INSTANCE.maxFilesPerThread.name}=2
         node-set:uuid
-        json-write --pretty-print --wrap-root  # result: {"items":[{
+        json-write --${AllPipelineOptions.INSTANCE.prettyPrint.name} --${AllPipelineOptions.INSTANCE.wrapRoot.name}  # result: {"items":[{
                                                            "uuid":"3170d9fc-6e75-4b76-8d9a-e33cc93a160d"
                                                          }, {
                                                            "uuid":"368cf6d6-120a-4e31-a717-c52ed08ce7cd"}
