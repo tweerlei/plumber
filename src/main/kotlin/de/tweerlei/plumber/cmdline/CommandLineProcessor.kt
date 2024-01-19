@@ -147,6 +147,7 @@ class CommandLineProcessor(
         logger.info("${if (failFast) "skipping over" else "failing on"} processing errors")
         logger.info("delaying retries for $retryDelaySeconds seconds")
         logger.info("using queue size of $queueSizePerThread items per thread")
+        logger.info("Files: ${if (recursive) "will" else "won't"} recurse into subdirectories")
         logger.info("AWS: assuming role '$assumeRoleArn' for AWS access")
         logger.info("AWS: ${if (requesterPays) "will" else "won't"} pay for S3 requests")
         logger.info("JDBC: using primary key '$primaryKey'")
@@ -159,7 +160,7 @@ class CommandLineProcessor(
         logger.info("DynamoDB: starting range after '$startAfterRangeKey' up to and including '$stopAfterRangeKey'")
         logger.info("CSV: using separator '$separator', ${if (header) "will" else "won't"} read/write header row")
         logger.info("JSON/XML: ${if (prettyPrint) "pretty printing" else "not pretty printing"} output")
-        logger.info("XML: naming elements <$elementName> with root <$rootElementName>")
+        logger.info("XML: naming elements <$elementName> with root <$rootElementName> ${if (wrapRoot) "wrapped" else "not wrapped"}")
     }
 
     private fun CommandLine.showHelpFor() =

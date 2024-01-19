@@ -35,9 +35,9 @@ class FileWriteWorker(
             .let { name ->
                 File(dir(item).ifEmptyGetFrom(item, WellKnownKeys.PATH).ifEmpty { "." })
                     .let { directory ->
-                        if (recursive) directory.mkdirs()
                         File(directory, name)
                             .let { file ->
+                                if (recursive) file.parentFile.mkdirs()
                                 FileOutputStream(file).use { stream ->
                                     stream.write(item.get().toByteArray())
                                 }
