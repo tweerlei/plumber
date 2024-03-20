@@ -14,9 +14,9 @@ RUN ./gradlew --no-daemon -Pversion=${PACKAGE_VERSION} build
 
 FROM openjdk:11-jre AS runtime
 
-# Add the AWS RDS CA to the JVM trust store
-COPY rds-combined-ca-bundle.pem /etc/ssl/certs/rds.crt
-RUN echo y | keytool -importcert -alias rds -file /etc/ssl/certs/rds.crt -cacerts -keypass changeit -storepass changeit && \
+# Add the AWS RDS CAs to the JVM trust store
+COPY ca-certificates /usr/local/share/ca-certificates
+RUN update-ca-certificates && \
 	rm -f /usr/local/bin/docker-java-home
 
 COPY plumber /usr/local/bin/
